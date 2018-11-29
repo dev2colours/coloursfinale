@@ -1,0 +1,69 @@
+<div class="main-content">
+    <!-- *ngIf="afAuth.user | async as user" -->
+    <div class="card card-plain">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card" *ngIf="CompanyRef">
+                        <div class="card-header">
+                            <h6 class="card-category">
+                                Company : {{ (CompanyRef)?.name }}<br><small>
+                                    <p>
+                                        By : {{ CompanyRef.by }}</p>
+                                </small><br>
+                                Sector : {{ CompanyRef.sector }}<br><br>
+                                Location : {{ CompanyRef.location }}<br><br>
+                                Projects : {{ (projects | async)?.length }}<br><br>
+                                My Tasks : {{ (myTasks | async)?.length }}<br><br>
+                                Tasks I'm Champion : {{ (tasksImChamp | async)?.length }} <small>{{ (tasksImChamp
+                                    )?.name }}</small><br><br>
+
+                            </h6>
+                        </div>
+                        <!-- <div class="card-body text-center">
+              <code hidden>Projects</code>
+              <div class="table-responsive pro_info text-left">
+                <table class="table">
+                  <thead class="">
+                    <th>Name</th>
+                    <th>Sector</th>
+                    <th>Action</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let project of companyProjects | async ">
+                      <td>{{ project.name }}</td>
+                      <td>{{ project.sector}}</td>
+                      <td class="text-center">
+                        <button class="warning btn-link" rel="tooltip" title="show {{project.name}} company details"
+                          (click)="toggle(); selectProject(project)">
+                          Select
+                        </button>
+                        <a class="danger btn-link btn-icon btn-sm remove" disabled="" hidden><i class="fa fa-times"></i></a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div> -->
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card" *ngIf="CompanyRef">
+                        <div class="card-header">
+                            <h6 class="card-category">
+                                <li>
+                                    <button class="btn-link btn-magnify" (click)="refreshCompany()"> <i class="nc-icon nc-refresh-69"></i>
+                                        Refresh</button>
+                                    <p><small>
+                                            Company : {{ CompanyRef.name }}
+                                        </small></p>
+                                    <!-- [routerLink]="[ '/enterprises/', comp.id ]" -->
+                                </li>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

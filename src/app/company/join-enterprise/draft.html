@@ -1,0 +1,75 @@
+<span *ngFor="let participant of enterprise.participants"><span *ngIf="participant.id==userId">
+    </span> </span>
+
+<button href="#" class="primary btn-link" ng-if="!isJoined(participant.id)" (click)="selectCompany(enterprise)"
+    data-toggle="modal" data-target="#myModal">join</button>
+<!-- Else Display Already Added -->
+<span ng-if="isJoined(participant.id)">joined</span>
+</td>
+
+
+
+<div class="modal fade" id="tskModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="card-body ">
+                <div class="card-header text-center">
+                    <p class="col-md-8 ml-auto mr-auto col-form-label info">
+                        <font size=4>Create a Task</font>
+                    </p>
+                </div>
+                <hr>
+                <form class="form-horizontal">
+                    <ng-container *ngIf="showChamp">
+                        <div class="row">
+                            <label class="col-md-3 col-form-label">Champion</label>
+                            <div class="col-md-8">
+                                <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
+                                    {{(selectedParticipant)?.name }}
+                                    <button type="text" name="taskChampion" class="btn btn-icon primary btn-link "
+                                        (click)="toggleUsersTable(); toggleChamp()">
+                                        <i class="fa fa-edit fa-fw"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="row">
+                        <div class="col-md-8 ml-auto mr-auto">
+                            <div class="form-group">
+                                <ng-container *ngIf="showUserTable">
+                                    <div class="table-responsive user_table">
+                                        <code>Select a Champion</code>
+
+                                        <table class="table">
+                                            <tbody class="">
+                                                <tr *ngFor="let user of coloursUsers | async " class="">
+                                                    <td>{{ user.name }}</td>
+                                                    <td><button class="primary btn-link" (click)="selectColoursUser(user)">
+                                                            select
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="modal-footer" style="margin-bottom:0%">
+                    <div class="left-side">
+                        <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="right-side">
+                        <button type="button" class="btn btn-success btn-link" (click)="saveTask()" data-dismiss="modal"
+                            title="save task">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

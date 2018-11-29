@@ -1,0 +1,198 @@
+<div class="main-content">
+    <div class="row">
+        <div class="col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="nav-tabs-navigation" style="margin-bottom: 0px;">
+                        <div class="nav-tabs-wrapper">
+                            <ul id="tabs" class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#project" role="tab" aria-expanded="true">Projects</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#company" role="tab" aria-expanded="false">Enterprise</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="my-tab-content" class="tab-content">
+                        <div class="tab-pane active" id="project" role="tabpanel" aria-expanded="true">
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <div class="card">
+                                    <div class="col-md-12">
+                                        <div class="card-header ">
+                                            <div class="row">
+                                                <div class="col-sm-9 ml-auto mr-auto">
+                                                    <h5 class="title na-am">Create Project</h5>
+                                                </div>
+                                                <div class="col-sm-3 mr-auto ml-auto" style="margin-right:0em">                                                
+                                                    <!-- <h5 class="card-title">Create Project</h5> -->
+                                                    <button type="submit" style="padding-right:0em" class="pull-left primary btn-link" routerLink="/join-project">Join a Project</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10 ml-auto mr-auto">
+                                        <div class="card-body ">
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Project Name</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="project.name" name="enterprise_name"
+                                                            class="form-control" placeholder="e.g..Bob Corp">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Industry Sector</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="project.sector" class="form-control"
+                                                            placeholder="e.g..Transport">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Location</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="project.location" name="enterprise_location"
+                                                            class="form-control" placeholder="e.g..Mutare">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Type</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <select data-style="btn btn-info btn-round" [(ngModel)]="project.type" name="ptype" class="form-control" data-style="btn btn-info btn-round"
+                                                            title="Select Project Type" data-size="7">
+                                                            <option value="Personal" selected> Personal </option>
+                                                            <option value="Enterprise"> Enterprise </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer ">
+                                                <div class="row">
+                                                    <label class="col-md-3"></label>
+                                                    <div class="col-md-9">
+                                                        <button type="submit"  data-toggle="modal" data-target="#pModal" name="enterprise_sector"
+                                                            class="btn btn-info btn-round">Save project</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="company" role="tabpanel" aria-expanded="false">
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <div class="card">
+                                    <div class="col-md-12">
+                                        <div class="card-header ">
+                                            <div class="row">
+                                                <div class="col-md-8 ml-auto mr-auto">
+                                                    <h5 class="title na-am">Create Company</h5>
+                                                </div>
+                                                <div class="col-md-4 mr-auto ml-auto" style="margin-right:0em">                                                
+                                                    <!-- <h5 class="card-title">Create Project</h5> -->
+                                                    <button type="submit" style="padding-right:0em" class="pull-left primary btn-link" routerLink="/enterprises/join-enterprise">Join existing Enterprise</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10 ml-auto mr-auto">
+                                        <div class="card-body ">
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Company Name</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="newEnterprise.name" name="enterprise_name"
+                                                            class="form-control" placeholder="e.g..Bob Corp">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Industry Sector</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="newEnterprise.sector" class="form-control"
+                                                            placeholder="e.g..Transport">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Location</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="newEnterprise.location" name="enterprise_location"
+                                                            class="form-control" placeholder="e.g..Mutare">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer ">
+                                                <div class="row">
+                                                    <label class="col-md-3"></label>
+                                                    <div class="col-md-9">
+                                                        <button type="submit" (click)="saveEnterprise()" name="enterprise_sector"
+                                                            class="btn btn-info btn-round">Save company</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="pModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <p>Select Company</p>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="nc-icon nc-simple-remove"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive pro_info">
+                    <table class="table">
+                        <thead class="">
+                            <th>Name</th>
+                            <th>Created By</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let ent of enterprises | async ">
+                                <td>{{ ent.name }} </td>
+                                <td>{{ ent.by}}</td>
+                                <td class="text-center">
+                                    <a class="warning btn-link edit" routerLink="#" rel="tooltip" title="select {{ ent.name }}"
+                                        (click)="selectCompany(ent)" data-toggle="modal" data-target="#noticeModal">
+                                        <font size=2>Select</font>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="left-side">
+                    <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Never mind</button>
+                </div>
+                <div class="divider"></div>
+                <div class="right-side">
+                    <button type="button" class="btn btn-danger btn-link" (click)="saveProject()" data-dismiss="modal">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

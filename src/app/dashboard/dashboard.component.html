@@ -1,0 +1,301 @@
+<div class="main-content">
+  <div class="row">
+    <div class="col-lg-4 col-sm-6">
+      <div class="card">
+        <div class="card-content btn-magnify">
+          <div class="col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
+            <div class="clrs-h1" style="color:steelblue">
+              <a><i class="nc-icon nc-palette"></i> Colours Personal</a>
+            </div><br>
+            <div class="text-left col-md-10" style="padding-top: -1em; color: steelblue; ">
+              <a>My Diary Today</a>
+            </div>
+          </div>
+          <div class="spacer" style="height: 1em;"></div>
+          <div class="row">
+            <div class="content" style="margin-left:1.0em;">
+              <!-- <ol>
+                <li>
+                  <div class="row">
+                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em">
+                      <a style="color:lightgrey">
+                        Meeting<span class="label text-warning"> 1000 hrs</span>
+                      </a>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="row">
+                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
+                      <a style="color:lightgrey">
+                        Email<span class="label text-success"> 1230 Hrs </span>
+                      </a>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="row">
+                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
+                      <a style="color:lightgrey; margin-bottom: 0px;">
+                        Skype<span class="label text-success"> 1400 Hrs </span>
+                      </a>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="row">
+                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
+                      <a style="color:lightgrey; margin-bottom: 0px;">
+                        Scheduling<span class="label text-success"> 0800 Hrs </span>
+                      </a>
+                    </div>
+                  </div>
+                </li>
+              </ol> -->
+            
+              <div class="content container scroll-em">
+                <ol>
+                  <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let item of viewActions | async">
+                    <a style="color:slategray">{{ item.name }}</a>
+                  </li>
+                </ol>
+              </div>
+
+              <!-- <div class="content container scroll-em" *ngIF="viewActions">
+                <div class="row">
+                  <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em">
+                    <a style="color:lightgrey">
+                      Go to Implimentation
+                    </a>
+                  </div>
+                </div>
+              </div> -->
+            
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h6 class="big-title">total earnings in last ten quarters</h6>
+          <canvas id="activeUsers" width="826" height="380"></canvas>
+        </div>
+        <div class="card-footer">
+          <hr>
+          <div class="row">
+            <div class="col-sm-7">
+              <div class="footer-title">View more details</div>
+            </div>
+            <div class="col-sm-5">
+              <div class="pull-right">
+                <button class="btn btn-success btn-round btn-icon btn-sm">
+                  <i class="nc-icon nc-simple-add"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-sm-6">
+      <div class="card">
+        <div class="card-content btn-magnify">
+          <div class="col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
+            <div class="clrs-h1" style="color:steelblue">
+              <a><i class="fa fa-tasks fa-fw"></i> Colours Projects</a>
+            </div><br>
+            <div class="text-left" style="padding-top: -1em; color: steelblue; ">
+              <a>My Current Priority Projects</a>
+            </div>
+          </div>
+          <div class="spacer" style="height: 1em;"></div>
+          <div id="pTasklist">
+            <!-- <ol>
+              <li>
+                <div class="row">
+                  <div class="col-xs-10 " style="margin-left:2.0em">
+                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                      Joina City
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row">
+                  <div class="col-xs-10 " style="margin-left:2.0em">
+                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                      Aripo Offices
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row">
+                  <div class="col-xs-10 " style="margin-left:2.0em">
+                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                      Colours Software
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row">
+                  <div class="col-xs-10 " style="margin-left:2.0em">
+                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                      Beitbridge
+                    </a>
+                  </div>
+                </div>
+              </li>
+            </ol> -->
+         
+            <div class="content container scroll-em">
+              <ol>
+                <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let project of allMyProjects | async"><a
+                    [routerLink]="[ '/projects/', project.id ]" style="color:slategray">{{ project.name }}</a>
+                </li>
+              </ol>
+            </div>
+         
+          </div>
+        </div>
+        <div class="card-body">
+          <h6 class="big-title">total subscriptions in last 7 days</h6>
+          <canvas id="emailsCampaignChart" width="826" height="380"></canvas>
+        </div>
+        <div class="card-footer">
+          <hr>
+          <div class="row">
+            <div class="col-sm-7">
+              <div class="footer-title">View more details</div>
+            </div>
+            <div class="col-sm-5">
+              <div class="pull-right">
+                <button class="btn btn-danger btn-round btn-icon btn-sm">
+                  <i class="nc-icon nc-button-play"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-sm-6">
+      <div class="card">
+        <!-- <div class="card-header">
+          <div class="row">
+            <div class="col-sm-7">
+              <div class="numbers pull-left">
+                8,960
+              </div>
+            </div>
+            <div class="col-sm-5">
+              <div class="pull-right">
+                <span class="badge badge-pill badge-warning">
+                  ~51%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <div class="card-content btn-magnify">
+          <div class="col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
+            <div class="clrs-h1" style="color:steelblue">
+              <a><i class="fa fa-briefcase fa-fw"></i> Colours Enterprise</a>
+            </div><br>
+            <div class="text-left" style="padding-top: -1em; color: steelblue; ">
+              <a>High Priority Enterprise Tasks</a>
+            </div>
+          </div>
+          <div class="spacer" style="height: 1em;"></div>
+          <div id="eTasklixt">
+            <ol>
+              <li>
+                <div class="row">
+                  <div class="col-xs-10 " style="margin-left: 2em">
+                    <a class="text-danger" style="color:lightgrey">
+                      Send Agenda
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row">
+                  <div class="col-xs-10" style="margin-left:2em">
+                    <a href="#Respond_to_mail" style="color:lightgrey">
+                      Respond to Mail
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row">
+                  <div class="col-xs-10" style="margin-left:2em">
+                    <a href="#Contact_Supplier" style="color:lightgrey">
+                      Contact Supplier
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row">
+                  <div class="col-xs-10" style="margin-left:2em">
+                    <a href="#Aripo" style="color:lightgrey">
+                      Aripo
+                    </a>
+                  </div>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="card-body">
+          <!--  -->
+          <h6 class="big-title">total downloads in last 6 years</h6>
+          <canvas id="activeCountries" width="826" height="380"></canvas>
+        </div>
+        <div class="card-footer">
+          <hr>
+          <div class="row">
+            <div class="col-sm-7">
+              <div class="footer-title">View more details</div>
+            </div>
+            <div class="col-sm-5">
+              <div class="pull-right">
+                <button class="btn btn-warning btn-round btn-icon btn-sm">
+                  <i class="nc-icon nc-alert-circle-i"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-stats">
+        <div class="card-body" style="padding-top: 0px;">
+          <div class="row" style="height: 66px;">
+            <div class="col-5 col-md-8">
+              <div class="icon-big pull-left icon-warning" style="left:3em">
+                <p><i class="fa fa-rss text-warning" style="font-size:24px">....</i>
+                  <span style="font-size:22px">Colours Marketplace News Feeds</span></p>
+              </div>
+            </div>
+            <div class="col-8 col-md-8">
+              <div class="numbers">
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-background-color="blue">
+          <marquee>
+            <a *ngFor="let project of allColoursProjects | async" style="color:rgb(35, 41, 49)" routerLink="#">A
+              project in
+              {{project.sector}} has been created in {{project.location}}. . . . . . . <span class="spacer" style="widows: 10px;"></span></a>
+          </marquee>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,380 @@
+<div class="row" *ngIf="afAuth.user | async as user">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body ">
+                <code>Create Project</code>
+                <form method="get" action="/" class="form-horizontal">
+                    <div class="row">
+                        <div class="col-lg-5 col-md-6 col-sm-3">
+                            <select class="selectpicker" data-style="btn btn-info btn-round" multiple title="Choose City"
+                                data-size="7">
+                                <option disabled> Multiple Options</option>
+                                <option value="2">Paris </option>
+                                <option value="3">Bucharest</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div class="form-group has-success">
+                                <input type="text" class="form-control" value="Success">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer ">
+                <div class="row pull-left">
+                    <label class="col-md-3"></label>
+                    <div class="col-md-9">
+                        <button type="submit" class="btn btn-info btn-round" (click)="saveProject()">Save Project</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body text-center">
+                <code>Personal Projects</code>
+                <div class="table-responsive pro_info">
+                    <table class="table">
+                        <thead class="">
+                            <th>
+                                Name</th>
+                            <th>By</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let project of projects | async ">
+                                <td>
+                                    {{project.name}}</td>
+                                <td>
+                                    {{ project.by}}</td>
+                                <td>
+                                    {{project.type}}</td>
+                                <td>
+                                    <!-- {{project.id}}</td> -->
+                                <td class="text-center">
+                                    <a class="btn btn-warning btn-link btn-icon btn-sm edit" data-toggle="modal"
+                                        (click)="selectProject(project)" data-target="#myModal"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger btn-link btn-icon btn-sm remove" (click)="deleteProject(project.id)"><i
+                                            class="fa fa-times"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header justify-content-center">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <i class="nc-icon nc-simple-remove"></i>
+                                    </button>
+                                    <h5 class="title title-up">Create tasks for the project "{{task.projectName}}"</h5>
+                                </div>
+                                <div class="modal-body pull-left">
+                                    <div class="col-md-12">
+                                        <div class="card ">
+                                            <div class="card-body ">
+                                                <form class="form-horizontal">
+                                                    <div class="row">
+                                                        <label class="col-md-3 col-form-label">Task name</label>
+                                                        <div class="col-md-9">
+                                                            <div class="form-group">
+                                                                <input type="text" [(ngModel)]="task.name" name="taskName"
+                                                                    class="form-control" placeholder="Task name">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-3 col-form-label">Start Date</label>
+                                                        <div class="col-md-9">
+                                                            <div class="form-group">
+                                                                <input type="date" [(ngModel)]="task.startTimeRange"
+                                                                    name="startTimeRange" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-3 col-form-label">Finish Date</label>
+                                                        <div class="col-md-9">
+                                                            <div class="form-group">
+                                                                <input type="date" [(ngModel)]="task.finishTimeRange"
+                                                                    name="finishTimeRange" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-3 col-form-label">Champion</label>
+                                                        <div class="col-md-9">
+                                                            <div class="form-group">
+                                                                <input type="text" [(ngModel)]="task.champion" name="taskChampion"
+                                                                    class="form-control" placeholder="John">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="left-side">
+                                        <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <div class="right-side">
+                                        <button type="button" class="btn btn-success btn-link" (click)="saveTask()">Add
+                                            Task</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<form method="get" action="/" class="form-horizontal">
+    <div class="row">
+        <div class="col-lg-5 col-md-6 col-sm-3">
+            <select class="selectpicker" data-style="btn btn-info btn-round" multiple title="Choose City" data-size="7">
+                <option disabled> Multiple Options</option>
+                <option value="2">Paris </option>
+                <option value="3">Bucharest</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10">
+            <div class="form-group has-success">
+                <input type="text" class="form-control" value="Success">
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<div class="card-body ">
+    <!--
+                                                    color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
+                                                -->
+    <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-center" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#link7" role="tablist">
+                <i class="now-ui-icons objects_umbrella-13"></i> Home
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#link8" role="tablist">
+                <i class="now-ui-icons shopping_shop"></i> Messages
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#link9" role="tablist">
+                <i class="now-ui-icons ui-2_settings-90"></i> Settings
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content tab-space tab-subcategories">
+        <div class="tab-pane active" id="link7">
+            <div class="col-md-12">
+                <div class="card ">
+                    <div class="modal-header justify-content-center">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="nc-icon nc-simple-remove"></i>
+                        </button>
+                        <code class="title title-up">Created {{project.name}} Project<br><span>You are creating project
+                                for {{selectedCompany.name}} </span><small> {{selectedCompany.id}}</small> ???</code>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive pro_info">
+                            <table class="table">
+                                <thead class="">
+                                    <th>Name</th>
+                                    <th>Created By</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let ent of enterprises | async ">
+                                        <td>{{ ent.name }} </td>
+                                        <td>{{ ent.by}}</td>
+                                        <td class="text-right">
+                                            <a class="btn btn-warning btn-link btn-icon btn-sm edit" rel="tooltip"
+                                                title="Company" (click)="selectCompany(ent)" data-toggle="modal"
+                                                data-target="#noticeModal"><i class="fa fa-check"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="link8">
+            Efficiently unleash cross-media information without cross-media value. Quickly maximize timely deliverables
+            for
+            real-time schemas.
+            <br>
+            <br>Dramatically maintain clicks-and-mortar solutions without functional solutions.
+        </div>
+        <div class="tab-pane" id="link9">
+            Completely synergize resource taxing relationships via premier niche markets. Professionally cultivate
+            one-to-one
+            customer service with robust ideas.
+            <br>
+            <br>Dynamically innovate resource-leveling customer service for state of the art customer service.
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card-body ">
+    <!--
+                                                    color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
+                                                -->
+    <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-center" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#link7" role="tablist">
+                <i class="now-ui-icons objects_umbrella-13"></i> Home
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#link8" role="tablist">
+                <i class="now-ui-icons shopping_shop"></i> Messages
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#link9" role="tablist">
+                <i class="now-ui-icons ui-2_settings-90"></i> Settings
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content tab-space tab-subcategories">
+        <div class="tab-pane active" id="link7">
+            <div class="col-md-12">
+                <div class="modal-header justify-content-center">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="nc-icon nc-simple-remove"></i>
+                    </button>
+                    <h5 class="title title-up">Create tasks for the project "{{task.projectName}}"</h5>
+                </div>
+                <div class="modal-body pull-left">
+                    <div class="col-md-12">
+                        <div class="card ">
+                            <div class="card-body ">
+                                <form class="form-horizontal">
+                                    <div class="row">
+                                        <label class="col-md-3 col-form-label">Task name</label>
+                                        <div class="col-md-9">
+                                            <div class="form-group">
+                                                <input type="text" [(ngModel)]="task.name" name="taskName" class="form-control"
+                                                    placeholder="Task name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-3 col-form-label">Start Date</label>
+                                        <div class="col-md-9">
+                                            <div class="form-group">
+                                                <input type="date" [(ngModel)]="task.startTimeRange" name="startTimeRange"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-3 col-form-label">Finish Date</label>
+                                        <div class="col-md-9">
+                                            <div class="form-group">
+                                                <input type="date" [(ngModel)]="task.finishTimeRange" name="finishTimeRange"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-3 col-form-label">Champion</label>
+                                        <div class="col-md-9">
+                                            <div class="form-group">
+                                                <input type="text" [(ngModel)]="task.champion" name="taskChampion"
+                                                    class="form-control" placeholder="John">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-3 col-form-label">Company</label>
+                                        <div class="col-md-9">
+                                            <div class="form-group">
+                                                <div class="col-lg-5 col-md-6 col-sm-3">
+                                                    <select class="selectpicker" data-style="btn btn-info btn-round btn-link"
+                                                        title="Choose Company" data-size="7">
+                                                        <!-- <option disabled> Multiple Options</option> -->
+                                                        <option *ngFor="let c of enterprises | async "> {{c.name}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="link8">
+            Efficiently unleash cross-media information without cross-media value. Quickly maximize timely deliverables
+            for
+            real-time schemas.
+            <br>
+            <br>Dramatically maintain clicks-and-mortar solutions without functional solutions.
+        </div>
+        <div class="tab-pane" id="link9">
+            Completely synergize resource taxing relationships via premier niche markets. Professionally cultivate
+            one-to-one
+            customer service with robust ideas.
+            <br>
+            <br>Dynamically innovate resource-leveling customer service for state of the art customer service.
+        </div>
+    </div>
+</div>
+
+<div class="dropdown">
+    <button class="dropdown-toggle btn btn-primary btn-block btn-link" type="button" id="dropdownMenuButton"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        ...
+    </button>
+    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+        <div class="dropdown-header">Action
+            <a class="btn btn-warning btn-link btn-icon btn-sm edit" data-toggle="modal" (click)="selectProject(project)"
+                rel="tooltip" title="Create Task" data-target="#myModal"><i class="fa fa-edit"></i></a>
+            <a class="btn btn-danger btn-link btn-icon btn-sm remove" (click)="deleteProject(project.id)"><i rel="tooltip"
+                    title="delete {{ project.name }} project" class="fa fa-times"></i></a>
+            <a class="btn btn-danger btn-link btn-icon btn-sm remove" (click)="toggle(); selectProject3(project)"><i
+                    rel="tooltip" title="Show project detail" class="nc-icon nc-globe"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="dropdown">
+    <button class="dropdown-toggle btn btn-primary btn-block btn-link" type="button" id="dropdownMenuButton"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        ...
+    </button>
+    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+        <div class="dropdown-header">Action
+            <a class="btn btn-warning btn-link btn-icon btn-sm edit" data-toggle="modal" (click)="selectProject(project)"
+                rel="tooltip" title="Create Task" data-target="#myModal"><i class="fa fa-edit"></i></a>
+            <a class="btn btn-danger btn-link btn-icon btn-sm remove" (click)="deleteProject(project.id)"><i rel="tooltip"
+                    title="delete this Project" class="fa fa-times"></i></a>
+            <a class="btn btn-danger btn-link btn-icon btn-sm remove" (click)="selectProject3(project)"><i rel="tooltip"
+                    title="Show project detail" class="nc-icon nc-globe"></i></a>
+        </div>
+    </div>
+</div>
