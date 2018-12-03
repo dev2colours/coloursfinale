@@ -1,67 +1,272 @@
-<div class="main-content">
-    <!-- *ngIf="afAuth.user | async as user" -->
-    <div class="card card-plain">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card" *ngIf="CompanyRef">
-                        <div class="card-header">
-                            <h6 class="card-category">
-                                Company : {{ (CompanyRef)?.name }}<br><small>
-                                    <p>
-                                        By : {{ CompanyRef.by }}</p>
-                                </small><br>
-                                Sector : {{ CompanyRef.sector }}<br><br>
-                                Location : {{ CompanyRef.location }}<br><br>
-                                Projects : {{ (projects | async)?.length }}<br><br>
-                                My Tasks : {{ (myTasks | async)?.length }}<br><br>
-                                Tasks I'm Champion : {{ (tasksImChamp | async)?.length }} <small>{{ (tasksImChamp
-                                    )?.name }}</small><br><br>
-
-                            </h6>
-                        </div>
-                        <!-- <div class="card-body text-center">
-              <code hidden>Projects</code>
-              <div class="table-responsive pro_info text-left">
-                <table class="table">
-                  <thead class="">
-                    <th>Name</th>
-                    <th>Sector</th>
-                    <th>Action</th>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let project of companyProjects | async ">
-                      <td>{{ project.name }}</td>
-                      <td>{{ project.sector}}</td>
-                      <td class="text-center">
-                        <button class="warning btn-link" rel="tooltip" title="show {{project.name}} company details"
-                          (click)="toggle(); selectProject(project)">
-                          Select
-                        </button>
-                        <a class="danger btn-link btn-icon btn-sm remove" disabled="" hidden><i class="fa fa-times"></i></a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div> -->
-                    </div>
+<div id="accordionActionData" role="tablist" aria-multiselectable="true" class="card-collapse">
+    <ol>
+        <li class="" style="color:steelblue" *ngFor="let item of viewActions | async">
+            <div class="card card-plain">
+                <div class="card-header" role="tab" id="heading2">
+                    <a class="collapsed" data-toggle="collapse" href="#{{ item.id }}" (click)="showTaskActions(item)"
+                        aria-expanded="false" aria-current="false">
+                        {{ item.name }}<span class="label text-warning"> {{ item.when }}</span><i class="nc-icon nc-minimal-down"></i>
+                    </a>
                 </div>
-                <div class="col-md-4">
-                    <div class="card" *ngIf="CompanyRef">
-                        <div class="card-header">
-                            <h6 class="card-category">
-                                <li>
-                                    <button class="btn-link btn-magnify" (click)="refreshCompany()"> <i class="nc-icon nc-refresh-69"></i>
-                                        Refresh</button>
-                                    <p><small>
-                                            Company : {{ CompanyRef.name }}
-                                        </small></p>
-                                    <!-- [routerLink]="[ '/enterprises/', comp.id ]" -->
-                                </li>
-                            </h6>
+                <div id="{{ item.id }}" class="collapse" data-parent="#accordionActionData" role="tabpanel" aria-labelledby="heading2">
+                    <div class="card-body">
+                        
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                            <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                                <div class="form-group">
+                                    <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start" style=" padding-left: 10px; padding-right: 10px; height:2em"
+                                        placeholder="Time from" />
+                                </div>
+                            </div>
+                            <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                                <div class="form-group">
+                                    <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end" style=" padding-left: 10px; padding-right: 10px;  height:2em"
+                                        placeholder="Time to" />
+                                </div>
+                            </div>
                         </div>
+                        
                     </div>
+                    <button class="btn-link btn-round primary" (click)="selectTask(item)" data-toggle="modal"
+                        data-target="#newAction">
+                        <small>Add action item</small></button>
+                </div>
+            </div>
+        </li>
+    </ol>
+</div>
+
+
+
+
+<div aria-multiselectable="true" class="card-collapse" id="accordion" role="tablist">
+    <div class="card card-plain">
+        <div class="card-header" id="heading2" role="tab"><a (click)="setDay('day0')" aria-controls="day0t"
+                aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#day0t">
+                {{ day0label }} <i class="nc-icon nc-minimal-down"></i></a></div>
+        <div aria-labelledby="heading2" class="collapse" id="day0t" role="tabpanel">
+            <div class="card-body">
+                <!-- {{todayDate}} -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="text-primary">
+                            <th class="text-left">Name</th>
+                            <th class="text-center">Project</th>
+                            <!-- <th class="text-center">Champion</th> -->
+                            <th class="text-right">Start Date</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let tss of todayTasks | async">
+                                <td class="text-left td-clrs">{{ tss.name }}</td>
+                                <td class="text-left td-clrs">{{ tss.projectName }}</td>
+                                <!-- <td class="text-left td-clrs">{{ tss.champion.name }}</td> -->
+                                <td class="text-right td-clrs">{{ tss.start | date }}</td>
+                            </tr>
+                            <tr class="text-left">
+                                <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
+                                    data-target="#tskModal">New
+                                    Task</button>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-plain">
+        <div class="card-header" id="heading2" role="tab"><a (click)="setDay('day1')" aria-controls="day1t"
+                aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#day1t">
+                {{ day1label }} <i class="nc-icon nc-minimal-down"></i></a></div>
+        <div aria-labelledby="heading2" class="collapse" id="day1t" role="tabpanel">
+            <div class="card-body">
+                <!-- {{todayDate}} -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="text-primary">
+                            <th class="text-left">Name</th>
+                            <th class="text-center">Project</th>
+                            <!-- <th class="text-center">Champion</th> -->
+                            <th class="text-right">Start Date</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let tss of day1Tasks | async">
+                                <td class="text-left td-clrs">{{ tss.name }}</td>
+                                <td class="text-left td-clrs">{{ tss.projectName }}</td>
+                                <!-- <td class="text-left td-clrs">{{ tss.champion.name }}</td> -->
+                                <td class="text-right td-clrs">{{ tss.start | date }}</td>
+                            </tr>
+                            <tr class="text-left">
+                                <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
+                                    data-target="#tskModal">New
+                                    Task</button>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-plain">
+        <div class="card-header" id="heading3" role="tab"><a (click)="setDay('day2')" aria-controls="day2t"
+                aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#day2t">
+                {{ day2label }} <i class="nc-icon nc-minimal-down"></i></a></div>
+        <div aria-labelledby="heading3" class="collapse" id="day2t" role="tabpanel">
+            <div class="card-body">
+                <!-- {{todayDate}} -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="text-primary">
+                            <th class="text-left">Name</th>
+                            <th class="text-center">Project</th>
+                            <!-- <th class="text-center">Champion</th> -->
+                            <th class="text-right">Start Date</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let tss of day2Tasks | async">
+                                <td class="text-left td-clrs">{{ tss.name }}</td>
+                                <td class="text-left td-clrs">{{ tss.projectName }}</td>
+                                <!-- <td class="text-left td-clrs">{{ tss.champion.name }}</td> -->
+                                <td class="text-right td-clrs">{{ tss.start | date }}</td>
+                            </tr>
+                            <tr class="text-left">
+                                <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
+                                    data-target="#tskModal">New
+                                    Task</button>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-plain">
+        <div class="card-header" id="heading4" role="tab"><a (click)="setDay('day3')" aria-controls="day3t"
+                aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#day3t">
+                {{ day3label }} <i class="nc-icon nc-minimal-down"></i></a></div>
+        <div aria-labelledby="heading4" class="collapse" id="day3t" role="tabpanel">
+            <div class="card-body">
+                <!-- {{todayDate}} -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="text-primary">
+                            <th class="text-left">Name</th>
+                            <th class="text-center">Project</th>
+                            <!-- <th class="text-center">Champion</th> -->
+                            <th class="text-right">Start Date</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let tss of day3Tasks | async">
+                                <td class="text-left td-clrs">{{ tss.name }}</td>
+                                <td class="text-left td-clrs">{{ tss.projectName }}</td>
+                                <!-- <td class="text-left td-clrs">{{ tss.champion.name }}</td> -->
+                                <td class="text-right td-clrs">{{ tss.start | date }}</td>
+                            </tr>
+                            <tr class="text-left">
+                                <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
+                                    data-target="#tskModal">New
+                                    Task</button>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-plain">
+        <div class="card-header" id="heading4" role="tab"><a (click)="setDay('day4')" aria-controls="day4t"
+                aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#day4t">
+                {{ day4label }} <i class="nc-icon nc-minimal-down"></i></a></div>
+        <div aria-labelledby="heading4" class="collapse" id="day4t" role="tabpanel">
+            <div class="card-body">
+                <!-- {{todayDate}} -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="text-primary">
+                            <th class="text-left">Name</th>
+                            <th class="text-center">Project</th>
+                            <!-- <th class="text-center">Champion</th> -->
+                            <th class="text-right">Start Date</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let tss of day4Tasks | async">
+                                <td class="text-left td-clrs">{{ tss.name }}</td>
+                                <td class="text-left td-clrs">{{ tss.projectName }}</td>
+                                <!-- <td class="text-left td-clrs">{{ tss.champion.name }}</td> -->
+                                <td class="text-right td-clrs">{{ tss.start | date }}</td>
+                            </tr>
+                            <tr class="text-left">
+                                <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
+                                    data-target="#tskModal">New
+                                    Task</button>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-plain">
+        <div class="card-header" id="heading4" role="tab"><a (click)="setDay('day5')" aria-controls="day5t"
+                aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#day5t">
+                {{ day5label }} <i class="nc-icon nc-minimal-down"></i></a></div>
+        <div aria-labelledby="heading4" class="collapse" id="day5t" role="tabpanel">
+            <div class="card-body">
+                <!-- {{todayDate}} -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="text-primary">
+                            <th class="text-left">Name</th>
+                            <th class="text-center">Project</th>
+                            <!-- <th class="text-center">Champion</th> -->
+                            <th class="text-right">Start Date</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let tss of day5Tasks | async">
+                                <td class="text-left td-clrs">{{ tss.name }}</td>
+                                <td class="text-left td-clrs">{{ tss.projectName }}</td>
+                                <!-- <td class="text-left td-clrs">{{ tss.champion.name }}</td> -->
+                                <td class="text-right td-clrs">{{ tss.start | date }}</td>
+                            </tr>
+                            <tr class="text-left">
+                                <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
+                                    data-target="#tskModal">New
+                                    Task</button>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-plain">
+        <div class="card-header" id="heading4" role="tab"><a (click)="setDay('day6')" aria-controls="day6t"
+                aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#day6t">
+                {{ day6label }} <i class="nc-icon nc-minimal-down"></i></a></div>
+        <div aria-labelledby="heading4" class="collapse" id="day6t" role="tabpanel">
+            <div class="card-body">
+                <!-- {{todayDate}} -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="text-primary">
+                            <th class="text-left">Name</th>
+                            <th class="text-center">Project</th>
+                            <!-- <th class="text-center">Champion</th> -->
+                            <th class="text-right">Start Date</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let tss of day6Tasks | async">
+                                <td class="text-left td-clrs">{{ tss.name }}</td>
+                                <td class="text-left td-clrs">{{ tss.projectName }}</td>
+                                <!-- <td class="text-left td-clrs">{{ tss.champion.name }}</td> -->
+                                <td class="text-right td-clrs">{{ tss.start | date }}</td>
+                            </tr>
+                            <tr class="text-left">
+                                <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
+                                    data-target="#tskModal">New
+                                    Task</button>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

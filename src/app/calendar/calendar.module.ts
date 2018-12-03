@@ -8,6 +8,7 @@ import { CalendarComponent } from './calendar.component';
 import { CalendarRoutes } from './calendar.routing';
 import { MapTaskComponent } from './map-task/map-task.component';
 import { ImplementationComponent } from './implementation/implementation.component';
+import { TimesheetComponent } from './timesheet/timesheet.component';
 
 @NgModule({
     imports: [
@@ -15,7 +16,7 @@ import { ImplementationComponent } from './implementation/implementation.compone
         RouterModule.forChild(CalendarRoutes),
         FormsModule, NgSelectModule
     ],
-    declarations: [CalendarComponent, MapTaskComponent, ImplementationComponent]
+    declarations: [CalendarComponent, MapTaskComponent, ImplementationComponent, TimesheetComponent]
 })
 
 export class CalendarModule {}

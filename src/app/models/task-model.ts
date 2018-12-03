@@ -50,7 +50,7 @@ export interface ActionItem {
     name: string,
     siu: string,
     targetQty: string,
-    actualQty: string,
+    actualData: [actionActualData],
     workStatus: string,
     complete : boolean,
     start: Time,
@@ -72,8 +72,7 @@ export interface ActionItem {
     champion: string
 };
 
-// export interface MomentAction extends ActionItem {
-//     startDate: string,
-//     endDate: string
-// }
+export interface actionActualData {
+    updateTime: string, qty: number
+}
 

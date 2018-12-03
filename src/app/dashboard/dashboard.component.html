@@ -12,8 +12,8 @@
             </div>
           </div>
           <div class="spacer" style="height: 1em;"></div>
-          <div class="row">
-            <div class="content" style="margin-left:1.0em;">
+          <!-- <div class="row"> -->
+            <div class="content">
               <!-- <ol>
                 <li>
                   <div class="row">
@@ -53,26 +53,65 @@
                 </li>
               </ol> -->
             
-              <div class="content container scroll-em">
+              <div class="content container scroll-em" *ngIf="showActions">
                 <ol>
                   <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let item of viewActions | async">
-                    <a style="color:slategray">{{ item.name }}</a>
+                    <!-- <a style="color:slategray">{{ item.name }}</a> -->
+                    <div class="row">
+                      <a style="color:steelblue">
+                        <span class="col-md-9 col-10">{{ item.name }} @</span>
+                        <span class="col-md-3 mr-auto number text-warning"> {{ item.start }} hrs</span>
+                      </a>
+                    </div>
                   </li>
                 </ol>
               </div>
 
-              <!-- <div class="content container scroll-em" *ngIF="viewActions">
+              <div class="content container scroll-em" *ngIf="!showActions">
                 <div class="row">
-                  <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em">
-                    <a style="color:lightgrey">
-                      Go to Implimentation
-                    </a>
+                  <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
+                      <ol>
+                        <li>
+                          <div class="row">
+                            <a style="color:lightgrey">
+                              <span class="col-md-9 col-10">Meeting @</span>
+                              <span class="col-md-3 mr-auto number text-warning"> 1000 hrs</span>
+                            </a>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="row">
+                              <a style="color:lightgrey">
+                                <span class="col-md-9 ">Email @</span>
+                                <span class="col-md-3 mr-auto ml-auto number text-success">1230 Hrs</span>
+                              </a>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="row">
+                            <a style="color:lightgrey">
+                              <span class="col-md-9">Skype</span>
+                              <span class="col-md-3 mr-auto ml-auto label text-success"> 1400 Hrs </span>
+                            </a>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="row ">
+                            <a style="color:lightgrey">
+                              <span class="col-lg-9">Scheduling</span>
+                              <span class="col-lg-3 mr-auto ml-auto label text-success"> 0800 Hrs </span>
+                            </a>
+                          </div>
+                        </li>
+                      </ol>
+            
+                    <!-- </a> -->
                   </div>
                 </div>
-              </div> -->
+              </div>
             
             </div>
-          </div>
+          <!-- </div> -->
         </div>
         <div class="card-body">
           <h6 class="big-title">total earnings in last ten quarters</h6>

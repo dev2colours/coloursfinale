@@ -39,6 +39,11 @@ export class DashboardComponent implements OnInit {
   user: any;
   loggedInUser: ParticipantData;
   viewActions: Observable<ActionItem[]>;
+  myActionItems: ActionItem[];
+  actionNo: number;
+
+  public showActions: boolean = false;
+
 
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
@@ -54,6 +59,10 @@ export class DashboardComponent implements OnInit {
       this.loggedInUser = loggedInUser;
       this.dataCall();
     })
+
+    this.showActions = false;      
+
+    // this.actionNo = 0;
   }
 
   public chartClicked(e:any):void {
@@ -94,8 +103,17 @@ export class DashboardComponent implements OnInit {
     );
 
     this.viewActions.subscribe((actions) =>{
+      this.myActionItems = actions
+      console.log(actions.length)
       console.log(actions)
+      this.actionNo = actions.length
     })
+
+    if (this.actionNo == 0) {
+      this.showActions = false;      
+    } else {
+      this.showActions = true;
+    }
   }
 
 

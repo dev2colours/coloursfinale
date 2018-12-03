@@ -36,6 +36,9 @@
                     <li class="nav-item">
                       <a class="nav-link" href="#reports" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Reporting</a>
                     </li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-colors" href="#timesheet" role="tab" data-toggle="tab">Timesheet</a>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -309,11 +312,13 @@
                   <app-map-task></app-map-task>
                 </div>
                 <div class="tab-pane" id="implem">
-                  <!-- <p>Implementation</p> -->
                   <app-implementation></app-implementation>
                 </div>
                 <div class="tab-pane" id="reports">
                   <p>Reporting</p>
+                </div>
+                <div class="tab-pane" id="timesheet">
+                  <app-timesheet></app-timesheet>
                 </div>
               </div>
             </div>

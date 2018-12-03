@@ -215,8 +215,8 @@ export class ViewComponent implements OnInit {
     this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
     this.selectedStaff = { name: "", id: "", email: "", phoneNumber: "" };
     this.selectedTask = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: "" };
-    this.actionItem = { name: "", siu: "", targetQty: "", actualQty: "", start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
-    this.selectedAction = { name: "", siu: "", targetQty: "", actualQty: "", start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
+    this.actionItem = { name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
+    this.selectedAction = { name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
     this.projectCompDetail = { id: "", name: ""};
 
     this.todayDate = moment(new Date(), "DD-MM-YYYY").format('dddd');
@@ -1113,7 +1113,7 @@ export class ViewComponent implements OnInit {
         
     startDate = ""; endDate = null;
     this.selectedAction = {
-      name: "", siu: "", targetQty: "", actualQty: "", start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "",
+      name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "",
       createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: ""
     };
   }

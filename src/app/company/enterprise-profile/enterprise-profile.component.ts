@@ -279,6 +279,8 @@ export class EnterpriseProfileComponent {
   actionDepartment: Task;
   deptStaff: Observable<ParticipantData[]>;
   categorizedTasks: any;
+  myActionItems: ActionItem[];
+  actionNo: number;
 
   constructor(public afAuth: AngularFireAuth, private ts: TaskService, private pns: PersonalService, public es: EnterpriseService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
 
@@ -290,7 +292,7 @@ export class EnterpriseProfileComponent {
     this.newPart = { name: "", id: "", email: "", phoneNumber: "" };
     this.counter = 1;
     this.selectedTask = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: "" };
-    this.actionItem = { name: "", siu: "", targetQty: "", actualQty: "", start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
+    this.actionItem = { name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
     this.dpt = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", head: null };
     this.asset = { name: "", assetNumber: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "" };
     this.client = { name: "", id: "", contactPerson: null, by: "", byId: "", companyName: "", companyId: "", createdOn: "" };
@@ -305,7 +307,7 @@ export class EnterpriseProfileComponent {
     this.companystaff2 = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", id: "" };
     this.department = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", head: null}
     this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", head: null }
-    this.selectedAction = { name: "", siu: "", targetQty: "", actualQty: "", start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay:""};
+    this.selectedAction = { name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay:""};
       
 
     let mmm = moment(new Date(), "DD-MM-YYYY");
@@ -1280,6 +1282,12 @@ export class EnterpriseProfileComponent {
           return { id, ...data };
         }))
       );
+    this.viewActions.subscribe((actions) => {
+      this.myActionItems = actions
+      console.log(actions.length)
+      console.log(actions)
+      this.actionNo = actions.length
+    })
     return this.viewActions;
   }
 
@@ -1401,7 +1409,7 @@ export class EnterpriseProfileComponent {
     myTaskActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
     startDate = ""; endDate = null;
     this.selectedAction = {
-      name: "", siu: "", targetQty: "", actualQty: "", start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "",
+      name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "",
       createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: ""
     };
   }

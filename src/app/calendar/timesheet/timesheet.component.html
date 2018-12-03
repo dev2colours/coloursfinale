@@ -1,0 +1,79 @@
+<div class="col-md-12" style="margin-top: 10em">
+  <div class="card">
+    <div class="card-body">
+      TimeSheet
+      <div id="accordionActionData" role="tablist" aria-multiselectable="true" class="card-collapse">
+        <ol>
+          <li class="" style="color:steelblue" *ngFor="let item of myActionItems">
+            <div class="card card-plain">
+              <div class="card-header" role="tab" id="heading2">
+                <a class="collapsed" data-toggle="collapse" href="#{{ item.id }}" aria-expanded="false" aria-current="false">
+                  <span class="label text-info">{{ item.name }}</span> Today's Target<span class="label text-warning"> {{ item.targetQty }} {{ item.siu }}</span><i class="nc-icon nc-minimal-down"></i>
+                </a>
+              </div>
+              <div id="{{ item.id }}" class="collapse" data-parent="#accordionActionData" role="tabpanel" aria-labelledby="heading2">
+                <div class="card-body">
+                  <div class="row">
+                    <div for="" class="col-sm-2 card-category">Actual Measure</div>
+                    <div class="col-sm-5">
+                      <div class="form-group">
+                        <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                          <input type="text" class="form-control panel-boader" [(ngModel)]="actualData.qty" style=" padding-left: 10px; padding-right: 10px; height:2em"
+                            placeholder="Enter Data" /><!-- clrs-cell  -->
+                          <div class="input-group-postpend">
+                            <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+                              <small>{{ item.siu }}</small>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div for="" class="col-sm-3 card-category">
+                      <button class="btn-link btn-round primary" (click)="saveActual(actualData)">
+                      <small>Save</small></button>
+                    </div>
+                  </div>
+                </div>
+<!-- <div class="card-body">
+  <div class="row">
+    <label for="" class="col-sm-6">Actual Measure</label>
+    <label for="" class="col-sm-6">End of Day's Target</label>
+  </div>
+  <div class="row">
+    <div class="col-sm-6" style="padding-left: 5px; padding-right:5px">
+      <div class="form-group">
+        <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+          <input type="text" class="col-sm-6 form-control panel-boader" [(ngModel)]="item.actualQty" style=" padding-left: 10px; padding-right: 10px; height:2em"
+            placeholder="Enter Data" />
+          <div class="input-group-postpend">
+            <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+              <small>{{ item.siu }}</small>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6" style="padding-left: 5px; padding-right:5px">
+      <div class="form-group">
+        <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+          <input type="text" disabled class="col-sm-6 form-control panel-boader" [(ngModel)]="item.targetQty" style=" padding-left: 10px; padding-right: 10px; height:2em"
+            placeholder="1 200" />
+          <div class="input-group-postpend">
+            <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+              <small>{{ item.siu }}</small>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+                
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>

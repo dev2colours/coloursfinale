@@ -123,19 +123,20 @@ export class ImplementationComponent {
       console.log(this.todayDate);
 
       this.SIunits = [
+        { id: 'hours', name: 'Time(hrs)' },
+        { id: 'kg', name: 'Kilograms(Kg)' },
+        { id: 'm2', name: 'Area(m2)' },
+        { id: 'm3', name: 'Volume(m3)' },
+        { id: 'units', name: 'Units' },
+        { id: 'mi', name: 'Miles' },
+        { id: 'yd', name: 'Yards' },
         { id: 'mm', name: 'Millimeters' },
         { id: 'cm', name: 'Centimeters' },
         { id: 'm', name: 'Meters' },
         { id: 'Km', name: 'Kilometers' },
         { id: 'in', name: 'Inches' },
         { id: 'ft', name: 'Feet' },
-        { id: 'mi', name: 'Miles' },
-        { id: 'yd', name: 'Yards' },
         { id: 'g', name: 'Grams' },
-        { id: 'kg', name: 'Kilograms' },
-        { id: 'm2', name: 'Area' },
-        { id: 'm3', name: 'Volume' },
-        { id: 'units', name: 'Units' },
         { id: 9, name: 'Pavilnys', disabled: true },
       ];
       
@@ -146,8 +147,8 @@ export class ImplementationComponent {
       this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" };
       this.userChampion = { name: "", id: "", email: "", phoneNumber: "" };
       this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
-      this.actionItem = { name: "", siu: "", targetQty: "", actualQty: "", start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
-      this.selectedAction = { name: "", siu: "", targetQty: "", actualQty: "", start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
+      this.actionItem = { name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
+      this.selectedAction = { name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
       this.dp ="";
       this.mytaskActions = null;
       
@@ -360,7 +361,7 @@ export class ImplementationComponent {
     allMyActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
     myTaskActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
     startDate = ""; endDate = null;
-    this.selectedAction = { name: "", siu: "", targetQty: "", actualQty: "", start: null, end: null, projectId: "", companyId: "",
+    this.selectedAction = { name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "",
     companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
   }
   
