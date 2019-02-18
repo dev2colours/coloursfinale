@@ -1,36 +1,17 @@
 import { Enterprise, ParticipantData, companyChampion, Department } from "./enterprise-model";
 import { Time } from "@angular/common";
 import { Observable, of, bindCallback } from 'rxjs';
+import { Section } from "./project-model";
+import { classification } from "./user-model";
 
 export interface Task {
-    id: string,
-    name: string,
-    champion: ParticipantData,
-    participants: [ParticipantData],
-    start: string,
-    startDay: string,
-    startWeek: string,
-    startMonth: string,
-    startQuarter: string,
-    startYear: string,
-    finish: string,
-    finishDay: string,
-    finishWeek: string,
-    finishMonth: string,
-    finishQuarter: string,
-    finishYear: string,
-    createdBy: string,
-    createdOn: string,
-    projectName: string,
-    projectId: string,
-    projectType: string,
-    byId: string,
-    companyName: string,
-    companyId: string,
-    trade: string,
-    section: string,
-    complete :boolean,
-    status: string
+    id: string, name: string,
+    companyId: string, companyName: string, department: string, departmentId: string,
+    champion: ParticipantData, participants: [ParticipantData],
+    start: string, startDay: string, startWeek: string, startMonth: string, startQuarter: string, startYear: string,
+    finish: string, finishDay: string, finishWeek: string, finishMonth: string, finishQuarter: string, finishYear: string,
+    createdBy: string, createdOn: string, projectName: string, projectId: string, projectType: string, byId: string,
+    trade: string, section: Section, complete :boolean, status: string,
 }
 
 export interface MomentTask extends Task {
@@ -48,18 +29,19 @@ export interface ActionItem {
     // participants: Observable<ParticipantData[]>
     participants: [ParticipantData],
     name: string,
-    siu: string,
+    unit: string,
     targetQty: string,
-    actualData: [actionActualData],
+    actualData: [actualData],
     workStatus: string,
     complete : boolean,
     start: Time,
     end: Time,
     startWeek: string,
     startDay: string,
-    endDay: string,
     startDate: string,
+    endDay: string,
     endDate: string,
+    endWeek: string,
     id: string,
     taskId : string,
     projectName: string,
@@ -69,10 +51,14 @@ export interface ActionItem {
     createdOn: string,
     createdBy: string,
     byId: string,
-    champion: string
+    champion: ParticipantData,   
+    classification: classification, 
 };
 
 export interface actionActualData {
-    updateTime: string, qty: number
+    name: string, id: string, actuals: [actualData]
 }
 
+export interface actualData {
+    updateTime: string, qty: number
+}

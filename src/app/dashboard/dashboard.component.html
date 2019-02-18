@@ -55,19 +55,30 @@
             
               <div class="content container scroll-em" *ngIf="showActions">
                 <ol>
-                  <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let item of viewActions | async">
+                  <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let item of myActionItems">
                     <!-- <a style="color:slategray">{{ item.name }}</a> -->
+
+                    
+                    <!-- <span class="row col-md-12">
+                      <span class="col-md-9 col-10" style="padding-left: 0px; padding-right: 0px;">{{ item.name }}</span>
+                      <span> @ <span class="col-md-3 mr-auto text-warning"> {{ item.start }} hrs </span></span>
+                    </span><br> -->
+
+
                     <div class="row">
-                      <a style="color:steelblue">
-                        <span class="col-md-9 col-10">{{ item.name }} @</span>
-                        <span class="col-md-3 mr-auto number text-warning"> {{ item.start }} hrs</span>
+                      <a class="col-md-12" style="color:steelblue">
+                        <span class="col-md-8" style="width:24em;">{{ item.name }} </span> <!-- class="col-md-9 col-10" -->
+                        <span *ngIf="item.start" class="pull-right" style="margin-right:2em">
+                          <span>@</span>
+                          <span class="number text-warning"> {{ item.start }} hrs</span> <!-- col-md-3 mr-auto  -->
+                        </span>
                       </a>
                     </div>
                   </li>
                 </ol>
               </div>
 
-              <div class="content container scroll-em" *ngIf="!showActions">
+              <div class="content container scroll-em" *ngIf="hideActions">
                 <div class="row">
                   <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
                       <ol>
@@ -330,8 +341,7 @@
         <div class="card" data-background-color="blue">
           <marquee>
             <a *ngFor="let project of allColoursProjects | async" style="color:rgb(35, 41, 49)" routerLink="#">A
-              project in
-              {{project.sector}} has been created in {{project.location}}. . . . . . . <span class="spacer" style="widows: 10px;"></span></a>
+              project has been created in {{project.location}}. . . . . . . <span class="spacer" style="widows: 10px;"></span></a> <!--  in {{project.sector}}  -->
           </marquee>
         </div>
       </div>

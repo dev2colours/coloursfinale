@@ -4,19 +4,23 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 
+//Ngx-Charts
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 import { CalendarComponent } from './calendar.component';
 import { CalendarRoutes } from './calendar.routing';
 import { MapTaskComponent } from './map-task/map-task.component';
 import { ImplementationComponent } from './implementation/implementation.component';
 import { TimesheetComponent } from './timesheet/timesheet.component';
+import { PopupComponent } from './popup/popup.component';
 
 @NgModule({
     imports: [
         CommonModule,
         RouterModule.forChild(CalendarRoutes),
-        FormsModule, NgSelectModule
+        FormsModule, NgSelectModule, NgxChartsModule
     ],
-    declarations: [CalendarComponent, MapTaskComponent, ImplementationComponent, TimesheetComponent]
+    declarations: [CalendarComponent, MapTaskComponent, ImplementationComponent, TimesheetComponent, PopupComponent]
 })
 
 export class CalendarModule {}

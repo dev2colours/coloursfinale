@@ -44,8 +44,8 @@ export const ROUTES: RouteInfo[] = [{
         icontype: 'nc-icon nc-layout-11',
         children: [
             { path: 'company-register', title: 'Enterprise Register', ab: 'ER' },
-            { path: 'join-enterprise', title: 'Join Enterprise', ab: 'EP' },
-            { path: 'create-enterprise', title: 'Create Enterprise', ab: 'CE' },
+            { path: 'join-enterprise', title: 'Join Enterprise', ab: 'JP' },
+            { path: 'create', title: 'Create Enterprise', ab: 'CE' },
             // { path: 'enterprise-projects', title: 'Enterprise projects', ab: 'UP' }
         ]
     },{
@@ -54,16 +54,20 @@ export const ROUTES: RouteInfo[] = [{
         type: 'sub',
         icontype: 'nc-icon nc-book-bookmark',
         children: [
-            { path: 'project', title: 'Projects Register', ab: 'PR' },
-            { path: 'view', title: 'Join Project', ab: 'PR' },
-            { path: 'create', title: 'Create Project', ab: 'CP' },
-            { path: 'enterprise', title: 'Enterprise projects', ab: 'EP' }
+            { path: 'management', title: 'Projects Register', ab: 'PR' },
+            { path: 'join-project', title: 'Join Project', ab: 'JP' },
+            { path: 'p-create', title: 'Create Project', ab: 'CP' },
         ]
     },{
         path: '/tasks',
         title: 'tasks',
         type: 'link',
         icontype: 'nc-icon nc-box'
+    }, {
+        path: '/messages',
+        title: 'Messages',
+        type: 'link',
+        icontype: 'nc-icon nc-email-85'
     }
 ];
 
@@ -124,7 +128,7 @@ export class SidebarComponent {
     }
 
     profileInfo() {
-        this.router.navigate(['./pages/user'])
+        this.router.navigate(['./pages/user']);
     }
 
     logout() {

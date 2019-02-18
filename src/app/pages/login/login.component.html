@@ -24,23 +24,23 @@
                   <div class="contents">
                     <div class="media-body">
 
-<div class="icon icon-danger">
-  <p>
-    <font size="4">
-      <i class="nc-icon nc-badge"></i>
-      Colours Personal</font>
-    <br>
-    <small><span>
-      <span>.</span>
-      <span>.</span>
-      <span>.</span>
-      <span>.</span>
-      <span>.</span>
-      <font size="3">
-        my true colours</font></span>
-    </small>
-  </p>
-</div>
+                      <div class="icon icon-danger">
+                        <p>
+                          <font size="4">
+                            <i class="nc-icon nc-badge"></i>
+                            Colours Personal</font>
+                          <br>
+                          <small><span>
+                            <span>.</span>
+                            <span>.</span>
+                            <span>.</span>
+                            <span>.</span>
+                            <span>.</span>
+                            <font size="3">
+                              my true colours</font></span>
+                          </small>
+                        </p>
+                      </div>
 
 
                       <!-- <div class="image">
@@ -197,13 +197,13 @@
                         <h4 class="card-category na-am" style="margin-top:10px ; margin-bottom :10px; color:#5f9ea0"><small>Login/Register using google, twitter or facebook</small>
                         </h4>
                         <div class="social">
-                          <button class="btn btn-icon btn-round btn-twitter">
+                          <button class="btn btn-icon btn-round btn-twitter" (click)="signInWithTwitter()">
                             <i class="fa fa-twitter"></i>
                           </button>
                           <button class="btn btn-icon btn-round btn-google" (click)="loginGoogle()">
                             <i class="fa fa-google"></i>
                           </button>
-                          <button class="btn btn-icon btn-round btn-facebook">
+                          <button class="btn btn-icon btn-round btn-facebook" (click)="signInWithFacebook()">
                             <i class="fa fa-facebook-f"></i>
                           </button>
                           <!-- <p class="card-description"> or be classical </p> -->
@@ -217,26 +217,31 @@
                           New to Colours, register using email
                         </button>
                       </div>
-                      <form #f="ngForm" >                  
+                      <!-- <form #f="ngForm" >                   -->
                         <div class="card-body ">
-                          <div class="input-group" [ngClass]="{'input-group-focus':focus===true}"  style="background-color: transparent;">
+                          <p *ngIf="statusLoginEmail" class="category text-danger" style="margin-top:-1em; cursor: pointer;">Email Required</p>
+                          <div class="input-group" style="background-color: transparent;"> <!--  [ngClass]="{'input-group-focus':focus===true}"   -->
                             <div class="input-group-prepend" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
                               <span class="input-group-text">
                                 <i class="nc-icon nc-single-02"></i>
                               </span>
                             </div>
-                            <input type="email" class="form-control" placeholder="email address..." (focus)="focus=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus=false">
+                            <input [(ngModel)]="emailPasswordLogin.email" name="loginEmail" type="email" class="form-control" placeholder="email address..." (focus)="focus=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus=false">
                           </div>
-                          <div class="input-group" [ngClass]="{'input-group-focus':focus1===true}">
+                          <p *ngIf="statusLoginPwd" class="category text-danger" style="margin-bottom: 0px; cursor: pointer;">Password Required</p>
+
+                          <div class="input-group"> <!--  [ngClass]="{'input-group-focus':focus1===true}" -->
                             <div class="input-group-prepend" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
                               <span class="input-group-text">
                                 <i class="nc-icon nc-key-25"></i>
                               </span>
                             </div>
-                            <input type="password" placeholder="Password" class="form-control" (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
+                            <input [(ngModel)]="emailPasswordLogin.password" name="loginPassword" type="password" placeholder="Password" class="form-control" (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
                           </div>
+                          
+                          <a class="category" style="margin-top:-1em; cursor: pointer;">Forgot your Password? </a>
                           <div class="card-footer text-left card-category">
-                            <a href="#pablo" class="btn btn-info btn-link btn-round" style="color:#5f9ea0">Login</a>
+                            <a class="btn btn-info btn-link btn-round" style="color:#5f9ea0" (click)="toggleLogIn(emailPasswordLogin)">Login</a>
                           </div>
                           <br>
                           <div class="form-group">
@@ -249,7 +254,7 @@
                             </div>
                           </div>
                         </div>
-                      </form>
+                      <!-- </form> -->
                     </div>
                     <div *ngIf="showEmailRegister">
                       <h4 class="card-category na-am" style="margin-top:10px ; margin-bottom :10px; color:#5f9ea0"><small>Register using email</small>
@@ -259,26 +264,29 @@
                           Not new Colours, login using email
                         </button>
                       </div>
-                      <form #f="ngForm" >                  
+                      <!-- <form #f="ngForm" >                   -->
                         <div class="card-body ">
-                          <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                          <p *ngIf="statusSigninEmail" class="category text-danger" style="margin-top:-1em; cursor: pointer;">Email Required</p>
+                          <div class="input-group"><!-- [ngClass]="{'input-group-focus':focus===true}"  [ngClass]=" {nullSigninEmail == false: text-warning)}"-->
                               <div class="input-group-prepend" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
                               <span class="input-group-text">
                                 <i class="nc-icon nc-single-02"></i>
                               </span>
                             </div>
-                            <input type="email" class="form-control" placeholder="email address..." (focus)="focus=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus=false">
+                            <input [(ngModel)]="emailPasswordLogin.email" name="signEmail" type="email" class="form-control" placeholder="email address..." (focus)="focus=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus=false">
                           </div>
-                          <div class="input-group" [ngClass]="{'input-group-focus':focus1===true}">
+                          <p *ngIf="statusSigninPwd" class="category text-danger" style="margin-bottom: 0px;cursor: pointer;">Password Required</p>
+
+                          <div class="input-group"><!--  [ngClass]="{'input-group-focus':focus1===true}" [ngClass]=" {emailPasswordLogin.password == '': text-warning)}" -->
                             <div class="input-group-prepend" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
                               <span class="input-group-text">
                                 <i class="nc-icon nc-key-25"></i>
                               </span>
                             </div>
-                            <input type="password" placeholder="Password" class="form-control" (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
+                            <input [(ngModel)]="emailPasswordLogin.password" name="signPassword" type="password" placeholder="Password" class="form-control" (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
                           </div>
                           <div class="card-footer text-left card-category">
-                            <a href="#pablo" class="btn btn-info btn-link btn-round" style="color:#5f9ea0">Sign up</a>
+                            <a class="btn btn-info btn-link btn-round" style="color:#5f9ea0; cursor:pointer" (click)="coloursSignIn(emailPasswordLogin)">Sign up</a>
                           </div>
                           <br>
                           <div class="form-group">
@@ -291,7 +299,7 @@
                             </div>
                           </div>
                         </div>
-                      </form>
+                      <!-- </form> -->
                     </div>
                   </div>
                 </div>
@@ -303,3 +311,27 @@
     <!-- </div> -->
   </div>
 </div>
+<!-- <script>
+  window.fbAsyncInit = function () {
+    FB.init({
+    appId: '{235005784119427}',
+      cookie: true,
+      xfbml: true,
+      version: '{api-version}'
+    });
+
+    FB.AppEvents.logPageView();
+
+  };
+
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {
+      return;
+    }
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script> -->

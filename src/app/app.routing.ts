@@ -40,7 +40,12 @@ export const AppRoutes: Routes = [{
         },{
             path: '',
             loadChildren: './work/work.module#WorkModule'
-        }]
+        }
+        ,{
+            path: '',
+            loadChildren: './messages/messages.module#MessagesModule'
+        }
+    ]
         },
     {
         path: '',

@@ -1,0 +1,116 @@
+<div class="main-content">
+  <div class="row">
+    <div class="card col-md-8">
+      <div class="row">
+        <div class="col-md-8">
+          <p class="na-p"> messages works! </p>
+        </div>
+        <div class="col-md-4">
+          <!-- <button class="btn-link" (click)="newMsg()">New Message</button> -->
+            <a style="cursor: pointer" (click)="newMsg()"> New messege</a>
+
+        </div>
+        
+      </div>
+      <div class="row">
+
+        <!-- <div class="col-md-12">
+          <ng-container *ngIf="chat$ | async as chat">
+
+            <div class="top">
+              <p>
+                  https://firestore-megachat.firebaseapp.com/chats/{{ chat.id }}
+              </p>
+            </div>
+
+
+            <div class="chat">
+
+
+              <div class="msg" *ngFor="let msg of chat.messages; trackBy: trackByCreated">
+
+                <div class="user">
+                  <img [src]="msg.user?.photoURL">
+                  <div>{{ msg.user?.displayName }}</div>
+                </div>
+
+                <p>{{ msg.content }}</p>
+
+              </div>
+
+            </div>
+
+            <div class="form">
+              <input [(ngModel)]="newMsg" (keydown.enter)="submit(chat.id)">
+
+              <button (click)="submit(chat.id)">Send</button>
+            </div>
+
+          </ng-container>
+        </div> -->
+        <div class="col-md-3">
+          <span *ngFor="let man of colGroup">
+            <a style="cursor: pointer" (click)="viewChat(man)">{{ man.name }}</a><br>
+          </span>
+        </div>
+        <div *ngIf="createMsg"  class="col-md-9 ml-auto mr-auto">
+          New messege
+        </div>
+        <div *ngIf="readMsg"  class="col-md-9 ml-auto mr-auto">
+          <div class="card"> 
+            {{ colMan.name }}
+            <div class="col-md-11">
+              <!-- <span class="card" *ngFor="let msg of myChat"> -->
+              <span class="card" *ngFor="let msg of myChats | async">
+                <a style="cursor: pointer" (click)="viewChat(man)">{{ msg.content }}</a><br>
+              </span>
+            </div>
+            <!-- <p ng-class="chat.userId == userId ? 'text-info' : (chat.userId != userId ? 'text-success')">Read msg Read msg Read msg Read msg Read msg Read msg Read msg Read msg</p> -->
+            <div class="col-md-11 card-footer" style="padding-right: 0px; padding-left: 25px;">
+              <code>new messege</code>
+              <div class="form-group">
+                <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                  <input type="text" class="form-control panel-boader" [(ngModel)]="msgText" style=" padding-left: 10px; padding-right: 10px; height:2em"
+                    placeholder="new messege" /><!-- clrs-cell  -->
+                  <div class="input-group-postpend">
+                    <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+                      <small>
+                        <button class="text-info btn-link " (click)="submitMsg(msgText)" title="Send messege" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;">
+                           <i class="nc-icon nc-send"></i>
+                        </button>
+                      </small>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="readRequests" class="card col-md-4">
+      <p>
+        Projects and Company Requests !
+      </p>
+      <!-- <div class="footer">
+          <button class="btn-link" (click)="viewRequest()">Back</button>
+      </div> -->
+    </div>
+    <!-- <div *ngIf="createMsg" class="card col-md-4">
+      <p>
+        New Message !
+      </p>
+      <div class="footer">
+          <button class="btn-link" (click)="return()">Back</button>
+      </div>
+    </div> -->
+    <!-- <div *ngIf="readMsg" class="card col-md-6">
+      <p>
+        Projects and Company Requests !
+      </p>
+      <div class="footer">
+          <button class="btn-link" (click)="viewRequest()">Back</button>
+      </div>
+    </div> -->
+  </div>
+</div>

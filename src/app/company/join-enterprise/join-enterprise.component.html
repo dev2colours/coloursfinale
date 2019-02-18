@@ -83,7 +83,7 @@
                             <td class="text-center">
                               <button class="success btn-link join" rel="tooltip" title="Connect to {{enterprise.name}}"
                                 (click)="selectCompany(enterprise)" data-toggle="modal" data-target="#deptModal">
-                                <font size=2>connect </font>
+                                <font size=2>select</font>
                               </button>
                           </tr>
                         </tbody>
@@ -98,8 +98,7 @@
                               </div>
                             </div>
                             <div class="modal-body">
-                              <p>Cornfirm, you want to connect to <b class="primary-color">{{ (selectedCompany)?.name
-                                  }}</b></p>
+                              <p>Send connect request to <b class="primary-color">{{ (selectedCompany)?.name }}</b></p>
                             </div>
                             <div class="modal-footer">
                               <div class="left-side">
@@ -107,8 +106,7 @@
                               </div>
                               <div class="divider"></div>
                               <div class="right-side">
-                                <button type="button" class="btn btn-link btn-link" (click)="connect2Enterprise(selectedCompany)"
-                                  data-dismiss="modal"> Confirm</button>
+                                <button type="button" class="btn btn-link btn-link" (click)="sendRequest()" data-dismiss="modal"> send request</button><!--  (click)="connect2Enterprise(selectedCompany) -->
                               </div>
                             </div>
                           </div>
@@ -122,109 +120,25 @@
           </div>
         </div>
       </div>
-      <div class="row" hidden>
-        <div class="col-lg-12">
-          <div class="card card-pricing ">
-            <div class="card-header text-left">
-              <h6 class="card-category"> All Companies</h6>
-            </div>
-            <div class="row">
-              <!-- *ngIf="afAuth.user | async as user" -->
-              <div class="col-lg-12">
-                <div class="card-body ">
-                  <code hidden>All Companies</code>
-                  <div class="table-responsive pro_info">
-                    <table class="table">
-                      <thead>
-                        <th class="text-left">Name</th>
-                        <th class="text-left">Sector</th>
-                        <th class="text-left">Location</th>
-                        <!-- <th class="text-left">Participants</th> -->
-                        <th>Action</th>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let enterprise of enterprises | async ">
-                          <td class="text-left tab-cell">{{ enterprise.name }} </td> <!-- <br> {{enterprise.id}} -->
-                          <td class="text-left tab-cell">{{ enterprise.sector }}</td>
-                          <td class="text-left tab-cell">{{ enterprise.location }}</td>
-                          <td class="text-center">
-                            <button class="success btn-link join" rel="tooltip" title="Connect to {{enterprise.name}}"
-                              (click)="selectCompany(enterprise)" data-toggle="modal" data-target="#myModal">
-                              <font size=2>connect </font>
-                            </button>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-                      aria-hidden="true">
-
-                      <div class="modal-dialog modal-sm">
-                        <div class="modal-content">
-                          <div class="modal-header justify-content-center">
-                            <div class="modal-profile ml-auto mr-auto text-warning">
-                              <i class="nc-icon nc-bulb-63"></i>
-                            </div>
-                          </div>
-                          <div class="modal-body">
-                            <p>Cornfirm, you want to connect to <b class="primary-color">{{ (selectedCompany)?.name
-                                }}</b></p>
-                          </div>
-                          <div class="modal-footer">
-                            <div class="left-side">
-                              <button type="button" class="btn btn-link btn-link" data-dismiss="modal">Close</button>
-                            </div>
-                            <div class="divider"></div>
-                            <div class="right-side">
-                              <button type="button" class="btn btn-link btn-link" (click)="connect2Enterprise(selectedCompany)"
-                                data-dismiss="modal"> Confirm</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
-<div class="modal fade" id="deptModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+<div class="modal fade" id="TestdeptModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="card-body ">
         <div class="card-header text-center">
           <p>Company selected <b class="primary-color">{{ (selectedCompany)?.name }}</b></p>
-          <div *ngIf="showme">
+          <div *ngIf="showDpt">
             <p>You are joining {{department.name}} department</p>
             <button type="text" name="department_name" class="primary btn-link "
               (click)="toggleUsersTable()">Change department 
               <i class="fa fa-edit fa-fw"></i>
             </button>
           </div>
-          <!-- <p class="col-md-8 ml-auto mr-auto col-form-label info">
-            Department 
-          </p> -->
         </div>
         <hr>
         <form class="form-horizontal">
-          <!-- <ng-container *ngIf="showChamp">
-            <div class="row">
-              <label class="col-md-3 col-form-label">Department</label>
-              <div class="col-md-8">
-                <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
-                  {{(department)?.name }}
-                  <button type="text" name="department_name" class="btn btn-icon primary btn-link " (click)="toggleUsersTable(); toggleChamp()">
-                    <i class="fa fa-edit fa-fw"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </ng-container> -->
           <div class="row">
             <div class="col-md-10 ml-auto mr-auto">
               <div class="form-group">
@@ -251,7 +165,7 @@
                             <form action="">
                               <div class="spacer" style="height:2em"></div>
                               <input class="form-control" placeholder="Add Department" type="text" [(ngModel)]="dpt.name" name="dpt_name">
-                              {{ today }}
+                              <!-- {{ today }} -->
                               <button class="primary btn-link" (click)="saveDpt(dpt)">save</button>
                           </form>
                           </div>
@@ -271,6 +185,108 @@
           <div class="right-side">
             <button type="button" class="btn btn-success btn-link" (click)="connect2Enterprise()" data-dismiss="modal" title="join Comapny">Join</button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="deptModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <button type="button" class="close" data-dismiss="modal" (click)="resetForm()" aria-label="Close">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+        <p class="title-up na-am">Joining <b>{{ (selectedCompany)?.name }}</b> Company.<br>
+      </div>
+      <div class="modal-body">
+        <span *ngIf="showDpt" class="card-category"></span>
+          <ng-container *ngIf="show">
+            <code>Select a Department</code>
+            <div class="table-responsive">
+              <table class="table text-left">
+                <thead class="card-category">
+                  <th>Department</th>
+                  <th>Action</th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let dept of viewDepartments | async" style="border-bottom: darkslategrey">
+                    <td class="td-clrs" style="padding-left: 1em">{{ dept.name }}</td>
+                    <td class="td-clrs">
+                      <button class="warning btn-link select" rel="tooltip" title="Select Department"(click)="hideDepartmentsTable(dept)">select</button>
+                    </td>
+                    <hr>
+                  </tr>
+                  <div class="">
+                    <div class="spacer" style="height:2em"></div>
+                    <input class="form-control" placeholder="Add Department" type="text" [(ngModel)]="dpt.name">
+                    <button class="primary btn-link" (click)="saveDept(dpt)">save</button>
+                  </div>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="showText">
+            <div class="row">
+              <label class="col-md-3 col-form-label">Department</label>
+              <div class="col-md-9">
+                <div class="form-group">
+                  <ng-select [items]="departmentsArray" bindLabel="name" placeholder="Select Department" [(ngModel)]="department">
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <label class="col-md-3 col-form-label">Address</label>
+              <div class="col-md-9">
+                <div class="form-group">
+                    <input type="text" [(ngModel)]="myData.address" name="enterprise_location" class="form-control" placeholder="e.g. House#, street, location ,Town">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <label class="col-md-3 col-form-label">Phone</label>
+              <div class="col-md-9">
+                <div class="form-group">
+                  <input type="text" [(ngModel)]="myData.phoneNumber" name="enterprise_location"
+                      class="form-control" placeholder="e.g. 06 66666666">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <label class="col-md-3 col-form-label">Email</label>
+              <div class="col-md-9">
+                <div class="form-group">
+                  <input type="email" [(ngModel)]="myData.bus_email" name="enterprise_location"
+                      class="form-control" placeholder="e.g. name@bus_email.com">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <label class="col-md-3 col-form-label">Nation</label>
+              <div class="col-md-9">
+                <div class="form-group">
+                  <input type="text" [(ngModel)]="myData.nation" name="enterprise_location" class="form-control" placeholder="e.g. Zimbabwe">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <label class="col-md-3 col-form-label">National ID</label>
+              <div class="col-md-9">
+                <div class="form-group">
+                    <input type="text" [(ngModel)]="myData.nationalId" name="enterprise_location" class="form-control" placeholder="e.g. N7388-039200 ">
+                </div>
+              </div>
+            </div>
+          </ng-container>
+      </div>
+      <div class="modal-footer" style="margin-bottom:0%">
+        <div class="left-side">
+          <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
+        </div>
+        <div class="divider"></div>
+        <div class="right-side">
+          <button type="button" class="btn btn-success btn-link" (click)="sendRequest()" data-dismiss="modal" title="join Comapny"> Send request</button><!--  (click)="connect2Enterprise()"  -->
         </div>
       </div>
     </div>

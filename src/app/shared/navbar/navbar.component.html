@@ -24,47 +24,259 @@
             <span class="d-lg-none d-md-block">Stats</span>
           </p>
         </a>
-      </li>
+      </li>      
       <li class="nav-item btn-rotate dropdown">
-        <a class="nav-link dropdown-toggle card-category" href="pablo" id="navbarDropdownMenuLink" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="true">
-          <i class="nc-icon nc-palette"></i>Colours Personal
-        </a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item btn-primary btn-link" *ngFor="let classification of classifications | async" (click)="setClassification(classification)">{{ classification.name }}</a><!-- [routerLink]="['/enterprises', company.id]" -->
-        </div>
-      </li>
-      <li class="nav-item btn-rotate dropdown">
-        <a class="nav-link dropdown-toggle card-category" href="pablo" id="navbarDropdownMenuLink" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="true">
-          <i class="nc-icon nc-globe-2"></i>Colours Companies
-        </a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item btn-primary btn-link" *ngFor="let company of companies | async" (click)="setCompany(company)" [routerLink]="[ '/enterprises/', company.id ]">{{ company.name }}</a><!-- [routerLink]="['/enterprises', company.id]" -->
-          <a class="dropdown-item btn-warning btn-link" routerLink="/enterprises/join-enterprise" style="color:steelblue">Join Company</a>
-          <a class="dropdown-item btn-success btn-link" routerLink="/work" style="color:steelblue">Create Company</a><!-- enterprises/join-enterprise -->
-        </div>
-      </li>
-      <li class="nav-item btn-rotate dropdown">
-        <a class="nav-link dropdown-toggle card-category" href="pablo" id="navbarDropdownMenuLink" data-toggle="dropdown"
+        <a class="nav-link dropdown-toggle card-category" style="cursor:pointer" id="navbarDropdownMenuLink" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="true">
           <i class="fa fa-folder-o [&#xf114;]"></i>Colours Projects
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" *ngFor="let project of projects | async" (click)="setProject(project)" [routerLink]="[ '/projects/', project.id ]">{{ project.name }}</a> <!--  [routerLink]="[ '/projects/', project.id ]" -->
-          <a class="dropdown-item btn-warning btn-link" style="color:steelblue" [routerLink]="[ '/join-project']">Join Project</a>
+          <a class="dropdown-item btn-warning btn-link" style="color:rgb(209, 135, 16)" disabled>Enterprise Projects</a>
+          <a class="dropdown-item" *ngFor="let project of projects | async" (click)="setProject(project)" [routerLink]="[ '/projects/', project.id ]">{{
+            project.name }}</a> <!--  [routerLink]="[ '/projects/', project.id ]" -->
+          <a class="dropdown-item btn-warning btn-link" style="color:rgb(209, 135, 16)" disabled>Personal Projects</a>
+          <a class="dropdown-item" *ngFor="let project of myprojects | async" (click)="setProject(project)"
+            [routerLink]="[ '/projects/', project.id ]">{{ project.name }}</a>
+          <!--  [routerLink]="[ '/projects/', project.id ]" -->
+          <a class="dropdown-item btn-warning btn-link" style="color:steelblue" [routerLink]="[ '/projects/join-project']">Join
+            Project</a>
           <a class="dropdown-item btn-success btn-link" routerLink="/work" style="color:steelblue">Create Project</a><!-- join-project -->
         </div>
       </li>
-      <!-- <li class="nav-item">
-        <a class="nav-link btn-rotate" routerLink="/dashboard">
-          <i class="nc-icon nc-settings-gear-65"></i>
-          <p>
-            <span class="d-lg-none d-md-block">Account</span>
-          </p>
+      <li class="nav-item btn-rotate dropdown">
+        <a class="nav-link dropdown-toggle card-category" style="cursor:pointer" id="navbarDropdownMenuLink" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="true">
+          <i class="nc-icon nc-globe-2"></i>Colours Enterprises
         </a>
-      </li> -->
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item btn-primary btn-link" *ngFor="let company of companies | async" (click)="setCompany(company)"
+            [routerLink]="[ '/enterprises/', company.id ]">{{ company.name }}</a><!-- [routerLink]="['/enterprises', company.id]" -->
+          <a class="dropdown-item btn-warning btn-link" routerLink="/enterprises/join-enterprise" style="color:steelblue">Join
+            Company</a>
+          <a class="dropdown-item btn-success btn-link" routerLink="/enterprises/create" style="color:steelblue">Create
+            Company</a><!-- enterprises/join-enterprise -->
+        </div>
+      </li>
+      <li class="nav-item btn-rotate dropdown">
+        <a class="nav-link dropdown-toggle card-category" style="cursor:pointer" id="navbarDropdownMenuLink" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="true">
+          <i class="nc-icon nc-palette"></i>Colours Personal
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item btn-primary btn-link" *ngFor="let classification of classifications | async" (click)="setClassification(classification)">{{
+            classification.name }}</a><!-- [routerLink]="['/enterprises', company.id]" -->
+        </div>
+      </li>
+      <li class="nav-item btn-rotate dropdown">
+        <a class="nav-link dropdown-toggle" style="cursor:pointer" id="navbarDropdownMenuLink" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="nc-icon nc-bell-55"></i>
+            <p>
+                <span *ngIf="notificationNo" class="d-sm text-warning" style="vertical-align: super; margin-left: -6px; font-size: 12px">
+                <!-- <span *ngIf="notificationNo" class="d-sm text-warning" style="vertical-align: super; margin-left: -6px; font-size: 12px"> -->
+                <!-- <span *ngIf="((proStatus | async)?.length + (entStatus | async)?.length + (invStatus | async)?.length) != 0" class="d-sm text-warning" style="vertical-align: super; margin-left: -6px; font-size: 12px"> -->
+                <!-- <span *ngIf="((compRequests | async)?.length + (projInvitations | async)?.length + (projRequests | async)?.length) != 0" class="d-sm text-warning" style="vertical-align: super; margin-left: -6px; font-size: 12px"> -->
+
+                    <!-- {{(compRequests | async)?.length}}</span> -->
+                    {{((compRequests | async)?.length + (projInvitations | async)?.length + (projRequests | async)?.length)}}</span>
+                    <!-- {{ totalRequests }}</span> -->
+            </p>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item btn-primary btn-link" *ngFor="let man of compRequests | async" (click)="selectUser(man)" data-toggle="modal" data-target="#companyNotice" style="cursor:default">{{ man.name }}</a>
+          <a class="dropdown-item btn-primary btn-link" *ngFor="let man of projRequests | async" (click)="selectUserP(man)" data-toggle="modal" data-target="#requestModal" style="cursor:default">{{ man.name }}</a>
+          <a class="dropdown-item btn-primary btn-link" *ngFor="let man of projInvitations | async" (click)="selectUserP(man)" data-toggle="modal" data-target="#inviModal" style="cursor:default">{{ man.name }}</a>
+          <a *ngIf="((compRequests | async)?.length + (projInvitations | async)?.length + (projRequests | async)?.length) == 0" class="dropdown-item"  style="cursor:pointer">..........No Requests..........</a>
+          <!-- <a *ngIf="!notificationNo" class="dropdown-item"  style="cursor:pointer">..........No Requests..........</a> -->
+        </div>
+      </li>
     </ul>
     <!-- </div> -->
   </div>
 </nav>
+<div class="modal fade" id="companyNotice" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-notice">
+    <div class="modal-content">
+      <div class="modal-header">
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button> -->
+        <h5 class="modal-title" id="myModalLabel">Request to join {{ applicant.company.name }}</h5>
+      </div>
+      <div class="modal-body">
+        <div class="instruction">
+          <div class="row">
+            <div class="col-md-8">
+              <strong class="card-category title na-p"> Hi {{ coloursUsername }}</strong><br><br>
+              <p class="description na-p"> <b>{{ applicant.name }}</b> is requesting to join <b>{{
+                  applicant.company.name }}</b> enterprise.</p>
+            </div><br>
+            <div class="col-md-4">
+              <div class="picture">
+                <img *ngIf="applicant.photoURL ; else showAvatar" src="{{ applicant.photoURL }}" class="rounded img-raised">
+                <ng-template #showAvatar>
+                  <img src="./assets/img/faces/default-avatar.png" class="rounded img-raised">
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button (click)="acceptRequest()" type="button" class="btn btn-success btn-round" data-dismiss="modal">Accept</button>
+        <button (click)="declineRequest()" type="button" class="btn btn-info btn-round" data-dismiss="modal">Decline</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="inviModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-notice">
+    <div *ngIf="page1" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title clrs-h1" id="myModalLabel">{{ appUser.project.name }} project</h5>
+      </div>
+      <div class="modal-body">
+        <div class="instruction">
+          <div class="row">
+            <div class="col-md-8">
+              <strong class="card-category title na-p"> Hi {{ coloursUsername }}</strong><br><br>
+              <p class="description na-p"><span class="card-category" style="color:steelblue">{{ appUser.name }}</span> is requesting your <span class="card-category" style="color:steelblue">{{ appUser.company.name }}</span> company to join
+                <span class="card-category" style="color:steelblue">{{ appUser.project.name }}</span> project.</p>
+            </div><br>
+            <div class="col-md-4">
+              <div class="picture">
+                <!-- <img src="./assets/img/bg/daniel-olahs.jpg" alt="Thumbnail Image" class="rounded img-raised"> -->
+                <img *ngIf="appUser.photoURL ; else showAvatar" src="{{ appUser.photoURL }}" class="rounded img-raised">
+                <ng-template #showAvatar>
+                  <img src="./assets/img/faces/default-avatar.png" class="rounded img-raised">
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button (click)="nxtPage()" type="button" class="btn btn-success btn-round" data-dismiss="modal">Accept</button>
+        <button (click)="declineProjectRequest()" type="button" class="btn btn-warning btn-round" data-dismiss="modal">Decline</button>
+      </div>
+    </div>
+    <div *ngIf="page2" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title clrs-h1" id="myModalLabel">{{ applicant.company.name }}</h5>
+      </div>
+      <div class="modal-body">
+        <div class="instruction">
+          <div class="row">
+            <div class="col-md-8">
+              <strong class="card-category title na-p">{{ coloursUsername }}</strong><br><br>
+              <p class="description na-p">
+                <!-- <span class="card-category" style="color:steelblue">{{ applicant.name }}</span> -->
+                Add your <span class="card-category" style="color:steelblue">{{ applicant.company.name }}</span>
+                company roles for the
+                <span class="card-category" style="color:steelblue">{{ applicant.project.name }}</span> project.</p>
+                <br>
+                <div class="row">
+                  <label class="col-md-3" style="margin-bottom: 0px; margin-top: 12px;">Roles</label>
+                  <div class="col-md-9">
+                      <tag-input [(ngModel)]='roles' theme='minimal'></tag-input>
+                  </div>
+                </div>
+            </div><br>
+            <div class="col-md-4">
+              <div class="picture">
+                <!-- <img src="./assets/img/bg/daniel-olahs.jpg" alt="Thumbnail Image" class="rounded img-raised"> -->
+                <img *ngIf="applicant.photoURL ; else showAvatar" src="{{ applicant.photoURL }}" class="rounded img-raised">
+                <ng-template #showAvatar>
+                  <img src="./assets/img/faces/default-avatar.png" class="rounded img-raised">
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button (click)="bckPage()" type="button" class="btn btn-info btn-round" data-dismiss="modal">Back</button>
+        <button (click)="declineProjectRequest()" type="button" class="btn btn-warning btn-round" data-dismiss="modal">Decline</button>
+        <button (click)="acceptProjectRequest()" type="button" class="btn btn-success btn-round" data-dismiss="modal">Finish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-notice">
+    <div *ngIf="page1" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title clrs-h1" id="myModalLabel">{{ appUser.project.name }} project</h5>
+      </div>
+      <div class="modal-body">
+        <div class="instruction">
+          <div class="row">
+            <div class="col-md-8">
+              <strong class="card-category title na-p"> Hi {{ coloursUsername }}</strong><br><br>
+              <p class="description na-p"><span class="card-category" style="color:steelblue">{{ appUser.name }}</span>
+                sent you a request for <span class="card-category" style="color:steelblue">{{ appUser.company.name }}</span>
+                company to join<span class="card-category" style="color:steelblue"> {{ appUser.project.name }}</span> project.
+              </p>
+            </div><br>
+            <div class="col-md-4">
+              <div class="picture">
+                <!-- <img src="./assets/img/bg/daniel-olahs.jpg" alt="Thumbnail Image" class="rounded img-raised"> -->
+                <img *ngIf="appUser.photoURL ; else showAvatar" src="{{ appUser.photoURL }}" class="rounded img-raised">
+                <ng-template #showAvatar>
+                  <img src="./assets/img/faces/default-avatar.png" class="rounded img-raised">
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button (click)="nxtPage()" type="button" class="btn btn-success btn-round" data-dismiss="modal">Accept</button>
+        <button (click)="declineProjectRequest()" type="button" class="btn btn-warning btn-round" data-dismiss="modal">Decline</button>
+      </div>
+    </div>
+    <div *ngIf="page2" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title clrs-h1" id="myModalLabel">{{ applicant.company.name }}</h5>
+      </div>
+      <div class="modal-body">
+        <div class="instruction">
+          <div class="row">
+            <div class="col-md-8">
+              <strong class="card-category title na-p">{{ coloursUsername }}</strong><br><br>
+              <p class="description na-p">
+                <!-- <span class="card-category" style="color:steelblue">{{ applicant.name }}</span> -->
+                Add your <span class="card-category" style="color:steelblue">{{ applicant.company.name }}</span>
+                company roles for the
+                <span class="card-category" style="color:steelblue">{{ applicant.project.name }}</span> project.</p>
+              <br>
+              <div class="row">
+                <label class="col-md-3" style="margin-bottom: 0px; margin-top: 12px;">Roles</label>
+                <div class="col-md-9">
+                  <tag-input [(ngModel)]='roles' theme='minimal'></tag-input>
+                </div>
+              </div>
+            </div><br>
+            <div class="col-md-4">
+              <div class="picture">
+                <!-- <img src="./assets/img/bg/daniel-olahs.jpg" alt="Thumbnail Image" class="rounded img-raised"> -->
+                <img *ngIf="applicant.photoURL ; else showAvatar" src="{{ applicant.photoURL }}" class="rounded img-raised">
+                <ng-template #showAvatar>
+                  <img src="./assets/img/faces/default-avatar.png" class="rounded img-raised">
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button (click)="bckPage()" type="button" class="btn btn-info btn-round" data-dismiss="modal">Back</button>
+        <button (click)="declineProjectRequest()" type="button" class="btn btn-warning btn-round" data-dismiss="modal">Decline</button>
+        <button (click)="acceptProjectInvitation()" type="button" class="btn btn-success btn-round" data-dismiss="modal">Finish</button>
+      </div>
+    </div>
+  </div>
+</div>

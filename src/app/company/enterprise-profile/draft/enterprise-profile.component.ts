@@ -1783,3 +1783,73 @@
 //     })
 //   }
 // }
+
+// selectActionStaff(e, staff: ParticipantData) {
+//     let actionId = this.selectedAction.id;
+//     let deptId = this.selectedAction.departmentId;
+//     let compRef = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
+//     let compRef2 = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('actionItems');
+//     let weeklyRef = this.afs.collection('Users').doc(staff.id).collection<workItem>('WeeklyActions');
+//     let allMyActionsRef = this.afs.collection('Users').doc(staff.id).collection<workItem>('actionItems');
+//     let actionRef: AngularFirestoreCollection<workItem>;
+
+
+//     let userWeeklyRef = this.afs.collection('Users').doc(staff.id).collection<workItem>('WeeklyActions');
+//     let userAllMyActionsRef = this.afs.collection('Users').doc(staff.id).collection<workItem>('actionItems');
+//     let userProjectDoc = this.afs.collection('Users').doc(this.selectedAction.byId).collection('myenterprises').doc(this.compId);
+//     let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
+//     let EntRef = this.afs.collection('Enterprises').doc(this.compId).collection('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
+//     let deptDoc = this.afs.collection('Enterprises').doc(this.compId).collection<Department>('departments');
+
+//     if (deptId !== "") {
+//         actionRef = deptDoc.doc(deptId).collection('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
+//     }
+
+//     if (e.target.checked) {
+//         console.log();
+//         this.selectedActionParticipants.push(staff);
+//         // this.selectedAction.participants.push(staff);
+
+//         compRef.doc(this.selectedAction.id).collection('Participants').doc(staff.id).set(staff);
+//         compRef2.doc(this.selectedAction.id).collection('Participants').doc(staff.id).set(staff);
+//         weeklyRef.doc(this.selectedAction.id).set(this.selectedAction);
+//         allMyActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
+
+//         EntRef.doc(actionId).update({ 'participants': this.selectedAction.participants });
+//         // EntRef.doc(actionId).update({
+//         //   participants: firebase.firestore.FieldValue.arrayUnion(staff)
+//         // });
+//         // compRef.doc(actionId).set(action);
+//         compRef.doc(actionId).update({ 'participants': this.selectedAction.participants });
+//         // userActionRef.doc(actionId).set(action);
+//         userActionRef.doc(actionId).update({ 'participants': this.selectedAction.participants });
+
+//         if (deptId != "") {
+//             // actionRef.doc(actionId).set(action);
+//             actionRef.doc(actionId).update({ 'participants': this.selectedAction.participants });
+//         }
+
+//         console.log("staff" + " " + staff.name + " " + " has been added");
+//     }
+
+//     else {
+//         this.selectedActionParticipants.splice(this.selectedActionParticipants.indexOf(staff), 1);
+//         this.selectedAction.participants.splice(this.selectedActionParticipants.indexOf(staff), 1);
+//         compRef.doc(this.selectedAction.id).collection('Participants').doc(staff.id).delete();
+//         compRef2.doc(this.selectedAction.id).collection('Participants').doc(staff.id).delete();
+//         weeklyRef.doc(this.selectedAction.id).delete();
+//         allMyActionsRef.doc(this.selectedAction.id).delete();
+
+//         compRef.doc(this.selectedAction.id).collection('Participants').doc(staff.id).set(staff);
+
+//         EntRef.doc(actionId).update({ 'participants': this.selectedAction.participants });
+//         // compRef.doc(actionId).set(action);
+//         compRef.doc(actionId).update({ 'participants': this.selectedAction.participants });
+//         // actionRef.doc(actionId).set(action);
+//         actionRef.doc(actionId).update({ 'participants': this.selectedAction.participants });
+//         // userActionRef.doc(actionId).set(action);
+//         userActionRef.doc(actionId).update({ 'participants': this.selectedAction.participants });
+//         console.log("staff" + " " + staff.name + " " + " has been removed");
+//     }
+//     this.showActionParticipants();
+// }

@@ -21,14 +21,15 @@
 <div class="sidebar-wrapper" *ngIf="afAuth.user | async as user">
 
   <div class="user" >
-    <div class="photo">
+    <div *ngIf="user.photoURL" class="photo">
       <img src="{{ user.photoURL }}" width="50px">
     </div>
     <div class="info" >
-      <a data-toggle="collapse" href="#collapseExample" class="collapsed card-category title">
+      <a data-toggle="collapse" href="#collapseExample" class="collapsed">
         <span>
-          {{user.displayName}}
-          <b class="caret"></b>
+            <span *ngIf=" user.displayName != null; else showEmail " class="title card-category" style="color:lightgray">{{user.displayName}}</span>
+            <ng-template #showEmail> {{user.email}} </ng-template>
+            <b class="caret"></b>
         </span>
       </a>
       <div class="clearfix"></div>

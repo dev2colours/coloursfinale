@@ -11,6 +11,7 @@ import { Project } from "../models/project-model";
 import { Task } from "../models/task-model";
 import * as moment from 'moment';
 import { TaskService } from 'app/services/task.service';
+import { InitialiseService } from 'app/services/initialise.service';
 // import { coloursUser } from 'app/models/user-model';
 
 
@@ -99,14 +100,13 @@ export class TasksComponent {
 
   // week: any;
 
-  constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private ts: TaskService, private afs: AngularFirestore) {
+  constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private authService: AuthService, private ts: TaskService, private afs: AngularFirestore) {
 
     // console.log(this.afAuth.user);
-    this.task = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: "" };        
-    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" };
-    this.userChampion = { name: "", id: "", email: "", phoneNumber: ""};
-    this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
-    this.rDaily= "";this.rWeekly= "";this.rmonthly= "";
+    this.task = is.getTask();
+    this.selectedProject = is.getSelectedProject();
+    this.userChampion = is.getUserChampion();
+    this.selectedCompany = is.getSelectedCompany();
 
     this.currentYear = moment(new Date().toISOString(), "YYYY-MM-DD").year().toString();
     this.currentQuarter = moment(new Date().toISOString(), "YYYY-MM-DD").quarter().toString();
@@ -300,7 +300,8 @@ export class TasksComponent {
       name : x.name,
       email: x.email,
       id: x.id,
-      phoneNumber: x.phoneNumber
+      phoneNumber: x.phoneNumber,
+      photoURL: x.photoURL
     };
     this.userChampion = cUser;
     console.log(x);
@@ -371,12 +372,12 @@ export class TasksComponent {
 
       console.log(this.task)
 
-      this.ts.addTask(this.task, this.selectedCompany);
+      this.ts.addTask(this.task, this.selectedCompany ,"");
 
-      this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
-      this.userChampion = { name: "", id: "", email: "", phoneNumber: "" };    
-    this.task = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: "" };      
-      this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" };    
+    this.selectedCompany = this.is.getSelectedCompany();
+    this.task = this.is.getTask();
+    this.selectedProject = this.is.getSelectedProject();
+    this.userChampion = this.is.getUserChampion();   
   }
 
   saveProjectTask() {

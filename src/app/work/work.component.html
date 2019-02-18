@@ -19,24 +19,26 @@
                         <div class="tab-pane active" id="project" role="tabpanel" aria-expanded="true">
                             <div class="col-md-12 ml-auto mr-auto">
                                 <div class="card">
-                                    <div class="col-md-12">
+                                    <div *ngIf="pfirstPage" class="col-md-12">
                                         <div class="card-header ">
                                             <div class="row">
-                                                <div class="col-sm-9 ml-auto mr-auto">
-                                                    <h5 class="title na-am">Create Project</h5>
-                                                </div>
-                                                <div class="col-sm-3 mr-auto ml-auto" style="margin-right:0em">                                                
-                                                    <!-- <h5 class="card-title">Create Project</h5> -->
-                                                    <button type="submit" style="padding-right:0em" class="pull-left primary btn-link" routerLink="/join-project">Join a Project</button>
-                                                </div>
+                                                <h5 class="title na-am">Create new Project</h5>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-10 ml-auto mr-auto">
+                                    <div *ngIf="pSecondPage" class="col-md-12">
+                                        <div class="card-header ">
+                                            <div class="row">
+                                                <h5 class="title na-am">{{ project.name }} <br> <small>Add Project Description</small></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="pfirstPage" class="col-md-10 ml-auto mr-auto">
                                         <div class="card-body ">
                                             <div class="row">
                                                 <label class="col-md-3 col-form-label">Project Name</label>
                                                 <div class="col-md-9">
+                                            <p *ngIf="projectNameFieldStatus" class="category text-danger" style="margin-top:-1em; cursor: pointer;">Name Required</p>
                                                     <div class="form-group">
                                                         <input type="text" [(ngModel)]="project.name" name="enterprise_name"
                                                             class="form-control" placeholder="e.g..Bob Corp">
@@ -46,6 +48,7 @@
                                             <div class="row">
                                                 <label class="col-md-3 col-form-label">Industry Sector</label>
                                                 <div class="col-md-9">
+                                                    <p *ngIf="projectSectorFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Sector Required</p>
                                                     <div class="form-group">
                                                         <input type="text" [(ngModel)]="project.sector" class="form-control"
                                                             placeholder="e.g..Transport">
@@ -55,6 +58,7 @@
                                             <div class="row">
                                                 <label class="col-md-3 col-form-label">Location</label>
                                                 <div class="col-md-9">
+                                                    <p *ngIf="projectLocationFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Location Required</p>
                                                     <div class="form-group">
                                                         <input type="text" [(ngModel)]="project.location" name="enterprise_location"
                                                             class="form-control" placeholder="e.g..Mutare">
@@ -62,25 +66,111 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <label class="col-md-3 col-form-label">Type</label>
+                                                <label class="col-md-3 col-form-label">Project Type</label>
                                                 <div class="col-md-9">
+                                                <p *ngIf="projectTypeFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Type Required</p>
                                                     <div class="form-group">
-                                                        <select data-style="btn btn-info btn-round" [(ngModel)]="project.type" name="ptype" class="form-control" data-style="btn btn-info btn-round"
-                                                            title="Select Project Type" data-size="7">
-                                                            <option value="Personal" selected> Personal </option>
-                                                            <option value="Enterprise"> Enterprise </option>
-                                                        </select>
+                                                        <ng-select [items]="projectType" title="Select Project Type" bindLabel="name" name="ptype" placeholder="Project Type" (change)="checkType(typeSet)"
+                                                            [(ngModel)]="typeSet">
+                                                        </ng-select>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="card-footer ">
-                                                <div class="row">
-                                                    <label class="col-md-3"></label>
-                                                    <div class="col-md-9">
-                                                        <button type="submit"  data-toggle="modal" data-target="#pModal" name="enterprise_sector"
-                                                            class="btn btn-info btn-round">Save project</button>
+                                            <div class="row" *ngIf="showComp">
+                                                <label class="col-md-3 col-form-label">Select Company</label>
+                                                <div class="col-md-9">
+                                                    <p *ngIf="projectCompanyFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Company Required</p>
+                                                    <div class="form-group">
+                                                        <ng-select [items]="myEnterprises | async" title="Select Company" bindLabel="name" name="pCompany" placeholder="Company" (change)="showCompanyTeam(setCompany)"
+                                                            [(ngModel)]="setCompany">
+                                                        </ng-select>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row" *ngIf="showComp">
+                                                <label class="col-md-3 col-form-label">Select Champion</label>
+                                                <div class="col-md-9">
+                                                    <p *ngIf="projectCompCampFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Champ Required</p>
+                                                    <div class="form-group">
+                                                        <ng-select [items]="comWorkers | async" title="Select Company" bindLabel="name" name="pChampion" placeholder="Champion" (change)="setNext(setChampion)"
+                                                            [(ngModel)]="setChampion">
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" *ngIf="showComp">
+                                            <label class="col-md-3 col-form-label">Roles</label>
+                                            <div class="col-md-9">
+                                                <tag-input [(ngModel)]='roles' theme='minimal'></tag-input>
+                                            </div>
+                                            </div>
+                                            <div class="card-footer" *ngIf="showNext">
+                                                <div class="row">
+                                                    <div class="col-md-11 ml-auto mr-auto">
+                                                        <!-- <button type="submit" style="padding-right:0em" class="pull-left primary btn-link" routerLink="/join-project">Join a Project</button> -->
+                                                    </div>
+                                                    <div class="col-md-1 mr-auto">
+                                                        <button type="submit" (click)="testProjectFilds(project, typeSet, setCompany, setChampion)" name="enterprise_sector" class="btn-link">Next</button>
+                                                    </div><!-- (click)="saveProject()" -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="pSecondPage" class="col-md-10 ml-auto mr-auto">
+                                        <div class="card-body ">
+                                            <!-- <a class="card-category clrs-h1">{{ project.name }} <br> <small>Add Project Description</small></a>     -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p *ngFor="let xsection of theSections | async">
+                                                        <span class="col-md-4">{{ xsection.no }}</span>
+                                                        <span class="col-md-8"> {{ xsection.name }}</span>
+                                                        <span>
+                                                            <button class="btn-link" (click)="deleteSection(xsection)"><i class="fa fa-times"></i></button>
+                                                        </span><br>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <p>Create Sections for the Project</p>   
+                                            <div class="row" rel="tooltip" title="Section No">
+                                                <label class="col-md-3 col-form-label">No</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="number" [(ngModel)]="section.no" name="enterprise_location" class="form-control"
+                                                            placeholder="e.g   1,2,3....">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" rel="tooltip" title="Section Nameo">
+                                                <label class="col-md-3 col-form-label">Name</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="section.name" name="enterprise_location" class="form-control"
+                                                            placeholder="e.g. Section Name">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10"></div>
+                                                <div class="col-md-2">
+                                                    <button type="submit reset" class="btn-link" (click)="addSection()">Add</button>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer" *ngIf="showNext">
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <button type="submit" name="nextBtn" (click)="pBckPage()" class="btn-link text-info">Dismiss</button>                                                    
+                                                        <button type="submit" (click)="finish()" name="enterprise_sector" class="btn-link">Save</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card-footer ">
+                                            <div class="row">
+                                                <h5 class="title na-am">Or Join Existing Project <a routerLink="/join-project"> <small> click to join </small></a></h5>
                                             </div>
                                         </div>
                                     </div>
@@ -96,21 +186,29 @@
                                                 <div class="col-md-8 ml-auto mr-auto">
                                                     <h5 class="title na-am">Create Company</h5>
                                                 </div>
-                                                <div class="col-md-4 mr-auto ml-auto" style="margin-right:0em">                                                
-                                                    <!-- <h5 class="card-title">Create Project</h5> -->
-                                                    <button type="submit" style="padding-right:0em" class="pull-left primary btn-link" routerLink="/enterprises/join-enterprise">Join existing Enterprise</button>
+                                                <div class="col-md-4 mr-auto ml-auto" style="margin-right:0em">
+                                                    <!-- <button type="submit" style="padding-right:0em" class="pull-left primary btn-link" routerLink="/enterprises/join-enterprise">Join existing Enterprise</button> -->
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-10 ml-auto mr-auto">
-                                        <div class="card-body ">
+                                    <div *ngIf="firstPage" class="col-md-10 ml-auto mr-auto">
+                                        <div class="card-body">
                                             <div class="row">
                                                 <label class="col-md-3 col-form-label">Company Name</label>
                                                 <div class="col-md-9">
                                                     <div class="form-group">
                                                         <input type="text" [(ngModel)]="newEnterprise.name" name="enterprise_name"
                                                             class="form-control" placeholder="e.g..Bob Corp">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Location</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="newEnterprise.location" name="enterprise_location"
+                                                            class="form-control" placeholder="e.g..Mutare">
                                                     </div>
                                                 </div>
                                             </div>
@@ -124,22 +222,99 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <label class="col-md-3 col-form-label">Location</label>
+                                                <label class="col-md-3 col-form-label">Services</label>
+                                                <div class="col-md-9">
+                                                    <tag-input [(ngModel)]='serviceTags' theme='minimal'></tag-input>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer ">
+                                            <div class="row">
+                                                <label class="col-md-3"></label>
+                                                <div class="col-md-9">
+                                                    <button type="submit" name="nextBtn" (click)="nxtPage()" class="btn-link text-info" >Next</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="secondPage" class="col-md-10 ml-auto mr-auto">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Telephone</label>
                                                 <div class="col-md-9">
                                                     <div class="form-group">
-                                                        <input type="text" [(ngModel)]="newEnterprise.location" name="enterprise_location"
-                                                            class="form-control" placeholder="e.g..Mutare">
+                                                        <input type="text" [(ngModel)]="newEnterprise.telephone" name="enterprise_location"
+                                                            class="form-control" placeholder="e.g. 06 66666666">
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="card-footer ">
-                                                <div class="row">
-                                                    <label class="col-md-3"></label>
-                                                    <div class="col-md-9">
-                                                        <button type="submit" (click)="saveEnterprise()" name="enterprise_sector"
-                                                            class="btn btn-info btn-round">Save company</button>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Address</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="newEnterprise.address" name="enterprise_location"
+                                                            class="form-control" placeholder="e.g. House#, street, location ,Town">
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Email</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="email" [(ngModel)]="compUser.bus_email" name="enterprise_location"
+                                                            class="form-control" placeholder="e.g. name@bus_email.com">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Nation</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="compUser.nation" name="enterprise_location"
+                                                            class="form-control" placeholder="e.g. Zimbabwe">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">ID number</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="compUser.nationalId" name="enterprise_location"
+                                                            class="form-control" placeholder="e.g. 08-1112389 N13">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="row">
+                                                <label class="col-md-3 col-form-label">Tax Clearance Doc</label>
+                                                <div class="col-md-9">
+                                                    <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                                                        <input class="form-control" type="file" style="border: 0px;" (click)="upload($event,newEnterprise.taxDocument)" name="taxDoc" accept=".png,.jpg,.pdf" [(ngModel)]="newEnterprise.taxDocument"/>
+                                                    </div>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                        <div class="card-footer ">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <button type="submit" name="nextBtn" (click)="bckPage()" class="btn-link text-info">Back</button>                                                    
+                                                    <button type="submit" (click)="saveEnterprise()" name="enterprise_sector" class="btn-link text-info">Save company</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card-footer ">
+                                            <div class="row">
+                                                <!-- <div class="col-md-8 ml-auto mr-auto"> -->
+                                                    <h5 class="title na-am">Or Join an existing Company <small><span>
+                                                        <button class="btn-link" routerLink="/enterprises/join-enterprise">click here</button></span></small>
+                                                    </h5>
+                                                <!-- </div>
+                                                <div class="col-md-4 mr-auto ml-auto" style="margin-right:0em">
+                                                    <button type="submit" style="padding-right:0em" class="pull-left primary btn-link" routerLink="/enterprises/join-enterprise">Join existing Enterprise</button>
+                                                </div> -->
                                             </div>
                                         </div>
                                     </div>
@@ -191,6 +366,61 @@
                 <div class="divider"></div>
                 <div class="right-side">
                     <button type="button" class="btn btn-danger btn-link" (click)="saveProject()" data-dismiss="modal">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade modal-primary" id="pdescription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-profile ml-auto mr-auto">
+                    <i class="fa  fa-list-alt"></i>
+                </div>
+                <a class="card-category clrs-h1">{{ project.name }} <br> <small>Add Project Description</small></a>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <p *ngFor="let xsection of theSections | async">
+                        <span class="col-md-4">{{ xsection.no }}</span><span class="col-md-8"> {{ xsection.name }}</span><span><button class="btn-link" (click)="deleteSection(xsection)"><i class="fa fa-times"></i></button></span><br>
+                    </p>
+                </div>
+                <p>Create Sections for the Project</p>
+                <div class="row" rel="tooltip" title="Section No">
+                    <label class="col-md-3 col-form-label">No</label>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="number" [(ngModel)]="section.no" name="enterprise_location"
+                                class="form-control" placeholder="e.g   1,2,3....">
+                        </div>
+                    </div>
+                </div>
+                <div class="row"  rel="tooltip" title="Section Nameo">
+                    <label class="col-md-3 col-form-label">Name</label>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <input type="text" [(ngModel)]="section.name" name="enterprise_location"
+                                class="form-control" placeholder="e.g. Section Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10"></div>
+                <div class="col-md-2">
+                    <button type="submit reset" class="btn-link" (click)="addSection()">Add</button>
+                </div>
+            </div>
+            <div class="spacer" style="height: 2em"></div>
+            <div class="modal-footer">
+                <div class="left-side">
+                    <button type="button" (click)="dismisProject()" class="btn btn-link" data-dismiss="modal">Back</button>
+                </div>
+                <div class="divider"></div>
+                <div class="right-side">
+                    <button type="button" class="btn btn-link" data-dismiss="modal" (click)="finish()">Save</button>
                 </div>
             </div>
         </div>

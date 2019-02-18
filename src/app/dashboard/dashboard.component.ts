@@ -10,7 +10,7 @@ import { map, timestamp } from 'rxjs/operators';
 import { ParticipantData } from 'app/models/enterprise-model';
 import { ActionItem } from 'app/models/task-model';
 import * as moment from 'moment';
-import { Project } from 'app/models/project-model';
+import { Project, workItem } from 'app/models/project-model';
 
 declare const $: any;
 
@@ -37,12 +37,14 @@ export class DashboardComponent implements OnInit {
   allColoursProjects: any;
   userId: any;
   user: any;
-  loggedInUser: ParticipantData;
-  viewActions: Observable<ActionItem[]>;
-  myActionItems: ActionItem[];
+  myData: ParticipantData;
+  viewActions: Observable<workItem[]>;
+  // myActionItems: ActionItem[];
+  myActionItems: any;
   actionNo: number;
 
   public showActions: boolean = false;
+  public hideActions: boolean = false;
 
 
 
@@ -50,19 +52,16 @@ export class DashboardComponent implements OnInit {
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
-      let loggedInUser = {
+      let myData = {
         name: this.user.displayName,
         email: this.user.email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
       }
-      this.loggedInUser = loggedInUser;
+      this.myData = myData;
       this.dataCall();
     })
-
-    this.showActions = false;      
-
-    // this.actionNo = 0;
   }
 
   public chartClicked(e:any):void {
@@ -86,34 +85,70 @@ export class DashboardComponent implements OnInit {
 
 
   dataCall(){
+
+    console.log("Yeeeeeeeees");
+    
+
+    this.showActions = false;
+    this.hideActions = false;
+
     let currentDate = moment(new Date()).format('L');;
 
     console.log(currentDate);
-    
-    
-    let userDocRef = this.afs.collection('Users').doc(this.userId);
-    this.allMyProjects = userDocRef.collection('projects', ref => ref.orderBy('createdOn', "desc").limit(4)).valueChanges();
-    this.viewActions = userDocRef.collection<ActionItem>('WeeklyActions', ref => ref.where("startDate", '==', currentDate).limit(4))
-    .snapshotChanges().pipe(
-      map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as ActionItem;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))
-    );
 
-    this.viewActions.subscribe((actions) =>{
-      this.myActionItems = actions
-      console.log(actions.length)
-      console.log(actions)
-      this.actionNo = actions.length
+
+    let userDocRef = this.afs.collection('Users').doc(this.userId);
+    this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
+      // .limit(4)
+      .where("startDate", '==', currentDate).limit(4))
+      .snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as workItem;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
+
+    this.viewActions.subscribe((actions) => {
+      console.log(actions);
+      
+      this.myActionItems = [];
+      this.myActionItems = actions;
+      console.log(actions.length);
+      console.log(actions);
+      this.actionNo = actions.length;
+      if (this.actionNo == 0) {
+
+        this.showActions = false;
+        this.hideActions = true;
+      } else {
+        this.hideActions = false;
+        this.showActions = true;
+      }
     })
 
-    if (this.actionNo == 0) {
-      this.showActions = false;      
-    } else {
-      this.showActions = true;
-    }
+    this.allMyProjects = userDocRef.collection('projects', ref => ref.orderBy('createdOn', "desc").limit(4)).valueChanges();
+    // this.viewActions = userDocRef.collection<ActionItem>('WeeklyActions', ref => ref.where("startDate", '==', currentDate).limit(4))
+    // .snapshotChanges().pipe(
+    //   map(actions => actions.map(a => {
+    //     const data = a.payload.doc.data() as ActionItem;
+    //     const id = a.payload.doc.id;
+    //     return { id, ...data };
+    //   }))
+    // );
+
+    // this.viewActions.subscribe((actions) =>{
+    //   this.myActionItems = actions
+    //   console.log(actions.length)
+    //   console.log(actions)
+    //   this.actionNo = actions.length
+    // })
+
+    // if (this.actionNo > 0) {
+    //   this.showActions = true;      
+    // } else {
+    //   this.showActions = false;
+    // }
   }
 
 

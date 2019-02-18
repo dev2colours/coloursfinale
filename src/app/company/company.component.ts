@@ -16,6 +16,7 @@ import { map, timestamp } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import { Enterprise, ParticipantData, companyChampion, Department } from "../models/enterprise-model";
 import { Project } from "../models/project-model";
+import { InitialiseService } from 'app/services/initialise.service';
 
 export interface Task {
   name: string,
@@ -111,19 +112,18 @@ export class CompanyComponent implements OnInit {
   user: firebase.User;
   userId: string;
 
-  constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
+  constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private authService: AuthService, private afs: AngularFirestore) {
     
     this.dpt = { name: "", by: "", byId: "", companyName: "",companyId: "", createdOn: ""}
-    this.newEnterprise = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
-    this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "",participants: null };
-    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" }
-    this.projectToJoin = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "", companyChampion:null, leader:null }
+    this.newEnterprise = is.getSelectedCompany();
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
+    this.projectToJoin = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", companyChampion:null, leader:null }
     this.userMatrix = {companiesCreated: "", projectsCreated: "", companiesJoined: "", projectsJoined: ""}
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" }
+    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
 
     this.task = { name: "", champion : null, projectName: "", start: "", finish: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: ""};
     this.companyProjectChamp = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "" }
-    this.userChampion = { name:"", id:"", email:"", phoneNumber: "" }
+    this.userChampion = { name:"", id:"", email:"", phoneNumber: "", photoURL:"" }
 
     console.log(this.userId);
 
@@ -256,7 +256,8 @@ export class CompanyComponent implements OnInit {
         name: this.user.displayName,
         email: this.user.email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
       }; 
 
       this.newEnterprise.by = this.user.displayName;
@@ -285,7 +286,7 @@ export class CompanyComponent implements OnInit {
         mycompanyRef.doc(compRef).update({ 'id': compRef });
       });
 
-    this.newEnterprise = { name: "", location: "", sector: "", by: "", byId: "", createdOn: "", id: "", participants: null };
+    this.newEnterprise = this.is.getSelectedCompany();
 
   }
 
@@ -360,9 +361,10 @@ export class CompanyComponent implements OnInit {
     projectsRef.doc(projectId).collection('enterprises').doc(scompanyId).set(this.selectedCompany);
     projectsRef.doc(projectId).collection('Participants').doc(partId).set(this.userChampion);
     console.log(this.projectToJoin)
-    this.projectToJoin = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "", companyChampion: null, leader: null }
-    this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
-    this.userChampion = {name:"", id:"", email:"", phoneNumber:""};
+    this.projectToJoin = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", companyChampion: null, leader: null }
+    this.selectedCompany = this.is.getSelectedCompany();
+    this.userChampion = {
+      name: "", id: "", email: "", phoneNumber: "", photoURL: ""};
 
     // })
   }
@@ -408,7 +410,7 @@ export class CompanyComponent implements OnInit {
           console.log('enterprise project')
         }
       });
-      this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" }
+      this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
 
     })
   }
@@ -456,7 +458,7 @@ export class CompanyComponent implements OnInit {
         //set task to the champion tasks collection                        
         champRef.doc(newTaskId).set(createdTask);
       });
-      this.userChampion = { name: "", id: "", email: "", phoneNumber: "" }
+      this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL:""}
 
     }
 
@@ -469,7 +471,7 @@ export class CompanyComponent implements OnInit {
     }
     this.companyProjectChamp = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "" }
     this.task = { name: "", champion: null, projectName: "", start: "", finish: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "" }
-    this.userChampion = { name: "", id: "", email: "", phoneNumber:"" }
+    this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "" }
   }
 
   save(department){
@@ -551,7 +553,8 @@ export class CompanyComponent implements OnInit {
         name: this.user.displayName,
         email: this.user.email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
       }; 
 
       this.newPart = pUser;

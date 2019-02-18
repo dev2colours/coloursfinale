@@ -14,6 +14,7 @@ import { Enterprise, ParticipantData, companyChampion, Department } from "../mod
 import { Project } from "../models/project-model";
 import { Task } from "../models/task-model";
 import { ProjectService } from '../services/project.service';
+import { InitialiseService } from 'app/services/initialise.service';
 
 // export interface ProjectId extends Project { id: string; }
 // export interface projectTaskChamp extends Task { championId: string; }
@@ -31,7 +32,6 @@ export class ProjectsComponent {
     companyDepartments: Observable<any[]>;
     selectedCompany: Enterprise;
     enterprise: Enterprise;
-    myEnterprise: Enterprise;
     
     projectToJoin: any;
     companyJoining: any;
@@ -89,16 +89,19 @@ export class ProjectsComponent {
 
 
 
-    constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore, private ps: ProjectService) {
+    constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private authService: AuthService, private afs: AngularFirestore, private ps: ProjectService) {
 
         // this.afAuth.authState.subscribe(user =>{
         // });
+        this.selectedCompany = this.is.getSelectedCompany();
+        this.task = this.is.getTask();
+        this.selectedProject = this.is.getSelectedProject();
+        this.userChampion = this.is.getUserChampion(); 
 
-        this.enterprise = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
-        this.myEnterprise = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null};
-        this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null};
-        this.project = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", location: "", sector: "", id: "",};
-        this.selectedProject = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", location: "", sector: "", id: "",};
+        this.enterprise = this.is.getSelectedCompany();
+        this.selectedCompany = this.is.getSelectedCompany();
+        this.project = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", champion: null, location: "", sector: "", id: "",};
+        this.selectedProject = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", champion: null, location: "", sector: "", id: "",};
         this.projectToJoin = { name: "", type: "", by: "", byId: "", joiningCompanyChampion:"" };  
             console.log(this.afAuth.user);
 
@@ -131,7 +134,7 @@ export class ProjectsComponent {
             
         });
         
-        this.task = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: "" };
+        this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     
         this.afAuth.authState.subscribe(user => {
             console.log(user.uid)
@@ -185,7 +188,7 @@ export class ProjectsComponent {
             let company = this.selectedCompany
             
             this.ps.addProject(pUser, project, company);
-            this.project = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", location: "", sector: "", id: "", };
+            this.project = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", champion: null, location: "", sector: "", id: "", };
 
         })
     }
@@ -371,7 +374,8 @@ export class ProjectsComponent {
             name: x.name,
             email: x.email,
             id: x.id,
-            phoneNumber: x.phoneNumber
+            phoneNumber: x.phoneNumber,
+            photoURL: x.photoURL
         }
         this.userChampion = cUser;
         console.log(x);
@@ -424,7 +428,7 @@ export class ProjectsComponent {
                 this.afs.collection('Users').doc(user.uid).collection('tasks').add(createdTask);
 
             }
-            this.task = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: ""};
+            this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
 
         })
     }

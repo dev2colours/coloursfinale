@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TagInputModule } from 'ngx-chips';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 import { UserComponent } from './user.component';
 import { UserRoutes } from './user.routing';
@@ -10,7 +12,7 @@ import { UserRoutes } from './user.routing';
     imports: [
         CommonModule,
         RouterModule.forChild(UserRoutes),
-        FormsModule
+        FormsModule, NgSelectModule, TagInputModule
     ],
     declarations: [UserComponent]
 })

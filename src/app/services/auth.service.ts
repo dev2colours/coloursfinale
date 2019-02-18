@@ -3,6 +3,8 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { auth } from 'firebase';
 // import { AngularFireAuth } from '@angular/fire/auth';
 // import { auth } from 'firebase/app';
+import * as firebase from 'firebase/app';
+// import { Observable } from 'rxjs/Observable';
 
 import { Observable } from 'rxjs';
 import { AngularFirestore } from 'angularfire2/firestore';
@@ -23,7 +25,7 @@ declare var gapi: any;
 export class AuthService {
   coloursUserDetails: auth.UserCredential;
 
-  user : firebase.User;
+  user: firebase.User;
   loggedInUser: ParticipantData;
   userId: string;
   user$: Observable<firebase.User>;
@@ -33,36 +35,42 @@ export class AuthService {
     this.user$ = afAuth.authState;
   }
 
+  async signInWithTwitter() {
+    return this.afAuth.auth.signInWithPopup(
+      new firebase.auth.TwitterAuthProvider()
+    )
+  }
 
   async googleSign() {
-    const provider = new auth.GoogleAuthProvider();
-    this.afAuth.auth.signInWithPopup(provider).then(ref => {
-      console.log("Check User collection for doc");
-      this.coloursUserDetails = ref;
+    // const provider = new auth.GoogleAuthProvider();
+    // this.afAuth.auth.signInWithPopup(provider).then(ref => {
+    //   console.log("Check User collection for doc");
+    //   this.coloursUserDetails = ref;
 
-      let coloursUser = ref.user;
-      let userData = {
-        name: coloursUser.displayName,
-        email: coloursUser.email,
-        id: coloursUser.uid,
-        userImg: coloursUser.photoURL,
-        phoneNumber: coloursUser.phoneNumber,
-        LastTimeLogin: new Date().toString()
-      }
-      console.log(userData);
-      if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-        this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-        console.log("userData is set");
+    //   let coloursUser = ref.user;
+    //   let userData = {
+    //     name: coloursUser.displayName,
+    //     email: coloursUser.email,
+    //     id: coloursUser.uid,
+    //     userImg: coloursUser.photoURL,
+    //     phoneNumber: coloursUser.phoneNumber,
+    //     LastTimeLogin: new Date().toString()
+    //   }
 
-      }
-      else {
-        this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-        console.log("userData is updated");
-      }
-      this.router.navigateByUrl('dashboard');
-    });
+    //   console.log(userData);
+    //   if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+    //     this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
+    //     console.log("userData is set");
+
+    //   }
+    //   else {
+    //     this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
+    //     console.log("userData is updated");
+    //   }
+    //   this.router.navigateByUrl('dashboard');
+    // });
   }
-  
+
 
   async getCalendar() {
     // const $calendar = $('#gCalendar');
@@ -80,7 +88,7 @@ export class AuthService {
     this.calendarItems = events.result.items;
 
   }
-  
+
   async insertEvent() {
     const insert = await gapi.client.calendar.events.insert({
       calendarId: 'primary',
@@ -102,7 +110,8 @@ export class AuthService {
 
   hoursFromNow = (n) => new Date(Date.now() + n * 1000 * 60 * 60).toISOString();
 
-  getUser(){
+
+  getUser() {
 
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;

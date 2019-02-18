@@ -63,9 +63,11 @@ export class TaskService {
     return this.projects;
   }
 
-  addToDepatment(task, dpt){
+  addToDepatment(task: Task, dpt: Department){
 
     console.log('the task--->' + task.name + " " + task.id);
+    console.log('the task company--->' + " " + task.companyName);
+    console.log('the task companyId--->' + " " + task.companyId);
     console.log('the department-->' + dpt.name + " "  + dpt.id);
     
     let deptDoc = this.afs.collection('Enterprises').doc(task.companyId).collection<Department>('departments').doc(dpt.id);
@@ -135,8 +137,8 @@ export class TaskService {
     return this.weeklyTasks
   }
 
-  addTask( task, company){
-    console.log('task created' + task)
+  addProjectTask(task, company) {
+    console.log('task created' + task.name)
     let oop = company.id;
     let createdTask = task;
     let tasksRef = this.afs.collection('tasks');
@@ -152,42 +154,132 @@ export class TaskService {
     //set task under a user
     userRef.add(createdTask).then(function (Ref) {
       let newTaskId = Ref.id;
-      userProjRef.doc(newTaskId).set(createdTask);
+      userRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      //set task under a tasks
+      tasksRef.doc(newTaskId).set(createdTask);
+      //update id for task under a tasks
+      tasksRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      //set task under a company                        
+      entRef.doc(newTaskId).set(createdTask);
+
+      //update id for task under a company
+      entRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      if (task.projectType === 'Enterprise') {
+        console.log(Ref);
+        //set task under a champion
+        champRef.doc(newTaskId).set(createdTask);
+        champProjRef.doc(newTaskId).set(createdTask);
+        // set task in user project tasks
+        userProjRef.doc(newTaskId).set(createdTask);
+        //set task under a project
+        projectsRef.doc(newTaskId).set(createdTask);
+
+        //set task under a company                
+        entProjRef.doc(newTaskId).set(createdTask);
+
+        //set task under a projectCompanyRef
+        projectCompanyRef.doc(newTaskId).set(createdTask);
+
+        //update task id under a company
+        entProjRef.doc(newTaskId).update({ 'id': newTaskId });
+
+        // update id for task in user project tasks
+        userProjRef.doc(newTaskId).update({ 'id': newTaskId });
+        // update id for champion
+        champRef.doc(newTaskId).update({ 'id': newTaskId });
+        champProjRef.doc(newTaskId).update({ 'id': newTaskId });
+        //update id for task under a project
+        projectsRef.doc(newTaskId).update({ 'id': newTaskId });
+        projectCompanyRef.doc(newTaskId).update({ 'id': newTaskId });
+      };
+    });
+  }
+  addTask( task, company, dept ){
+    console.log('Company' + ' ' + company.name)
+    console.log('task created' + ' ' + task.name)
+    let oop = company.id;
+    let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>; 
+    let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData> ;
+    let createdTask = task;
+    let tasksRef = this.afs.collection('tasks');
+    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
+    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+    let entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
+    let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
+    let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
+
+    if (dept.departmentId !="") {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');      
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
+      .doc(task.champion.id).collection('tasks');      
+    }
+
+    //set task under a user
+    userRef.add(createdTask).then(function (Ref) {
+      let newTaskId = Ref.id;
+      userRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      //set champ task under a enterprise
+      entTaskChamp.doc(newTaskId).set(createdTask);
+      //update id for champ task under a enterprise
+      entTaskChamp.doc(newTaskId).update({ 'id': newTaskId });
+
+      //set task under a tasks
+      tasksRef.doc(newTaskId).set(createdTask);
+      //update id for task under a tasks
+      tasksRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      //set task under a company                        
+      entRef.doc(newTaskId).set(createdTask);
+
+      //update id for task under a company
+      entRef.doc(newTaskId).update({ 'id': newTaskId });
+      
+      if (task.departmentId != "") {
+
+        //set task under a enterprise dept
+        entDeptRef.doc(newTaskId).set(createdTask);
+        //update id for task under a enterprise dept
+        entDeptRef.doc(newTaskId).update({ 'id': newTaskId });
+
+        //set champ task under a enterprise dept
+        entDepStafftRef.doc(newTaskId).set(createdTask);
+        //update id for champ task under a enterprise dept
+        entDepStafftRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      }
+
       if (task.projectType === 'Enterprise') {
           console.log(Ref);
-          //set task under a projectCompanyRef
           //set task under a champion
           champRef.doc(newTaskId).set(createdTask);
           champProjRef.doc(newTaskId).set(createdTask);
-          //set task under a tasks
-          tasksRef.doc(newTaskId).set(createdTask);
+          // set task in user project tasks
+          userProjRef.doc(newTaskId).set(createdTask);
           //set task under a project
-          projectCompanyRef.doc(newTaskId).set(createdTask);
           projectsRef.doc(newTaskId).set(createdTask);
-          //set task under a company                        
-          entRef.doc(newTaskId).set(createdTask);
+          //set task under a company                
           entProjRef.doc(newTaskId).set(createdTask);
-          // update id for champion
-          userRef.doc(newTaskId).update({ 'id': newTaskId });
+          //set task under a projectCompanyRef
+          projectCompanyRef.doc(newTaskId).set(createdTask);
+          //update task id under a company
+          entProjRef.doc(newTaskId).update({ 'id': newTaskId });
+          // update id for task in user project tasks
           userProjRef.doc(newTaskId).update({ 'id': newTaskId });
           // update id for champion
           champRef.doc(newTaskId).update({ 'id': newTaskId });
           champProjRef.doc(newTaskId).update({ 'id': newTaskId });
-          //update id for task under a tasks
-          tasksRef.doc(newTaskId).update({ 'id': newTaskId });
           //update id for task under a project
           projectsRef.doc(newTaskId).update({ 'id': newTaskId });
           projectCompanyRef.doc(newTaskId).update({ 'id': newTaskId });
-          //update id for task under a company
-          entRef.doc(newTaskId).update({ 'id': newTaskId });
-          entProjRef.doc(newTaskId).update({ 'id': newTaskId });
-      }
-      else {
-        //set task under a user
-        console.log('personal Task')
-        this.afs.collection('Users').doc(this.userId).collection('tasks').add(createdTask);
-        this.afs.collection('Users').doc(this.userId).collection('tasks').doc(newTaskId).update({ 'id': newTaskId });
-      } 
+      };
     });    
   }
 

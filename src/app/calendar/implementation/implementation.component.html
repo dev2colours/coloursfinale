@@ -5,12 +5,12 @@
       <div class="nav-tabs-wrapper">
         <ul id="tabs" class="nav nav-tabs" role="tablist">
           <li class="nav-item">
-            <a class="nav-link nav-colors active" data-toggle="tab" href="#intray" role="tab" aria-expanded="true">Things
-              To Do In Tray</a>
+            <a class="nav-link nav-colors active" data-toggle="tab" href="#intray" role="tab" aria-expanded="true">
+              Things To Do In Tray</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-colors" data-toggle="tab" href="#weekly" role="tab" aria-expanded="true">Weekly
-              Calendar</a> <!--  (click)="slide()" -->
+            <a class="nav-link nav-colors" data-toggle="tab" href="#weekly" role="tab" aria-expanded="true">
+              Weekly Calendar</a>
           </li>
           <li class="nav-item">
             <a class="nav-link nav-colors" data-toggle="tab" (click)="initDiary()" href="#diary" role="tab"
@@ -42,8 +42,6 @@
                           <div class="content container scroll-em">
                             <ol style="padding-left:18px;">
                               <li class="" style="color:steelblue" *ngFor="let tss of OutstandingTasks">
-                              <!-- <li *ngFor="let tss of tasks | async"> -->
-                              <!-- <li *ngFor="let tss of OutstandingTasks"> -->
                                 <div class="row">
                                   <div class="col-sm-12 text-left" style="margin-right:-.5em">
                                     <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown"
@@ -55,8 +53,6 @@
                                         data-toggle="modal" data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">Add
                                         to my Week's tasks
                                       </button>
-                                      <!-- <button class="dropdown-item primary btn-link" rel="tooltip"  (click)="closeTask(project)" title="Set task as completed">Task
-                                        Complete</button> -->
                                     </div>
                                   </div>
                                 </div>
@@ -179,7 +175,7 @@
                                   <ol style="padding-left: 0px;">
                                     <li *ngFor="let item of mytaskActions | async">{{ item.name }}
                                       <!-- <input [(ngModel)]="checkedAction" class="form-check-input pull-right col-form-label" id="checkbox1" type="checkbox"> -->
-                                      <input class="pull-right col-form-label" type="checkbox" (change)="selectAction($event, item)">
+                                      <input style="margin-top: 4px;" class="pull-right col-form-label" type="checkbox" (change)="selectAction($event, item)">
                                     </li>
                                   </ol>
                                 </div>
@@ -215,8 +211,44 @@
         </div>
       </div>
       <div class="tab-pane" id="weekly" role="tabpanel" aria-expanded="false">
+
+        <div class="col-md-11 col-sm-11 ml-auto mr-auto">
+          <p class="clrs-h4 text-left" style="margin-top:-1em; color: darkslategrey">Calendar Weekly Activities.</p>
+          <p class="category text-left" style="margin-top:-1em">
+            These are task classification standard action and work action Items picked for this week's activities
+          </p>
+        </div>
         <div class="row card-category clrs-h4">
           <div class="col-sm-4">Action Item
+          </div>
+          <div class="col-sm-8">
+            <div class="row">
+              <div class="col-sm-6 text-left na-an">Classification</div>
+              <div class="col-sm-6 text-left ma-an">Period</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ol>
+            <li *ngFor="let item of standards | async">
+              <div class="row" style="color: darkslategrey">
+                <div class="col-sm-4 text-left" style="padding-left: 2em">
+                  {{ item.name }}
+                </div>
+                <div class="col-sm-8">
+                  <div class="row">
+                    <div class="col-sm-6 text-left">{{ item.classificationName }}</div>
+                    <div class="col-sm-4 text-left">{{ item.period }}</div>
+                      <!-- <button class="primary btn-link" data-toggle="modal" (click)="selectEditAction(item)" data-target="#editAction">
+                        Edit</button> -->
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <div class="row card-category clrs-h4">
+          <div class="col-sm-4">Work Action Item
           </div>
           <div class="col-sm-8">
             <div class="row">
@@ -226,16 +258,40 @@
           </div>
         </div>
         <div class="card-body">
-          <ol>
-            <li *ngFor="let item of myWeeklyActions | async">
-              <div class="row">
+          <!-- <ol>
+            <li *ngFor="let item of standards | async">
+              <div class="row" style="color: darkslategrey">
                 <div class="col-sm-3">
                   {{ item.name }}
                 </div>
                 <div class="col-sm-9">
-                  <p>{{ item.startDay }}, {{ item.startDate }} | {{ item.endDay }}, {{ item.endDate }}<span>
+                  <div class="row">
+                    <div class="col-sm-6">{{ item.classificationName }}</div>
+                    <div class="col-sm-4">{{ item.period }}</div>
                       <button class="primary btn-link" data-toggle="modal" (click)="selectEditAction(item)" data-target="#editAction">
-                        Edit</button></span></p>
+                        Edit</button>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ol> -->
+          <ol>
+            <li *ngFor="let item of myWeeklyActions | async">
+              <div class="row">
+                <div class="col-sm-3 text-left" style="padding-left: 2em">
+                  {{ item.name }}
+                </div>
+                <div class="col-sm-9">
+                  <div class="row">
+                    <div class="col-sm-5 text-left">{{ item.startDay }}, {{ item.startDate }}</div>
+                    <div class="col-sm-5 text-left">{{ item.endDay }}, {{ item.endDate }}</div>
+                      <button class="primary btn-link" (click)="selectEditAction(item)" data-toggle="modal" data-target="#editAction" style=" padding-top: 0px; padding-bottom: 0px;">
+                        Edit</button>
+                  </div>
+                  <!-- <p>{{ item.startDay }}, {{ item.startDate }} | {{ item.endDay }}, {{ item.endDate }}<span> -->
+                      <!-- <button class="primary btn-link" data-toggle="modal" (click)="selectEditAction(item)" data-target="#editAction">
+                        Edit</button> -->
+                      <!-- </span></p> -->
                   <!-- <input [(ngModel)]="item.startDate" type="date"> -->
                   <!-- <div id="{{ item.id }}" class="slider slider-primary"></div> -->
 
@@ -260,54 +316,184 @@
           <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol" (click)="changeDay('next','startDate')">Next</a></div>
         </div>
         <div class="card-body" style="margin-top: -10px">
-          <div class="row">
+          <div class="row" *ngIf= "viewTodaystds || viewTodays">
             <div class="col-sm-3 card-header text-center">Action Item</div>
             <div class="col-sm-3 card-header">Target Qty</div>
             <div class="col-sm-2 card-header text-left">Start time</div>
             <div class="col-sm-2 card-header text-left">Finish time</div>
             <div class="col-sm-2 card-header text-left"></div>
           </div>
-          <div class="col-sm-12">
-            <ol style="padding-left: 10px;">
-              <li *ngFor="let item of viewActions | async">
-                <div class="row">
-                  <div class="col-sm-3">
-                    {{ item.name }}
-                  </div>
-                  <div class="col-sm-3" style="padding-left: 5px; padding-right:5px">
-                    <div class="form-group">
-                      <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-                        <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty" 
-                          style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="1 200" /><!-- clrs-cell  -->
-                        <div class="input-group-postpend">
-                          <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
-                            <small>{{ item.siu }}</small>
-                          </span>
+          <ng-container>
+            <div class="col-sm-12">
+              <div class="row col-md-11 col-sm-11 ml-auto mr-auto">
+                <p class="category text-left" style="padding-top :2em">
+                  Task classification standard action items
+                </p>
+              </div>
+              <div *ngIf="!viewTodaystds">
+                <p class="na-p"> No standard actions </p>
+              </div>
+              <ol style="padding-left: 10px;">
+                <li *ngFor="let item of standards | async">
+                  <div class="row">
+                    <div class="col-sm-3 text-left">
+                      {{ item.name }}
+                    </div>
+                    <div class="col-sm-3" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                          <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty" style=" padding-left: 10px; padding-right: 10px; height:2em"
+                            placeholder="1 200" /><!-- clrs-cell  -->
+                          <div class="input-group-postpend">
+                            <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+                              <small>
+                                <button class="" *ngIf="!item.unit; else showBTNB" (click)="theItem(item)" title="Add units to {{ item.name }}" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;"  data-toggle="modal" data-target="#editUnits">
+                                  Add units</button>
+                                <ng-template #showBTNB>
+                                  <a class="" title="change units" (click)="theItem(item)" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer"  data-toggle="modal" data-target="#editUnits" >
+                                    {{ item.unit.id }}</a>
+                                </ng-template>
+                                
+                              </small>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
-                    <div class="form-group">
-                      <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start"
-                        style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="Time from" /> <!-- clrs-cell  -->
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start" style=" padding-left: 10px; padding-right: 10px; height:2em"
+                          placeholder="Time from" /> <!-- clrs-cell  -->
+                      </div>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end" style=" padding-left: 10px; padding-right: 10px;  height:2em"
+                          placeholder="Time to" /> <!-- clrs-cell  -->
+                      </div>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <button class="form-control panel-boader clrs-cell btn-link" style=" padding-left: 10px; padding-right: 10px; height:2em"
+                          (click)="addActionTime(item)">Save</button> <!-- clrs-cell  -->
+                      </div>
                     </div>
                   </div>
-                  <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
-                    <div class="form-group">
-                      <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end"
-                        style=" padding-left: 10px; padding-right: 10px;  height:2em" placeholder="Time to" /> <!-- clrs-cell  -->
+                </li>
+              </ol>
+            </div>
+            <div class="col-sm-12">
+              <div class="row col-md-11 col-sm-11 ml-auto mr-auto">
+                <p class="category text-left">
+                  Work action Items
+                </p>
+              </div>
+              <div *ngIf="!viewTodayWork">
+                <p class="na-p"> No work actions </p>
+              </div>
+              <!-- <ol style="padding-left: 10px;">
+                <!- <li *ngFor="let item of viewActions | async"> ->
+                <li *ngFor="let item of viewDayActions">
+                  <div class="row">
+                    <div class="col-sm-3 text-left">
+                      {{ item.name }}
+                    </div>
+                    <div class="col-sm-3" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                          <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty" 
+                            style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="1 200" />
+                          <div class="input-group-postpend">
+                            <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+                              <small>{{ item.unit.id }}</small>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start"
+                          style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="Time from" />
+                      </div>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end"
+                          style=" padding-left: 10px; padding-right: 10px;  height:2em" placeholder="Time to" />
+                      </div>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <button  class="form-control panel-boader clrs-cell btn-link"
+                          style=" padding-left: 10px; padding-right: 10px; height:2em" (click)="addActionTime(item)">Save</button>
+                      </div>
                     </div>
                   </div>
-                  <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
-                    <div class="form-group">
-                      <button  class="form-control panel-boader clrs-cell btn-link"
-                        style=" padding-left: 10px; padding-right: 10px; height:2em" (click)="addActionTime(item)">Save</button> <!-- clrs-cell  -->
+                </li>
+              </ol> -->
+              <ol style="padding-left: 10px;">
+                <li *ngFor="let item of viewActions | async">
+                <!-- <li *ngFor="let item of currentWorkItems"> -->
+                  <div class="row">
+                    <div class="col-sm-3 text-left">
+                      {{ item.name }}
+                    </div>
+                    <div class="col-sm-3" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                          <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty" 
+                            style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="1 200" /><!-- clrs-cell  -->
+                          <div class="input-group-postpend">
+                            <span  *ngIf="!item.unit.id; else showUnit" class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+                              <small><span>{{ item.unit.id }}</span><span *ngIf="!item.unit.id">{{ item.unit }}</span></small>
+                            </span>
+                            <ng-template #showUnit>
+                              <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+                                <small>{{ item.unit }}</small>
+                              </span>
+                            </ng-template>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start"
+                          style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="Time from" /> <!-- clrs-cell  -->
+                      </div>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end"
+                          style=" padding-left: 10px; padding-right: 10px;  height:2em" placeholder="Time to" /> <!-- clrs-cell  -->
+                      </div>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group">
+                        <button  class="form-control panel-boader clrs-cell btn-link"
+                          style=" padding-left: 10px; padding-right: 10px; height:2em" (click)="addActionTime(item)">Save</button> <!-- clrs-cell  -->
+                      </div>
                     </div>
                   </div>
-                </div>
-              </li>
-            </ol>
+                </li>
+              </ol>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!viewTodaystds && !viewTodayWork">
+            <h4 class="clrs-h4">
+              You have no activity planned Today
+            </h4>
+          </ng-container>
+          <div class="card-footer text-right">
+            <div class="row">
+              <div class="col-md-9"></div>
+              <div class="col-md-3">
+                <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday"> <!-- (click)="selectEditAction(item);showActionParticipants()"  -->
+                  New Action
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -315,7 +501,40 @@
   </div>
 </div>
 <!-- </div> -->
-
+<div class="modal fade modal-primary" id="editUnits" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog"><!--  modal-sm -->
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <div class="modal-profile ml-auto mr-auto">
+          <i class="nc-icon nc-bulb-63"></i>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p class="text-center">Edit Units for {{ selectEditWorkItem.name }}</p>
+        <div class="row">
+          <label class="col-md-4 col-form-label">Select Unit</label>
+          <div class="col-md-7">
+            <div class="form-group">
+              <!-- <ng-select [items]="SIunits" bindLabel="name" name="jyu" placeholder="Select unit of Measure" [(ngModel)]="selectEditWorkItem.unit"></ng-select> -->
+              <ng-select [items]="SIunits" bindLabel="name" id="sui1" name="jyu" placeholder="Select unit of Measure" [(ngModel)]="setSui">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="left-side">
+          <button type="button" class="btn btn-link btn-link" data-dismiss="modal">Back</button>
+        </div>
+        <div class="divider"></div>
+        <div class="right-side">
+          <button type="button" class="btn btn-link btn-link" (click)="addUnit()" data-dismiss="modal">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal fade" id="newAction" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -326,7 +545,7 @@
             <font size=4>New Action Item for <br>{{ selectedTask.name }} task</font>
           </p>
         </div>
-        <a> Selected Unit: <span></span><small> {{ setSui.id }}</small></a><br>
+        <!-- <a *ngIf="setUnit.id"> Selected Unit: <span></span><small> {{ (setUnit)?.id }}</small></a><br> -->
         <hr>
         <form class="form-horizontal">
           <div class="row">
@@ -341,8 +560,8 @@
             <label class="col-md-4 col-form-label">Unit measure</label>
             <div class="col-md-7">
               <div class="form-group">
-                <ng-select [items]="SIunits" bindLabel="name" name="jyu" placeholder="Select unit of Measure"
-                  [(ngModel)]="setSui"></ng-select>
+                <ng-select [items]="SIunits" bindLabel="name"  id="sui12" name="jyu" placeholder="Select unit of Measure"
+                  [(ngModel)]="setUnit"></ng-select>
               </div>
             </div>
           </div>
@@ -574,6 +793,78 @@
           <div class="divider"></div>
           <div class="right-side">
             <button type="button" class="btn btn-success btn-link" (click)="newTask()" data-dismiss="modal" title="save task">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="newActionToday" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="card-body ">
+        <div class="card-header text-center">
+          <p class="col-md-10 ml-auto mr-auto title na-an info" style="color:steelblue">
+            <font size=4>New Action Item for {{ selectedTask.name }} task</font>
+          </p>
+        </div>
+        <hr>
+        <form class="form-horizontal">
+          <div class="row">
+            <label class="col-md-4 col-form-label">Action Name</label>
+            <div class="col-md-7">
+              <div class="form-group">
+                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Action name">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-4 col-form-label">Unit measure</label>
+            <div class="col-md-7 col-lg-6 col-sm-5">
+              <div class="form-group">
+                <ng-select [items]="SIunits" bindLabel="name" name="jyu" id="sui3" placeholder="Select unit of Measure"
+                  [(ngModel)]="setSui">
+                </ng-select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-4 col-form-label">Task</label>
+            <div class="col-md-7 col-lg-6 col-sm-5">
+              <div class="form-group">
+                <ng-select placeholder="Select Task" [(ngModel)]="taskId" name="actionTask">
+                  <ng-option *ngFor="let tas of dptTasks | async" [value]="tas.id">
+                    {{ tas.name }}</ng-option>
+                </ng-select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-4 col-form-label">Start Date</label>
+            <div class="col-md-7">
+              <div class="form-group">
+                <input type="time" [(ngModel)]="actionItem.start" name="siu" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-4 col-form-label">End Date</label>
+            <div class="col-md-7">
+              <div class="form-group">
+                <input type="time" [(ngModel)]="actionItem.end" name="siu" class="form-control">
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="modal-footer" style="margin-bottom:0%">
+          <div class="left-side">
+            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
+          </div>
+          <div class="divider"></div>
+          <div class="right-side">
+            <button type="button" class="btn btn-success btn-link" (click)="newActionToday(actionItem)" data-dismiss="modal"
+              title="save action">Enter</button>
           </div>
         </div>
       </div>

@@ -16,7 +16,8 @@ import * as moment from 'moment';
 import { scaleLinear } from "d3-scale";
 import * as d3 from "d3";
 import { TaskService } from 'app/services/task.service';
-import { coloursUser } from 'app/models/user-model';
+import { coloursUser, classification } from 'app/models/user-model';
+import { InitialiseService } from 'app/services/initialise.service';
 
 declare var $: any;
 
@@ -79,6 +80,7 @@ export class MapTaskComponent {
   selectedProject: Project;
   proj_ID: string;
   userChampion: ParticipantData;
+  myChampion: ParticipantData;
 
 
   projects: Observable<Project[]>;
@@ -141,16 +143,20 @@ export class MapTaskComponent {
   aPeriod: string;
   workDay: string;
   workWeekDay: string;
-
+  classifications: Observable<any[]>;
   SIunits: ({ id: string; name: string; disabled?: undefined; } | { id: number; name: string; disabled: boolean; })[];
   currentMonthLabel: string;
+  classification: classification;
+  myContacts: Observable<ParticipantData[]>;
 
-  constructor(public auth: AuthService, private pns: PersonalService, private ts: TaskService, public afAuth: AngularFireAuth, public es: EnterpriseService, public afs: AngularFirestore, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
+  constructor(public auth: AuthService, private is: InitialiseService, private pns: PersonalService, private ts: TaskService, public afAuth: AngularFireAuth, public es: EnterpriseService, public afs: AngularFirestore, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
     
-    this.task = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: "" };    
-    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" };
-    this.userChampion = { name: "", id: "", email: "", phoneNumber: "" };
-    this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
+    this.task = is.getTask();
+    this.selectedCompany = is.getSelectedCompany();
+    this.selectedProject = is.getSelectedProject();
+    this.userChampion = is.getUserChampion();
+    this.myChampion = is.getUserChampion();
+    // this.classification = { name: '', createdOn: '' };
     
 
     this.afAuth.user.subscribe(user => {
@@ -160,9 +166,10 @@ export class MapTaskComponent {
         name: this.user.displayName,
         email: this.user.email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
       }
-      // this.loggedInUser = loggedInUser;
+      this.userChampion = loggedInUser;
       this.dataCall();
     })
 
@@ -250,6 +257,16 @@ export class MapTaskComponent {
 
   }
 
+  deleteTask(task){
+    console.log(task);
+    
+    let taskId = task.id;
+
+    console.log(taskId);
+    
+    this.afs.collection('Users').doc(this.userId).collection('tasks').doc(taskId).delete();
+    this.afs.collection('Users').doc(this.task.champion.id).collection('tasks').doc(taskId).delete();
+  }
 
    newTask(){
     console.log(this.task);
@@ -260,7 +277,7 @@ export class MapTaskComponent {
     this.task.byId = this.userId;
 
     // setting dates
-    this.task.createdOn = new Date().toISOString();
+     this.task.createdOn = new Date().toISOString();
     this.task.startDay = moment(this.task.start, "YYYY-MM-DD").dayOfYear().toString();
     this.task.startWeek = moment(this.task.start, "YYYY-MM-DD").week().toString();
     this.task.startMonth = moment(this.task.start, "YYYY-MM-DD").month().toString();
@@ -272,25 +289,63 @@ export class MapTaskComponent {
     this.task.finishQuarter = moment(this.task.finish, "YYYY-MM-DD").quarter().toString();
     this.task.finishYear = moment(this.task.finish, "YYYY-MM-DD").year().toString();
 
-    this.task.companyName = this.selectedCompany.name;
-    this.task.companyId = this.selectedCompany.id;
-    this.task.projectId = this.proj_ID;
-    this.task.projectName = this.selectedProject.name;
-    this.task.projectType = this.selectedProject.type;
-    this.task.champion = this.userChampion;
+    this.task.companyName = 'NaN';
+    this.task.companyId = '';
+    this.task.projectId = '';
+    this.task.projectName = 'NaN';
+    this.task.projectType = 'NaN';
 
-    console.log(this.task)
+     if (this.myChampion.id != '') {
+       this.task.champion = this.myChampion;  
+       this.task.participants = [this.myChampion]; 
+    }
+    
+    else {
+       this.task.champion = this.userChampion;    
+       this.task.participants = [this.userChampion]; 
+    }
 
-    this.ts.addTask(this.task, this.selectedCompany);
+    // this.ts.addTask(this.task, this.selectedCompany);
 
-    this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
-    this.userChampion = { name: "", id: "", email: "", phoneNumber: "" };
-     this.task = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: "" };    
-    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" };  
+     console.log('task created' + this.task);
+     let createdTask ;
+     createdTask = this.task;
+     createdTask.classification = this.classification;
+     let userRef = this.afs.collection('Users').doc(this.userId).collection('tasks');
+     let userClassRef = this.afs.collection('Users').doc(this.userId).collection('classifications').doc(this.classification.id).collection('tasks');
+     let champRef = this.afs.collection('Users').doc(this.task.champion.id).collection('tasks');
+     //set task under a user
+     userRef.add(createdTask).then(function (Ref) {
+      let newTaskId = Ref.id;
+        console.log(Ref);
+        //set task under a champion
+
+        champRef.doc(newTaskId).set(createdTask);
+        // update id for user
+
+        userRef.doc(newTaskId).update({ 'id': newTaskId });
+         // set task under user classifications
+        userClassRef.doc(newTaskId).set(createdTask);
+
+        // update id for user
+        userClassRef.doc(newTaskId).update({ 'id': newTaskId });
+
+        // update id for champion
+        champRef.doc(newTaskId).update({ 'id': newTaskId });
+     });    
+
+     this.task = this.is.getTask();
+     this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "" };
+     this.myChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: ""};
   }
 
 
   async dataCall(){
+
+    this.classifications = this.pns.getClassifications(this.userId);
+    this.myContacts = this.pns.getContacts(this.userId);
+
+
     this.tasks = this.afs.collection('/Users').doc(this.userId).collection('tasks', ref => { return ref.where('startDay', '==', this.todayDate).orderBy('start','asc').limit(5) }).snapshotChanges().pipe(
        map(b => b.map(a => {
           const data = a.payload.doc.data() as MomentTask;
@@ -451,7 +506,8 @@ export class MapTaskComponent {
       name: x.name,
       email: x.email,
       id: x.id,
-      phoneNumber: x.phoneNumber
+      phoneNumber: x.phoneNumber,
+      photoURL: this.user.photoURL
     };
     this.userChampion = cUser;
     console.log(x);

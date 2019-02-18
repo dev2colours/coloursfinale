@@ -4,6 +4,7 @@ import { CalendarComponent } from './calendar.component';
 import { MapTaskComponent } from './map-task/map-task.component';
 import { ImplementationComponent } from './implementation/implementation.component';
 import { TimesheetComponent } from './timesheet/timesheet.component';
+import { PopupComponent } from './popup/popup.component';
 
 
 export const CalendarRoutes: Routes = [{
@@ -17,6 +18,9 @@ export const CalendarRoutes: Routes = [{
     },{
         path: 'implementation',
         component: ImplementationComponent
+    },{
+        path: 'popup',
+        component: PopupComponent
     },{
         path: 'timesheet',
         component: TimesheetComponent

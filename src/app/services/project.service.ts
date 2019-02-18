@@ -8,9 +8,9 @@ import { Observable, Observer } from 'rxjs';
 import { map, timestamp } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
-import { Enterprise, ParticipantData, companyChampion, Department } from "../models/enterprise-model";
-import { Project } from "../models/project-model";
-import { Task, ActionItem } from "../models/task-model";
+import { Enterprise, ParticipantData, companyChampion, Department, asset, assetInProject } from "../models/enterprise-model";
+import { Project, abridgedBill, workItem, Section } from "../models/project-model";
+import { Task } from "../models/task-model";
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +30,12 @@ export class ProjectService {
   companyTasks: Observable<Task[]>;
   showStaffTasks: Observable<Task[]>;
   labour: Observable<ParticipantData[]>;
-  staffTaskActions: Observable<ActionItem[]>;
-
+  staffTaskActions: Observable<workItem[]>;
+  Bill: Observable<abridgedBill[]>;
+  billWorkItems: Observable<workItem[]>;
+  ProjectPlantReturns: Observable<assetInProject[]>;
+  projectSections: Observable<Section[]>;
+  billWorks: Observable<workItem[]>;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
     afAuth.authState.subscribe(user => {
@@ -41,6 +45,30 @@ export class ProjectService {
     })
 
   }
+
+  getProjectData(projectName){
+    this.afs.collection('Projects', ref => { return ref.where('name', '==', projectName  ) }).snapshotChanges().pipe(
+    map(b => b.map(a => {
+      const data = a.payload.doc.data() as Task;
+      const id = a.payload.doc.id;
+      return { id, ...data };
+    }))
+    );
+  }
+
+  addProjectSections(projectId){}
+
+  getProjectSections(projectId){
+    this.projectSections = this.afs.collection('Projects').doc(projectId).collection<Section>('sections', ref => { return ref.orderBy('no', 'asc' ) }).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Section;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+    return this.projectSections
+  }
+
   compParams(projectId) {
     this.currentProjectId = projectId;
     console.log(this.currentProjectId);
@@ -49,6 +77,20 @@ export class ProjectService {
   setCurrentProject(Ref){
     // alert(Ref.name);
     this.currentProject = Ref
+  }
+
+  getProjectPlantReturns (companyId, projectId) {
+    let plantRef = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(companyId).collection<assetInProject>('plantReturns');
+    // this.ProjectPlantReturns = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(companyId).collection('plantReturns').snapshotChanges().pipe(
+    this.ProjectPlantReturns = plantRef.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as assetInProject;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+    
+    return this.ProjectPlantReturns;
   }
 
   getStaffProjTasks(projId, staffId) {
@@ -65,6 +107,43 @@ export class ProjectService {
     );
     return this.showStaffTasks;
   }
+
+  getProCompanyABOQ(projectId, compId) {
+    let compRef = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(compId);
+    this.Bill = compRef.collection<abridgedBill>('abridgedBOQ', ref => ref.orderBy('No', 'asc')).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as abridgedBill;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+    return this.Bill;
+  }
+
+  getCompanyBillWorks(projectId, compId) {
+    let compRef = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(compId);
+    this.billWorks = compRef.collection<workItem>('workItems', ref => ref.orderBy('name', 'asc')).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as workItem;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+    return this.billWorks;
+  }
+
+  getBillWorkItems(projectId, compId, billID) {
+    let BillRef = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(compId).collection<abridgedBill>('abridgedBOQ').doc(billID);
+    this.billWorkItems = BillRef.collection<workItem>('workItems').snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as workItem;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+    return this.billWorkItems;
+  }
+
   getProCompanyLabour(projectId, compId){
     let compRef = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(compId);
     this.labour = compRef.collection<ParticipantData>('labour').snapshotChanges().pipe(
@@ -82,10 +161,10 @@ export class ProjectService {
     console.log('project Id -->' + ' ' + projId);
 
     let proRef = this.afs.collection('Users').doc(staffId).collection<Project>('projects').doc(projId);    
-    let taskActions = proRef.collection<Task>('tasks').doc(taskId).collection<ActionItem>('actionItems');
+    let taskActions = proRef.collection<Task>('tasks').doc(taskId).collection<workItem>('workItems');
     this.staffTaskActions = taskActions.snapshotChanges().pipe(
       map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as ActionItem;
+        const data = a.payload.doc.data() as workItem;
         const id = a.payload.doc.id;
         return { id, ...data };
       }))
@@ -146,36 +225,44 @@ export class ProjectService {
 
   addProject(user, project, company){
     let projectId: string = '';
-    let dref;
-    dref = this.afs.collection('Projects')
+    let dref = this.afs.collection('Projects')
     let entRef = this.afs.collection('Enterprises').doc(company.id).collection('projects');
     let myProRef = this.afs.collection('/Users').doc(user.id).collection('projects');
-    //////   Counter projectsCreated++
-
-    this.afs.collection('/Users').doc(user.id).collection('projects').add(project).then(function (pref) {
+    // this.afs.collection('/Users').doc(user.id).collection('projects').add(project).then(function (pref) {
+    myProRef.add(project).then(function (pref) {
       ////Add this.project to users collection of projects
       console.log(pref.id)
       projectId = pref.id;   /// Id of the newly created project
 
       if (project.type === 'Enterprise') {
         console.log(projectId)
-        dref.doc(projectId).set(project);
-        dref.doc(projectId).collection('Participants').doc(user.id).set(user);
-        dref.doc(projectId).collection('enterprises').doc(company.id).set(company);
         entRef.doc(projectId).set(project);
-
+        dref.doc(projectId).set(project);
         dref.doc(projectId).update({ 'id': projectId });
         entRef.doc(projectId).update({ 'id': projectId });
         myProRef.doc(projectId).update({ 'id': projectId });
-        console.log('project Id updated')
-        console.log('enterprise project')
+        dref.doc(projectId).collection('Participants').doc(user.id).set(user);
+        dref.doc(projectId).collection('enterprises').doc(company.id).set(company);
+        console.log('project Id updated');
+        console.log('enterprise project');
       }
     });
-    this.project = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", location: "", sector: "", id: "", };
-
-  
   }
 
+  dismissProject(userId, project) {
+    let projectId = project.id;
+    let dref = this.afs.collection('Projects')
+    let entRef = this.afs.collection('Enterprises').doc(project.companyId).collection('projects');
+    let myProRef = this.afs.collection('/Users').doc(userId).collection('projects');
+    myProRef.doc(projectId).delete();
+    if (project.type === 'Enterprise') {
+      console.log(projectId)
+      dref.doc(projectId).delete();
+      entRef.doc(projectId).delete();
+      console.log('project dismissed')
+      console.log('enterprise project dismissed')
+    }
+  }
 
   getMyProjectTasks(projectId, myUserId) {
     // this.myCompanyTasks = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref.where('byId', '==', myUserId) }).snapshotChanges().pipe(

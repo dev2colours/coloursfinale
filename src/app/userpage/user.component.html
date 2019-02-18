@@ -11,15 +11,14 @@
               <div class="photo">
                 <img class="justify-content-center avatar" src="{{ user.photoURL }}">
               </div>
-              <h5 class="title card-category na-am">{{user.displayName}}</h5>
+              <!-- <h5 class="title card-category na-am">{{user.displayName}}</h5> -->
+              <h5 class="title card-category na-am">{{ userData.name }}</h5>
             <!-- <p class="description">
               @chetfaker
             </p> -->
           </div>
           <p class="description text-center"><small>
-            "Hard working is the key
-            <br> to diggity
-            <br> I wanna bag it up"</small>
+            ""</small>
             <br><br>
             <button class="info btn-link" (click)="run1()">edit profile</button>
           </p>
@@ -52,61 +51,82 @@
       </div>
       <div class="card">
         <div class="card-header">
-          <h4 class="card-title">Team Members</h4>
+          <h4 class="card-title">Contact</h4>
         </div>
         <div class="card-body">
           <ul class="list-unstyled team-members">
-            <li>
-              <div class="row">
-                <div class="col-md-2 col-2">
-                  <div class="avatar">
-                    <img src="./assets/img/faces/ayo-ogunseinde-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+            <ng-container *ngIf="showContacts">
+              <li>
+                <div class="row">
+                  <div class="col-md-2 col-2">
+                    <div class="avatar">
+                      <img src="./assets/img/faces/ayo-ogunseinde-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                    </div>
+                  </div>
+                  <div class="col-md-7 col-7">
+                    DJ Khaled
+                    <br />
+                    <!-- <span class="text-muted">
+                      <small>Offline</small>
+                    </span> -->
+                  </div>
+                  <div class="col-md-3 col-3 text-right">
+                    <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="fa fa-envelope"></i></button>
                   </div>
                 </div>
-                <div class="col-md-7 col-7">
-                  DJ Khaled
-                  <br />
-                  <span class="text-muted">
-                    <small>Offline</small>
-                  </span>
-                </div>
-                <div class="col-md-3 col-3 text-right">
-                  <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="fa fa-envelope"></i></button>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="row">
-                <div class="col-md-2 col-2">
-                  <div class="avatar">
-                    <img src="./assets/img/faces/joe-gardner-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+              </li>
+              <li>
+                <div class="row">
+                  <div class="col-md-2 col-2">
+                    <div class="avatar">
+                      <img src="./assets/img/faces/joe-gardner-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                    </div>
+                  </div>
+                  <div class="col-md-7 col-7">
+                    Creative Tim
+                    <br />
+                    <!-- <span class="text-success">
+                      <small>Available</small>
+                    </span> -->
+                  </div>
+                  <div class="col-md-3 col-3 text-right">
+                    <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="fa fa-envelope"></i></button>
                   </div>
                 </div>
-                <div class="col-md-7 col-7">
-                  Creative Tim
-                  <br />
-                  <span class="text-success">
-                    <small>Available</small>
-                  </span>
+              </li>
+              <li>
+                <div class="row">
+                  <div class="col-md-2 col-2">
+                    <div class="avatar">
+                      <img src="./assets/img/faces/clem-onojeghuo-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                    </div>
+                  </div>
+                  <div class="col-ms-7 col-7">
+                    Flume
+                    <br />
+                    <!-- <span class="text-danger">
+                      <small>Busy</small>
+                    </span> -->
+                  </div>
+                  <div class="col-md-3 col-3 text-right">
+                    <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="fa fa-envelope"></i></button>
+                  </div>
                 </div>
-                <div class="col-md-3 col-3 text-right">
-                  <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="fa fa-envelope"></i></button>
-                </div>
-              </div>
-            </li>
-            <li>
+              </li>
+            </ng-container>
+            <li *ngFor="let contact of myContacts | async">
               <div class="row">
                 <div class="col-md-2 col-2">
                   <div class="avatar">
-                    <img src="./assets/img/faces/clem-onojeghuo-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                    <img src="./assets/img/faces/default-avatar.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
                   </div>
                 </div>
                 <div class="col-ms-7 col-7">
-                  Flume
+                  {{ contact.name }}
                   <br />
-                  <span class="text-danger">
+                  <!-- <span class="text-danger">
                     <small>Busy</small>
-                  </span>
+                  </span> -->
                 </div>
                 <div class="col-md-3 col-3 text-right">
                   <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="fa fa-envelope"></i></button>
@@ -114,14 +134,14 @@
               </div>
             </li>
             <button class="info btn-link" data-toggle="modal" data-target="#myModal10">
-                New Contact
-              </button>
+              New Contact
+            </button>
 
           </ul>
         </div>
         <!-- small modal -->
               <div class="modal fade modal-primary" id="myModal10" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-sm">
+                <div class="modal-dialog"><!-- modal-sm -->
                   <div class="modal-content">
                     <div class="modal-header">
                       <div class="modal-profile ml-auto mr-auto">
@@ -129,9 +149,13 @@
                       </div> New Conatct
                     </div>
                     <div class="modal-body">
-                      <p>Always have an access to your profile</p>
+                      <p>Select from the list to add Contacts</p>
+
+                      <div *ngIf="selectedContacts" class="col-md-12">
+                        <p *ngFor="let item of selectedContacts">{{ item.name }},</p>
+                      </div>
                       <form method="">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                           <label>Contact Name</label>
                           <input type="text" [(ngModel)]="contact.name" name="cName" class="form-control" placeholder="Simon">
                         </div>
@@ -142,7 +166,12 @@
                         <div class="form-group">
                           <label>Contact number</label>
                           <input type="text" [(ngModel)]="contact.phoneNumber" name="cNumber" class="form-control" placeholder="+263774555666">
-                        </div>
+                        </div> -->
+
+                        <ng-select [items]="coloursUsers | async" bindLabel="name" name="tClassification" placeholder="Select contact"
+                          (change)="addContact(newContact)"  [(ngModel)]="newContact">
+                        </ng-select>
+                      
                       </form>
                     </div>
                     <div class="modal-footer">
@@ -151,7 +180,7 @@
                       </div>
                       <div class="divider"></div>
                       <div class="right-side">
-                        <button type="button" class="btn btn-link btn-link" (click)="addContact()" data-dismiss="modal">Save</button>
+                        <button type="button" class="btn btn-link btn-link" data-dismiss="modal">Save</button> <!--  (click)="addContact()" -->
                       </div>
                     </div>
                   </div>
@@ -160,7 +189,7 @@
               <!--    end small modal -->
       </div>
     </div>
-    <div class="col-md-7" *ngIf="show1" ><!--  *ngIf="show1" -->
+    <div class="col-md-7" *ngIf="show1" >
       <div class="card">
         <div class="card-header">
           <div class="row">

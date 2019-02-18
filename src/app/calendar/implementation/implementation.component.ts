@@ -8,15 +8,16 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument 
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Enterprise, ParticipantData, companyChampion, Department } from "../../models/enterprise-model";
-import { Project } from "../../models/project-model";
-import { Task, MomentTask, ActionItem } from "../../models/task-model";
+import { Project, workItem } from "../../models/project-model";
+import { Task, MomentTask } from "../../models/task-model";
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
 import { scaleLinear } from "d3-scale";
 import * as d3 from "d3";
 import { TaskService } from 'app/services/task.service';
-import { coloursUser } from 'app/models/user-model';
+import { coloursUser, classification } from 'app/models/user-model';
+import { InitialiseService } from 'app/services/initialise.service';
 
 declare var $: any;
 declare var require: any
@@ -24,18 +25,23 @@ declare interface TableData {
   headerRow: string[];
   dataRows: string[][];
 }
+export interface classTask extends Task {
+  classification:classification;
+}
 
 @Component({
   selector: 'app-implementation',
   templateUrl: './implementation.component.html',
   styleUrls: ['./implementation.component.css']
 })
+
 export class ImplementationComponent {
 
   public tableDataC: TableData;
 
   userId: string;
   coloursUsers: Observable<coloursUser[]>;
+  
   
   user: firebase.User;
   tasks: Observable<Task[]>;
@@ -64,22 +70,22 @@ export class ImplementationComponent {
   theseTasks: MomentTask[];
   myData: ParticipantData;
 
-  //ActionItem
+  //workItem
 
-  actionItem: ActionItem;
+  actionItem: workItem;
   dptStaff: Observable<ParticipantData[]>;
-  taskActions: Observable<ActionItem[]>;
+  taskActions: Observable<workItem[]>;
   calldptStaff: Observable<ParticipantData[]>;
-  selectedAction: ActionItem;
-  actionItems: Observable<ActionItem[]>;
+  selectedAction: workItem;
+  actionItems: Observable<workItem[]>;
   dp: string;
   checkedAction: [string];
   myTaskData: MomentTask;
   allMyTasks = [];
   compId:string;
-  selectedTask: Task;
+  selectedTask: classTask;
   weeklyTasks: Observable<Task[]>;
-  mytaskActions: Observable<ActionItem[]>;
+  mytaskActions: Observable<workItem[]>;
   selectedActionItems =[];
   options = ['OptionA', 'OptionB', 'OptionC'];
   optionsMap = {
@@ -89,19 +95,20 @@ export class ImplementationComponent {
   };
   optionsChecked = [];
   order: any;
-  myWeeklyActions: Observable<ActionItem[]>;
-  actiondata: ActionItem;
+  myWeeklyActions: Observable<workItem[]>;
+  actiondata: workItem;
   myActions = [];
-  viewActions: Observable<ActionItem[]>;
+  viewActions: Observable<workItem[]>;
   aPeriod: string;
-  dayTasks: Observable<ActionItem[]>;
+  dayTasks: Observable<workItem[]>;
   workDay: string;
   workWeekDay: string;
-  dashboardActions: Observable<ActionItem[]>;
-  actionData: ActionItem;
-  selectedActions: ActionItem[];
+  dashboardActions: Observable<workItem[]>;
+  actionData: workItem;
+  selectedActions: workItem[];
   sui: string;
   setSui: ({ id: string; name: string });
+  unit: any;
   SIunits: ({ id: string; name: string; disabled?: undefined; } | { id: number; name: string; disabled: boolean; })[];
 
   OutstandingTasks = [];
@@ -111,8 +118,25 @@ export class ImplementationComponent {
   MediumTermTAsks = [];
   LongTermTAsks = [];
   personalTasks: Observable<Task[]>;
+  compChampion: ParticipantData;
+  standards: Observable<workItem[]>;
+  selectEditWorkItem: workItem;
+  viewTodayWork: boolean = false;
+  viewTodaystds: boolean = false;
+  stdArray: workItem[];
+  stdNo: number;
+  theViewedActions: Observable<workItem[]>;
+  setUnit: { id: string; name: string; };
 
-  constructor(public auth: AuthService, private pns: PersonalService, private ts: TaskService, public afAuth: AngularFireAuth, public es: EnterpriseService, public afs: AngularFirestore, private renderer: Renderer,
+  currentWorkItems :workItem[] = [];
+  theCurrentActions: Observable<workItem[]>;
+  weekNo: number;
+  viewDayActions: any;
+  allActions: any;
+  classification: classification;
+
+
+  constructor(public auth: AuthService, private is: InitialiseService, private pns: PersonalService, private ts: TaskService, public afAuth: AngularFireAuth, public es: EnterpriseService, public afs: AngularFirestore, private renderer: Renderer,
     private element: ElementRef, private router: Router, private as: ActivatedRoute) { 
 
       this.todayDate = moment(new Date(), "YYYY-MM-DD").day().toString();
@@ -124,33 +148,37 @@ export class ImplementationComponent {
 
       this.SIunits = [
         { id: 'hours', name: 'Time(hrs)' },
+        { id: 'items', name: 'Items' },
         { id: 'kg', name: 'Kilograms(Kg)' },
         { id: 'm2', name: 'Area(m2)' },
         { id: 'm3', name: 'Volume(m3)' },
-        { id: 'units', name: 'Units' },
-        { id: 'mi', name: 'Miles' },
-        { id: 'yd', name: 'Yards' },
-        { id: 'mm', name: 'Millimeters' },
-        { id: 'cm', name: 'Centimeters' },
-        { id: 'm', name: 'Meters' },
-        { id: 'Km', name: 'Kilometers' },
-        { id: 'in', name: 'Inches' },
-        { id: 'ft', name: 'Feet' },
-        { id: 'g', name: 'Grams' },
-        { id: 9, name: 'Pavilnys', disabled: true },
+        { id: 'mi', name: 'Miles(mi)' },
+        { id: 'yd', name: 'Yards(yd)' },
+        { id: 'mm', name: 'Millimeters(mm)' },
+        { id: 'cm', name: 'Centimeters(cm)' },
+        { id: 'm', name: 'Meters(m)' },
+        { id: 'Km', name: 'Kilometers(km)' },
+        { id: 'in', name: 'Inches(in)' },
+        { id: 'ft', name: 'Feet(ft)' },
+        { id: 'g', name: 'Grams(g)' },
       ];
       
-      this.setSui = { id: '', name: '' };
+      // this.setSui = { id: '', name: '' };
+      this.setUnit = { id: '', name: '' };
     
-      this.selectedTask = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: "" };
-      this.task = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: "" };    
-      this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" };
-      this.userChampion = { name: "", id: "", email: "", phoneNumber: "" };
-      this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
-      this.actionItem = { name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
-      this.selectedAction = { name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "", companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
       this.dp ="";
       this.mytaskActions = null;
+      this.classification = { name: '', createdOn: '', plannedTime: '', actualTime: '', Varience: '', id: '' };
+
+      this.task = is.getTask();
+      this.selectedProject = is.getSelectedProject();
+      this.userChampion = is.getUserChampion();
+      this.selectedCompany = is.getSelectedCompany();
+      this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", classification:this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "" };
+      this.actionItem = is.getActionItem();
+      this.selectedAction = is.getSelectedAction();
+      this.compChampion = is.getCompChampion();
+      this.selectEditWorkItem = is.getActionItem();
       
    }
 
@@ -182,6 +210,16 @@ export class ImplementationComponent {
     this.selectedTask = TAsk;
   }
 
+  theItem(item: workItem){
+    this.selectEditWorkItem = item;
+  }
+
+  addUnit(){
+    console.log(this.selectEditWorkItem.unit);
+    this.afs.collection('Users').doc(this.userId).collection('myStandards').doc(this.selectEditWorkItem.id).set( this.selectEditWorkItem );
+    console.log(this.selectEditWorkItem.name + ' ' + 'updated untits' + this.selectEditWorkItem.unit);
+    this.selectEditWorkItem = { id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+  }
   /* add to my weekly to do list */
 
   add2WeeklyPlan(task) {
@@ -189,7 +227,7 @@ export class ImplementationComponent {
     console.log(this.selectedTask.name);
     console.log(this.selectedTask.id);
     this.ts.add2WeekPlan(task, this.userId);
-    this.task = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: "", complete: null, id: "", participants: null, status: ""};
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
   }
 
   removeWeekTask(task){
@@ -202,7 +240,7 @@ export class ImplementationComponent {
   removeWeekAction(action) {
     console.log('removing' + ' ' + action);
 
-    let userRef = this.afs.collection('Users').doc(this.userId).collection<ActionItem>('WeeklyActions').doc(action.id);
+    let userRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('WeeklyActions').doc(action.id);
     userRef.delete();
   }
   showTaskActions(task) {
@@ -233,14 +271,14 @@ export class ImplementationComponent {
       console.log();
       
       this.selectedActionItems.push(action);
-      let userRef = this.afs.collection('Users').doc(this.userId).collection<ActionItem>('WeeklyActions');
+      let userRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('WeeklyActions');
       userRef.doc(action.id).set(action);
       console.log("action"+ " " + action + " " + " has been added");
       
 
     } else {
       this.selectedActionItems.splice(this.selectedActionItems.indexOf(action), 1);
-      let userRef = this.afs.collection('Users').doc(this.userId).collection<ActionItem>('WeeklyActions');
+      let userRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('WeeklyActions');
       userRef.doc(action.id).delete();
     }
   }
@@ -249,17 +287,21 @@ export class ImplementationComponent {
     switch (action) {
       case 'previous': {
         this.aPeriod = this.currentDate = moment(this.currentDate).subtract(1, 'd').format('L');
-        console.log(this.currentDate);
-        this.workDay = moment(this.aPeriod).format('LL');
-        this.workWeekDay = moment(this.aPeriod).format('dddd');
-        break;
-      }
-      case 'next': {
-        this.aPeriod = this.currentDate = moment(this.currentDate).add(1, 'd').format('L');
+        this.weekNo = moment(this.currentDate).week();
+        console.log(this.weekNo);
         console.log(this.currentDate);
         this.workDay = moment(this.aPeriod).format('LL');
         this.workWeekDay = moment(this.aPeriod).format('dddd');
 
+        break;
+      }
+      case 'next': {
+        this.aPeriod = this.currentDate = moment(this.currentDate).add(1, 'd').format('L');
+        this.weekNo = moment(this.currentDate).week();
+        console.log(this.currentDate);
+        console.log(this.weekNo);
+        this.workDay = moment(this.aPeriod).format('LL');
+        this.workWeekDay = moment(this.aPeriod).format('dddd');
 
         break; 
       }
@@ -270,29 +312,135 @@ export class ImplementationComponent {
     let testPeriod = "startDate";
     this.dayTasks = this.viewTodayAction(testPeriod, this.aPeriod);
 
+    // let testPeriod = "startWeek";
+    // this.dayTasks = this.viewTodayAction(testPeriod, this.weekNo);
+
   }
 
   initDiary() {
     let testPeriod = "startDate";
     this.viewTodayAction(testPeriod, this.currentDate)
+
+    // let testPeriod = "startWeek";
+    // this.weekNo = moment(this.currentDate).week();
+    // console.log(testPeriod + ' ' + this.weekNo);
+
+    // this.viewTodayAction(testPeriod, this.weekNo)
   }
 
   viewTodayAction(testPeriod, checkPeriod) {
     let viewActionsRef = this.afs.collection('Users').doc(this.userId);
-    this.viewActions = viewActionsRef.collection<ActionItem>('WeeklyActions', ref => ref
+    this.viewActions = viewActionsRef.collection<workItem>('WeeklyActions', ref => ref
       .where(testPeriod, '==', checkPeriod) ).snapshotChanges().pipe(
       map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as ActionItem;
+        const data = a.payload.doc.data() as workItem;
         const id = a.payload.doc.id;
+        
+        if (actions.length > 0) {
+          this.viewTodayWork = true;
+        } else {
+          this.viewTodayWork = false;
+        }
         return { id, ...data };
       }))
     );
 
-    this.viewActions.subscribe((actions) => {
+    console.log(testPeriod + ' ' + checkPeriod);
+    
+    let today = moment(new Date(), "YYYY-MM-DD");
+    this.currentWorkItems = [];
+
+    // let viewActionsRef = this.afs.collection('Users').doc(this.userId);
+    this.allActions = viewActionsRef.collection<workItem>('WeeklyActions').snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as workItem;
+          const id = a.payload.doc.id;
+
+          if (actions.length > 0) {
+            this.viewTodayWork = true;
+          } else {
+            this.viewTodayWork = false;
+          }
+          return { id, ...data };
+        }))
+      );
+
+    this.viewDayActions = [];
+    this.allActions.subscribe((actions) => {
       this.selectedActions = actions;
-      console.log(this.selectedActions);
-      console.log(this.selectedActions.length);
+      actions.forEach(element => {
+        if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
+          // if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
+          this.viewDayActions.push(element);
+        }
+
+      });
+      // console.log(this.selectedActions);
+      // console.log(this.selectedActions.length);
+      if (this.selectedActions.length > 0) {
+        this.viewTodayWork = true;
+      } else {
+        this.viewTodayWork = false;
+      }
     });
+
+    // let viewActionsRef = this.afs.collection('Users').doc(this.userId);
+    // this.viewActions = viewActionsRef.collection<workItem>('WeeklyActions', ref => ref
+    //   .where(testPeriod, '==', checkPeriod)
+    //   ).snapshotChanges().pipe(
+    //     map(actions => actions.map(a => {
+    //       const data = a.payload.doc.data() as workItem;
+    //       const id = a.payload.doc.id;
+
+    //       this.viewActions.subscribe((actions) => {
+    //         this.selectedActions = actions;
+    //         // console.log(this.selectedActions);
+    //         // console.log(this.selectedActions.length);
+    //         if (this.selectedActions.length > 0) {
+    //           this.viewTodayWork = true;
+    //         } else {
+    //           this.viewTodayWork = false;
+    //         }
+    //       });
+
+    //       this.theViewedActions = this.viewActions;
+
+    //       for (let index = 0; index < actions.length; index++) {
+    //         const element = actions[index];
+    //         if (moment(data.startDate).isSameOrBefore(today) && moment(data.endDate).isSameOrAfter(today) || moment(data.startDate).isBetween(data.startDate, data.endDate, 'year')) {
+    //           this.currentWorkItems.push(data);
+    //           console.log(this.currentWorkItems);
+    //         };
+    //       }
+    //       if (actions.length > 0) {
+    //         this.viewTodayWork = true;
+    //       } else {
+    //         this.viewTodayWork = false;
+    //       }
+    //       return { id, ...data };
+    //     }))
+    //   );
+
+    // this.viewDayActions = [];
+    // this.viewActions.subscribe((actions) => {
+    //   this.selectedActions = actions;
+    //   actions.forEach(element => {
+    //     if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
+    //     // if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
+    //       this.viewDayActions.push(element);
+    //     }
+        
+    //   });
+    //   // console.log(this.selectedActions);
+    //   // console.log(this.selectedActions.length);
+    //   if (this.selectedActions.length > 0) {
+    //     this.viewTodayWork = true;
+    //   } else {
+    //     this.viewTodayWork = false;
+    //   }
+    // });
+
+    this.theViewedActions = this.viewActions;
 
     return this.viewActions;
   }
@@ -302,34 +450,48 @@ export class ImplementationComponent {
     console.log(action.start);
     console.log(action.end);
 
-    let weeklyRef = this.afs.collection('Users').doc(this.userId).collection<ActionItem>('WeeklyActions');
-    let allMyActionsRef = this.afs.collection('Users').doc(this.userId).collection<ActionItem>('actionItems');
-    let myTaskActionsRef = this.afs.collection('Users').doc(this.userId).collection<Task>('tasks').doc(action.taskId).collection<ActionItem>('actionItems');
+    let weeklyRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('WeeklyActions');
+    let allMyActionsRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('actionItems');
+    let myTaskActionsRef = this.afs.collection('Users').doc(this.userId).collection<Task>('tasks').doc(action.taskId).collection<workItem>('actionItems');
     weeklyRef.doc(action.id).set(action);
     allMyActionsRef.doc(action.id).set(action);
     myTaskActionsRef.doc(action.id).set(action);
   }
 
   newAction(action) {
+
+    let task = this.selectedTask;
+    // task.classification.id != ""
+    // task = this.selectedTask;
     console.log(action);
+    console.log(this.setUnit.id);
     action.createdBy = this.user.displayName;
     action.byId = this.userId;
-    action.createdOn = new Date().toString();
+    action.createdOn = new Date().toISOString();
     action.taskId = this.selectedTask.id;
+    action.taskName = this.selectedTask.name;
     action.startDate = moment(action.startDate).format('L');
     action.endDate = moment(action.endDate).format('L');
-    // action.startWeek = moment(action.startDate, 'DD-MM-YYYY').subtract(3, 'w').week().toString();
+    action.endWeek = moment(action.endDate, 'MM-DD-YYYY').week().toString();
     action.startWeek = moment(action.startDate, 'MM-DD-YYYY').week().toString();
     action.startDay = moment(action.startDate, 'MM-DD-YYYY').format('ddd').toString();
     action.endDay = moment(action.endDate, 'MM-DD-YYYY').format('ddd').toString();
-    action.champion = this.myData;
-    action.sui = this.setSui.id;
+    action.champion = task.champion;
+    action.unit = this.setUnit.id;
 
+    if (task.classification != null) {
+      action.classification = task.classification;
+    }
+    action.unit = this.setUnit.id;
+    action.type = "planned";
+    console.log(action);
 
     console.log('the task--->' + this.selectedTask.name + " " + this.selectedTask.id);
     console.log('the department-->' + action.name);
-    let allMyActionsRef = this.afs.collection<Enterprise>('Users').doc(this.userId).collection<ActionItem>('actionItems');
-    let myTaskActionsRef = this.afs.collection<Enterprise>('Users').doc(this.userId).collection<Task>('tasks').doc(this.selectedTask.id).collection<ActionItem>('actionItems');
+
+    let myTaskActionsRef = this.afs.collection('Users').doc(this.userId).collection<Task>('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+    let allMyActionsRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('actionItems');
+    
     myTaskActionsRef.add(action).then(function (Ref) {
       let newActionId = Ref.id;
       console.log(Ref);
@@ -354,19 +516,22 @@ export class ImplementationComponent {
     this.selectedAction.startWeek = moment(startDate, "YYYY-MM-DD").week().toString();
 
     console.log('the actionItem-->' + this.selectedAction.name);
-    let weeklyRef = this.afs.collection<Enterprise>('Users').doc(this.userId).collection<ActionItem>('WeeklyActions');
-    let allMyActionsRef = this.afs.collection<Enterprise>('Users').doc(this.userId).collection<ActionItem>('actionItems');
-    let myTaskActionsRef = this.afs.collection<Enterprise>('Users').doc(this.userId).collection<Task>('tasks').doc(this.selectedAction.taskId).collection<ActionItem>('actionItems');
+    let weeklyRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('WeeklyActions');
+    let allMyActionsRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('actionItems');
     weeklyRef.doc(this.selectedAction.id).set(this.selectedAction);
     allMyActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
-    myTaskActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
-    startDate = ""; endDate = null;
-    this.selectedAction = { name: "", siu: "", targetQty: "", actualData: null, start: null, end: null, projectId: "", companyId: "",
-    companyName: "", projectName: "", workStatus: "", complete: null, id: "", taskId: "", createdOn: "", createdBy: "", byId: "", champion: "", participants: null, startDate: null, endDate: null, startWeek: "", startDay: "", endDay: "" };
+    if (this.selectedAction.taskId != "") {
+      let myTaskActionsRef = this.afs.collection('Users').doc(this.userId).collection<Task>('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
+      myTaskActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
+    }
+    startDate = ""; endDate = "";
+    this.selectedAction = { id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
   }
   
   refreshData() {
-    this.currentDate = moment(new Date()).format('L');;
+    this.currentDate = moment(new Date()).format('L');
+    console.log(moment(new Date()).format('YYYY-MM-DD'));
+    
     console.log(this.currentDate);
     this.workDay = moment().format('LL');
     this.workWeekDay = moment(this.aPeriod).format('dddd');    
@@ -380,7 +545,12 @@ export class ImplementationComponent {
     console.log(this.userId);
 
     let userdataRef = this.afs.collection('Users').doc(this.userId);
-    
+    this.OutstandingTasks = [];
+    this.CurrentTAsks = [];
+    this.UpcomingTAsks = [];
+    this.ShortTermTAsks = [];
+    this.MediumTermTAsks = [];
+    this.LongTermTAsks = [];
     this.tasks = userdataRef.collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as MomentTask;
@@ -389,10 +559,23 @@ export class ImplementationComponent {
         this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
         this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
         // this.categorizedTasks.push(this.myTaskData);
+        
+        return { id, ...data };
+      }))
+    );
+
+    this.tasks.subscribe((tasks) => {
+      console.log(tasks);
+      this.OutstandingTasks = [];
+      this.CurrentTAsks = [];
+      this.UpcomingTAsks = [];
+      this.ShortTermTAsks = [];
+      this.MediumTermTAsks = [];
+      this.LongTermTAsks = [];
+      tasks.forEach(data => {
         let today = moment(new Date(), "YYYY-MM-DD");
-
         if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
-
+          // currentWorkItems
           this.CurrentTAsks.push(data);
         };
         // outstanding tasks
@@ -401,6 +584,7 @@ export class ImplementationComponent {
         };
         // Upcoming tasks
         if (moment(data.start).isAfter(today)) {
+          this.OutstandingTasks = [];
           this.UpcomingTAsks.push(data);
           if (moment(data.start).isBefore(today.add(3, "month"))) {
             this.ShortTermTAsks.push(data);
@@ -413,19 +597,39 @@ export class ImplementationComponent {
           }
 
         };
+      });
+      this.allMyTasks = tasks;
+    });
+
+    this.standards = this.afs.collection('Users').doc(this.userId).collection('myStandards', ref => ref.orderBy('classificationName')).snapshotChanges().pipe(
+      map(b => b.map(a => {
+        const data = a.payload.doc.data() as workItem;
+        const id = a.payload.doc.id;
+        console.log(b.length);
+        
+        if (b.length >= 1) {
+          this.viewTodaystds = true;          
+        } else {
+          this.viewTodaystds = false;          
+        }
         return { id, ...data };
       }))
     );
 
-    this.tasks.subscribe((tasks) => {
-      console.log(tasks);
-      this.allMyTasks = tasks;
+    this.standards.subscribe((actions) => {
+      this.stdArray = actions;
+      this.stdNo = actions.length;
     });
 
+    // if (this.stdNo > 0) {
+    //   this.viewTodaystds = true;
+    // } else {
+    //   this.viewTodaystds = false;
+    // }
     
-    this.myWeeklyActions = userdataRef.collection<ActionItem>('WeeklyActions',).snapshotChanges().pipe(
+    this.myWeeklyActions = userdataRef.collection<workItem>('WeeklyActions',).snapshotChanges().pipe(
       map(b => b.map(a => {
-        const data = a.payload.doc.data() as ActionItem;
+        const data = a.payload.doc.data() as workItem;
         const id = a.payload.doc.id;
         data.startDate = moment(data.startDate, "MM-DD-YYYY").format('LL');
         data.endDate = moment(data.endDate,  "MM-DD-YYYY").format('LL');
@@ -446,9 +650,9 @@ export class ImplementationComponent {
     let arraySize = this.myActions.length;
     console.log(arraySize);
 
-    this.dashboardActions = this.afs.collection('Users').doc(this.userId).collection<ActionItem>('actionItems', ref => ref.orderBy('start')).snapshotChanges().pipe(
+    this.dashboardActions = this.afs.collection('Users').doc(this.userId).collection<workItem>('actionItems', ref => ref.orderBy('start')).snapshotChanges().pipe(
       map(b => b.map(a => {
-        const data = a.payload.doc.data() as ActionItem;
+        const data = a.payload.doc.data() as workItem;
         const id = a.payload.doc.id;
         this.actionData = data;
         this.actionData.startDate = moment(data.startDate, "YYYY-MM-DD").fromNow().toString();
@@ -469,7 +673,8 @@ export class ImplementationComponent {
         name: this.user.displayName,
         email: this.user.email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
       }
       console.log(this.userId);
 
