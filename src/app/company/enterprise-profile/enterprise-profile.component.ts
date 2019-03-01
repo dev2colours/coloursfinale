@@ -14,7 +14,7 @@ import * as moment from 'moment';
 import { scaleLinear } from "d3-scale";
 import * as d3 from "d3";
 import { TaskService } from 'app/services/task.service';
-import { coloursUser } from 'app/models/user-model';
+import { coloursUser, mail } from 'app/models/user-model';
 import { Task, MomentTask } from "../../models/task-model";
 import { PersonalService } from 'app/services/personal.service';
 import { InitialiseService } from 'app/services/initialise.service';
@@ -156,7 +156,7 @@ export class EnterpriseProfileComponent {
   compId: string;
   newCompany: Observable<Enterprise>;
   tasksImChamp: Observable<{}>;
-  coloursUsers: Observable<firebase.User[]>;
+  coloursUsers: Observable<coloursUser[]>;
   theTasks = [];
   CompanyTasks = [];
   OutstandingTasks = [];
@@ -176,6 +176,7 @@ export class EnterpriseProfileComponent {
   assets: Observable<any[]>;
   selectedDepartment: Department;
   dp: string;
+  dpId: string;
   projId: string;
   Champion: ParticipantData;
   selParticipantId: any;
@@ -245,6 +246,7 @@ export class EnterpriseProfileComponent {
   month2label: moment.Moment;
   month3label: moment.Moment;
   dptId: string;
+  deptId: string;
   dept: Department;
   dept1: Department;
   dept2: Department;
@@ -266,7 +268,7 @@ export class EnterpriseProfileComponent {
   projectSet: Project;
 
   //workItem
-
+  editedAction: workItem;
   actionItem: workItem;
   dptStaff: Observable<ParticipantData[]>;
   taskActions: Observable<workItem[]>;
@@ -285,7 +287,7 @@ export class EnterpriseProfileComponent {
   staffIds: string[];
   person: any;
   setStaff: ParticipantData;
-  coloursUsersList: Observable<firebase.User[]>;
+  coloursUsersList: Observable<coloursUser[]>;
   optionsChecked = [];
   selectedParticipants: ParticipantData[];
   selectedPartId: string;
@@ -339,6 +341,19 @@ export class EnterpriseProfileComponent {
   allCompProjects: Observable<Project[]>;
   compStaff2: Observable<employeeData[]>;
   companyStaff: Observable<employeeData[]>;
+  myMail: mail;
+  staff3: Observable<employeeData[]>;
+  industrySectors: { name: string; }[];
+  userProfile: Observable<coloursUser>;
+  myDocment: AngularFirestoreDocument<{}>;
+  userData: coloursUser;
+
+  selectedActions: workItem[];
+  viewDayActions: any;
+  viewTodayWork: boolean = false;
+  newCompanystaff: companyStaff;
+  allStaff: Observable<employeeData[]>;
+  action: workItem;
 
   constructor(public afAuth: AngularFireAuth, private ts: TaskService, private is: InitialiseService, private pns: PersonalService, public es: EnterpriseService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
 
@@ -347,27 +362,27 @@ export class EnterpriseProfileComponent {
     this.location = location;
     this.nativeElement = element.nativeElement;
     this.sidebarVisible = false;
-    this.newPart = { name: "", id: "", email: "", phoneNumber: "", photoURL: "" };
+    this.newPart = { name: "", id: "", email: "", bus_email:"", phoneNumber: "", photoURL: "" };
     this.counter = 1;
     this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
-    this.actionItem = { id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type:"", champion: null, participants: null, classification: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type:"", champion: null, participants: null, classification: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
     this.dpt = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
     this.asset = { name: "", assetNumber: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", cost:"" };
     this.client = is.getClient();
     this.subsidiary = is.getSubsidiary();
     this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
-    this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "", nationalId: "", nationality: "", address: "", department: "", departmentId: ""  };
-    this.contactPerson = {
-      name: "", id: "", email: "", phoneNumber: "", photoURL: "" };
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", nationalId: "", nationality: "", address: "", department: "", departmentId: ""  };
+    this.contactPerson = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
     this.selectedCompany = is.getSelectedCompany();
-    this.selectedStaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", id: "" };
-    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", id: "" };
-    this.companystaff2 = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", id: "" };
+    this.selectedStaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
+    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
+    this.companystaff2 = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
     this.department = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null}
     this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null }
-    this.selectedAction = { id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
-    this.setUser = { name: "", id: "", email: "", phoneNumber: "", photoURL: ""};
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+    this.editedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+    this.setUser = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: ""};
     this.joinmyProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
 
     let mmm = moment(new Date(), "DD-MM-YYYY");
@@ -401,6 +416,266 @@ export class EnterpriseProfileComponent {
       { id: 'ft', name: 'Feet(ft)' },
       { id: 'g', name: 'Grams(g)' },
     ];
+
+
+    this.industrySectors = [ 
+      { name: 'Accountants'},
+      { name: 'Advertising/ Public Relations' },
+      { name: 'Aerospace, Defense Contractors '},
+      { name: 'Agribusiness '},
+      { name: 'Agricultural Services & Products' },
+      { name: 'Air Transport' },
+      { name: 'Air Transport Unions' },
+      { name: 'Airlines' },
+      { name: 'Alcoholic Beverages' },
+      { name: 'Alternative Energy Production & Services' },
+      { name: 'Architectural Services' },
+      { name: 'Attorneys / Law Firms' },
+      { name: 'Auto Dealers' },
+      { name: 'Auto Dealers, Japanese' },
+      { name: ' Auto Manufacturers' },
+      { name: 'Automotive' },
+      { name: 'Abortion Policy / Anti - Abortion' },
+      { name: 'Abortion Policy / Pro - Abortion Rights' },
+
+      { name: 'Banking, Mortgage' },
+      { name: 'Banks, Commercial' },
+      { name: 'Banks, Savings & Loans' },
+      { name: 'Bars & Restaurants' },
+      { name: 'Beer, Wine & Liquor' },
+      { name: 'Books, Magazines & Newspapers' },
+      { name: ' Broadcasters, Radio / TV' },
+      { name: 'Builders / General Contractors' },
+      { name: 'Builders / Residential' },
+      { name: 'Building Materials & Equipment' },
+      { name: 'Building Trade Unions ' },
+      { name: 'Business Associations' },
+      { name: 'Business Services' },
+
+      { name: 'Cable & Satellite TV Production & Distribution' },
+      { name: 'Candidate Committees ' },
+      { name: 'Candidate Committees, Democratic' },
+      { name: 'Candidate Committees, Republican' },
+      { name: 'Car Dealers' },
+      { name: 'Car Dealers, Imports' },
+      { name: 'Car Manufacturers' },
+      { name: 'Casinos / Gambling' },
+      { name: 'Cattle Ranchers / Livestock' },
+      { name: 'Chemical & Related Manufacturing' },
+      { name: 'Chiropractors' },
+      { name: 'Civil Servants / Public Officials' },
+      { name: 'Clergy & Religious Organizations ' },
+      { name: 'Clothing Manufacturing' },
+      { name: 'Coal Mining' },
+      { name: 'Colleges, Universities & Schools' },
+      { name: 'Commercial Banks' },
+      { name: 'Commercial TV & Radio Stations' },
+      { name: 'Communications / Electronics' },
+      { name: 'Computer Software' },
+      { name: 'Conservative / Republican' },
+      { name: 'Construction' },
+      { name: 'Construction Services' },
+      { name: 'Construction Unions' },
+      { name: 'Credit Unions' },
+      { name: 'Crop Production & Basic Processing' },
+      { name: 'Cruise Lines' },
+      { name: 'Cruise Ships & Lines' },
+
+      { name: 'Dairy' },
+      { name: 'Defense' },
+      { name: 'Defense Aerospace' },
+      { name: 'Defense Electronics' },
+      { name: 'Defense / Foreign Policy Advocates' },
+      { name: 'Democratic Candidate Committees ' },
+      { name: 'Democratic Leadership PACs' },
+      { name: ' Democratic / Liberal ' },
+      { name: ' Dentists' },
+      { name: ' Doctors & Other Health Professionals' },
+      { name: ' Drug Manufacturers' },
+
+      { name: 'Education ' },
+      { name: 'Electric Utilities' },
+      { name: 'Electronics Manufacturing & Equipment' },
+      { name: 'Electronics, Defense Contractors' },
+      { name: 'Energy & Natural Resources' },
+      { name: 'Entertainment Industry' },
+      { name: 'Environment ' },
+      { name: 'Farm Bureaus' },
+      { name: 'Farming' },
+      { name: 'Finance / Credit Companies' },
+      { name: 'Finance, Insurance & Real Estate' },
+      { name: 'Food & Beverage' },
+      { name: 'Food Processing & Sales' },
+      { name: 'Food Products Manufacturing' },
+      { name: 'Food Stores' },
+      { name: 'For - profit Education' },
+      { name: 'For - profit Prisons' },
+      { name: 'Foreign & Defense Policy ' },
+      { name: 'Forestry & Forest Products' },
+      { name: 'Foundations, Philanthropists & Non - Profits' },
+      { name: 'Funeral Services' },
+
+      { name: 'Gambling & Casinos' },
+      { name: 'Gambling, Indian Casinos' },
+      { name: 'Garbage Collection / Waste Management' },
+      { name: 'Gas & Oil' },
+      { name: 'Gay & Lesbian Rights & Issues' },
+      { name: 'General Contractors' },
+      { name: 'Government Employee Unions' },
+      { name: 'Government Employees' },
+      { name: 'Gun Control ' },
+      { name: 'Gun Rights ' },
+
+      { name: 'Health' },
+      { name: 'Health Professionals' },
+      { name: 'Health Services / HMOs' },
+      { name: 'Hedge Funds' },
+      { name: 'HMOs & Health Care Services' },
+      { name: 'Home Builders' },
+      { name: 'Hospitals & Nursing Homes' },
+      { name: 'Hotels, Motels & Tourism' },
+      { name: 'Human Rights ' },
+
+      { name: 'Ideological / Single - Issue' },
+      { name: 'Indian Gaming' },
+      { name: 'Industrial Unions' }, 
+      { name: 'Insurance' },
+      { name: 'Internet' },
+      { name: 'Israel Policy' },
+
+      { name: 'Labor' },
+      { name: 'Lawyers & Lobbyists' },
+      { name: 'Lawyers / Law Firms' },
+      { name: 'Leadership PACs ' },
+      { name: 'Liberal / Democratic' },
+      { name: 'Liquor, Wine & Beer' },
+      { name: 'Livestock' },
+      { name: 'Lobbyists' },
+      { name: 'Lodging / Tourism' },
+      { name: 'Logging, Timber & Paper Mills' },
+
+      { name: 'Manufacturing, Misc' },
+      { name: 'Marine Transport' },
+      { name: 'Meat processing & products' },
+      { name: 'Medical Supplies' },
+      { name: 'Mining' },
+      { name: 'Misc Business' },
+      { name: 'Misc Finance' },
+      { name: 'Misc Manufacturing & Distributing ' },
+      { name: 'Misc Unions ' },
+      { name: 'Miscellaneous Defense' },
+      { name: 'Miscellaneous Services' },
+      { name: 'Mortgage Bankers & Brokers' },
+      { name: 'Motion Picture Production & Distribution' },
+      { name: 'Music Production' },
+
+      { name: 'Natural Gas Pipelines' },
+      { name: 'Newspaper, Magazine & Book Publishing' },
+      { name: 'Non - profits, Foundations & Philanthropists' },
+      { name: 'Nurses' },
+      { name: 'Nursing Homes / Hospitals' },
+      { name: 'Nutritional & Dietary Supplements' },
+
+      { name: 'Oil & Gas' },
+      { name: 'Other' },
+
+      { name: 'Payday Lenders' },
+      { name: 'Pharmaceutical Manufacturing' },
+      { name: 'Pharmaceuticals / Health Products' },
+      { name: 'Phone Companies' },
+      { name: 'Physicians & Other Health Professionals' },
+      { name: 'Postal Unions' },
+      { name: 'Poultry & Eggs' },
+      { name: 'Power Utilities' },
+      { name: 'Printing & Publishing' },
+      { name: 'Private Equity & Investment Firms' },
+      { name: 'Pro - Israel ' },
+      { name: 'Professional Sports, Sports Arenas & Related Equipment & Services' },
+      { name: 'Progressive / Democratic' },
+      { name: 'Public Employees' },
+      { name: 'Public Sector Unions ' },
+      { name: 'Publishing & Printing' },
+
+      { name: 'Radio / TV Stations' },
+      { name: 'Railroads' },
+      { name: 'Real Estate' },
+      { name: 'Record Companies / Singers' },
+      { name: 'Recorded Music & Music Production' },
+      { name: 'Recreation / Live Entertainment' },
+      { name: 'Religious Organizations / Clergy' },
+      { name: 'Republican Candidate Committees ' },
+      { name: 'Republican Leadership PACs' },
+      { name: 'Republican / Conservative ' },
+      { name: 'Residential Construction' },
+      { name: 'Restaurants & Drinking Establishments' },
+      { name: 'Retail Sales' },
+      { name: 'Retired ' },
+
+      { name: 'Savings & Loans' },
+      { name: 'Schools / Education' },
+      { name: 'Sea Transport' },
+      { name: 'Securities & Investment' },
+      { name: 'Special Trade Contractors' },
+      { name: 'Sports, Professional' },
+      { name: 'Steel Production ' },
+      { name: 'Stock Brokers / Investment Industry' },
+      { name: 'Student Loan Companies' },
+      { name: 'Sugar Cane & Sugar Beets' },
+
+      { name: 'Teachers Unions' },
+      { name: 'Teachers / Education' },
+      { name: 'Telecom Services & Equipment' },
+      { name: 'Telephone Utilities' },
+      { name: 'Textiles ' },
+      { name: 'Timber, Logging & Paper Mills' },
+      { name: 'Tobacco' },
+      { name: 'Transportation' },
+      { name: 'Transportation Unions ' },
+      { name: 'Trash Collection / Waste Management' },
+      { name: 'Trucking' },
+      { name: 'TV / Movies / Music' },
+      { name: 'TV Production' },
+
+      { name: 'Unions' },
+      { name: 'Unions, Airline' },
+      { name: 'Unions, Building Trades' },
+      { name: 'Unions, Industrial' },
+      { name: 'Unions, Misc' },
+      { name: 'Unions, Public Sector' },
+      { name: 'Unions, Teacher' },
+      { name: 'Unions, Transportation' },
+      { name: 'Universities, Colleges & Schools' },
+
+      { name: 'Vegetables & Fruits' },
+      { name: 'Venture Capital' },
+
+      { name: 'Waste Management' },
+      { name: 'Wine, Beer & Liquor' },
+      { name: 'Womens Issues' }      
+      ,
+    ];
+    // this.myMail = CreateObject("CDO.Message")
+
+
+    // this.myMail.Subject = "Sending email with CDO";
+    // this.myMail.From = "mymail@mydomain.com";
+    // this.myMail.To = "someone@somedomain.com";
+    // this.myMail.HTMLBody = '<div class="row logo">' +
+    //                           '< a href = "#" class="card-category logo-mini" style = "margin-left: 23px;" >'+
+    //                             '<div class="logo-image-small" style = "margin-top: 16px;" > '+
+    //                               '<img src="./assets/img/Colourslogo2.png" />'+
+    //                             '</div>'
+    //                           '</a>'
+    //                           '<div class="info" >'
+    //                             '<span class="sidebar-mini-icon" > </span>'
+    //                             '< span class="sidebar-normal" >'
+    //                               '<a class="collapsed logo-normal card-category clrs-logo" style = "color:snow" > Colours < /a><!-- title --></span >'
+    //                           '</div>'
+    //                         '</div>';
+
+                            
+    // this.myMail.Send
+    // this.set myMail = nothing
 
     // this.testDay = moment(new Date().toISOString(), "DD-MM-YYYY").dayOfYear();
     console.log(moment().add(2, 'Q').toString());
@@ -470,6 +745,15 @@ export class EnterpriseProfileComponent {
   back2Dept() {
     this.displayDept = false;
     this.displayDeptReport = true;
+  }
+
+  back2Proj() {
+    this.displayProject = false;
+    this.displayProjReport = true;
+  }
+
+  printReport() {
+    window.print();
   }
 
   minimizeSidebar() {
@@ -547,7 +831,8 @@ export class EnterpriseProfileComponent {
     this.projectSet = proj;
     // this.ProjectDemoNotes = false;
     this.displayProject = true;
-    this.displayReport = false;
+    this.displayProjReport = false;
+    // this.displayReport = false;
 
     this.allProjectTasks = this.afs.collection('Projects').doc(proj.id).collection('enterprises').doc(this.compId).collection('tasks').snapshotChanges().pipe(map(b => b.map(a => {
       const data = a.payload.doc.data() as Task;
@@ -682,6 +967,7 @@ export class EnterpriseProfileComponent {
     let pUser = {
       name: this.user.displayName,
       email: this.user.email,
+      bus_email: this.userData.bus_email,
       id: this.user.uid,
       phoneNumber: this.user.phoneNumber,
       photoURL: this.user.photoURL
@@ -764,7 +1050,7 @@ export class EnterpriseProfileComponent {
 
     let projectsRef = this.afs.collection('Projects').doc(projectId);
     let companysRef = this.afs.collection('Enterprises').doc(this.compId).collection('projects').doc(project.id);
-    let allMyProjectsRef = this.afs.collection('/Users').doc(this.userId).collection<Project>('projects').doc(projectId);  //point to project doc
+    let allMyProjectsRef = this.afs.collection('Users').doc(this.userId).collection<Project>('projects').doc(projectId);  //point to project doc
     allMyProjectsRef.set(project);  // set the project
 
     let setCompany = projectsRef.collection('enterprises').doc(this.compId);
@@ -820,14 +1106,19 @@ export class EnterpriseProfileComponent {
     console.log(this.selectedStaff);
   }
 
-  selectUser(x) {
+  selectUser(x: companyStaff) {
+
     let staff = {
       name: x.name,
       email: x.email,
+      bus_email: x.bus_email,
       id: x.id,
       phoneNumber: x.phoneNumber,
       by: this.user.displayName,
       byId: this.userId,
+      photoURL: x.photoURL,
+      department: "",
+      departmentId: "",
       createdOn: new Date().toISOString()
     };
     console.log(x);
@@ -838,8 +1129,31 @@ export class EnterpriseProfileComponent {
     this.toggleChamp(); this.toggleUsersTable();
   }
 
+  selectColUser(x: coloursUser) {
+
+    let staff = {
+      name: x.name,
+      email: x.email,
+      bus_email: x.bus_email,
+      id: x.id,
+      phoneNumber: x.phoneNumber,
+      by: this.user.displayName,
+      byId: this.userId,
+      photoURL: x.userImg,
+      department: "",
+      departmentId: "",
+      createdOn: new Date().toISOString()
+    };
+    console.log(x);
+    console.log(staff);
+    this.newCompanystaff = staff;
+    console.log(this.newCompanystaff);
+    // this.saveNewStaff(this.newCompanystaff)
+    this.toggleChamp(); this.toggleUsersTable();
+  }
+
   add2DptStaff(){
-    this.es.add2DptStaff(this.compId, this.dp, this.companystaff, this.selectedTask, this.selectedAction )
+    this.es.add2DptStaff(this.compId, this.dptId, this.companystaff, this.selectedTask, this.selectedAction )
   }
  
   /* selectTask */
@@ -849,9 +1163,10 @@ export class EnterpriseProfileComponent {
 
   saveNewStaff() {
     let partRef = this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection('Participants');
-    partRef.doc(this.companystaff.id).set(this.companystaff);
-    console.log(this.companystaff);
-    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", id: "" };
+    partRef.doc(this.newCompanystaff.id).set(this.newCompanystaff);
+    console.log(this.newCompanystaff);
+    this.newCompanystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL:"" };
+    this.dataCall();
   }
 
   saveStaff() {
@@ -875,17 +1190,26 @@ export class EnterpriseProfileComponent {
       colUsers.doc(partId).update({ 'id': partId });
     });
     console.log(this.companystaff);
-    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", id: "" };
+    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
   }
   
-  deleteStaff(x) {
+  deleteStaff(x:companyStaff) {
     this.afAuth.user.subscribe(user => {
-      console.log(x); let staffId = x.id;
-      //  delete from the enterprise's tasks
+      console.log(x); 
+      let staffId = x.id;
+      if (x.departmentId != "") {
+
+        let dptId = x.departmentId;
+        //  delete from the enterprise's Department
+        let deptDoc = this.afs.collection('Enterprises').doc(this.compId).collection<Department>('departments').doc(dptId);
+        deptDoc.collection('Participants').doc(staffId).delete();
+      }
+      //  delete from the enterprise
       let staffRef = this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection('Participants').doc(staffId);
       staffRef.delete();
       //  delete from the user's tasks
     })
+    this.dataCall();
   }
 
   removeStaff(x) {
@@ -1233,7 +1557,7 @@ export class EnterpriseProfileComponent {
   }
 
   addTaskDptStaff(){
-    this.es.addTaskDptStaff(this.compId, this.dp, this.companystaff, this.selectedTask)
+    this.es.addTaskDptStaff(this.compId, this.deptId, this.companystaff, this.selectedTask)
   }
 
   setDptHead(){
@@ -1242,6 +1566,7 @@ export class EnterpriseProfileComponent {
       name: this.companystaff.name,
       email: this.companystaff.email,
       id: this.companystaff.id,
+      bus_email: this.companystaff.bus_email,
       phoneNumber: this.companystaff.phoneNumber,
       photoURL: this.user.photoURL,
       // byId: this.userId,
@@ -1269,6 +1594,8 @@ export class EnterpriseProfileComponent {
     this.dptTasks = this.es.getDptTasks(this.compId, dptId);
     this.dptStaff = this.es.getDptStaff(this.compId, dptId);
     this.calldptStaff = this.es.getDptStaff(this.compId, dptId);
+    this.deptId = dptId;
+    console.log(this.calldptStaff);
     this.companyDptStaff = this.es.getDptStaffArray(this.compId, dptId);
   }
 
@@ -1279,12 +1606,12 @@ export class EnterpriseProfileComponent {
   }
 
   showUserTasks(staffId) {
-    this.staffTasks = this.es.getDptStaffTasks(this.compId, this.dp, staffId);  
+    this.staffTasks = this.es.getDptStaffTasks(this.compId, this.deptId, staffId);  
   }
 
   showTaskActions(task){
     this.selectTask(task)
-    this.taskActions = this.es.getDptTasksActions(this.compId, this.dp, task.id)
+    this.taskActions = this.es.getDptTasksActions(this.compId, this.deptId, task.id)
   }
 
   viewMyTaskActions(task) {
@@ -1332,16 +1659,16 @@ export class EnterpriseProfileComponent {
     console.log('the department-->' + action.name + " " + action.id);
 
     if (staffId == champId) {
-      champRef = this.afs.collection('Users').doc(this.staffId).collection('enterprises').doc(this.selectedTask.companyId).collection('tasks')
+      champRef = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId).collection('tasks')
       .doc(this.selectedTask.id).collection<workItem>('actionItems');
     }
 
     if (staffId != champId) {
-      champRef = this.afs.collection('Users').doc(this.staffId).collection('enterprises').doc(this.selectedTask.companyId).collection('tasks')
+      champRef = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId).collection('tasks')
         .doc(this.selectedTask.id).collection<workItem>('actionItems');
     }
 
-    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('enterprises').doc(this.selectedTask.companyId);
+    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId);
     let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
     let deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<Department>('departments').doc(dptId);
     let actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
@@ -1365,7 +1692,7 @@ export class EnterpriseProfileComponent {
   deleteAction(action) {
     console.log(action);
     let actionId = action.id;
-    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('enterprises').doc(this.selectedTask.companyId);
+    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId);
     let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
     let deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<Department>('departments').doc(action.departmentId);
     let actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
@@ -1375,24 +1702,32 @@ export class EnterpriseProfileComponent {
     userActionRef.doc(actionId).delete();
   }
 
-  newAction(action) {
+  newAction(action:workItem) {
     console.log(action);
-    action.createdBy = this.user.displayName;
+    action.by = this.user.displayName;
     action.byId = this.userId;
-    let dptId = this.dp;
+    let dptId = this.deptId;
     action.createdOn = new Date().toISOString();
     action.taskId = this.selectedTask.id;
     action.projectId = this.selectedTask.projectId;
     action.projectName = this.selectedTask.projectName;
-    action.departmentId = this.dp;
+    action.departmentId = this.deptId;
     action.companyId = this.selectedTask.companyId;
     action.companyName = this.selectedTask.companyName;
-    action.startDate = moment(action.startDate).format('L');
-    action.endDate = moment(action.endDate).format('L');
-    action.startWeek = moment(action.startDate, 'MM-DD-YYYY').week().toString();
-    action.startDay = moment(action.startDate, 'MM-DD-YYYY').format('ddd').toString();
-    action.endDay = moment(action.endDate, 'MM-DD-YYYY').format('ddd').toString();
-    action.champion = this.myData;
+    // action.startDate = moment(action.startDate).format('L');
+    // action.endDate = moment(action.endDate).format('L');
+    // action.startWeek = moment(action.startDate, 'MM-DD-YYYY').week().toString();
+    // action.endWeek = moment(action.endDate, 'MM-DD-YYYY').week().toString();
+    // action.startDay = moment(action.startDate, 'MM-DD-YYYY').format('ddd').toString();
+    // action.endDay = moment(action.endDate, 'MM-DD-YYYY').format('ddd').toString();
+    action.startDate = "";
+    action.endDate = "";
+    action.startWeek = "";
+    action.endWeek = "";
+    action.startDay = "";
+    action.endDay = "";
+    // action.champion = this.myData;
+    action.champion = this.selectedTask.champion;
     action.unit = this.setSui.id;
     console.log(action.unit);
     console.log(this.setSui.id);
@@ -1403,7 +1738,7 @@ export class EnterpriseProfileComponent {
     console.log('the task--->' + this.selectedTask.name + " " + this.selectedTask.id);
     console.log('the department-->' + action.name);
 
-    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('enterprises').doc(this.selectedTask.companyId);
+    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId);
     let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
     let deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<Department>('departments').doc(dptId);
     let actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
@@ -1417,6 +1752,8 @@ export class EnterpriseProfileComponent {
       userActionRef.doc(newActionId).set(action);
       userActionRef.doc(newActionId).update({ 'id': newActionId });
     })
+    this.setSui = null;
+    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
   }
 
   newActionToday(action) {
@@ -1486,7 +1823,7 @@ export class EnterpriseProfileComponent {
     console.log(this.selectedDepartment);
     // let man = this.companystaff;
     this.es.addStaffToDepatment(this.compId, this.selectedDepartment, this.companystaff);
-    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", id: "" };    
+    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };    
   }
 
   addActionParticipants(){
@@ -1520,7 +1857,8 @@ export class EnterpriseProfileComponent {
     }
 
     let testPeriod = "startDate";
-    this.dayTasks = this.viewTodayAction(testPeriod, this.aPeriod);
+    // this.dayTasks = this.viewTodayAction(testPeriod, this.aPeriod);
+    this.dayTasks = this.viewTodayActionQuery(testPeriod, this.aPeriod);
 
   }
 
@@ -1528,7 +1866,8 @@ export class EnterpriseProfileComponent {
   initDiary() {
     // this.aCurrentDate = moment(new Date()).format('L');
     let testPeriod = "startDate";
-    this.viewTodayAction(testPeriod, this.aCurrentDate);
+    // this.viewTodayAction(testPeriod, this.aCurrentDate);
+    this.viewTodayActionQuery(testPeriod, this.aCurrentDate);
   }
 
   viewTodayAction(testPeriod, checkPeriod) {
@@ -1550,6 +1889,56 @@ export class EnterpriseProfileComponent {
     return this.viewActions;
   }
 
+  viewTodayActionQuery(testPeriod, checkPeriod) {
+    let today = moment(new Date(), "YYYY-MM-DD");
+    let today2 = moment(new Date(), "MM-DD-YYYY").format('L');
+    today2 = checkPeriod;
+    console.log(today);
+    console.log(today2);
+    console.log(testPeriod);
+    console.log(checkPeriod);
+
+    let viewActionsRef = this.afs.collection('Enterprises').doc(this.compId);
+    this.viewActions = viewActionsRef.collection<workItem>('WeeklyActions',
+      // , ref => ref
+      // .orderBy('start')
+      // .where(testPeriod, '==', checkPeriod)
+    ).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        this.viewDayActions = [];
+        const data = a.payload.doc.data() as workItem;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    this.viewDayActions = [];
+
+    this.viewActions.subscribe((actions) => {
+      console.log(actions);
+      this.selectedActions = actions;
+      actions.forEach(element => {
+        let data = element;
+        // this.viewDayActions = [];
+
+        // if (moment(element.startDate).isSameOrAfter(today) && element.complete == false) {
+        // if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
+        if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
+          this.viewDayActions.push(element);
+          console.log(this.viewDayActions);
+
+        }
+
+      });
+      if (this.selectedActions.length > 0) {
+        this.viewTodayWork = true;
+      } else {
+        this.viewTodayWork = false;
+      }
+    });
+    return this.viewActions;
+  }
+
   selectActions(e, action) {
 
     if (e.target.checked) {
@@ -1568,35 +1957,34 @@ export class EnterpriseProfileComponent {
   }
 
   selectActionStaff(e, staff:ParticipantData) {
-    let actionId = this.selectedAction.id;
-    let deptId = this.selectedAction.departmentId;
+    let actionId = this.editedAction.id;
+    let deptId = this.editedAction.departmentId;
     let compRef = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
     let compRef2 = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('actionItems');
     let weeklyRef = this.afs.collection('Users').doc(staff.id).collection<workItem>('WeeklyActions');
     let allMyActionsRef = this.afs.collection('Users').doc(staff.id).collection<workItem>('actionItems');
     let actionRef: AngularFirestoreCollection<workItem>;
 
-
     let userWeeklyRef = this.afs.collection('Users').doc(staff.id).collection<workItem>('WeeklyActions');
     let userAllMyActionsRef = this.afs.collection('Users').doc(staff.id).collection<workItem>('actionItems');
-    let userProjectDoc = this.afs.collection('Users').doc(this.selectedAction.byId).collection('myenterprises').doc(this.compId);
-    let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
-    let EntRef = this.afs.collection('Enterprises').doc(this.compId).collection('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
+    let userProjectDoc = this.afs.collection('Users').doc(this.editedAction.byId).collection('myenterprises').doc(this.compId);
+    let userActionRef = userProjectDoc.collection('tasks').doc(this.editedAction.taskId).collection<workItem>('actionItems');
+    let EntRef = this.afs.collection('Enterprises').doc(this.compId).collection('tasks').doc(this.editedAction.taskId).collection<workItem>('actionItems');
     let deptDoc = this.afs.collection('Enterprises').doc(this.compId).collection<Department>('departments');
 
     if (deptId !== "") {
-      actionRef = deptDoc.doc(deptId).collection('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
+      actionRef = deptDoc.doc(deptId).collection('tasks').doc(this.editedAction.taskId).collection<workItem>('actionItems');
     }
 
     if (e.target.checked) {
       console.log();
       this.selectedActionParticipants.push(staff);
-      // this.selectedAction.participants.push(staff);
+      // this.editedAction.participants.push(staff);
 
-      compRef.doc(this.selectedAction.id).collection('Participants').doc(staff.id).set(staff);
-      compRef2.doc(this.selectedAction.id).collection('Participants').doc(staff.id).set(staff);
-      weeklyRef.doc(this.selectedAction.id).set(this.selectedAction);
-      allMyActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
+      compRef.doc(this.editedAction.id).collection('Participants').doc(staff.id).set(staff);
+      compRef2.doc(this.editedAction.id).collection('Participants').doc(staff.id).set(staff);
+      weeklyRef.doc(this.editedAction.id).set(this.editedAction);
+      allMyActionsRef.doc(this.editedAction.id).set(this.editedAction);
       
       EntRef.doc(actionId).collection('Participants').doc(staff.id).set(staff);
       // compRef.doc(actionId).set(action);
@@ -1615,10 +2003,10 @@ export class EnterpriseProfileComponent {
     else {
 
       this.selectedActionParticipants.splice(this.selectedActionParticipants.indexOf(staff), 1);
-      compRef.doc(this.selectedAction.id).collection('Participants').doc(staff.id).delete();
-      compRef2.doc(this.selectedAction.id).collection('Participants').doc(staff.id).delete();
-      weeklyRef.doc(this.selectedAction.id).delete();
-      allMyActionsRef.doc(this.selectedAction.id).delete();
+      compRef.doc(this.editedAction.id).collection('Participants').doc(staff.id).delete();
+      compRef2.doc(this.editedAction.id).collection('Participants').doc(staff.id).delete();
+      weeklyRef.doc(this.editedAction.id).delete();
+      allMyActionsRef.doc(this.editedAction.id).delete();
 
       EntRef.doc(actionId).collection('Participants').doc(staff.id).set(staff);
       // userActionRef.doc(actionId).set(action);
@@ -1630,13 +2018,15 @@ export class EnterpriseProfileComponent {
       }
       console.log("staff" + " " + staff.name + " " + " has been removed");
     }
-    this.showActionParticipants();
+    this.showActionParticipants(actionId);
 
   }
 
-  showActionParticipants(){
+  showActionParticipants(actionId: string){
+    console.log(this.editedAction.id);
     let labourRef = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
-    this.actionParticipants = labourRef.doc(this.selectedAction.id).collection<ParticipantData>('Participants').snapshotChanges().pipe(
+    // this.actionParticipants = labourRef.doc(this.editedAction.id).collection<ParticipantData>('Participants').snapshotChanges().pipe(
+    this.actionParticipants = labourRef.doc(actionId).collection<ParticipantData>('Participants').snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as ParticipantData;
         const id = a.payload.doc.id;
@@ -1645,12 +2035,19 @@ export class EnterpriseProfileComponent {
     );
   }
 
-  selectEditAction(action) {
+  selectEditAction(action: workItem) {
     console.log(action);
     this.selectedAction = action;
     console.log(this.selectedAction);
   }
 
+
+  select2EditAction(action: workItem) {
+    console.log(action.id);
+    this.editedAction = action;
+    console.log(this.editedAction);
+    this.showActionParticipants(action.id);
+  }
   refreshData() {
     this.aCurrentDate = moment(new Date()).format('L'); 
     console.log(this.aCurrentDate);
@@ -1692,7 +2089,7 @@ export class EnterpriseProfileComponent {
     if (action.byId == champId) {
 
       if (action.byId != "") {
-        let creatorRef = this.afs.collection('Users').doc(action.byId).collection('enterprises').doc(action.companyId).collection<workItem>('WeeklyActions');
+        let creatorRef = this.afs.collection('Users').doc(action.byId).collection('myenterprises').doc(action.companyId).collection<workItem>('WeeklyActions');
         creatorRef.doc(action.id).set(action);
 
         let weeklyRef = this.afs.collection('Users').doc(action.byId).collection<workItem>('WeeklyActions');
@@ -1708,7 +2105,7 @@ export class EnterpriseProfileComponent {
       if (action.byId != "") {
         let creatorRef2 = this.afs.collection('Users').doc(action.byId).collection<workItem>('WeeklyActions');
         creatorRef2.doc(action.id).set(action);
-        let creatorRef = this.afs.collection('Users').doc(action.byId).collection('enterprises').doc(action.companyId).collection<workItem>('WeeklyActions');
+        let creatorRef = this.afs.collection('Users').doc(action.byId).collection('myenterprises').doc(action.companyId).collection<workItem>('WeeklyActions');
         creatorRef.doc(action.id).set(action);
 
 
@@ -1723,7 +2120,7 @@ export class EnterpriseProfileComponent {
       if (champId != "") {
         let championRef2 = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyTasks');
         championRef2.doc(action.id).set(action);
-        let championRef = this.afs.collection('Users').doc(champId).collection('enterprises').doc(action.companyId).collection<workItem>('WeeklyActions');
+        let championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(action.companyId).collection<workItem>('WeeklyActions');
         championRef.doc(action.id).set(action);
 
 
@@ -1748,12 +2145,15 @@ export class EnterpriseProfileComponent {
     this.selectedAction.endDay = moment(endDate, 'YYYY-MM-DD').format('ddd').toString();
     this.selectedAction.startDate = moment(startDate).format('L');
     this.selectedAction.endDate = moment(endDate).format('L');
+    // this.selectedAction.targetQty = 0;
+    // this.selectedAction.start = "";
+    // this.selectedAction.end = "";
     console.log(this.selectedAction.startDate);
     console.log(this.selectedAction.endDate);
 
-    // this.selectedAction.startDate = startDate;
-    // this.selectedAction.endDate = endDate;
-    this.selectedAction.startWeek = moment(startDate, "YYYY-MM-DD").week().toString();
+    this.selectedAction.startWeek = moment(endDate, "YYYY-MM-DD").week().toString();
+    this.selectedAction.endWeek = moment(startDate, "YYYY-MM-DD").week().toString();
+    // this.selectedAction.startWeek = moment(startDate, "YYYY-MM-DD").week().toString();
     console.log('the actionItem-->' + this.selectedAction.name);
 
     // Project update
@@ -1780,7 +2180,7 @@ export class EnterpriseProfileComponent {
     if (this.selectedAction.byId == this.selectedAction.champion.id ) {
       
       if (this.selectedAction.byId != "") {
-        let creatorRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection('enterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+        let creatorRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
         creatorRef.doc(this.selectedAction.id).set(this.selectedAction);
 
         let weeklyRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('WeeklyActions');
@@ -1796,7 +2196,7 @@ export class EnterpriseProfileComponent {
       if (this.selectedAction.byId != "") {
         let creatorRef2 = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('WeeklyActions');
         creatorRef2.doc(this.selectedAction.id).set(this.selectedAction);
-        let creatorRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection('enterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+        let creatorRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
         creatorRef.doc(this.selectedAction.id).set(this.selectedAction);
 
 
@@ -1811,7 +2211,7 @@ export class EnterpriseProfileComponent {
       if (champId != "") {
         let championRef2 = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection<workItem>('WeeklyTasks');
         championRef2.doc(this.selectedAction.id).set(this.selectedAction);
-        let championRef = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection('enterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+        let championRef = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
         championRef.doc(this.selectedAction.id).set(this.selectedAction);
 
 
@@ -1823,7 +2223,7 @@ export class EnterpriseProfileComponent {
     }
 
     startDate = ""; endDate = null;
-    this.selectedAction = { id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
   }
 
   compActions(){
@@ -1893,6 +2293,8 @@ export class EnterpriseProfileComponent {
     this.companyDpts = this.es.getCompanyDepts(this.compId);
     this.companyDptsArray = this.es.getCompanyDepts(this.compId);
     this.staff = this.es.getStaff(this.compId);
+    this.allStaff = this.es.getStaff(this.compId);
+    this.staff3 = this.es.getStaff(this.compId);
     this.compStaffList = this.es.getStaff(this.compId);
     this.compStaff2 = this.es.getStaff(this.compId);
     this.companyStaff = this.es.getStaff(this.compId);
@@ -2062,6 +2464,29 @@ export class EnterpriseProfileComponent {
   }
 
   dataCall(): Observable<Enterprise> {
+    
+    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+
+    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+      const data = a.payload.data() as coloursUser;
+      const id = a.payload.id;
+      return { id, ...data };
+    }));
+
+    this.userProfile.subscribe(userData => {
+      console.log(userData);
+      let myData = {
+        name: this.user.displayName,
+        email: this.user.email,
+        bus_email: userData.bus_email,
+        id: this.user.uid,
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
+      }
+      this.myData = myData;
+      this.userData = userData;
+    });
+
     this.comp = this.as.paramMap.pipe(
       switchMap(params => {
         const id = params.get('id');
@@ -2148,7 +2573,7 @@ export class EnterpriseProfileComponent {
     this.ts.addTask(this.task, this.company, this.selectedDepartment);
 
     this.selectedCompany = this.is.getSelectedCompany();
-    this.userChampion = { name: "", id: "", email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "" };
+    this.userChampion = { name: "", id: "", email: "", bus_email:"", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "" };
     this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
   }
@@ -2241,7 +2666,7 @@ export class EnterpriseProfileComponent {
 
   selectColoursUser(x) {
     let cUser = {
-      name: x.name, email: x.email, id: x.id, phoneNumber: x.phoneNumber, nationalId: x.nationalId,
+      name: x.name, email: x.email, bus_email: x.bus_email, id: x.id, phoneNumber: x.phoneNumber, nationalId: x.nationalId,
       photoURL: x.photoURL,
       nationality: x.nationality, address: x.address, department: x.department, departmentId: x.departmentId
     };
@@ -2253,7 +2678,7 @@ export class EnterpriseProfileComponent {
     
   selectCompanyUser(x) {
     let cUser = {
-      name: x.name, email: x.email, id: x.id, phoneNumber: x.phoneNumber, nationalId: x.nationalId, photoURL: x.photoURL,
+      name: x.name, email: x.email, id: x.id, bus_email: x.bus_email, phoneNumber: x.phoneNumber, nationalId: x.nationalId, photoURL: x.photoURL,
       nationality: x.nationality, address: x.address, department: x.department, departmentId: x.departmentId
     };
     this.userChampion = cUser;
@@ -2361,17 +2786,10 @@ export class EnterpriseProfileComponent {
 
     $('.bootstrap-tagsinput').addClass('' + tagClass + '-badge');
     
+    
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
-      let myData = {
-        name: this.user.displayName,
-        email: this.user.email,
-        id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
-      }
-      this.myData = myData;
       this.refreshData();
       this.dataCall().subscribe();
     })

@@ -17,6 +17,7 @@ import * as firebase from 'firebase/app';
 import { Enterprise, ParticipantData, companyChampion, Department } from "../models/enterprise-model";
 import { Project } from "../models/project-model";
 import { InitialiseService } from 'app/services/initialise.service';
+import { coloursUser } from 'app/models/user-model';
 
 export interface Task {
   name: string,
@@ -112,6 +113,11 @@ export class CompanyComponent implements OnInit {
   user: firebase.User;
   userId: string;
 
+  userProfile: Observable<coloursUser>;
+  myDocment: AngularFirestoreDocument<{}>;
+  userData: coloursUser;
+  myData: ParticipantData;
+
   constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private authService: AuthService, private afs: AngularFirestore) {
     
     this.dpt = { name: "", by: "", byId: "", companyName: "",companyId: "", createdOn: ""}
@@ -123,7 +129,7 @@ export class CompanyComponent implements OnInit {
 
     this.task = { name: "", champion : null, projectName: "", start: "", finish: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: ""};
     this.companyProjectChamp = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "" }
-    this.userChampion = { name:"", id:"", email:"", phoneNumber: "", photoURL:"" }
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL:"" }
 
     console.log(this.userId);
 
@@ -255,6 +261,7 @@ export class CompanyComponent implements OnInit {
       let pUser = {
         name: this.user.displayName,
         email: this.user.email,
+        bus_email: this.userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
         photoURL: this.user.photoURL
@@ -363,8 +370,7 @@ export class CompanyComponent implements OnInit {
     console.log(this.projectToJoin)
     this.projectToJoin = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", companyChampion: null, leader: null }
     this.selectedCompany = this.is.getSelectedCompany();
-    this.userChampion = {
-      name: "", id: "", email: "", phoneNumber: "", photoURL: ""};
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: ""};
 
     // })
   }
@@ -458,7 +464,7 @@ export class CompanyComponent implements OnInit {
         //set task to the champion tasks collection                        
         champRef.doc(newTaskId).set(createdTask);
       });
-      this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL:""}
+      this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL:""}
 
     }
 
@@ -471,7 +477,7 @@ export class CompanyComponent implements OnInit {
     }
     this.companyProjectChamp = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "" }
     this.task = { name: "", champion: null, projectName: "", start: "", finish: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "" }
-    this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "" }
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" }
   }
 
   save(department){
@@ -552,6 +558,7 @@ export class CompanyComponent implements OnInit {
       let pUser = {
         name: this.user.displayName,
         email: this.user.email,
+        bus_email: this.userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
         photoURL: this.user.photoURL
@@ -604,6 +611,27 @@ export class CompanyComponent implements OnInit {
   }
 
   dataCall(){
+    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+
+    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+      const data = a.payload.data() as coloursUser;
+      const id = a.payload.id;
+      return { id, ...data };
+    }));
+
+    this.userProfile.subscribe(userData => {
+      console.log(userData);
+      let myData = {
+        name: this.user.displayName,
+        email: this.user.email,
+        bus_email: userData.bus_email,
+        id: this.user.uid,
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
+      }
+      this.myData = myData;
+      this.userData = userData;
+    });
     /* collection of users */
     this.coloursUsers = this.afs.collection('Users').snapshotChanges().pipe(
       map(actions => actions.map(a => {

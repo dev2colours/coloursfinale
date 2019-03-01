@@ -18,9 +18,10 @@
             </p> -->
           </div>
           <p class="description text-center"><small>
-            ""</small>
+            "{{ userData.aboutMe }}"</small>
             <br><br>
-            <button class="info btn-link" (click)="run1()">edit profile</button>
+            <!-- <button class="info btn-link" (click)="run1()">edit profile</button> -->
+            <button class="info btn-link" (click)="viewProfile()">View profile</button>
           </p>
         </div>
         <div class="card-footer">
@@ -193,29 +194,30 @@
       <div class="card">
         <div class="card-header">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col-md-7">
               <h5 class="card-category clrs-h1">Edit Profile</h5>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-5">
+              <button class="info btn-link" (click)="viewProfile()">Preview</button>
               <button class="info btn-link" (click)="saveProfile(userData)">Save</button>
             </div>
           </div>
         </div>
         <div class="card-body">
           <!-- <form> -->
-            <div class="row">
+            <!-- <div class="row">
               <div class="col-md-8 pr-1">
                 <div class="form-group">
                   <label>Company (disabled)</label>
                   <input type="text" class="form-control" name="userCompany" disabled="" placeholder="Company" value="Creative Code Inc.">
                 </div>
               </div>
-            </div>
+            </div> -->
             <div class="row">
               <div class="col-md-8 pr-1">
                 <div class="form-group">
                   <label>Username</label>
-                  <input type="text" class="form-control" name="userUsername"[(ngModel)]="userData.username">
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userUsername"[(ngModel)]="userData.username">
                 </div>
               </div>
             </div>
@@ -223,15 +225,84 @@
               <div class="col-md-8 pr-1">
                 <div class="form-group">
                   <label>Full Name</label>
-                  <input type="text" class="form-control card-category" name="userDisplayName" [(ngModel)]="userData.name">
+                  <input type="text" class="form-control card-category" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userDisplayName" [(ngModel)]="userData.name">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 pr-1">
+                <div class="form-group">
+                  <label>Date of birth</label>
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userDob" placeholder="dd/mm/yyyy" [(ngModel)]="userData.dob">
+                </div>
+              </div>
+              <div class="col-md-4 ">
+                <div class="form-group">
+                  <!-- <label>Gender</label> -->
+                  <!-- <input type="text" class="form-control" name="userGenger" placeholder="Male/Female" [(ngModel)]="userData.gender"> -->
+
+                  <ng-select bindLabel="name" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="userGenger" placeholder="Male/Female" [(ngModel)]="userData.gender">
+                    <ng-option value="Male" style="padding-top: 7px; padding-bottom: 0px; height: 32px;">Male</ng-option>
+                    <ng-option value="Female" style="padding-top: 7px; padding-bottom: 0px; height: 32px;">Female</ng-option>
+                </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3 pr-1">
+                <div class="form-group">
+                  <label>Weight</label>
+                  <div class="input-group">
+                    <input [(ngModel)]="userData.bodyWeight" name="weight" placeholder="60Kg" class="form-control"
+                      (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
+                    <div class="input-group-postpand" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                      <span class="input-group-text"><small>Kg</small>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 px-1">
+                <div class="form-group">
+                  <label>Height</label>
+                  <!-- <input type="number" class="form-control" name="Country" placeholder="178cm" [(ngModel)]="userData.bodyHeight"> -->
+                  
+                <div class="input-group">
+                  <input [(ngModel)]="userData.bodyHeight" name="height" placeholder="180cm" class="form-control"
+                    (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
+                  <div class="input-group-postpand" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                    <span class="input-group-text"><small>cm</small>
+                    </span>
+                  </div>
+                </div>
+
+                </div>
+              </div>
+              <div *ngIf="userData.bodyMassIndex != 0" class="col-md-3 pl-1">
+                <div class="form-group">
+                  <label>BMI</label>
+                  <!-- <div style="padding-top: 8px;padding-bottom: 0px; height: 32px;">{{ userData.bodyMassIndex }}</div> -->
+                  <p class="form-control" style="padding-top: 7px;padding-bottom: 0px; height: 32px;" name="Zipcode" placeholder="0.8"> {{ userData.bodyMassIndex }} </p>
+                  <!-- <div class="input-group-postpand" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                    <span class="input-group-text"><small>Kg/m2</small>
+                    </span>
+                  </div> -->
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col-md-10">
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Email address</label>
-                  <input type="email" class="form-control" name="userEmail" [(ngModel)]="userData.email">
+                  <label for="exampleInputEmail1">Account email</label>
+                  <input type="email" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userEmail" [(ngModel)]="userData.email">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-10">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Business email</label>
+                  <input type="email" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="Bus_email" [(ngModel)]="userData.bus_email">
                 </div>
               </div>
             </div>
@@ -239,13 +310,13 @@
               <div class="col-md-6 pr-1">
                 <div class="form-group">
                   <label>Mobile</label>
-                  <input type="text" class="form-control" name="userMobileContact" placeholder="0773344556" [(ngModel)]="userData.phoneNumber">
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userMobileContact" placeholder="0773344556" [(ngModel)]="userData.phoneNumber">
                 </div>
               </div>
               <div class="col-md-6 ">
                 <div class="form-group">
                   <label>Telephone</label>
-                  <input type="text" class="form-control" name="userTelephone" placeholder="0566699777" [(ngModel)]="userData.telephone">
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userTelephone" placeholder="0566699777" [(ngModel)]="userData.telephone">
                 </div>
               </div>
             </div>
@@ -253,7 +324,7 @@
               <div class="col-md-12">
                 <div class="form-group">
                   <label>Address</label>
-                  <input type="text" class="form-control" name="userHomeAddress"placeholder="400 Dough road, Cranehill" [(ngModel)]="userData.address">
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userHomeAddress"placeholder="400 Dough road, Cranehill" [(ngModel)]="userData.address">
                 </div>
               </div>
             </div>
@@ -261,19 +332,19 @@
               <div class="col-md-4 pr-1">
                 <div class="form-group">
                   <label>City</label>
-                  <input type="text" class="form-control" name="City" placeholder="Bulawayo" [(ngModel)]="userData.city">
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="City" placeholder="Bulawayo" [(ngModel)]="userData.city">
                 </div>
               </div>
               <div class="col-md-4 px-1">
                 <div class="form-group">
                   <label>Country</label>
-                  <input type="text" class="form-control" name="Country" placeholder="Australia" [(ngModel)]="userData.country">
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="Country" placeholder="Australia" [(ngModel)]="userData.country">
                 </div>
               </div>
               <div class="col-md-4 pl-1">
                 <div class="form-group">
                   <label>Postal Code</label>
-                  <input type="number" class="form-control" name="Zipcode" placeholder="ZIP Code" [(ngModel)]="userData.zipCode">
+                  <input type="number" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="Zipcode" placeholder="ZIP Code" [(ngModel)]="userData.zipCode">
                 </div>
               </div>
             </div>
@@ -281,7 +352,8 @@
               <div class="col-md-12">
                 <div class="form-group">
                   <label>About Me</label>
-                  <textarea rows="4" cols="80" class="form-control textarea" placeholder="Oh so, your weak rhyme You doubt I'll bother, reading into it" [(ngModel)]="userData.aboutMe"></textarea>
+                  <textarea rows="auto" cols="80" class="form-control textarea" placeholder="Oh so, your weak rhyme You doubt I'll bother, reading into it" [(ngModel)]="userData.aboutMe"></textarea>
+                  <!-- <textarea name="taskComment" id="comments" cols="50" rows="auto" placeholder="Click and type your comment here....." [(ngModel)]="aboutMe"></textarea> -->
                 </div>
               </div>
             </div>
@@ -307,49 +379,102 @@
         </div>
         <div class="card-body">
           <form>
-            <div class="row">
+            <!-- <div class="row">
               <div class="col-md-8 pr-1">
                 <div class="form-group">
                   <label>Company (disabled)</label>
                   <input type="text" class="form-control" name="Company" disabled="" placeholder="Company" value="Creative Code Inc.">
                 </div>
               </div>
-            </div>
+            </div> -->
             <div class="row">
-              <div class="col-md-8 pr-1">
+              <div class="col-md-7 pr-1">
                 <div class="form-group">
                   <label>Username</label>
-                  <input type="text" class="form-control" name="Username" [(ngModel)]="userData.username">
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="Username">{{ userData.username }}</p> 
+                  <!-- [(ngModel)]="userData.username"> -->
                 </div>
               </div>
             </div>
             <div class="row">
-              <div class="col-md-8 pr-1">
+              <div class="col-md-7 pr-1">
                 <div class="form-group">
                   <label>Full Name</label>
-                  <input type="text" class="form-control card-category" name="DisplayName" [(ngModel)]="userData.name">
+                  <p type="text" class="form-control card-category" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="DisplayName">{{ userData.name }}</p>
+                   <!-- [(ngModel)]="userData.name"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 pr-1">
+                <div class="form-group">
+                  <label>Date of birth</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="userDob" placeholder="dd/mm/yyyy">{{ userData.dob }}</p>
+                   <!-- [(ngModel)]="userData.dob"> -->
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Gender</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="userGender" placeholder="male/female"> {{ userData.gender }} </p>
+                   <!-- [(ngModel)]="userData.gender"> -->
+                </div>
+              </div>
+            </div>
+            <div *ngIf="(userData.bodyMassIndex + userData.bodyWeight + userData.bodyHeight) != 0" class="row">
+              <div class="col-md-3 pr-1">
+                <div class="form-group">
+                  <label>Weight</label>
+                  <p type="number" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="City" placeholder="Bulawayo"> {{ userData.bodyWeight }} Kg</p>
+                   <!-- [(ngModel)]="userData.city"> -->
+                </div>
+              </div>
+              <div class="col-md-3 px-1">
+                <div class="form-group">
+                  <label>Height</label>
+                  <p type="number" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="Country" placeholder="Australia"> {{ userData.bodyHeight }} cm</p> 
+                  <!-- [(ngModel)]="userData.country"> -->
+                </div>
+              </div>
+              <div class="col-md-3 pl-1">
+                <div class="form-group">
+                  <label>BMI</label>
+                  <p type="number" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="Zipcode" placeholder="ZIP Code"> {{ userData.bodyMassIndex }} </p>
+                   <!-- [(ngModel)]="userData.zipCode"> -->
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col-md-10">
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Email address</label>
-                  <input type="email" class="form-control" name="Email" [(ngModel)]="userData.email">
+                  <label for="exampleInputEmail1">Account Email</label>
+                  <p type="email" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="usermail"> {{ userData.email }} </p>
+                   <!-- [(ngModel)]="userData.email"> -->
                 </div>
               </div>
             </div>
             <div class="row">
-              <div class="col-md-6 pr-1">
+              <div class="col-md-10">
                 <div class="form-group">
-                  <label>Mobile</label>
-                  <input type="text" class="form-control" name="MobileContact" placeholder="0773344556" [(ngModel)]="userData.phoneNumber">
+                  <label for="exampleInputEmail1">Business Email</label>
+                  <p type="email" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="busEmail"> {{ userData.bus_email }} </p>
+                  <!-- [(ngModel)]="userData.bus_email"> -->
                 </div>
               </div>
-              <div class="col-md-6 ">
+            </div>
+            <div class="row">
+              <div class="col-md-5 pr-1">
+                <div class="form-group">
+                  <label>Mobile</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="MobileContact" placeholder="0773344556"> {{ userData.phoneNumber }} </p>
+                   <!-- [(ngModel)]="userData.phoneNumber"> -->
+                </div>
+              </div>
+              <div class="col-md-5">
                 <div class="form-group">
                   <label>Telephone</label>
-                  <input type="text" class="form-control" name="Telephone" placeholder="0566699777" [(ngModel)]="userData.telephone">
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="Telephone" placeholder="0566699777"> {{ userData.telephone }} </p>
+                   <!-- [(ngModel)]="userData.telephone"> -->
                 </div>
               </div>
             </div>
@@ -357,7 +482,8 @@
               <div class="col-md-12">
                 <div class="form-group">
                   <label>Address</label>
-                  <input type="text" class="form-control" name="HomeAddress" placeholder="400 Dough road, Craneborne" [(ngModel)]="userData.address">
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="HomeAddress" placeholder="400 Dough road, Craneborne"> {{ userData.address }} </p>
+                  <!-- [(ngModel)]="userData.address"> -->
                 </div>
               </div>
             </div>
@@ -365,19 +491,22 @@
               <div class="col-md-4 pr-1">
                 <div class="form-group">
                   <label>City</label>
-                  <input type="text" class="form-control" name="City" placeholder="Bulawayo" [(ngModel)]="userData.city">
+                  <p type="text" class="form-control" name="City" placeholder="Bulawayo"> {{ userData.city }} </p>
+                   <!-- [(ngModel)]="userData.city"> -->
                 </div>
               </div>
               <div class="col-md-4 px-1">
                 <div class="form-group">
                   <label>Country</label>
-                  <input type="text" class="form-control" name="Country" placeholder="Australia" [(ngModel)]="userData.country">
+                  <p type="text" class="form-control" name="Country" placeholder="Australia"> {{ userData.country }} </p> 
+                  <!-- [(ngModel)]="userData.country"> -->
                 </div>
               </div>
               <div class="col-md-4 pl-1">
                 <div class="form-group">
                   <label>Postal Code</label>
-                  <input type="number" class="form-control" name="Zipcode" placeholder="ZIP Code" [(ngModel)]="userData.zipCode">
+                  <p type="number" class="form-control" name="Zipcode" placeholder="ZIP Code"> {{ userData.zipCode }} </p>
+                   <!-- [(ngModel)]="userData.zipCode"> -->
                 </div>
               </div>
             </div>
@@ -385,8 +514,7 @@
               <div class="col-md-12">
                 <div class="form-group">
                   <label>About Me</label>
-                  <textarea rows="4" cols="80" class="form-control textarea" placeholder="Tell colours about yourself "
-                    [(ngModel)]="Data.aboutMe"></textarea>
+                  <p rows="4" cols="80" class="form-control textarea" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="aboutMeUser" placeholder="Tell colours about yourself"> {{ userData.aboutMe }} </p><!-- [(ngModel)]="userData.aboutMe" -->
                 </div>
               </div>
             </div>

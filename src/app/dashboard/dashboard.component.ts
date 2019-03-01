@@ -11,6 +11,8 @@ import { ParticipantData } from 'app/models/enterprise-model';
 import { ActionItem } from 'app/models/task-model';
 import * as moment from 'moment';
 import { Project, workItem } from 'app/models/project-model';
+import { coloursUser } from 'app/models/user-model';
+
 
 declare const $: any;
 
@@ -47,21 +49,20 @@ export class DashboardComponent implements OnInit {
   public hideActions: boolean = false;
 
 
+  userProfile: Observable<coloursUser>;
+  myDocment: AngularFirestoreDocument<{}>;
+  userData: coloursUser;
+  cdTimer: string;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
-      let myData = {
-        name: this.user.displayName,
-        email: this.user.email,
-        id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
-      }
-      this.myData = myData;
       this.dataCall();
-    })
+    });
+    
+    // this.countDown(10, "status");
+    // this.countDownPopup(10);
   }
 
   public chartClicked(e:any):void {
@@ -83,8 +84,56 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  // countDown(secs, elem) {
+  //   var element = document.getElementById(elem);
+  //   element.innerHTML = "Please wait for " + secs + " seconds";
+  //   if (secs < 1) {
+  //     clearTimeout(timer);
+  //     element.innerHTML = '<h2>Countdown Complete!</h2>';
+  //     element.innerHTML += '<a href="#">Click here now</a>';
+  //   }
+  //   secs--;
+  //   var timer = setTimeout('countDown(' + secs + ',"' + elem + '")', 1000);
+  // }
+
+  // countDownPopup(secs) {
+  //   var element = "Please wait for " + secs + " seconds";
+  //   if (secs < 1) {
+  //     clearTimeout(timer);
+  //     element = 'Countdown Complete!';
+  //   }
+  //   this.cdTimer = element;
+  //   console.log(this.cdTimer);
+    
+  //   secs--;
+  //   var timer = setTimeout('countDownPopup(' + secs + ')', 1000);
+  //   console.log(timer);
+    
+  // }
 
   dataCall(){
+    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+
+    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+      const data = a.payload.data() as coloursUser;
+      const id = a.payload.id;
+      return { id, ...data };
+    }));
+
+    this.userProfile.subscribe(userData => {
+      console.log(userData);
+      let myData = {
+        name: this.user.displayName,
+        email: this.user.email,
+        bus_email: userData.bus_email,
+        id: this.user.uid,
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
+      }
+      this.myData = myData;
+      this.userData = userData;
+    });
+
 
     console.log("Yeeeeeeeees");
     

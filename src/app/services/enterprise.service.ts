@@ -8,7 +8,7 @@ import { Observable, Observer } from 'rxjs';
 import { map, timestamp } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
-import { Enterprise, ParticipantData, companyChampion, Department, asset, Subsidiary, employeeData } from "../models/enterprise-model";
+import { Enterprise, ParticipantData, companyChampion, Department, asset, Subsidiary, employeeData, companyStaff } from "../models/enterprise-model";
 import { Project, workItem } from "../models/project-model";
 import { Task, MomentTask } from "../models/task-model";
 
@@ -207,19 +207,30 @@ export class EnterpriseService {
     staffTaskRef.collection('actionItems').doc(action.id).set(action);
   }
   
-  addTaskDptStaff(companyId, dptId, staff, task) {
+  addTaskDptStaff(companyId: string, dptId: string, staff: companyStaff, task:Task) {
     console.log(task.id);
     console.log('the departmentID-->' + " " + dptId);
     console.log('the staff-->' + staff.name + " " + staff.id);
     console.log('the Task-->' + task.name + " " + task.id);
-    task.champion = staff;
+    let markedUserId = task.champion.id;
+
     let userRef = this.afs.collection('Users').doc(this.userId).collection('tasks').doc(task.id);
     let userTaskRef = this.afs.collection('Users').doc(this.userId).collection('myenterprises').doc(companyId).collection('tasks').doc(task.id);
     let staffRef = this.afs.collection('Users').doc(staff.id).collection('tasks').doc(task.id);
     let staffTaskRef = this.afs.collection('Users').doc(staff.id).collection('myenterprises').doc(companyId).collection('tasks').doc(task.id);
     let compParticipant = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('Participants').doc(staff.id).collection('tasks').doc(task.id)
     let deptDoc = this.afs.collection('Enterprises').doc(companyId).collection<Department>('departments').doc(dptId);
-    deptDoc.collection('Participants').doc(staff.id).collection('tasks').doc(task.id).set(task);
+
+    task.champion = staff;
+    if (markedUserId != "") {
+      let markedStaffRef = this.afs.collection('Users').doc(markedUserId).collection('tasks').doc(task.id);
+      let markedStaffTaskRef = this.afs.collection('Users').doc(markedUserId).collection('myenterprises').doc(companyId).collection('tasks').doc(task.id);
+      deptDoc.collection('Participants').doc(staff.id).collection('tasks').doc(task.id).delete();  //  ex-champion
+      markedStaffRef.delete();  //  ex-champion
+      markedStaffTaskRef.delete();  //  ex-champion
+    }
+
+    deptDoc.collection('Participants').doc(markedUserId).collection('tasks').doc(task.id).set(task);
     userRef.set(task);
     staffRef.set(task);
     compParticipant.set(task);

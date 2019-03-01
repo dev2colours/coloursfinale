@@ -13,6 +13,7 @@ import { Task } from 'app/models/task-model';
 import { ProjectService } from 'app/services/project.service';
 import { InitialiseService } from 'app/services/initialise.service';
 import { EnterpriseService } from 'app/services/enterprise.service';
+import { coloursUser } from 'app/models/user-model';
 // export interface ProjectId extends Project { id: string; };
 // import { FileUploader, FileSelectDirective } from 'ng2-file-upload/ng2-file-upload';
 
@@ -79,6 +80,11 @@ export class CreateComponent implements OnInit {
   taxDocument: any;
   mdats: Promise<string>;
   comWorkers: Observable<ParticipantData[]>;
+
+
+  userProfile: Observable<coloursUser>;
+  myDocment: AngularFirestoreDocument<{}>;
+  userData: coloursUser;
 
   // public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'photo' });
   // public uploader: FileUploader = new FileUploader({});
@@ -246,6 +252,7 @@ export class CreateComponent implements OnInit {
     let pUser = {
       name: this.user.displayName,
       email: this.user.email,
+      bus_email: this.userData.bus_email,
       id: this.user.uid,
       phoneNumber: this.user.phoneNumber,
       photoURL: this.user.photoURL
@@ -347,7 +354,7 @@ export class CreateComponent implements OnInit {
     this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
     this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
     this.setCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
-    this.setChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "" };
+    this.setChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
   }
 
   clear() {
@@ -559,6 +566,29 @@ export class CreateComponent implements OnInit {
 
   callData() {
 
+    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+
+    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+      const data = a.payload.data() as coloursUser;
+      const id = a.payload.id;
+      return { id, ...data };
+    }));
+
+    this.userProfile.subscribe(userData => {
+      console.log(userData);
+      let myData = {
+        name: this.user.displayName,
+        email: this.user.email,
+        bus_email: userData.bus_email,
+        id: this.user.uid,
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
+      }
+      this.myData = myData;
+      this.userData = userData;
+    });
+
+
     this.myEnterprises = this.es.getCompanies(this.userId);
 
     this.CompanyCollection = this.afs.collection('/Users').doc(this.userId).collection<Enterprise>('myenterprises');
@@ -593,15 +623,6 @@ export class CreateComponent implements OnInit {
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
-      let myData = {
-        name: this.user.displayName,
-        email: this.user.email,
-        id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
-
-      }
-      this.myData = myData;
       this.callData();
     })
 

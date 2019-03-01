@@ -56,7 +56,7 @@ export interface ActionItem {
 };
 
 export interface actionActualData {
-    name: string, id: string, actuals: [actualData]
+   time: string, name: string, actionId: string, id: string, actuals: [actualData]
 }
 
 export interface actualData {

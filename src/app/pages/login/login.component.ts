@@ -157,11 +157,12 @@ export class LoginComponent implements OnInit{
                         console.log(userData);
                         if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
                             this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
+                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
                             console.log("userData is set");
-
                         }
                         else {
                             this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
+                            
                             console.log("userData is updated");
                         }
                         let value;
@@ -247,9 +248,9 @@ export class LoginComponent implements OnInit{
             }
             console.log(error);
             // [END_EXCLUDE]
-    });
-    // [END sendpasswordemail];
-}
+        });
+        // [END sendpasswordemail];
+    }
             
 
     coloursSignIn(credentials) {
@@ -297,6 +298,7 @@ export class LoginComponent implements OnInit{
                         console.log(userData);
                         if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
                             this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
+                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
                             console.log("userData is set");
 
                         }
@@ -425,6 +427,7 @@ export class LoginComponent implements OnInit{
             console.log(userData);
             if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
                 this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
+                this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
                 console.log("userData is set");
 
             }
@@ -487,6 +490,7 @@ export class LoginComponent implements OnInit{
         console.log(userData);
         if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
             this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
+            this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
             console.log("userData is set");
 
         }
@@ -559,6 +563,7 @@ export class LoginComponent implements OnInit{
                 console.log(userData);
                 if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
                     this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
+                    this.afs.collection('Users').doc(coloursUser.uid).update({'bus_email': ""});
                     console.log("userData is set");
 
                 }

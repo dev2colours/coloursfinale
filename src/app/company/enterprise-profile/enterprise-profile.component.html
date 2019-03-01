@@ -12,8 +12,15 @@
             </div>
           </div>
           <div class="col-md-4 ml-auto">
+                <!-- &body=Colours%20Is%20invited%20to%20a%20big%20summer%20party! -->
             <div class="card-header">
-              <!-- <button *ngIf="!displayReport" class="btn-link btn-magnify" (click)="reportBack()">Back</button> -->
+              <button *ngIf="displayDept" class="btn-link btn-magnify" (click)="printReport()">Print</button>
+              <a *ngIf="displayDept" href="mailto:someone@example.com?
+                &subject=Welcome%20to%20Colours
+                &body=Colours%20Is%20inviting%20you%20to%20join%20Colours%20System%20
+                " target="_top">
+                Email
+              </a>
               <button class="btn-link btn-magnify" (click)="doc$(company.id); refreshCompany()"> <i class="fa fa-spinner fa-spin fa-2x fa-fw"></i>
                 Refresh</button>
             </div>
@@ -21,8 +28,8 @@
         </div>
         <div class="card-body">
           <div class="row" style="margin-left:3em; margin-right:0em">
-            <!-- <div class="clrs-tabs"> -->
-            <div class="col-lg-2 col-md-2 col-sm-3" style="margin-left: -50px">
+            <div class="clrs-tabs">
+            <!-- <div class="col-lg-2 col-md-2 col-sm-3" style="margin-left: -50px"> -->
               <div class="nav-tabs-navigation vertical-navs">
                 <div class="nav-tabs-wrapper">
                   <ul class="nav nav-tabs flex-column nav-stacked text-left" role="tablist">
@@ -30,7 +37,7 @@
                       <a class="nav-link nav-colors active" href="#info" role="tab" data-toggle="tab">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link nav-colors" href="#description" role="tab" data-toggle="tab">Standards</a>
+                      <a class="nav-link nav-colors" href="#standards" role="tab" data-toggle="tab">Standards</a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link nav-colors" (click)="minimizeSidebar()" href="#compSetup" role="tab" data-toggle="tab">Setup</a>
@@ -317,7 +324,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="tab-pane" id="description">
+                <div class="tab-pane" id="standards">
                   <p>The first thing you notice when you hold the phone is how great it feels in your hand. The cover
                     glass curves down around the sides to meet the anodized aluminum enclosure in a remarkable,
                     simplified design. </p>
@@ -539,7 +546,7 @@
                                     <th>Action</th>
                                   </thead>
                                   <tbody>
-                                    <tr *ngFor="let person of staff | async" style="border-bottom: #2f4f4f">
+                                    <tr *ngFor="let person of allStaff | async" style="border-bottom: #2f4f4f">
                                       <td class="td-clrs" style="padding-left: 1em">{{ person.name }}</td>
                                       <td class="td-clrs" style="padding-left: 1em">{{ person.department }}</td>
                                       <td class="td-clrs">
@@ -631,102 +638,6 @@
                               </div>
                             </div> -->
                           </div>
-                          <!-- <div class="row">
-                            <div class="col-md-10 mr-auto ml-auto">
-                              <div class="table-responsive">
-                                <table class="table text-left">
-                                  <thead class="card-category">
-                                    <th>Staff</th>
-                                    <th>Department</th>
-                                    <th>Action</th>
-                                  </thead>
-                                  <tbody>
-                                    <tr *ngFor="let person of staff | async" style="border-bottom: #2f4f4f">
-                                      <td class="td-clrs" style="padding-left: 1em">{{ person.name }}</td>
-                                      <td class="td-clrs" style="padding-left: 1em">{{ person.department }}</td>
-                                      <td class="td-clrs">
-                                        <a *ngIf="!person.department" class="btn warning btn-link btn-icon btn-sm edit" rel="tooltip"
-                                          title="Add to Department" (click)="selectUser(person)" data-toggle="modal"
-                                          data-target="#addStaffdpt">
-                                          <i class="fa fa-edit"></i></a>
-                                        <a class="btn danger btn-link btn-icon btn-sm remove" (click)="deleteStaff(person)"><i
-                                            class="fa fa-times"></i></a>
-                                      </td>
-                                      <hr>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                                <div class="text-left">
-                                  <div class="row" style="padding-top: 0px;">
-                                    <div class="col-ms-8">
-                                      <div class="card-header text-left">
-                                        <h5 class="card-category" style="height: 28px; font-size: 8;">
-                                          Add new staff
-                                        </h5>
-                                      </div>
-                                    </div>
-                                    <div class="col-ms-4 mr-auto ml-auto">
-                                      <div class="card-header text-right">
-                                        <h5 class="card-category" style="height: 28px; font-size: 8;">
-                                          Add from <button class="primary btn-link" data-toggle="modal" data-target="#usersList">Colours Users</button>
-                                        </h5>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="row">
-                                    <div class="col-md-5">
-                                      <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text">
-                                            <i class="fa fa-user-md"></i>
-                                          </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Staff name..." (focus)="focus=true"
-                                          (blur)="focus=false" [(ngModel)]="companystaff.name">
-                                      </div>
-                                    </div>
-                                    <div class="col-md-5">
-                                      <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text">
-                                            <i class="nc-icon nc-tag-content"></i>
-                                          </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Phone number ..." (focus)="focus=true"
-                                          (blur)="focus=false" [(ngModel)]="companystaff.phoneNnumber">
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="row">
-                                    <div class="col-md-5">
-                                      <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text">
-                                            <i class="nc-icon nc-email-85"></i>
-                                          </span>
-                                        </div>
-                                        <input type="email" class="form-control" placeholder="email address ..." (focus)="focus=true"
-                                          (blur)="focus=false" [(ngModel)]="companystaff.email">
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <button class="primary btn-link" (click)="saveStaff(companystaff)">save</button>
-                                </div>
-                              </div>
-                              <div class="spacer" style="height: 3em"></div>
-                              <div class="card-header text-left" style="padding-top: 0px;">
-                                <h5 class="card-category title clrs-h4" style="height: 28px; font-size: 8;">
-                                  Company Staff Join Request<br><small>
-                                  </small><br>
-                                </h5>
-                              </div>
-                            </div>
-                            <div class="col-md-4 mr-auto ml-auto">
-                              <ul>
-                                <li *ngFor="let rMan of staffRequests | async"><span>{{ rMan.name }}</span><span><button class="btn-link" > Accept </button></span></li>
-                              </ul>
-                            </div>
-                          </div> -->
                         </div>
 
                         <div class="tab-pane" id="client" role="tabpanel" aria-expanded="false">
@@ -1920,13 +1831,13 @@
                                       Things To Do In Tray For Departments</p>
                                     <div class="row">
                                       <div class="col-md-12">
-                                        <ng-select placeholder="Select department" [(ngModel)]="dp" (change)="showDpTasks(dp)">
+                                        <ng-select placeholder="Select department" [(ngModel)]="dpId" (change)="showDpTasks(dpId)">
                                           <ng-option *ngFor="let department of departments | async" [value]="department.id">
                                             {{ department.name }}</ng-option>
                                         </ng-select>
                                       </div>
                                     </div>
-                                    <div *ngIf="dp">
+                                    <div *ngIf="dpId">
                                       <div class="card-body">
                                         <div class="row">
                                           <div class="col-sm-12 text-left" style="margin-right:-.5em">
@@ -2015,7 +1926,7 @@
                                                                   (click)="selectAction(item)" title="Set task as completed">Add
                                                                   Participants</button>
                                                                 <button class="dropdown-item btn-info btn-link" rel="tooltip"
-                                                                  title="Assign action to Staff" (click)="showDpTasks(dp)"
+                                                                  title="Assign action to Staff"
                                                                   data-toggle="modal" data-target="#dptStaffList">Assign
                                                                   Champion</button>
                                                               </div> -->
@@ -2079,7 +1990,7 @@
                                       <button class="primary btn-link" (click)="selectEditAction(item)" data-toggle="modal"
                                         data-target="#editAction">
                                         Period
-                                      </button><button class="primary btn-link" data-toggle="modal" (click)="selectEditAction(item);showActionParticipants()"
+                                      </button><button class="primary btn-link" data-toggle="modal" (click)="select2EditAction(item);"
                                         data-target="#actionItemParticipants">
                                         Participants
                                       </button>
@@ -2113,7 +2024,8 @@
                             </div>
                             <!-- <div class="col-sm-12"> -->
                             <ol style="padding-left: 10px;">
-                              <li *ngFor="let item of viewActions | async">
+                              <!-- <li *ngFor="let item of viewActions | async"> -->
+                              <li *ngFor="let item of viewDayActions">
                                 <div class="row">
                                   <div class="col-sm-2">
                                     <a> {{ item.name }}</a>
@@ -2151,7 +2063,7 @@
                                           (click)="addActionTime(item)">Save</button>
                                         <!-- clrs-cell form-control panel-boader clrs-cell  -->
                                         <button class="primary btn-link" data-toggle="modal" data-target="#actionItemParticipants"
-                                          (click)="selectEditAction(item);showActionParticipants()">
+                                          (click)="select2EditAction(item)">
                                           Participants
                                         </button></small>
                                     </div>
@@ -2328,7 +2240,7 @@
                                 </div> -->
                               </div>
                             </div>
-                            <div *ngIf="displayDept" class="card-body" style="margin-top: -3em">
+                            <div *ngIf="displayDept" class="card-body" style="margin-top: -3em" id="DepartmentDisplay">
                               <div class="col-md-12">
                                 <div class="row">
                                   <div class="col-md-10">
@@ -2347,12 +2259,10 @@
                                         Overview 
                                       </a>
                                     </li>
-                                    <span style="color:darkslategrey"> -|- </span>
-                                    <li class="nav-item">
+                                    <!-- <span style="color:darkslategrey"> -|- </span><li class="nav-item">
                                       <a class="pagination pagination-primary" title="click to see the timesheet" data-toggle="tab" href="#deptTimesheet" role="tablist">
                                         Timesheet
-                                      </a>
-                                    </li>
+                                      </a>         </li> -->
                                     <span style="color:darkslategrey"> -|- </span>
                                     <li class="nav-item">
                                       <a class="pagination pagination-primary" title="click to see the other reports" data-toggle="tab" href="#deptOther" role="tablist">
@@ -2369,7 +2279,7 @@
                                       Total Number of Tasks allocated: {{ (allDeptTasks | async)?.length }}<br>
                                     </div>
                                     <div class="col-md-12">
-                                      <div class="row">
+                                      <div *ngIf="((allDeptTasks | async)?.length != 0)" class="row">
                                         <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
                                         <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
                                         <!-- <div class="col-sm-2 card-header">Target</div> -->
@@ -2513,7 +2423,7 @@
                                       Total Number of Tasks allocated: {{ (allMyTasks | async)?.length }}<br>
                                     </div>
                                     <div class="col-md-12">
-                                        <div class="row">
+                                        <div *ngIf="((allMyTasks | async)?.length != 0)" class="row">
                                           <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
                                           <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
                                           <!-- <div class="col-sm-2 card-header">Target</div> -->
@@ -2600,7 +2510,7 @@
                             </div>
                           </div>
                           <div class="tab-pane" id="projectsTab" role="tabpanel" aria-expanded="false">
-                            <div *ngIf="displayReport" class="card-body">
+                            <div *ngIf="displayProjReport" class="card-body">
                               <div class="row">
                                 <div class="col-sm-4">
                                   <!-- <h3>List of Employees</h3> -->
@@ -2614,23 +2524,12 @@
                                 <div *ngIf="ProjectDemoNotes" class="col-sm-8">
                                   <!-- <h3>Another Title Here</h3> -->
                                   <p class="clrs-h1" style="margin-top:0em; color:darkslategray">Project Details...</p>
-
                                   <p class="text-info ">Click to view on an Project to see their report.</p>
                                 </div>
-                                <!-- <div *ngIf="displayProject" class="col-sm-8">
-                                  <p style="margin-top:0em; color:darkslategray"><span class="card-category clrs-h1">{{
-                                      projectSet.name }}`</span><span class="clrs-h1"> s project report...</span></p>
-                                  <div class="col-md-10 mr-auto ml-auto text-left">
-                                    A summarized report for <b>{{ projectSet.name }} </b> project.<br><br>
-                                    Total Number of Tasks Complete : {{ (compProjectTasksComplete | async)?.length }}<br>
-                                    Total Number of outstanding Tasks : {{ outstandingProjectTasks.length }}<br>
-                                    Total Number of Tasks allocated : {{ (allProjectTasks | async)?.length }}<br>
-                                  </div>
-                                </div> -->
                               </div>
                             </div>
                             <div *ngIf="displayProject" class="card-body" style="margin-top: -3em">
-                              <div class="col-sm-8">
+                              <!-- <div class="col-sm-8">
                                 <p style="margin-top:0em; color:darkslategray"><span class="card-category clrs-h1">{{
                                     projectSet.name }}`</span><span class="clrs-h1"> s project report...</span></p>
                                 <div class="col-md-10 mr-auto ml-auto text-left">
@@ -2638,6 +2537,132 @@
                                   Total Number of Tasks Complete : {{ (compProjectTasksComplete | async)?.length }}<br>
                                   Total Number of outstanding Tasks : {{ outstandingProjectTasks.length }}<br>
                                   Total Number of Tasks allocated : {{ (allProjectTasks | async)?.length }}<br>
+                                </div>
+                              </div> -->
+
+
+
+                              <div class="col-md-12">
+                                <div class="row">
+                                  <div class="col-md-10">
+                                    <p class="clrs-h1 pull-left" style="margin-top:0em; color:darkslategray; margin-bottom: 0px;"><span
+                                        class="title card-category" style="color:darkslategray">{{ projectSet.name }}</span>`s project report overview...</p>
+                                  </div>
+                                  <div class="col-md-2">
+                                    <button class="btn-link btn-magnify" (click)="back2Proj()">Back</button>
+                                  </div>
+                                </div>
+                                <br><br>
+                              
+                                <nav aria-label="Page navigation example">
+                                  <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-right" role="tablist"
+                                    style="margin-top: -30px;">
+                                    <li class="nav-item">
+                                      <a class="pagination pagination-primary active" title="click to see the overview" data-toggle="tab"
+                                        href="#projOverview" role="tablist">
+                                        Overview
+                                      </a>
+                                    </li>
+                                    <!-- <span style="color:darkslategrey"> -|- </span><li class="nav-item">
+                                                                    <a class="pagination pagination-primary" title="click to see the timesheet" data-toggle="tab" href="#projTimesheet" role="tablist">
+                                                                      Timesheet
+                                                                    </a>         </li> -->
+                                    <span style="color:darkslategrey"> -|- </span>
+                                    <li class="nav-item">
+                                      <a class="pagination pagination-primary" title="click to see the other reports" data-toggle="tab"
+                                        href="#projOther" role="tablist">
+                                        Other
+                                      </a>
+                                    </li>
+                                  </ul>
+                                </nav>
+                                <div class="tab-content tab-space tab-subcategories col-md-12">
+                                  <div class="tab-pane active" id="projOverview">
+                                    <div class="col-md-11 mr-auto ml-auto text-left">
+                                      Total Number of Tasks Complete : {{ (compProjectTasksComplete | async)?.length }}<br>
+                                      Total Number of outstanding Tasks : {{ outstandingProjectTasks.length }}<br>
+                                      Total Number of Tasks allocated : {{ (allProjectTasks | async)?.length }}<br>
+                                    </div>
+                                    <div class="col-md-12">
+                                      <div *ngIf="((allProjectTasks | async)?.length != 0)" class="row">
+                                        <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
+                                        <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
+                                        <!-- <div class="col-sm-2 card-header">Target</div> -->
+                                        <div class="col-md-2 col-sm-2 card-header text-left">Start</div>
+                                        <div class="col-md-2 col-sm-2 card-header text-left">Finish</div>
+                                        <div class="col-md-2 col-sm-2 card-header text-left">Complete</div>
+                                        <div class="col-md-3 col-sm-3 card-header text-left">Champion</div>
+                                      </div>
+                                      <!-- <ol style="padding-left: 10px;">
+                                                                      <p *ngIf="(labourerOutstandingTasks.length != 0)" class="category text-warning">Outstanding Tasks.</p>
+                                                                      <li *ngFor="let item of labourerOutstandingTasks">
+                                                                        <div class="row">
+                                                                          <div class="col-md-3 col-sm-3">
+                                                                            <a>{{ item.name }}</a>
+                                                                          <div class="col-md-2 col-sm-2">
+                                                                            <a>{{ item.start }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-2 col-sm-2">
+                                                                            <a>{{ item.finish }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-2 col-sm-2">
+                                                                            <a>{{ item.complete }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-3 card-category col-sm-3">
+                                                                            <a>{{ item.champion.name }}</a>
+                                                                          </div>
+                                                                        </div>
+                                                                      </li>
+                                                                      <p *ngIf="(labourerCurrentTAsks != 0)" class="category text-success">Current Tasks.</p>
+                                                                      <li *ngFor="let item of labourerCurrentTAsks">
+                                                                        <div class="row">
+                                                                          <div class="col-md-3 col-sm-3">
+                                                                            <a> {{ item.name }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-2 col-sm-2">
+                                                                            <a> {{ item.start }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-2 col-sm-2">
+                                                                            <a> {{ item.finish }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-2 col-sm-2">
+                                                                            <a> {{ item.complete }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-3 card-category  col-sm-3">
+                                                                            <a> {{ item.champion.name }}</a>
+                                                                          </div>
+                                                                        </div>
+                                                                      </li>
+                                                                      <p *ngIf="(labourerUpcomingTAsks != 0)" class="category text-info">Upcurrent Tasks.</p>
+                                                                      <li *ngFor="let item of labourerUpcomingTAsks">
+                                                                        <div class="row">
+                                                                          <div class="col-md-3 col-sm-3">
+                                                                            <a> {{ item.name }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-2 col-sm-2">
+                                                                            <a> {{ item.start }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-2 col-sm-2">
+                                                                            <a> {{ item.finish }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-2 col-sm-2">
+                                                                            <a> {{ item.complete }}</a>
+                                                                          </div>
+                                                                          <div class="col-md-3 card-category  col-sm-3">
+                                                                            <a> {{ item.champion.name }}</a>
+                                                                          </div>
+                                                                        </div>
+                                                                      </li>
+                                                                    </ol> -->
+                                    </div>
+                                  </div>
+                                  <div class="tab-pane" id="projTimesheet">
+                                    Timesheet
+                                    <br>
+                                  </div>
+                                  <div class="tab-pane" id="projOther">
+                                    Other reports
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -2901,7 +2926,7 @@
                     <code>Select a Champion</code>
                     <table class="table">
                       <tbody class="">
-                        <tr *ngFor="let user of compStaffList | async " class="td-clrs">
+                        <tr *ngFor="let user of staff3 | async " class="td-clrs">
                           <td class="td-clrs">{{ user.name }}</td>
                           <td class="td-clrs"><button class="primary btn-link" (click)="selectCompanyUser(user)">select</button></td>
                         </tr>
@@ -2984,7 +3009,7 @@
                 <label class="col-md-4 col-form-label">User</label>
                 <div class="col-md-8 mr-auto">
                   <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
-                    :{{(companystaff)?.name }}
+                    :{{(newCompanystaff)?.name }}
                     <button type="text" name="taskChampion" class="btn btn-icon primary btn-link " (click)="toggleUsersTable(); toggleChamp()"
                       rel="tooltip" title="select a new staff">
                       <i class="fa fa-edit fa-fw"></i>
@@ -3004,7 +3029,7 @@
                       <tbody class="">
                         <tr *ngFor="let user of coloursUsers | async " class="">
                           <td>{{ user.name }}</td>
-                          <td><button class="primary btn-link" (click)="selectUser(user)"> select
+                          <td><button class="primary btn-link" (click)="selectColUser(user)"> select
                             </button></td>
                         </tr>
                       </tbody>
@@ -3219,7 +3244,7 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-8 ml-auto mr-auto title na-am col-form-label info">
-            Select Participants<br> for Action item: <b>{{ selectedAction.name }}</b> </p><br>
+            Select Participants<br> for Action item: <b>{{ editedAction.name }}</b> </p><br>
 
         </div>
         <div class="col-md-10 ml-auto mr-auto">
@@ -3334,7 +3359,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <!-- <div class="row">
             <label class="col-md-4 col-form-label">Start Date</label>
             <div class="col-md-7">
               <div class="form-group">
@@ -3349,7 +3374,7 @@
                 <input type="date" [(ngModel)]="actionItem.endDate" name="siu" class="form-control">
               </div>
             </div>
-          </div>
+          </div> -->
         </form>
 
         <div class="modal-footer" style="margin-bottom:0%">
@@ -3402,7 +3427,6 @@
             <div class="col-md-7 col-lg-6 col-sm-5">
               <div class="form-group">
                 <ng-select placeholder="Select department" [(ngModel)]="dp" name="actionDpt" (change)="showDpTasks(dp)">
-                  <!--  (change)="showDpTasks(dp)" -->
                   <ng-option *ngFor="let department of departments | async" [value]="department.id">
                     {{ department.name }}</ng-option>
                 </ng-select>

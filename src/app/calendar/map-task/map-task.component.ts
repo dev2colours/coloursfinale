@@ -91,7 +91,7 @@ export class MapTaskComponent {
   private taskCollection: AngularFirestoreCollection<Task>; 
   myprojects: Observable<Project[]>;
   theseTasks: MomentTask[];
-   // this.loggedInUser: participant
+   // this.myData: participant
   day0label: string;
   day1label: string;
   day2label: string;
@@ -149,6 +149,11 @@ export class MapTaskComponent {
   classification: classification;
   myContacts: Observable<ParticipantData[]>;
 
+  userProfile: Observable<coloursUser>;
+  myDocment: AngularFirestoreDocument<{}>;
+  userData: coloursUser;
+  myData: ParticipantData;
+
   constructor(public auth: AuthService, private is: InitialiseService, private pns: PersonalService, private ts: TaskService, public afAuth: AngularFireAuth, public es: EnterpriseService, public afs: AngularFirestore, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
     
     this.task = is.getTask();
@@ -162,14 +167,6 @@ export class MapTaskComponent {
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
-      let loggedInUser = {
-        name: this.user.displayName,
-        email: this.user.email,
-        id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
-      }
-      this.userChampion = loggedInUser;
       this.dataCall();
     })
 
@@ -335,12 +332,36 @@ export class MapTaskComponent {
      });    
 
      this.task = this.is.getTask();
-     this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "" };
-     this.myChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: ""};
+     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
+     this.myChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: ""};
   }
 
 
   async dataCall(){
+
+    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+
+    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+      const data = a.payload.data() as coloursUser;
+      const id = a.payload.id;
+      return { id, ...data };
+    }));
+
+    this.userProfile.subscribe(userData => {
+      console.log(userData);
+      let myData = {
+        name: this.user.displayName,
+        email: this.user.email,
+        bus_email: userData.bus_email,
+        id: this.user.uid,
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
+      }
+      this.userChampion = myData;
+
+      this.myData = myData;
+      this.userData = userData;
+    });
 
     this.classifications = this.pns.getClassifications(this.userId);
     this.myContacts = this.pns.getContacts(this.userId);
@@ -505,6 +526,7 @@ export class MapTaskComponent {
     let cUser = {
       name: x.name,
       email: x.email,
+      bus_email: x.bus_email,
       id: x.id,
       phoneNumber: x.phoneNumber,
       photoURL: this.user.photoURL

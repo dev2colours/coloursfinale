@@ -2,13 +2,14 @@ import { Component, OnInit, OnChanges, AfterViewInit, SimpleChanges  } from '@an
 import { FormControl, FormGroupDirective, NgForm, Validators, FormGroup } from '@angular/forms';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Router } from '@angular/router';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Enterprise, ParticipantData, companyChampion, Department, employeeData } from "../../models/enterprise-model";
 import { Project } from "../../models/project-model";
 import { EnterpriseService } from 'app/services/enterprise.service';
 import { InitialiseService } from 'app/services/initialise.service';
+import { coloursUser } from 'app/models/user-model';
 
 var misc: any = {
   navbar_menu_visible: 0,
@@ -77,6 +78,10 @@ export class JoinEnterpriseComponent {
   companyId: any;
   userDetail: Observable<employeeData>;
 
+  userProfile: Observable<coloursUser>;
+  myDocment: AngularFirestoreDocument<{}>;
+  userData: coloursUser;
+
   constructor(private es: EnterpriseService, public afAuth: AngularFireAuth, private is: InitialiseService, public router: Router, private afs: AngularFirestore) {
 
     this.selectedCompany = is.getSelectedCompany();
@@ -87,14 +92,6 @@ export class JoinEnterpriseComponent {
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
-      let myData = {
-        name: this.user.displayName,
-        email: this.user.email,
-        id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
-      }
-      this.myData = myData
       this.coloursUsername = user.displayName;
       console.log(this.userId);
       console.log(this.user);
@@ -368,6 +365,28 @@ export class JoinEnterpriseComponent {
   }
 
   dataCall(){
+
+    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+
+    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+      const data = a.payload.data() as coloursUser;
+      const id = a.payload.id;
+      return { id, ...data };
+    }));
+
+    this.userProfile.subscribe(userData => {
+      console.log(userData);
+      let myData = {
+        name: this.user.displayName,
+        email: this.user.email,
+        bus_email: userData.bus_email,
+        id: this.user.uid,
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
+      }
+      this.myData = myData;
+      this.userData = userData;
+    });
     this.enterprises = this.afs.collection<Enterprise>('Enterprises').snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Enterprise;
@@ -387,17 +406,6 @@ export class JoinEnterpriseComponent {
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
-      let myData ={
-        name: this.user.displayName,
-        email: this.user.email,
-        id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
-      }
-      this.myData = myData
-      this.coloursUsername = user.displayName;
-      console.log(this.userId);
-      console.log(this.user);
       this.dataCall();
     })
   }

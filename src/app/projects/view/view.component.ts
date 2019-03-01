@@ -293,6 +293,15 @@ export class ViewComponent implements OnInit {
   labourerUpcomingTAsks = [];
   labourerCompletedTasks: Observable<Task[]>
 
+  userProfile: Observable<coloursUser>;
+  myDocment: AngularFirestoreDocument<{}>;
+  userData: coloursUser;
+
+  selectedActions: workItem[];
+  viewDayActions: any;
+  viewTodayWork: boolean = false;
+  viewTodaystds: boolean = false;
+
   constructor(public afAuth: AngularFireAuth, private is: InitialiseService, public router: Router, private authService: AuthService, private afs: AngularFirestore, private pns: PersonalService, private ts: TaskService,
     public es: EnterpriseService, private ps: ProjectService, private as: ActivatedRoute) {
     this.task = is.getTask();
@@ -313,9 +322,8 @@ export class ViewComponent implements OnInit {
     // this.compChampion = is.getCompChampion();
 
 
-    this.compChampion = {
-      name: "", id: "", email: "", phoneNumber: "", photoURL: ""};
-    this.labourer = { name: "", id: "", email: "", phoneNumber: "", photoURL: "" };
+    this.compChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: ""};
+    this.labourer = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
     this.projectCompDetail = { id: "", name: "" };
 
     this.todayDate = moment(new Date(), "DD-MM-YYYY").format('dddd');
@@ -915,7 +923,7 @@ export class ViewComponent implements OnInit {
     let compId = this.projectCompId;    
     let proId = this.projectId;
     console.log(proId);
- 
+    this.callProjectTasks();
     this.coloursUsers = this.afs.collection('Users').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as firebase.User;
@@ -986,7 +994,7 @@ export class ViewComponent implements OnInit {
     this.start = "";
     this.finish = "";
     this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
-    this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "" };
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
     this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
   }
@@ -1033,7 +1041,7 @@ export class ViewComponent implements OnInit {
     this.start = "";
     this.finish = "";
     this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
-    this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "" };
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
     this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
   }
@@ -1126,6 +1134,7 @@ export class ViewComponent implements OnInit {
     let cUser = {
       name: x.name,
       email: x.email,
+      bus_email: x.bus_email,
       id: x.id,
       phoneNumber: x.phoneNumber,
       photoURL: x.photoURL
@@ -1348,18 +1357,18 @@ export class ViewComponent implements OnInit {
     console.log('the task-->' + this.selectedTask.name + " " + this.selectedTask.id);
     console.log('the action-->' + action.name);
     let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('projects').doc(this.projectId);
-    let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
 
     let cmpProjectDoc = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(this.selectedTask.companyId);
-    let cmpProActions = cmpProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let cmpProActions = cmpProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
 
     let projectTaskDoc = this.afs.collection('Projects').doc(this.projectId);
-    let projectTaskActions = projectTaskDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let projectTaskActions = projectTaskDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
 
     let projectDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('projects').doc(this.projectId);
-    let actionRef = projectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let actionRef = projectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
 
-    let EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
     // EntRef.doc(action.id).set(action);
     // cmpProActions.doc(action.id).set(action);
     // actionRef.doc(action.id).set(action);
@@ -1367,8 +1376,10 @@ export class ViewComponent implements OnInit {
     // projectTaskActions.doc(action.id).set(action);
   }
 
-  newAction(startDate, endDate) {
+  newAction() {
     console.log(this.setItem);
+    this.setItem.by = this.user.displayName;
+    this.setItem.byId = this.userId;
     this.setItem.taskName = this.selectedTask.name;
     this.setItem.taskId = this.selectedTask.id;
     this.setItem.projectId = this.selectedTask.projectId;
@@ -1377,16 +1388,25 @@ export class ViewComponent implements OnInit {
     this.setItem.companyName = this.selectedTask.companyName;
     this.setItem.type = "planned";
     // set Time 
-    console.log('' + '' + moment(startDate, 'YYYY-MM-DD').format('L'));
+    // console.log('' + '' + moment(startDate, 'YYYY-MM-DD').format('L'));
+
+    this.setItem.startDate = "";
+    this.setItem.startWeek = "";
+    this.setItem.startDay = "";
+    this.setItem.endDate = "";
+    this.setItem.endWeek = "";
+    this.setItem.endDay = "";
     
-    this.setItem.startDate = moment(startDate, 'YYYY-MM-DD').format('L');
-    this.setItem.startWeek = moment(this.startDate, 'YYYY-MM-DD').week().toString();
-    this.setItem.startDay = moment(this.startDate, 'YYYY-MM-DD').format('ddd');
-    this.setItem.endDate = moment(endDate, 'YYYY-MM-DD').format('L');
-    this.setItem.endWeek = moment(this.endDate, 'YYYY-MM-DD').week().toString();
-    this.setItem.endDay = moment(this.endDate, 'YYYY-MM-DD').format('ddd');
+    // this.setItem.startDate = moment(startDate, 'YYYY-MM-DD').format('L');
+    // this.setItem.startWeek = moment(this.startDate, 'YYYY-MM-DD').week().toString();
+    // this.setItem.startDay = moment(this.startDate, 'YYYY-MM-DD').format('ddd');
+    // this.setItem.endDate = moment(endDate, 'YYYY-MM-DD').format('L');
+    // this.setItem.endWeek = moment(this.endDate, 'YYYY-MM-DD').week().toString();
+    // this.setItem.endDay = moment(this.endDate, 'YYYY-MM-DD').format('ddd');
     // set Champion
-    this.setItem.champion = this.myData;
+    // this.setItem.champion = this.myData;
+    this.setItem.champion = this.selectedTask.champion;
+
     let mooom = this.setItem;
     console.log(mooom);
     console.log('Work Action =>' + '' + mooom.id);
@@ -1395,24 +1415,27 @@ export class ViewComponent implements OnInit {
     console.log('the action-->' + this.setItem.name);
 
     let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('projects').doc(this.projectId);
-    let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
     let userCmpProjectDoc = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(this.selectedTask.companyId).collection('Participants').doc(this.staffId).collection<workItem>('WeeklyActions');
 
     let cmpProjectDoc = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(this.selectedTask.companyId);
-    let cmpProActions = cmpProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let cmpProActions = cmpProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
 
     let projectTaskDoc = this.afs.collection('Projects').doc(this.projectId);
-    let projectTaskActions = projectTaskDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let projectTaskActions = projectTaskDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
 
     let projectDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('projects').doc(this.projectId);
-    let actionRef = projectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let actionRef = projectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
 
-    let EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
     EntRef.doc(this.setItem.id).set(this.setItem);
     cmpProActions.doc(this.setItem.id).set(this.setItem);
     actionRef.doc(this.setItem.id).set(this.setItem);
     userActionRef.doc(this.setItem.id).set(this.setItem);
     projectTaskActions.doc(this.setItem.id).set(this.setItem);
+
+    // this.setItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+    this.setItem = null;
   }
 
   setAction(setItem){
@@ -1471,7 +1494,8 @@ export class ViewComponent implements OnInit {
   initDiary() {
     // this.aCurrentDate = moment(new Date()).format('L');
     let testPeriod = "startDate";
-    this.viewTodayAction(testPeriod, this.aCurrentDate);
+    // this.viewTodayAction(testPeriod, this.aCurrentDate);
+    this.viewTodayActionQuery(testPeriod, this.aCurrentDate);
   }
 
   changeDay(action) {
@@ -1499,7 +1523,8 @@ export class ViewComponent implements OnInit {
     }
 
     let testPeriod = "startDate";
-    this.dayTasks = this.viewTodayAction(testPeriod, this.aPeriod);
+    // this.dayTasks = this.viewTodayAction(testPeriod, this.aPeriod);
+    this.dayTasks = this.viewTodayActionQuery(testPeriod, this.aPeriod);
   }
 
   viewTodayAction(testPeriod, checkPeriod) {
@@ -1517,6 +1542,56 @@ export class ViewComponent implements OnInit {
           return { id, ...data };
         }))
       );
+    return this.viewActions;
+  }
+
+  viewTodayActionQuery(testPeriod, checkPeriod) {
+    console.log(this.projectCompId);
+    let today = moment(new Date(), "YYYY-MM-DD");
+    let today2 = moment(new Date(), "MM-DD-YYYY").format('L');
+    today2 = checkPeriod;
+    console.log(today);
+    console.log(today2);
+    console.log(testPeriod);
+    console.log(checkPeriod);
+    
+    this.viewActions = this.afs.collection('Enterprises').doc(this.projectCompId).collection('projects').doc(this.projectId).collection<workItem>('WeeklyActions'
+      // , ref => ref
+      // .orderBy('start')
+      // .where(testPeriod, '==', checkPeriod)
+      ).snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          this.viewDayActions = [];
+          const data = a.payload.doc.data() as workItem;
+          const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    this.viewDayActions = [];
+
+    this.viewActions.subscribe((actions) => {
+      console.log(actions);
+      this.selectedActions = actions;
+      actions.forEach(element => {
+        let data = element;
+        // this.viewDayActions = [];
+
+        // if (moment(element.startDate).isSameOrAfter(today) && element.complete == false) {
+        // if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
+        if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
+          this.viewDayActions.push(element);
+          console.log(this.viewDayActions);
+
+        }
+
+      });
+      if (this.selectedActions.length > 0) {
+        this.viewTodayWork = true;
+      } else {
+        this.viewTodayWork = false;
+      }
+    });
     return this.viewActions;
   }
 
@@ -1550,13 +1625,19 @@ export class ViewComponent implements OnInit {
     this.selectedAction.endDay = moment(endDate, 'YYYY-MM-DD').format('ddd').toString();
     this.selectedAction.startDate = moment(startDate).format('L');
     this.selectedAction.endDate = moment(endDate).format('L');
-    this.selectedAction.targetQty
+
+    // this.selectedAction.targetQty = 0;
+    // this.selectedAction.start = "";
+    // this.selectedAction.end = "";
+
     console.log(this.selectedAction.startDate);
     console.log(this.selectedAction.endDate);
 
+    this.selectedAction.startWeek = moment(endDate, "YYYY-MM-DD").week().toString();
+    this.selectedAction.endWeek = moment(startDate, "YYYY-MM-DD").week().toString();
+
     // this.selectedAction.startDate = startDate;
     // this.selectedAction.endDate = endDate;
-    this.selectedAction.startWeek = moment(startDate, "YYYY-MM-DD").week().toString();
 
     console.log('the actionItem-->' + this.selectedAction.name);
 
@@ -1591,14 +1672,14 @@ export class ViewComponent implements OnInit {
     // creator update
 
     if (this.selectedAction.byId != "") {
-      let creatorRef = this.afs.collection<Project>('Users').doc(this.selectedAction.byId).collection<Enterprise>('enterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+      let creatorRef = this.afs.collection<Project>('Users').doc(this.selectedAction.byId).collection<Enterprise>('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
       creatorRef.doc(this.selectedAction.id).set(this.selectedAction);
     };
 
     // champion update
 
     if (this.selectedAction.champion != null) {
-      let championRef = this.afs.collection<Project>('Users').doc(champId).collection<Enterprise>('enterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+      let championRef = this.afs.collection<Project>('Users').doc(champId).collection<Enterprise>('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
       championRef.doc(this.selectedAction.id).set(this.selectedAction);
     };
 
@@ -1724,11 +1805,11 @@ export class ViewComponent implements OnInit {
     let workData = this.newWorkItem;
     let entDoc = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(this.projectCompId)
     let itemsCol = entDoc.collection<abridgedBill>('abridgedBOQ').doc(this.selectedBill.id);
-    itemsCol.collection('workItems').add(this.newWorkItem).then(function (wrkItemRef) {
+    itemsCol.collection('actionItems').add(this.newWorkItem).then(function (wrkItemRef) {
       const id = wrkItemRef.id;
-      entDoc.collection('workItems').doc(id).set(workData);
-      entDoc.collection('workItems').doc(id).update({ 'id': id });
-      itemsCol.collection('workItems').doc(id).update({ 'id': id });
+      entDoc.collection('actionItems').doc(id).set(workData);
+      entDoc.collection('actionItems').doc(id).update({ 'id': id });
+      itemsCol.collection('actionItems').doc(id).update({ 'id': id });
     });
     itemsCol.update({ 'totalAmount': this.selectedBill.totalAmount });
   }
@@ -1745,6 +1826,7 @@ export class ViewComponent implements OnInit {
     let staff = {
       name: x.name,
       email: x.email,
+      bus_email: x.bus_email,
       id: x.id,
       phoneNumber: x.phoneNumber,
       photoURL: x.photoURL,
@@ -1764,7 +1846,7 @@ export class ViewComponent implements OnInit {
     let partRef = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(this.projectCompId).collection('labour');
     partRef.doc(this.companystaff.id).set(this.companystaff);
     console.log(this.companystaff);
-    this.companystaff = { name: "", phoneNumber: "", email: "", id: "" , photoURL: ""};
+    this.companystaff = { name: "", phoneNumber: "", email: "", bus_email: "", id: "" , photoURL: ""};
   }
 
   selectAsset(asset){
@@ -2246,6 +2328,30 @@ export class ViewComponent implements OnInit {
   
 
   dataCall(): Observable<Project> {
+
+
+    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+
+    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+      const data = a.payload.data() as coloursUser;
+      const id = a.payload.id;
+      return { id, ...data };
+    }));
+
+    this.userProfile.subscribe(userData => {
+      console.log(userData);
+      let myData = {
+        name: this.user.displayName,
+        email: this.user.email,
+        bus_email: userData.bus_email,
+        id: this.user.uid,
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
+      }
+      this.myData = myData;
+      this.userData = userData;
+    });
+
     let compId;
     let compName;
     this.proj = this.as.paramMap.pipe(
@@ -2294,14 +2400,6 @@ export class ViewComponent implements OnInit {
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
-      let myData = {
-        name: this.user.displayName,
-        email: this.user.email,
-        id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
-      }
-      this.myData = myData;
       this.refreshData();
       this.dataCall().subscribe();
       this.getComp();

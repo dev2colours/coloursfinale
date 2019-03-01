@@ -33,26 +33,31 @@
                         data-toggle="tab">Standards</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#proSetup"
+                      <!-- <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#proSetup" -->
+                      <a class="nav-link nav-colors" (click)="minimizeSidebar()" href="#proSetup"
                         role="tab" data-toggle="tab">Setup</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#planning"
+                      <!-- <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#planning" -->
+                      <a class="nav-link nav-colors" (click)="minimizeSidebar()" href="#planning"
                         role="tab" data-toggle="tab">Planning</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#implement"
+                      <!-- <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#implement" -->
+                      <a class="nav-link nav-colors" (click)="minimizeSidebar()" href="#implement"
                         role="tab" data-toggle="tab">Implementation</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#reports"
+                      <!-- <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#reports" -->
+                      <a class="nav-link nav-colors" (click)="minimizeSidebar()" href="#reports"
                         role="tab" data-toggle="tab">Reporting</a>
                     </li>
                   </ul>
                 </div>
               </div>
             </div>
-            <div class="col-lg-10 col-md-9 col-sm-8 col-6">
+            <!-- <div class="col-lg-10 col-md-9 col-sm-8 col-6"> -->
+            <div class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto" style="padding-right: 0px;padding-left: 0px;">
               <!-- Tab panes -->
               <div class="tab-content">
                 <div class="tab-pane active" id="info">
@@ -1889,8 +1894,7 @@
                                                           <button class="dropdown-item btn-primary btn-link"
                                                             rel="tooltip" (click)="selectTask(tss)" data-toggle="modal"
                                                             data-target="#labourModal"
-                                                            title="Add {{ tss.name }} to a department">Reallocate to new
-                                                            staff
+                                                            title="Add {{ tss.name }} to a department">Reallocate to new staff
                                                           </button>
                                                         </div>
                                                       </div>
@@ -2170,7 +2174,8 @@
                               <div class="col-sm-2 card-header text-left"></div>
                             </div>
                             <ol style="padding-left: 10px;">
-                              <li *ngFor="let item of viewActions | async">
+                              <!-- <li *ngFor="let item of viewActions | async"> -->
+                              <li *ngFor="let item of viewDayActions">
                                 <div class="row">
                                   <div class="col-sm-2">
                                     <a> {{ item.name }}</a>
@@ -2891,12 +2896,11 @@
             <div class="row">
               <label class="col-md-4 col-form-label">Work Action</label>
               <div class="col-md-7 col-lg-6 col-sm-5">
-                <ng-select [items]="billWorks | async" bindLabel="name" name="WorkAction"
-                  placeholder="Select Work Action" (click)="setAction(setItem)" [(ngModel)]="setItem">
+                <ng-select [items]="billWorks | async" bindLabel="name" name="WorkAction" placeholder="Select Work Action" (click)="setAction(setItem)" [(ngModel)]="setItem">
                 </ng-select>
               </div>
             </div>
-            <ng-container *ngIf="hideDateBtn">
+            <!-- <ng-container *ngIf="hideDateBtn">
               <div class="row col-md-10 ml-auto mr-auto">
                 <button class="primary btn-link" (click)="showDatefield()">
                   <small>Add date</small>
@@ -2929,7 +2933,7 @@
                   </button>
                 </div>
               </div>
-            </ng-container>
+            </ng-container> -->
           </form>
 
           <div class="modal-footer" style="margin-bottom:0%">

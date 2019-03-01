@@ -299,6 +299,7 @@ export class TasksComponent {
     let cUser = {
       name : x.name,
       email: x.email,
+      bus_email: x.bus_email,
       id: x.id,
       phoneNumber: x.phoneNumber,
       photoURL: x.photoURL

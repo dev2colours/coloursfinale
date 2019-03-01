@@ -9,11 +9,11 @@ export interface service { display: string, value: string }
 
 export interface Department { name: string, by: string, byId: string, companyName: string, companyId: string, createdOn: string, id: string, hod: ParticipantData }
 
-export interface employeeData extends ParticipantData { nationalId: string, email: string, nationality: string, address: string, department: string, departmentId: string }
+export interface employeeData extends ParticipantData { nationalId: string, email: string, nationality: string, address: string, department: string, departmentId: string,  }
 
-export interface companyStaff { name: string; phoneNumber: string; by: string; byId: string; createdOn: string; email: string; id: string; };
+export interface companyStaff { name: string; phoneNumber: string; by: string; byId: string; createdOn: string; email: string; bus_email: string; id: string; photoURL: string, departmentId: string, department: string };
 
-export interface ParticipantData { name: string, id: string, email: string, phoneNumber: string, photoURL: string }
+export interface ParticipantData { name: string, id: string, email: string, bus_email: string, phoneNumber: string, photoURL: string }
 
 export interface companyChampion { companyName, id, contactPerson: ParticipantData }
 

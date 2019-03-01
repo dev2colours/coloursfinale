@@ -7,15 +7,18 @@ import * as firebase from 'firebase/app';
 // import { Observable } from 'rxjs/Observable';
 
 import { Observable } from 'rxjs';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { Router } from '@angular/router';
+import { ParticipantData } from 'app/models/enterprise-model';
+import { coloursUser } from 'app/models/user-model';
+import { map } from 'rxjs/operators';
 
-export interface ParticipantData {
-  name: string,
-  id: string,
-  email: string,
-  phoneNumber: string
-}
+// export interface ParticipantData {
+//   name: string,
+//   id: string,
+//   email: string,
+//   phoneNumber: string
+// }
 
 declare var gapi: any;
 
@@ -30,6 +33,11 @@ export class AuthService {
   userId: string;
   user$: Observable<firebase.User>;
   calendarItems: any[];
+
+  myDocment: AngularFirestoreDocument<{}>;
+  userProfile: Observable<coloursUser>;
+  userData: coloursUser;
+  myData: ParticipantData;
 
   constructor(public afAuth: AngularFireAuth, private afs: AngularFirestore, private router: Router) {
     this.user$ = afAuth.authState;
@@ -116,15 +124,27 @@ export class AuthService {
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
-      let loggedInUser = {
-        name: this.user.displayName,
-        email: this.user.email,
-        id: this.user.uid,
-        phoneNumber: this.user.phoneNumber
-      }
-      this.loggedInUser = loggedInUser;
+      this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+        const data = a.payload.data() as coloursUser;
+        const id = a.payload.id;
+        return { id, ...data };
+      }));
+      this.userProfile.subscribe(userData => {
+        console.log(userData);
+        let myData = {
+          name: this.user.displayName,
+          email: this.user.email,
+          bus_email: userData.bus_email,
+          id: this.user.uid,
+          phoneNumber: this.user.phoneNumber,
+          photoURL: this.user.photoURL
+        }
+        this.myData = myData;
+        this.userData = userData;
+      });
+      return this.user;
+
     })
-    return this.user;
 
   }
 }

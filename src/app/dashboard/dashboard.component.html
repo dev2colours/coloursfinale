@@ -1,4 +1,27 @@
+
+<!-- <script>
+  function countDown(secs, elem) {
+    var element = document.getElementById(elem);
+    element.innerHTML = "Please wait for " + secs + " seconds";
+    if (secs < 1) {
+      clearTimeout(timer);
+      element.innerHTML = '<h2>Countdown Complete!</h2>';
+      element.innerHTML += '<a href="#">Click here now</a>';
+    }
+    secs--;
+    var timer = setTimeout('countDown(' + secs + ',"' + elem + '")', 1000);
+  }
+</script> -->
 <div class="main-content">
+  <!-- <div class="row">
+    <div class="card">
+      <div><h4>{{ cdTimer }}</h4></div>
+      <script>
+        countDown(10, "status");
+        countDownPopup(10);
+      </script>
+    </div>
+  </div> -->
   <div class="row">
     <div class="col-lg-4 col-sm-6">
       <div class="card">
@@ -14,45 +37,6 @@
           <div class="spacer" style="height: 1em;"></div>
           <!-- <div class="row"> -->
             <div class="content">
-              <!-- <ol>
-                <li>
-                  <div class="row">
-                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em">
-                      <a style="color:lightgrey">
-                        Meeting<span class="label text-warning"> 1000 hrs</span>
-                      </a>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="row">
-                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
-                      <a style="color:lightgrey">
-                        Email<span class="label text-success"> 1230 Hrs </span>
-                      </a>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="row">
-                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
-                      <a style="color:lightgrey; margin-bottom: 0px;">
-                        Skype<span class="label text-success"> 1400 Hrs </span>
-                      </a>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="row">
-                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
-                      <a style="color:lightgrey; margin-bottom: 0px;">
-                        Scheduling<span class="label text-success"> 0800 Hrs </span>
-                      </a>
-                    </div>
-                  </div>
-                </li>
-              </ol> -->
-            
               <div class="content container scroll-em" *ngIf="showActions">
                 <ol>
                   <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let item of myActionItems">

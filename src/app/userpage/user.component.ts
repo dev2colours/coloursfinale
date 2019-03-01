@@ -30,11 +30,16 @@ export class UserComponent{
     preview: boolean = false;
     showContacts: boolean = false;
     
-    coloursUsers: Observable<firebase.User[]>
+    coloursUsers: Observable<coloursUser[]>
 
     selectedContacts = [];
     user$: Observable<coloursUser>;
     userDatam: Observable<{ data: coloursUser; }>;
+
+    aboutMe: String;
+
+    userInit: ParticipantData;
+
 
 
     constructor(public afAuth: AngularFireAuth, private ps: PersonalService, private afs: AngularFirestore, public router: Router){
@@ -51,8 +56,10 @@ export class UserComponent{
                 }
             })
         );
-        this.userData = { name: "", username: "", email: "", phoneNumber: "", telephone: null, address: "", nationalId: "", nationality: "", zipCode: null, country: "", city: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", aboutMe: ""}; 
+        this.userData = { name: "", gender: "", dob: "", age: 0, username: "", email: "", bus_email: "", phoneNumber: "", telephone: null, address: "", nationalId: "", nationality: "", zipCode: null, country: "", city: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", aboutMe: "", profession: null, qualifications: null, bodyWeight: 0, bodyHeight: 0, bodyMassIndex: 0, industrySector: "", personalAssets: null, personalLiabilities: null, reference: null, focusFactor: 0, userImg: "", LastTimeLogin: "", referee: [this.userInit] }; 
         // this.contact = { name: "", id: "", email: "", phoneNumber: "" };
+
+        
     }
 
     myDataCall(){
@@ -66,20 +73,24 @@ export class UserComponent{
             }
         })
 
-        var docRef = this.afs.collection("Users").doc(this.userId);
+        var docRef = this.afs.collection("Users").doc(this.userId).snapshotChanges().pipe(map(a => {
+            const data = a.payload.data() as coloursUser;
+            const id = a.payload.id;
+            return { id, ...data };
+        }));
 
-        
-        
-        // docRef.get().then(function (doc) {
-        //     if (doc.exists) {
-        //         console.log("Document data:", doc.data());
-        //     } else {
-        //         // doc.data() will be undefined in this case
-        //         console.log("No such document!");
-        //     }
-        // }).catch(function (error) {
-        //     console.log("Error getting document:", error);
-        // });
+        docRef.subscribe(userData => {
+            console.log(userData);
+            
+            // userData.bodyMassIndex = Math.round(userData.bodyWeight / ((userData.bodyHeight * (1 / 100)) * ((userData.bodyHeight * (1 / 100)))));
+            let bmi = (userData.bodyWeight / ((userData.bodyHeight * (1 / 100)) * ((userData.bodyHeight * (1 / 100)))));
+            console.log(bmi.toFixed(1));
+            
+            userData.bodyMassIndex = Number(bmi.toFixed(1));
+            console.log(userData.bodyMassIndex);
+            this.userData = userData;
+
+        })
 
     }
 
@@ -87,15 +98,26 @@ export class UserComponent{
         console.log("show Edit User Profile");
         this.show1 = true;
         this.show = false;
+        this.preview = false;
+
     }
 
     saveProfile(userData) {
         console.log(userData);
-        // this.afs.collection('/Users').doc(this.userId)
-        // .set(userData);
+        console.log(this.aboutMe);
+        this.afs.collection('Users').doc(this.userId)
+        .set(userData);
         this.show1 = false;
         this.preview = true;
         console.log("show User Profile");
+        this.myDataCall();
+    }
+
+    viewProfile(){
+        this.show1 = false;
+        this.preview = true;
+        this.show = false;
+
     }
 
     done() {
@@ -110,10 +132,10 @@ export class UserComponent{
         let newcontact = { name: contact.name, id: contact.id, email: contact.email, phoneNumber: contact.phoneNumber };
         console.log(newcontact);
         
-        this.afs.collection('/Users').doc(this.userId).collection('contacts').doc(newcontact.id).set(newcontact);
+        this.afs.collection('Users').doc(this.userId).collection('contacts').doc(newcontact.id).set(newcontact);
         this.selectedContacts.push(newcontact);
         this.contact = {
-            name: '', id: '', email: '', phoneNumber: '', photoURL: "" };
+            name: '', id: '', email: '', bus_email: '', phoneNumber: '', photoURL: "" };
         this.newContact = null;
     }
     
@@ -132,10 +154,10 @@ export class UserComponent{
             console.log(mer.valueChanges());
             this.myDataCall();
 
-            this.userData.name = this.user.displayName;
-            this.userData.email = this.user.email;
-            this.userData.id = this.user.uid;
-            this.userData.phoneNumber = this.user.phoneNumber;
+            // this.userData.name = this.user.displayName;
+            // this.userData.email = this.user.email;
+            // this.userData.id = this.user.uid;
+            // this.userData.phoneNumber = this.user.phoneNumber;
             
         })
     }

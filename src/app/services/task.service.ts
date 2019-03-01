@@ -92,13 +92,30 @@ export class TaskService {
     projectEntDoc.collection('tasks').doc(task.id).set(task);
   }
 
-  allocateTask(task, staff) {
+  allocateTask(task: Task, staff: ParticipantData) {
     console.log('the task--->' + task.name + " " + task.id);
     console.log('the staff-->' + staff.name + " " + staff.id);
+    let projRef = this.afs.collection('Projects').doc(task.projectId)
+
+
+    if (task.champion.id != "") {
+      let exChampId = task.champion.id
+      let exChampRef = this.afs.collection('Users').doc(exChampId).collection('tasks');
+      let exChampProjectEntDoc = projRef.collection<Enterprise>('enterprises').doc(task.companyId);
+      exChampProjectEntDoc.collection('tasks').doc(task.id).delete();
+      exChampRef.doc(task.id).delete();
+    }
+    
+    task.champion = staff;
+    // let userRef = this.afs.collection('Users').doc(this.userId).collection('tasks');
+    let newChampRef = this.afs.collection('Users').doc(staff.id).collection('tasks');
     let compProjectsDoc = this.afs.collection('Users').doc(staff.id).collection<Project>('projects').doc(task.projectId);
-    let projectEntDoc = this.afs.collection('Projects').doc(task.projectId).collection<Enterprise>('enterprises').doc(task.companyId);
+    let projectEntDoc = projRef.collection<Enterprise>('enterprises').doc(task.companyId);
     compProjectsDoc.collection('tasks').doc(task.id).set(task);
     projectEntDoc.collection('tasks').doc(task.id).set(task);
+    projRef.collection('tasks').doc(task.id).set(task);
+    newChampRef.doc(task.id).set(task);
+    // userRef.doc(task.id).set(task);
   }
 
   getEntepriseTasks(compId, projectId){

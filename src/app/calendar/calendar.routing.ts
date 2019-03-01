@@ -18,10 +18,12 @@ export const CalendarRoutes: Routes = [{
     },{
         path: 'implementation',
         component: ImplementationComponent
-    },{
+    },
+    {
         path: 'popup',
         component: PopupComponent
-    },{
+    },
+    {
         path: 'timesheet',
         component: TimesheetComponent
     }]

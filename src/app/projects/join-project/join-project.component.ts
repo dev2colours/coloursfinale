@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Router } from '@angular/router';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Enterprise, ParticipantData, companyChampion, Department } from "../../models/enterprise-model";
@@ -9,7 +9,7 @@ import { Project } from "../../models/project-model";
 import { InitialiseService } from 'app/services/initialise.service';
 import { EnterpriseService } from 'app/services/enterprise.service';
 import * as moment from 'moment';
-import { Applicant } from 'app/models/user-model';
+import { Applicant, coloursUser } from 'app/models/user-model';
 
 var misc: any = {
   navbar_menu_visible: 0,
@@ -61,6 +61,10 @@ export class JoinProjectComponent {
   public buttonName: any = 'Show';
   enterprises2nd: Observable<Enterprise[]>;
   company: Enterprise;
+  
+  userProfile: Observable<coloursUser>;
+  myDocment: AngularFirestoreDocument<{}>;
+  userData: coloursUser;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private es: EnterpriseService, private afs: AngularFirestore) {
     this.selectedCompany = this.is.getSelectedCompany();
@@ -314,6 +318,28 @@ export class JoinProjectComponent {
 
 
   dataCall() {
+    this.myDocment = this.afs.collection('Users').doc(this.userId);
+
+    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+      const data = a.payload.data() as coloursUser;
+      const id = a.payload.id;
+      return { id, ...data };
+    }));
+
+    this.userProfile.subscribe(userData => {
+      console.log(userData);
+      let myData = {
+        name: this.user.displayName,
+        email: this.user.email,
+        bus_email: userData.bus_email,
+        id: this.user.uid,
+        phoneNumber: this.user.phoneNumber,
+        photoURL: this.user.photoURL
+      }
+      this.myData = myData;
+      this.userData = userData;
+    });
+
     this.enterprises = this.es.getCompanies(this.userId);
     this.enterprises2nd = this.es.getCompanies(this.userId);
   }
@@ -325,14 +351,6 @@ export class JoinProjectComponent {
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
-      let myData = {
-        name: this.user.displayName,
-        email: this.user.email,
-        id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
-      }
-      this.myData = myData
       this.coloursUsername = user.displayName;
       console.log(this.userId);
       console.log(this.user);

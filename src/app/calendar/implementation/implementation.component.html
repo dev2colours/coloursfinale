@@ -353,7 +353,6 @@
                                   <a class="" title="change units" (click)="theItem(item)" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer"  data-toggle="modal" data-target="#editUnits" >
                                     {{ item.unit.id }}</a>
                                 </ng-template>
-                                
                               </small>
                             </span>
                           </div>
@@ -391,50 +390,9 @@
               <div *ngIf="!viewTodayWork">
                 <p class="na-p"> No work actions </p>
               </div>
-              <!-- <ol style="padding-left: 10px;">
-                <!- <li *ngFor="let item of viewActions | async"> ->
-                <li *ngFor="let item of viewDayActions">
-                  <div class="row">
-                    <div class="col-sm-3 text-left">
-                      {{ item.name }}
-                    </div>
-                    <div class="col-sm-3" style="padding-left: 5px; padding-right:5px">
-                      <div class="form-group">
-                        <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-                          <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty" 
-                            style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="1 200" />
-                          <div class="input-group-postpend">
-                            <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
-                              <small>{{ item.unit.id }}</small>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
-                      <div class="form-group">
-                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start"
-                          style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="Time from" />
-                      </div>
-                    </div>
-                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
-                      <div class="form-group">
-                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end"
-                          style=" padding-left: 10px; padding-right: 10px;  height:2em" placeholder="Time to" />
-                      </div>
-                    </div>
-                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
-                      <div class="form-group">
-                        <button  class="form-control panel-boader clrs-cell btn-link"
-                          style=" padding-left: 10px; padding-right: 10px; height:2em" (click)="addActionTime(item)">Save</button>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              </ol> -->
               <ol style="padding-left: 10px;">
-                <li *ngFor="let item of viewActions | async">
-                <!-- <li *ngFor="let item of currentWorkItems"> -->
+                <!-- <li *ngFor="let item of viewActions | async"> -->
+                <li *ngFor="let item of viewDayActions">
                   <div class="row">
                     <div class="col-sm-3 text-left">
                       {{ item.name }}

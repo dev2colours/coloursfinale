@@ -35,6 +35,7 @@ import { TaskService } from './services/task.service';
 import { EnterpriseService } from './services/enterprise.service';
 import { InitialiseService } from './services/initialise.service';
 import { AuthService } from './services/auth.service';
+import { TimesheetComponent } from './calendar/timesheet/timesheet.component';
 
 @NgModule({
     imports:      [
@@ -67,6 +68,7 @@ import { AuthService } from './services/auth.service';
         AppComponent,
         AdminLayoutComponent,
         AuthLayoutComponent,
+        
     ],
     bootstrap:    [ AppComponent ]
 })

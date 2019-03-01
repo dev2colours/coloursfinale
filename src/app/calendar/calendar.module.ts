@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { TagInputModule } from 'ngx-chips';
 
 //Ngx-Charts
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -18,7 +19,7 @@ import { PopupComponent } from './popup/popup.component';
     imports: [
         CommonModule,
         RouterModule.forChild(CalendarRoutes),
-        FormsModule, NgSelectModule, NgxChartsModule
+        FormsModule, NgSelectModule, NgxChartsModule, TagInputModule,
     ],
     declarations: [CalendarComponent, MapTaskComponent, ImplementationComponent, TimesheetComponent, PopupComponent]
 })

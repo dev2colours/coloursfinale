@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import { Enterprise, ParticipantData, companyChampion, Department } from "../models/enterprise-model";
 import { Project } from "../models/project-model";
 import { Task } from "../models/task-model";
-import { classification } from 'app/models/user-model';
+import { classification, coloursUser } from 'app/models/user-model';
 // import { coloursUser } from 'app/models/user-model';
 
 
@@ -20,7 +20,7 @@ import { classification } from 'app/models/user-model';
 })
 export class PersonalService {
 
-  coloursUsers: Observable<firebase.User[]>
+  coloursUsers: Observable<coloursUser[]>
 
   user: firebase.User;
   userId: any;
@@ -69,8 +69,9 @@ export class PersonalService {
   getColoursUsers(){
     this.coloursUsers = this.afs.collection('Users').snapshotChanges().pipe(
       map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as firebase.User;
+        const data = a.payload.doc.data() as coloursUser;
         const id = a.payload.doc.id;
+        
         return { id, ...data };
       }))
     );
