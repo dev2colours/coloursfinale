@@ -348,7 +348,7 @@ export class TasksComponent {
 
     let pr: Project;
       console.log(this.selectedCompany)
-      this.task.createdBy = this.coloursUsername;
+      this.task.by = this.coloursUsername;
       this.task.byId = this.myUser;
 
       // setting dates
@@ -386,7 +386,7 @@ export class TasksComponent {
 
     let pr: Project;
     console.log(this.selectedCompany)
-    this.task.createdBy = this.coloursUsername;
+    this.task.by = this.coloursUsername;
     this.task.byId = this.myUser;
     this.task.createdOn = new Date().toISOString();
     let start=this.task.start;
@@ -440,7 +440,7 @@ export class TasksComponent {
     // }
     // this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" };
     // this.userChampion = null;
-    // this.task = { name: "", champion: null, projectName: "", start: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "" };    
+    // this.task = { name: "", champion: null, projectName: "", start: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "" };    
 
   }
 

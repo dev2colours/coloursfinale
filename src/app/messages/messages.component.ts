@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService, ParticipantData } from 'app/services/auth.service';
+import { AuthService } from 'app/services/auth.service';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Router } from '@angular/router';
 import { firestore } from 'firebase';
 import { PersonalService } from 'app/services/personal.service';
 import { Observable } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { ParticipantData } from 'app/models/enterprise-model';
 
 @Component({
   selector: 'app-messages',
@@ -23,7 +24,7 @@ export class MessagesComponent implements OnInit {
   colMan: { id: any; name: any; };
   myChat = [];
   // user$:firebase.User;
-  myContacts: Observable<ParticipantData[]>;
+  myContacts: Observable<ParticipantData[]>; 
   myChats: any;
   user: any;
   userId: string;

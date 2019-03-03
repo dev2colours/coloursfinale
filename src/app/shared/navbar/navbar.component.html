@@ -70,8 +70,10 @@
           <i class="nc-icon nc-palette"></i>Colours Personal
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item btn-primary btn-link" *ngFor="let classification of classifications | async" (click)="setClassification(classification)">{{
-            classification.name }}</a><!-- [routerLink]="['/enterprises', company.id]" -->
+          <a class="dropdown-item btn-primary btn-link" *ngFor="let classification of classifications | async" disabled (click)="setClassification(classification)">
+          {{ classification.name }}
+        </a><!-- [routerLink]="['/enterprises', company.id]" -->
+            <a class="dropdown-item btn-primary btn-link" routerLink="/calendar">Goto <span class="text-primary">Colours Personal</span> </a>
         </div>
       </li>
       <li class="nav-item btn-rotate dropdown">

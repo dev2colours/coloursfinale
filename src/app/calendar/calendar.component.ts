@@ -32,6 +32,7 @@ var misc: any = {
   active_collapse: true,
   disabled_collapse_init: 0,
 }
+var $: any;
 
 @Component({
   selector: 'app-calendar',
@@ -115,6 +116,7 @@ export class CalendarComponent implements OnInit {
   userInit: ParticipantData;
   pro: profession;
   timesheetCollection: { date: string; name: string; }[];
+  classificationsToDate: Observable<classification[]>;
 
 
   constructor(public auth: AuthService, private pns: PersonalService , public afAuth: AngularFireAuth, public es: EnterpriseService,private ps:ProjectService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute)  { 
@@ -522,8 +524,11 @@ export class CalendarComponent implements OnInit {
   }
 
 
-  addTimeBudget(time){
+  addTimeBudget(item: classification){
+    let time = item.plannedTime;
     this.totalPlannedTime, this.totalActualTime, this.totalVarience = 0;
+
+    this.selectedClassification = item;
 
     console.log(this.selectedClassification);
     this.selectedClassification.plannedTime = time;
@@ -532,6 +537,11 @@ export class CalendarComponent implements OnInit {
     let setClass = this.afs.collection<Project>('Users').doc(this.userId).collection('classifications').doc(this.selectedClassification.id);
     setClass.update({ 'plannedTime': time });
     this.time = 0;
+    this.selectedClassification = { name: '', createdOn: '', plannedTime: '', actualTime: '', Varience: '', id: '' };   
+    this.showNotification('timeBudget', 'top', 'right'); 
+  }
+
+  dismissTimeBudgdet(){
     this.selectedClassification = { name: '', createdOn: '', plannedTime: '', actualTime: '', Varience: '', id: '' };    
   }
 
@@ -867,7 +877,10 @@ export class CalendarComponent implements OnInit {
       });
       this.classArray.length;
 
-    })
+    });
+
+    this.classificationsToDate = this.pns.getClassifications(this.userId);
+
 
     console.log('ók')
 
@@ -961,6 +974,71 @@ export class CalendarComponent implements OnInit {
     console.log(userData);
     this.myDocment.set(userData);
     this.dataCall();
+  }
+
+  showNotification(data, from, align) {
+    // var type = ['', 'info', 'success', 'warning', 'danger'];
+    var type = ['', 'info', 'success', 'warning', 'danger'];
+
+    var color = Math.floor((Math.random() * 4) + 1);
+
+    if (data === 'project') {
+      $.notify({
+        icon: "ti-gift",
+        message: "A new project has been created <br> check colours projects dropdown."
+      }, {
+          type: type[color],
+          timer: 4000,
+          placement: {
+            from: from,
+            align: align
+          },
+          template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove"></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+        });
+    }
+    if (data === 'timeBudget') {
+      $.notify({
+        icon: "ti-gift",
+        message: "Time Budget has been updated !!!."
+      }, {
+          type: type[color],
+          timer: 4000,
+          placement: {
+            from: from,
+            align: align
+          },
+          template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove"></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+        });
+    }
+    if (data === 'Task') {
+      $.notify({
+        icon: "ti-gift",
+        message: "Task has been updated."
+      }, {
+          type: type[color],
+          timer: 4000,
+          placement: {
+            from: from,
+            align: align
+          },
+          template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove"></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+        });
+    }
+    if (data === 'comp') {
+      $.notify({
+        icon: "ti-gift",
+        message: "A new enterprise has been created <b> check colours enterprise dropdown."
+      }, {
+          type: type[color],
+          timer: 4000,
+          placement: {
+            from: from,
+            align: align
+          },
+          template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove"></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+        });
+    }
+
   }
 
   ngOnInit() {

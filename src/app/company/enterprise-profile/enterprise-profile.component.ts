@@ -364,13 +364,13 @@ export class EnterpriseProfileComponent {
     this.sidebarVisible = false;
     this.newPart = { name: "", id: "", email: "", bus_email:"", phoneNumber: "", photoURL: "" };
     this.counter = 1;
-    this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+    this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type:"", champion: null, participants: null, classification: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
     this.dpt = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
     this.asset = { name: "", assetNumber: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", cost:"" };
     this.client = is.getClient();
     this.subsidiary = is.getSubsidiary();
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", nationalId: "", nationality: "", address: "", department: "", departmentId: ""  };
     this.contactPerson = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
@@ -1646,7 +1646,7 @@ export class EnterpriseProfileComponent {
     let dptId = this.dp;
     let champRef ;
     let champId = action.champion.id;
-    action.createdBy = this.user.displayName;
+    action.by = this.user.displayName;
     action.byId = this.userId;
     action.createdOn = new Date().toISOString();
     action.taskId = this.selectedTask.id
@@ -1760,7 +1760,7 @@ export class EnterpriseProfileComponent {
     console.log(action);
     action.startDate = moment(new Date()).format('L');
     action.endDate = moment(new Date()).format('L');
-    action.createdBy = this.user.displayName;
+    action.by = this.user.displayName;
     action.byId = this.userId;
     let dptId = this.dp;
     action.createdOn = new Date().toISOString();
@@ -1815,7 +1815,7 @@ export class EnterpriseProfileComponent {
     console.log(this.selectedDepartment.name);
     console.log(this.selectedTask);
     this.ts.addToDepatment(this.selectedTask, this.selectedDepartment);
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
   }
 
   addStaff2Dpartment() {
@@ -2520,7 +2520,7 @@ export class EnterpriseProfileComponent {
     let pr: Project;
     console.log(this.selectedCompany)
     console.log(this.selectedDepartment);
-    this.task.createdBy = this.user.displayName;
+    this.task.by = this.user.displayName;
     this.task.byId = this.userId;
     console.log(this.start);
     console.log(this.finish);
@@ -2574,7 +2574,7 @@ export class EnterpriseProfileComponent {
 
     this.selectedCompany = this.is.getSelectedCompany();
     this.userChampion = { name: "", id: "", email: "", bus_email:"", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
   }
 

@@ -286,7 +286,7 @@
                     <div class="col-sm-5 text-left">{{ item.startDay }}, {{ item.startDate }}</div>
                     <div class="col-sm-5 text-left">{{ item.endDay }}, {{ item.endDate }}</div>
                       <button class="primary btn-link" (click)="selectEditAction(item)" data-toggle="modal" data-target="#editAction" style=" padding-top: 0px; padding-bottom: 0px;">
-                        Edit</button>
+                        Add date</button>
                   </div>
                   <!-- <p>{{ item.startDay }}, {{ item.startDate }} | {{ item.endDay }}, {{ item.endDate }}<span> -->
                       <!-- <button class="primary btn-link" data-toggle="modal" (click)="selectEditAction(item)" data-target="#editAction">
@@ -362,7 +362,7 @@
                     <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
                       <div class="form-group">
                         <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                          placeholder="Time from" /> <!-- clrs-cell  -->
+                          placeholder="Time from" />
                       </div>
                     </div>
                     <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
@@ -520,10 +520,10 @@
               <div class="form-group">
                 <ng-select [items]="SIunits" bindLabel="name"  id="sui12" name="jyu" placeholder="Select unit of Measure"
                   [(ngModel)]="setUnit"></ng-select>
-              </div>
+              </div>  
             </div>
           </div>
-          <div class="row">
+          <!-- <div class="row">
             <label class="col-md-4 col-form-label">Start Date</label>
             <div class="col-md-7">
               <div class="form-group">
@@ -538,7 +538,7 @@
                 <input type="date" [(ngModel)]="actionItem.endDate" name="siu" class="form-control">
               </div>
             </div>
-          </div>
+          </div> -->
         </form>
 
         <div class="modal-footer" style="margin-bottom:0%">

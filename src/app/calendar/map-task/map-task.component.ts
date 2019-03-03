@@ -270,7 +270,7 @@ export class MapTaskComponent {
 
     let pr: Project;
     console.log(this.selectedCompany)
-    this.task.createdBy = this.user.displayName;
+    this.task.by = this.user.displayName;
     this.task.byId = this.userId;
 
     // setting dates

@@ -18,21 +18,7 @@ import { Enterprise, ParticipantData, companyChampion, Department } from "../mod
 import { Project } from "../models/project-model";
 import { InitialiseService } from 'app/services/initialise.service';
 import { coloursUser } from 'app/models/user-model';
-
-export interface Task {
-  name: string,
-  champion: ParticipantData,
-  projectName: string,
-  start: string,
-  finish: string,
-  createdBy: string,
-  createdOn: string,
-  projectId: string,
-  byId: string,
-  projectType: string,
-  companyName: string,
-  companyId: string
-}
+import { Task } from 'app/models/task-model';
 
 export interface ProjectCompanyChamp extends Project {
    companyChampion: Enterprise,
@@ -127,7 +113,7 @@ export class CompanyComponent implements OnInit {
     this.userMatrix = {companiesCreated: "", projectsCreated: "", companiesJoined: "", projectsJoined: ""}
     this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
 
-    this.task = { name: "", champion : null, projectName: "", start: "", finish: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: ""};
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.companyProjectChamp = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "" }
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL:"" }
 
@@ -424,7 +410,7 @@ export class CompanyComponent implements OnInit {
   saveProjectTask() {
     console.log(this.task);
     /* assign task attributes */
-    this.task.createdBy = this.user.displayName;
+    this.task.by = this.user.displayName;
     this.task.byId = this.userId;
     this.task.createdOn = new Date().toISOString();
     this.task.companyName = this.selectedCompany.name;
@@ -476,7 +462,7 @@ export class CompanyComponent implements OnInit {
 
     }
     this.companyProjectChamp = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "" }
-    this.task = { name: "", champion: null, projectName: "", start: "", finish: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "" }
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" }
   }
 

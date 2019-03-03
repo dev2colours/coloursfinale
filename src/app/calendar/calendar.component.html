@@ -314,7 +314,7 @@
                               <td class="table td-clrs">{{ std.classificationName }}</td>
                               <td class="table td-clrs">{{ std.period }}</td>
                               <!-- <td class="table td-clrs">
-                                <button class="info btn-link" rel="tooltip" title="add Time budget" data-toggle="modal" data-target="#timeBudget"><i
+                                <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget"><i
                                     class="fa fa-calendar-plus-o"></i></button>
                               </td>
                               <td class="table td-clrs">
@@ -351,7 +351,8 @@
                               </ng-container>
                               <td class="table td-clrs">
                                 <!-- <a class="btn warning btn-link btn-icon btn-sm edit" rel="tooltip" title="Edit Classification"><i class="fa fa-edit"></i></a> -->
-                                <button class="info btn-link" rel="tooltip" (click)="selectClassification(classification)" title="add Time budget" data-toggle="modal" data-target="#timeBudget"><i class="fa fa-calendar-plus-o"></i></button>
+                                <!-- <button class="info btn-link" rel="tooltip" (click)="selectClassification(classification)" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget"><i class="fa fa-calendar-plus-o"></i></button> -->
+                                <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget"><i class="fa fa-calendar-plus-o"></i></button>
                               </td>
                               <td class="table td-clrs">
                                 <button class="info btn-link" rel="tooltip" (click)="selectClassification(classification)" title="add Personal standards" data-toggle="modal" data-target="#personalStandard"><i class="fa fa-file-text"></i></button>
@@ -365,7 +366,7 @@
                                 <td class="table td-clrs"><a routerLink="/enterprises/create">Work</a></td>
                                 <td class="table td-clrs">
                                   <!-- <a class="btn warning btn-link btn-icon btn-sm edit" rel="tooltip" title="Edit Classification"><i class="fa fa-edit"></i></a> -->
-                                  <button class="info btn-link" rel="tooltip" (click)="addWork();" title="add Time budget" data-toggle="modal" data-target="#timeBudget"><i class="fa fa-calendar-plus-o"></i></button>
+                                  <button class="info btn-link" rel="tooltip" (click)="addWork();" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget"><i class="fa fa-calendar-plus-o"></i></button>
                                 </td><!--  selectClassification(classification) -->
                                 <td class="table td-clrs">
                                   <button class="info btn-link" rel="tooltip" (click)="addWork();" title="add Personal standards" data-toggle="modal" data-target="#personalStandard"><i class="fa fa-file-text"></i></button>
@@ -749,8 +750,8 @@
                                       <td class="text-right table td-clrs" style="padding-right:2em">0200</td>
                                     </tr>
                                     <tr>
-                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray">Totals</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">2400</td>
+                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
+                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">2400</td>
                                     </tr>
                                   </tbody>
                                 </table>
@@ -807,8 +808,8 @@
                                       <td class="text-right table td-clrs" style="padding-right:2em">03</td>
                                     </tr>
                                     <tr>
-                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray">Totals</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">14</td>
+                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
+                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">14</td>
                                     </tr>
                                   </tbody>
                                 </table>
@@ -866,9 +867,9 @@
                                       <td class="text-right table td-clrs" style="padding-right:2em">---</td>
                                     </tr>
                                     <tr>
-                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray">Totals</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">14</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
+                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
+                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">14</td>
+                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">---</td>
 
                                     </tr>
                                   </tbody>
@@ -891,37 +892,50 @@
                                     <th>Action</th>
                                   </thead>
                                   <tbody>
-                                    <tr>
+                                    <!-- <tr> -->
+                                    <tr *ngFor="let item of classifications | async">
+<!-- 
                                       <td class="text-left table td-clrs">Work</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">80</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">
-                                        <button *ngIf="editRpt" class="btn-link btn-magnify" >...</button>
+                                      <td class="text-right table td-clrs" style="padding-right:2em">80</td> -->
+
+                                      <td class="text-left table td-clrs">{{ item.name }}</td>
+                                      <td class="text-right table td-clrs" style="padding-right:2em">{{ item.plannedTime }}</td>
+                                      <td class="text-center table td-clrs" style="padding-right:2em">
+                                      <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget">
+                                        <i class="fa fa-calendar-plus-o"></i>
+                                      </button>
                                       </td>
                                     </tr>
-                                    <tr>
+                                    <!-- <tr>
                                       <td class="text-left table td-clrs">Sleeping</td>
                                       <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">
-                                        <button *ngIf="editRpt" class="btn-link btn-magnify" >...</button>
+                                      <td class="text-center table td-clrs" style="padding-right:2em">
+                                        <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget">
+                                        <i class="fa fa-calendar-plus-o"></i>
+                                      </button>
                                       </td>
                                     </tr>
                                     <tr>
                                       <td class="text-left table td-clrs">-----------</td>
                                       <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">
-                                        <button *ngIf="editRpt" class="btn-link btn-magnify" >...</button>
+                                      <td class="text-center table td-clrs" style="padding-right:2em">
+                                        <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget">
+                                          <i class="fa fa-calendar-plus-o"></i>
+                                        </button>
                                       </td>
                                     </tr>
                                     <tr>
                                       <td class="text-left table td-clrs">-----------</td>
                                       <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">
-                                        <button *ngIf="editRpt" class="btn-link btn-magnify" >...</button>
+                                      <td class="text-center table td-clrs" style="padding-right:2em">
+                                        <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget">
+                                          <i class="fa fa-calendar-plus-o"></i>
+                                        </button>
                                       </td>
-                                    </tr>
+                                    </tr> -->
                                     <tr>
-                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray">Totals</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">168</td>
+                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
+                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">168</td>
                                     </tr>
                                   </tbody>
                                 </table>
@@ -949,10 +963,10 @@
                                       <td class="text-right table td-clrs" style="padding-right:2em">{{ item.actualTime }}</td>
                                     </tr>
                                     <tr>
-                                      <td class="text-left table td-clrs title clrs-h4"  style="color: darkslategray">Totals</td>
-                                      <td class="table td-clrs">{{ totalPlannedTime }}</td>
-                                      <td class="table td-clrs">{{ totalActualTime }}</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">{{ totalVarience }}</td>
+                                      <td class="text-left table td-clrs title clrs-h4"  style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
+                                      <td class="table td-clrs" style = "border-bottom-style: double; border-top-color: black;border-bottom-color: black;">{{ totalPlannedTime }}</td>
+                                      <td class="table td-clrs" style = "border-bottom-style: double; border-top-color: black;border-bottom-color: black;">{{ totalActualTime }}</td>
+                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">{{ totalVarience }}</td>
                                     </tr>
                                   </tbody>
                                 </table>
@@ -1227,42 +1241,65 @@
   </div>
 </div>
 <div class="modal fade" id="timeBudget" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <!-- <div class="modal-dialog modal-lg"> -->
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="card-body ">
-        <code>Time Budget</code>
-
-        <form>
+        <!-- <code>Time Budget</code> -->
+        <!-- <form> -->
           <div class="card-header ">
-            <h4 class="title clrs-h1">Classification: {{ selectedClassification.name }}</h4>
-            <p class="title na-p">Add Time Budget</p>
-        
+            <p class="title clrs-h1">Time Budget</p>
+            <p class="category">Add or Edit the classifications Time</p>
           </div>
           <div class="card-body ">
             <div class="form-group">
-              <label class="control-label" for="">Panned Time
-                <span class="star"><small>(Hours)</small>*</span>
+              <label class="control-label" for="">Plan Classifications Time in Hours
+                <span class="star">*</span>
               </label>
-              <div class="input-group" [ngClass]="{'input-group-focus':focus1===true}">
-                <div class="input-group-prepend" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
-                  <span class="input-group-text">
-                    <i class="fa fa-dashboard"></i>
-                  </span>
-                </div>
-                <input  type="number" class="form-control" name="sName" [(ngModel)]="time" required (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
-                  (blur)="focus1=false">
-              </div>
 
-              <!-- <label class="control-label" for="">Panned Time:
-                <span class="star"><small>(Hrs/week)</small>*</span>
-              </label>
-              <input type="number" class="form-control" name="sName" [(ngModel)]="time" required> -->
+              <table class="table">
+                <thead class="title clrs-h4 text-info">
+                  <th class="text-left">Classification</th>
+                  <th class="text-left">Frequence
+                    <!-- <small> (Hrs)</small> -->
+                  </th>
+                  <th>action</th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of classificationsToDate | async">                    
+                    <td class="text-left table td-clrs">{{ item.name }}</td>
+                    <td class="table text-center td-clrs">
+                      <input type="number" class="form-control text-right" [(ngModel)]="item.plannedTime" required (focus)="focus1=true"
+                        style="padding-top: 0px;padding-bottom: 0px; height: 32px; width: 6em" placeholder="Add Time" (blur)="focus1=false">
+                    </td>
+                    <td class="table td-clrs">
+                      <button class="danger btn-link remove" (click)="addTimeBudget(item)"><i class="fa fa-check"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray;border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
+                    <td class="text-center table td-clrs" style="border-bottom-style: double; padding-right:3em; border-top-color:black; border-bottom-color:black">{{ totalPlannedTime }}</td>
+                    <td></td>
+                  </tr>
+                  <!-- <hr> -->
+                  <!-- <tr>
+                    <td style="padding-right:4em; border-top-color:black; border-bottom-color:black"></td>
+                    <td style="padding-right:4em; border-top-color:black; border-bottom-color:black"></td>
+                  </tr> -->
+                </tbody>
+              </table>
+              
+                  <div style="width:fit-content category">
+                    <small>Totals shouldn't exceed total week hours (168 hrs)</small>
+                  </div>
             </div>
           </div>
-          <div class="card-footer text-center">
-            <button (click)="addTimeBudget(time)" data-dismiss="modal" class="btn btn-primary">Add</button>
+          <div class="card-footer text-right">
+            <button (click)="dismissTimeBudgdet()" data-dismiss="modal" class="btn btn-warning">Dismiss</button>
+            <button (click)="dismissTimeBudgdet()" data-dismiss="modal" class="btn btn-primary">Save</button>
+            <!-- <button (click)="addTimeBudget(time)" data-dismiss="modal" class="btn btn-primary">Save</button> -->
           </div>
-        </form>
+        <!-- </form> -->
 
 
 
@@ -1298,10 +1335,10 @@
                 <input type="text" class="form-control" name="sName" [(ngModel)]="newStandard.name" required>
               </div>
               <div class="form-group">
-                <label for="" class="control-label">Period
+                <label for="" class="control-label">Frequence
                   <span class="star">*</span>
                 </label>
-                <ng-select [items]="stdPeriods" bindLabel="name" name="sPeriod" placeholder="Select Period"
+                <ng-select [items]="stdPeriods" bindLabel="name" name="sPeriod" placeholder="Select Frequence"
                   [(ngModel)]="selectedPeriod"></ng-select>
               </div>
               <div class="category"> <span class="star">*</span> Required fields</div>

@@ -178,7 +178,7 @@ export class ImplementationComponent {
       this.selectedProject = is.getSelectedProject();
       this.userChampion = is.getUserChampion();
       this.selectedCompany = is.getSelectedCompany();
-      this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", classification:this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "" };
+      this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", classification:this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "" };
       this.actionItem = is.getActionItem();
       this.selectedAction = is.getSelectedAction();
       this.compChampion = is.getCompChampion();
@@ -231,7 +231,7 @@ export class ImplementationComponent {
     console.log(this.selectedTask.name);
     console.log(this.selectedTask.id);
     this.ts.add2WeekPlan(task, this.userId);
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
   }
 
   removeWeekTask(task){

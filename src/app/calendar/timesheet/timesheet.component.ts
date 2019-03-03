@@ -528,7 +528,6 @@ export class TimesheetComponent implements OnInit {
       this.userData = userData;
     });
 
-
     let currentDate = moment(new Date()).format('L');;
     let today = moment(new Date(), "YYYY-MM-DD");
     console.log(currentDate);
@@ -834,7 +833,7 @@ export class TimesheetComponent implements OnInit {
 
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
-      // this.user = user;
+      this.user = user;
       // let myData = {
       //   name: this.user.displayName,
       //   email: this.user.email,

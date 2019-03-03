@@ -10,7 +10,7 @@ export interface Task {
     champion: ParticipantData, participants: [ParticipantData],
     start: string, startDay: string, startWeek: string, startMonth: string, startQuarter: string, startYear: string,
     finish: string, finishDay: string, finishWeek: string, finishMonth: string, finishQuarter: string, finishYear: string,
-    createdBy: string, createdOn: string, projectName: string, projectId: string, projectType: string, byId: string,
+    by: string, createdOn: string, projectName: string, projectId: string, projectType: string, byId: string,
     trade: string, section: Section, complete :boolean, status: string,
 }
 
@@ -49,7 +49,7 @@ export interface ActionItem {
     companyName: string,
     companyId: string,
     createdOn: string,
-    createdBy: string,
+    by: string,
     byId: string,
     champion: ParticipantData,   
     classification: classification, 

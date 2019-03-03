@@ -19,7 +19,7 @@ import { Task, MomentTask } from "../../models/task-model";
 import { EnterpriseService } from 'app/services/enterprise.service';
 import { PersonalService } from 'app/services/personal.service';
 import { InitialiseService } from 'app/services/initialise.service';
-import { RText } from '@angular/core/src/render3/interfaces/renderer';
+// import { RText } from '@angular/core/src/render3/interfaces/renderer';
 import { MomentInput } from 'moment';
 
 declare var $: any;
@@ -957,7 +957,7 @@ export class ViewComponent implements OnInit {
 
     let pr: Project;
     console.log(this.selectedCompany)
-    this.task.createdBy = this.user.displayName;
+    this.task.by = this.user.displayName;
     this.task.byId = this.userId;
     console.log(this.start);
     console.log(this.finish);
@@ -995,7 +995,7 @@ export class ViewComponent implements OnInit {
     this.finish = "";
     this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
   }
 
@@ -1004,7 +1004,7 @@ export class ViewComponent implements OnInit {
 
     let pr: Project;
     console.log(this.selectedCompany)
-    this.task.createdBy = this.user.displayName;
+    this.task.by = this.user.displayName;
     this.task.byId = this.userId;
     console.log(this.start);
     console.log(this.finish);
@@ -1042,7 +1042,7 @@ export class ViewComponent implements OnInit {
     this.finish = "";
     this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
   }
 
@@ -1691,7 +1691,7 @@ export class ViewComponent implements OnInit {
     console.log(action);
     action.startDate = moment(new Date()).format('L');
     action.endDate = moment(new Date()).format('L');
-    action.createdBy = this.user.displayName;
+    action.by = this.user.displayName;
     action.by = this.user.displayName;
     action.byId = this.userId;
     action.createdOn = new Date().toISOString();
