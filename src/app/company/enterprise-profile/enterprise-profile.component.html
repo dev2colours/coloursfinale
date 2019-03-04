@@ -2093,400 +2093,681 @@
 
                   <!-- <p class="clrs-h1" style="margin-top:0em; color:darkslategray">Company Report...</p> -->
 
-<div class="col-md-12">
-  <div class="card">
-    <div class="card-body" style="margin-top: -3em">
-      <div class="nav-tabs-navigation">
-        <div class="nav-tabs-wrapper">
-          <ul id="tabs" class="nav nav-tabs" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#internalReport" role="tab" aria-expanded="true">Internal</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#publicReport" role="tab" aria-expanded="false">Public</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div id="my-tab-content" class="tab-content text-center">
-        <div class="tab-pane active" id="internalReport" role="tabpanel" aria-expanded="true">
-          <div class="col-md-10 ml-auto mr-auto">
-            <p class="text-left title clrs-h4" style="color: darkslategray">Company Details</p>
-            <div class="card-plain card-content">
-              <div class="text-left na-p" style="margin-left:2em ">
-                <span class="row col-md-12">
-                  <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Company Name </span>
-                  <span class="col-sm-9">: {{ (company)?.name }} </span>
-                </span><br>
-                <span class="row col-md-12">
-                  <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Sector </span>
-                  <span class="col-sm-9">: {{ (company)?.sector }} </span>
-                </span><br>
-                <span class="row col-md-12">
-                  <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Services </span>
-                  <span class="col-sm-9">
-                    <a *ngFor="let service of (company)?.services">: {{ service.display }} <br></a>
-                  </span>
-                </span><br>
-                <span class="row col-md-12">
-                  <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Location </span>
-                  <span class="col-sm-9">: {{ (company)?.location }} </span>
-                </span><br>
-                <!-- Location : {{ (company)?.location }} -->
-              </div>
-            </div>
-          </div>
-          <div class="spacer" style="height: 2em"></div>
-          <div class="col-md-10 ml-auto mr-auto">
-            <p class="text-left title clrs-h4" style="color: darkslategray">Compliance</p>
-            <div class="card-plain card-content">
-              <div class="text-left na-p">
-                <ol>
-                  <li>
-                    <span class="row col-md-12">
-                      <span class="col-sm-6" style="padding-left: 0px; padding-right: 0px;">Tax Clearance </span>
-                      <span class="col-sm-6">: Document </span>
-                    </span>
-                  </li>
-                  <li>
-                    <span class="row col-md-12">
-                      <span class="col-sm-6" style="padding-left: 0px; padding-right: 0px;">Industry sector registration </span>
-                      <span class="col-sm-6">: Document </span>
-                    </span>
-                  </li>
-                  <li>
-                    <span class="row col-md-12">
-                      <span class="col-sm-6" style="padding-left: 0px; padding-right: 0px;">Health and Safety </span>
-                      <span class="col-sm-6">: Document </span>
-                    </span>
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </div>
-          <div class="spacer" style="height: 2em"></div>
-          <div class="col-md-10 ml-auto mr-auto">
-            <p class="text-left title clrs-h4" style="color: darkslategray">Metrics</p>
-            <div class="card-plain card-content">
-              <div class="text-left na-p">
-                <ol>
-                  <li>
-                    <span class="row col-md-12">
-                      <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Revenue Per Capital </span>
-                      <span class="col-sm-2">: 5/10 </span>
-                    </span>
-                  </li>
-                  <li>
-                    <span class="row col-md-12">
-                      <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Annual staff costs percentage of
-                        total Annual Revenue </span>
-                      <span class="col-sm-2">: 70 % </span>
-                    </span>
-                  </li>
-                  <li>
-                    <span class="row col-md-12">
-                      <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Sum of projects finished to projects
-                        supposed to be finished to date </span>
-                      <span class="col-sm-2">: 7/10 </span>
-                    </span>
-                  </li>
-                  <li>
-                    <span class="row col-md-12">
-                      <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Tasks complete percentage to tasks
-                        planned to Date </span>
-                      <span class="col-sm-2">: 80 % </span>
-                    </span>
-                  </li>
-                  <li>
-                    <span class="row col-md-12">
-                      <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Tasks complete percentage to tasks
-                        planned to Date By Key Personel </span>
-                      <span class="col-sm-2">: 60 % </span>
-                    </span>
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-10 ml-auto mr-auto">
-            <p class="text-left title clrs-h4" style="color: darkslategray">Departments</p>
-            <div class="card-plain card-content">
-            <div *ngIf="displayDeptReport" class="card-body">
-              <div class="row">
-                <div class="col-sm-4">
-                  <!-- <h3>List of Employees</h3> -->
-                  <p class="clrs-h4" style="margin-top:0em; color:darkslategray">List of Departments...</p>
+                  <div class="col-md-12">
+                    <div class="card">
+                      <div class="card-body" style="margin-top: -3em">
+                        <div class="nav-tabs-navigation">
+                          <div class="nav-tabs-wrapper">
+                            <ul id="tabs" class="nav nav-tabs" role="tablist">
+                              <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#internalReport" role="tab" aria-expanded="true">Internal</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#publicReport" role="tab" aria-expanded="false">Public</a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div id="my-tab-content" class="tab-content text-center">
+                          <div class="tab-pane active" id="internalReport" role="tabpanel" aria-expanded="true">
+                            <div class="col-md-10 ml-auto mr-auto">
+                              <p class="text-left title clrs-h4" style="color: darkslategray">Company Details</p>
+                              <div class="card-plain card-content">
+                                <div class="text-left na-p" style="margin-left:2em ">
+                                  <span class="row col-md-12">
+                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Company Name </span>
+                                    <span class="col-sm-9">: {{ (company)?.name }} </span>
+                                  </span><br>
+                                  <span class="row col-md-12">
+                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Sector </span>
+                                    <span class="col-sm-9">: {{ (company)?.sector }} </span>
+                                  </span><br>
+                                  <span class="row col-md-12">
+                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Services </span>
+                                    <span class="col-sm-9">
+                                      <a *ngFor="let service of (company)?.services">: {{ service.display }} <br></a>
+                                    </span>
+                                  </span><br>
+                                  <span class="row col-md-12">
+                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Location </span>
+                                    <span class="col-sm-9">: {{ (company)?.location }} </span>
+                                  </span><br>
+                                  <!-- Location : {{ (company)?.location }} -->
+                                </div>
+                              </div>
+                            </div>
+                            <div class="spacer" style="height: 2em"></div>
+                            <div class="col-md-10 ml-auto mr-auto">
+                              <p class="text-left title clrs-h4" style="color: darkslategray">Compliance</p>
+                              <div class="card-plain card-content">
+                                <div class="text-left na-p">
+                                  <ol>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-6" style="padding-left: 0px; padding-right: 0px;">Tax Clearance </span>
+                                        <span class="col-sm-6">: Document </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-6" style="padding-left: 0px; padding-right: 0px;">Industry sector registration </span>
+                                        <span class="col-sm-6">: Document </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-6" style="padding-left: 0px; padding-right: 0px;">Health and Safety </span>
+                                        <span class="col-sm-6">: Document </span>
+                                      </span>
+                                    </li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="spacer" style="height: 2em"></div>
+                            <div class="col-md-10 ml-auto mr-auto">
+                              <p class="text-left title clrs-h4" style="color: darkslategray">Metrics</p>
+                              <div class="card-plain card-content">
+                                <div class="text-left na-p">
+                                  <ol>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Revenue Per Capital </span>
+                                        <span class="col-sm-2">: 5/10 </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Annual staff costs percentage of
+                                          total Annual Revenue </span>
+                                        <span class="col-sm-2">: 70 % </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Sum of projects finished to projects
+                                          supposed to be finished to date </span>
+                                        <span class="col-sm-2">: 7/10 </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Tasks complete percentage to tasks
+                                          planned to Date </span>
+                                        <span class="col-sm-2">: 80 % </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Tasks complete percentage to tasks
+                                          planned to Date By Key Personel </span>
+                                        <span class="col-sm-2">: 60 % </span>
+                                      </span>
+                                    </li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-10 ml-auto mr-auto">
+                              <p class="text-left title clrs-h4" style="color: darkslategray">Departments</p>
+                              <div class="card-plain card-content">
+                              <div *ngIf="displayDeptReport" class="card-body">
+                                <div class="row">
+                                  <div class="col-sm-4">
+                                    <p class="clrs-h4" style="margin-top:0em; color:darkslategray">List of Departments...</p>
 
-                  <ol class="card-category">
-                    <li *ngFor="let dept of companyDptsArray | async" class="text-left">
-                      <a (click)="viewDeptReport(dept)" style="cursor:context-menu" class="text-left">{{ dept.name }}</a>
-                    </li><!-- viewCompProjectReport -->
-                  </ol>
+                                    <ol class="card-category">
+                                      <li *ngFor="let dept of companyDptsArray | async" class="text-left">
+                                        <a (click)="viewDeptReport(dept)" style="cursor:context-menu" class="text-left">{{ dept.name }}</a>
+                                      </li>
+                                    </ol>
 
-                </div>
-                <div *ngIf="deptDemoNotes" class="col-sm-8">
-                  <!-- <h3>Another Title Here</h3> -->
-                  <p class="clrs-h4" style="margin-top:0em; color:darkslategray">Department Details...</p>
+                                  </div>
+                                  <div *ngIf="deptDemoNotes" class="col-sm-8">
+                                    <!-- <h3>Another Title Here</h3> -->
+                                    <p class="clrs-h4" style="margin-top:0em; color:darkslategray">Department Details...</p>
 
-                  <p class="text-info ">Click to view on a department to see report.</p>
-                </div>
-              </div>
-            </div>
-            <div *ngIf="displayDept" class="card-body" style="margin-top: -3em" id="DepartmentDisplay">
-              <div class="col-md-12">
-                <div class="row">
-                  <div class="col-md-10">
-                    <p class="clrs-h1 pull-left" style="margin-top:0em; color:darkslategray; margin-bottom: 0px;"><span class="title card-category"
-                        style="color:darkslategray">{{ setDept.name }}</span>`s report overview...</p>
-                  </div>
-                  <div class="col-md-2">
-                    <button class="btn-link btn-magnify" (click)="back2Dept()">Back</button>
-                  </div>
-                </div>
-                <br><br>
+                                    <p class="text-info ">Click to view on a department to see report.</p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div *ngIf="displayDept" class="card-body" style="margin-top: -3em" id="DepartmentDisplay">
+                                <div class="col-md-12">
+                                  <div class="row">
+                                    <div class="col-md-10">
+                                      <p class="clrs-h1 pull-left" style="margin-top:0em; color:darkslategray; margin-bottom: 0px;"><span class="title card-category"
+                                          style="color:darkslategray">{{ setDept.name }}</span>`s report overview...</p>
+                                    </div>
+                                    <div class="col-md-2">
+                                      <button class="btn-link btn-magnify" (click)="back2Dept()">Back</button>
+                                    </div>
+                                  </div>
+                                  <br><br>
 
-                <nav aria-label="Page navigation example">
-                  <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-right" role="tablist" style="margin-top: -30px;">
-                    <li class="nav-item">
-                      <a class="pagination pagination-primary active" title="click to see the overview" data-toggle="tab" href="#deptOverview"
-                        role="tablist">
-                        Overview
-                      </a>
-                    </li>
-                    <span style="color:darkslategrey"> -|- </span>
-                    <li class="nav-item">
-                      <a class="pagination pagination-primary" title="click to see the other reports" data-toggle="tab" href="#deptOther"
-                        role="tablist">
-                        Other
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
-                <div class="tab-content tab-space tab-subcategories col-md-12">
-                  <div class="tab-pane active" id="deptOverview">
-                    <div class="col-md-11 mr-auto ml-auto text-left">
-                      Total Number of Tasks Complete : {{ (allDeptTasksComplete | async)?.length }}<br>
-                      Total Number of outstanding Tasks : {{ outstandingDptTasks.length }}<br>
-                      Total Number of Tasks allocated: {{ (allDeptTasks | async)?.length }}<br>
-                    </div>
-                    <div class="col-md-12">
-                      <div *ngIf="((allDeptTasks | async)?.length != 0)" class="row">
-                        <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
-                        <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
-                        <!-- <div class="col-sm-2 card-header">Target</div> -->
-                        <div class="col-md-2 col-sm-2 card-header text-left">Start</div>
-                        <div class="col-md-2 col-sm-2 card-header text-left">Finish</div>
-                        <div class="col-md-2 col-sm-2 card-header text-left">Complete</div>
-                        <div class="col-md-3 col-sm-3 card-header text-left">Champion</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tab-pane" id="deptTimesheet">
-                    Timesheet
-                    <br>
-                  </div>
-                  <div class="tab-pane" id="deptOther">
-                    Other reports
-                  </div>
-                </div>
-              </div>
-            </div>
-            </div>
-          </div>
-          <div class="col-md-10 ml-auto mr-auto">
-            <p class="text-left title clrs-h4" style="color: darkslategray">Staff</p>
-            <div class="card-plain card-content">
-              <div *ngIf="displayUserReport" class="card-body">
-                <div class="row">
-                  <div class="col-sm-4">
-                    <p class="clrs-h4" style="margin-top:0em; color:darkslategray">List of Employees...</p>
-                    <ol class="card-category">
-                      <li *ngFor="let man of companyStaff | async" class="text-left">
-                        <a (click)="viewReport(man)" style="cursor:context-menu">{{ man.name }}</a>
-                      </li>
-                    </ol>
-                  </div>
-                  <div *ngIf="demoNotes" class="col-sm-8">
-                    <p class="clrs-h4" style="margin-top:0em; color:darkslategray">Employee Details...</p>
-                    <p class="text-info ">Click to view on an employee`s name to see their report.</p>
-                  </div>
-                </div>
-              </div>
-              <div *ngIf="displayUser" class="card-body">
-                <div class="col-md-12">
-                  <div class="row">
-                    <div class="col-md-10">
-                      <p class="clrs-h4 pull-left" style="margin-top:0em; color:darkslategray; margin-bottom: 0px;"><span class="title card-category"
-                          style="color:darkslategray">{{ setUser.name }}</span>`s report overview...</p>
-                    </div>
-                    <div class="col-md-2">
-                      <button class="btn-link btn-magnify" (click)="back2Users()">Back</button>
-                    </div>
-                  </div>
-                  <br><br>
-                  <nav aria-label="Page navigation example">
-                    <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-right" role="tablist" style="margin-top: -30px;">
-                      <li class="nav-item">
-                        <a class="pagination pagination-primary active" title="click to see the overview" data-toggle="tab" href="#link7"
-                          role="tablist">
-                          Overview
-                        </a>
-                      </li>
-                      <span style="color:darkslategrey"> -|- </span>
-                      <li class="nav-item">
-                        <a class="pagination pagination-primary" title="click to see the timesheet" data-toggle="tab" href="#link8"
-                          role="tablist">
-                          Timesheet
-                        </a>
-                      </li>
-                      <span style="color:darkslategrey"> -|- </span>
-                      <li class="nav-item">
-                        <a class="pagination pagination-primary" title="click to see the other reports" data-toggle="tab" href="#link9"
-                          role="tablist">
-                          Other
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
-                  <div class="tab-content tab-space tab-subcategories col-md-12">
-                    <div class="tab-pane active" id="link7">
-                      <div class="col-md-11 mr-auto ml-auto text-left">
-                        Total Number of Tasks Complete : {{ (myCompletetasks | async)?.length }}<br>
-                        Total Number of outstanding Tasks: {{ outstandingTasks.length }}<br>
-                        Total Number of Tasks allocated: {{ (allMyTasks | async)?.length }}<br>
-                      </div>
-                      <div class="col-md-12">
-                        <div *ngIf="((allMyTasks | async)?.length != 0)" class="row">
-                          <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
-                          <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
-                          <div class="col-md-2 col-sm-2 card-header text-left">Start</div>
-                          <div class="col-md-2 col-sm-2 card-header text-left">Finish</div>
-                          <div class="col-md-2 col-sm-2 card-header text-left">Complete</div>
-                          <div class="col-md-3 col-sm-3 card-header text-left">Champion</div>
+                                  <nav aria-label="Page navigation example">
+                                    <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-right" role="tablist" style="margin-top: -30px;">
+                                      <li class="nav-item">
+                                        <a class="pagination pagination-primary active" title="click to see the overview" data-toggle="tab" href="#deptOverview"
+                                          role="tablist">
+                                          Overview
+                                        </a>
+                                      </li>
+                                      <span style="color:darkslategrey"> -|- </span>
+                                      <li class="nav-item">
+                                        <a class="pagination pagination-primary" title="click to see the other reports" data-toggle="tab" href="#deptOther"
+                                          role="tablist">
+                                          Other
+                                        </a>
+                                      </li>
+                                    </ul>
+                                  </nav>
+                                  <div class="tab-content tab-space tab-subcategories col-md-12">
+                                    <div class="tab-pane active" id="deptOverview">
+                                      <div class="col-md-11 mr-auto ml-auto text-left">
+                                        Total Number of Tasks Complete : {{ (allDeptTasksComplete | async)?.length }}<br>
+                                        Total Number of outstanding Tasks : {{ outstandingDptTasks.length }}<br>
+                                        Total Number of Tasks allocated: {{ (allDeptTasks | async)?.length }}<br>
+                                      </div>
+                                      <div class="col-md-12">
+                                        <div *ngIf="((allDeptTasks | async)?.length != 0)" class="row">
+                                          <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
+                                          <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
+                                          <!-- <div class="col-sm-2 card-header">Target</div> -->
+                                          <div class="col-md-2 col-sm-2 card-header text-left">Start</div>
+                                          <div class="col-md-2 col-sm-2 card-header text-left">Finish</div>
+                                          <div class="col-md-2 col-sm-2 card-header text-left">Complete</div>
+                                          <div class="col-md-3 col-sm-3 card-header text-left">Champion</div>
+                                        </div>
+                                        <ol style="padding-left: 10px;">
+                                          <p *ngIf="(setDeptOutstandingTasks.length != 0)" class="category text-warning">Outstanding Tasks.</p>
+                                          <li *ngFor="let item of setDeptOutstandingTasks">
+                                            <div class="row">
+                                              <div class="col-md-3 col-sm-3 text-left">
+                                                <a>{{ item.name }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a>{{ item.start }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a>{{ item.finish }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a>{{ item.complete }}</a>
+                                              </div>
+                                              <div class="col-md-3 card-category col-sm-3">
+                                                <a>{{ item.champion.name }}</a>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <p *ngIf="(setDeptCurrentTAsks != 0)" class="category text-success">Current Tasks.</p>
+                                          <li *ngFor="let item of setDeptCurrentTAsks">
+                                            <div class="row">
+                                              <div class="col-md-3 col-sm-3 text-left">
+                                                <a> {{ item.name }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.start }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.finish }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.complete }}</a>
+                                              </div>
+                                              <div class="col-md-3 card-category  col-sm-3">
+                                                <a> {{ item.champion.name }}</a>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <p *ngIf="(setDeptUpcomingTAsks != 0)" class="category text-info">Upcurrent Tasks.</p>
+                                          <li *ngFor="let item of setDeptUpcomingTAsks">
+                                            <div class="row">
+                                              <div class="col-md-3 col-sm-3 text-left">
+                                                <a> {{ item.name }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.start }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.finish }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.complete }}</a>
+                                              </div>
+                                              <div class="col-md-3 card-category  col-sm-3">
+                                                <a> {{ item.champion.name }}</a>
+                                              </div>
+                                            </div>
+                                          </li>
+                                        </ol>
+                                      </div>
+                                    </div>
+                                    <div class="tab-pane" id="deptTimesheet">
+                                      Timesheet
+                                      <br>
+                                    </div>
+                                    <div class="tab-pane" id="deptOther">
+                                      Other reports
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              </div>
+                            </div>
+                            <div class="col-md-10 ml-auto mr-auto">
+                              <p class="text-left title clrs-h4" style="color: darkslategray">Staff</p>
+                              <div class="card-plain card-content">
+                                <div *ngIf="displayUserReport" class="card-body">
+                                  <div class="row">
+                                    <div class="col-sm-4">
+                                      <p class="clrs-h4" style="margin-top:0em; color:darkslategray">List of Employees...</p>
+                                      <ol class="card-category">
+                                        <li *ngFor="let man of companyStaff | async" class="text-left">
+                                          <a (click)="viewReport(man)" style="cursor:context-menu">{{ man.name }}</a>
+                                        </li>
+                                      </ol>
+                                    </div>
+                                    <div *ngIf="demoNotes" class="col-sm-8">
+                                      <p class="clrs-h4" style="margin-top:0em; color:darkslategray">Employee Details...</p>
+                                      <p class="text-info ">Click to view on an employee`s name to see their report.</p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div *ngIf="displayUser" class="card-body">
+                                  <div class="col-md-12">
+                                    <div class="row">
+                                      <div class="col-md-10">
+                                        <p class="clrs-h4 pull-left" style="margin-top:0em; color:darkslategray; margin-bottom: 0px;"><span class="title card-category"
+                                            style="color:darkslategray">{{ setUser.name }}</span>`s report overview...</p>
+                                      </div>
+                                      <div class="col-md-2">
+                                        <button class="btn-link btn-magnify" (click)="back2Users()">Back</button>
+                                      </div>
+                                    </div>
+                                    <br><br>
+                                    <nav aria-label="Page navigation example">
+                                      <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-right" role="tablist" style="margin-top: -30px;">
+                                        <li class="nav-item">
+                                          <a class="pagination pagination-primary active" title="click to see the overview" data-toggle="tab" href="#link7"
+                                            role="tablist">
+                                            Overview
+                                          </a>
+                                        </li>
+                                        <span style="color:darkslategrey"> -|- </span>
+                                        <li class="nav-item">
+                                          <a class="pagination pagination-primary" title="click to see the timesheet" data-toggle="tab" href="#link8"
+                                            role="tablist">
+                                            Timesheet
+                                          </a>
+                                        </li>
+                                        <span style="color:darkslategrey"> -|- </span>
+                                        <li class="nav-item">
+                                          <a class="pagination pagination-primary" title="click to see the other reports" data-toggle="tab" href="#link9"
+                                            role="tablist">
+                                            Other
+                                          </a>
+                                        </li>
+                                      </ul>
+                                    </nav>
+                                    <div class="tab-content tab-space tab-subcategories col-md-12">
+                                      <div class="tab-pane active" id="link7">
+                                        <div class="col-md-11 mr-auto ml-auto text-left">
+                                          Total Number of Tasks Complete : {{ (myCompletetasks | async)?.length }}<br>
+                                          Total Number of outstanding Tasks: {{ outstandingTasks.length }}<br>
+                                          Total Number of Tasks allocated: {{ (allMyTasks | async)?.length }}<br>
+                                        </div>
+                                        <div class="col-md-12">
+                                          <div *ngIf="((allMyTasks | async)?.length != 0)" class="row">
+                                            <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
+                                            <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
+                                            <div class="col-md-2 col-sm-2 card-header text-left">Start</div>
+                                            <div class="col-md-2 col-sm-2 card-header text-left">Finish</div>
+                                            <div class="col-md-2 col-sm-2 card-header text-left">Complete</div>
+                                            <div class="col-md-3 col-sm-3 card-header text-left">Champion</div>
+                                          </div>
+                                          <ol style="padding-left: 10px;">
+                                            <p *ngIf="(setUserOutstandingTasks.length != 0)" class="category text-warning">Outstanding Tasks.</p>
+                                            <li *ngFor="let item of setUserOutstandingTasks">
+                                              <div class="row">
+                                                <div class="col-md-3 col-sm-3 text-left">
+                                                  <a>{{ item.name }}</a>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                  <a>{{ item.start }}</a>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                  <a>{{ item.finish }}</a>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                  <a>{{ item.complete }}</a>
+                                                </div>
+                                                <div class="col-md-3 card-category col-sm-3">
+                                                  <a>{{ item.champion.name }}</a>
+                                                </div>
+                                              </div>
+                                            </li>
+                                            <p *ngIf="(setUserCurrentTAsks != 0)" class="category text-success">Current Tasks.</p>
+                                            <li *ngFor="let item of setUserCurrentTAsks">
+                                              <div class="row">
+                                                <div class="col-md-3 col-sm-3 text-left">
+                                                  <a> {{ item.name }}</a>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                  <a> {{ item.start }}</a>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                  <a> {{ item.finish }}</a>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                  <a> {{ item.complete }}</a>
+                                                </div>
+                                                <div class="col-md-3 card-category  col-sm-3">
+                                                  <a> {{ item.champion.name }}</a>
+                                                </div>
+                                              </div>
+                                            </li>
+                                            <p *ngIf="(setUserUpcomingTAsks != 0)" class="category text-info">Upcurrent Tasks.</p>
+                                            <li *ngFor="let item of setUserUpcomingTAsks">
+                                              <div class="row">
+                                                <div class="col-md-3 col-sm-3 text-left">
+                                                  <a> {{ item.name }}</a>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                  <a> {{ item.start }}</a>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                  <a> {{ item.finish }}</a>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                  <a> {{ item.complete }}</a>
+                                                </div>
+                                                <div class="col-md-3 card-category  col-sm-3">
+                                                  <a> {{ item.champion.name }}</a>
+                                                </div>
+                                              </div>
+                                            </li>
+                                          </ol>
+                                        </div>
+                                      </div>
+                                      <div class="tab-pane" id="link8">
+                                        Timesheet
+                                        <br>
+                                      </div>
+                                      <div class="tab-pane" id="link9">
+                                        Other reports
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-10 ml-auto mr-auto">
+                              <p class="text-left title clrs-h4" style="color: darkslategray">Projects</p>
+                              <div class="card-plain card-content">
+                                <div *ngIf="displayProjReport" class="card-body">
+                                  <div class="row">
+                                    <div class="col-sm-4">
+                                      <!-- <h3>List of Employees</h3> -->
+                                      <p class="clrs-h4" style="margin-top:0em; color:darkslategray">List of Projects...</p><br>
+                                      <ol class="card-category">
+                                        <li *ngFor="let project of allCompProjects | async" class="text-left">
+                                          <a (click)="viewProjectReport(project)" style="cursor:context-menu">{{ project.name }}</a>
+                                        </li>
+                                      </ol>
+                                    </div>
+                                    <div *ngIf="ProjectDemoNotes" class="col-sm-8">
+                                      <!-- <h3>Another Title Here</h3> -->
+                                      <p class="clrs-h4" style="margin-top:0em; color:darkslategray">Project Details...</p>
+                                      <p class="text-info ">Click to view on an Project to see their report.</p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div *ngIf="displayProject" class="card-body" style="margin-top: -3em">
+                                  <div class="col-md-12">
+                                    <div class="row">
+                                      <div class="col-md-10">
+                                        <p class="clrs-h4 pull-left" style="margin-top:0em; color:darkslategray; margin-bottom: 0px;"><span class="title card-category"
+                                            style="color:darkslategray">{{ projectSet.name }}</span>`s project report overview...</p>
+                                      </div>
+                                      <div class="col-md-2">
+                                        <button class="btn-link btn-magnify" (click)="back2Proj()">Back</button>
+                                      </div>
+                                    </div>
+                                    <br><br>
+
+                                    <nav aria-label="Page navigation example">
+                                      <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-right" role="tablist" style="margin-top: -30px;">
+                                        <li class="nav-item">
+                                          <a class="pagination pagination-primary active" title="click to see the overview" data-toggle="tab" href="#projOverview"
+                                            role="tablist">
+                                            Overview
+                                          </a>
+                                        </li>
+                                        <!-- <span style="color:darkslategrey"> -|- </span><li class="nav-item">
+                                          <a class="pagination pagination-primary" title="click to see the timesheet" data-toggle="tab" href="#projTimesheet" role="tablist">
+                                            Timesheet
+                                          </a>         </li> -->
+                                        <span style="color:darkslategrey"> -|- </span>
+                                        <li class="nav-item">
+                                          <a class="pagination pagination-primary" title="click to see the other reports" data-toggle="tab" href="#projOther"
+                                            role="tablist">
+                                            Other
+                                          </a>
+                                        </li>
+                                      </ul>
+                                    </nav>
+                                    <div class="tab-content tab-space tab-subcategories col-md-12">
+                                      <div class="tab-pane active" id="projOverview">
+                                        <div class="col-md-11 mr-auto ml-auto text-left">
+                                          Total Number of Tasks Complete : {{ (compProjectTasksComplete | async)?.length }}<br>
+                                          Total Number of outstanding Tasks : {{ outstandingProjectTasks.length }}<br>
+                                          Total Number of Tasks allocated : {{ (allProjectTasks | async)?.length }}<br>
+                                        </div>
+                                        <div class="col-md-12">
+                                          <div *ngIf="((allProjectTasks | async)?.length != 0)" class="row">
+                                            <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
+                                            <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
+                                            <div class="col-md-2 col-sm-2 card-header text-left">Start</div>
+                                            <div class="col-md-2 col-sm-2 card-header text-left">Finish</div>
+                                            <div class="col-md-2 col-sm-2 card-header text-left">Complete</div>
+                                            <div class="col-md-3 col-sm-3 card-header text-left">Champion</div>
+                                          </div>
+                                          <ol style="padding-left: 10px;">
+                                          <p *ngIf="(setPojOutstandingTasks.length != 0)" class="category text-warning">Outstanding Tasks.</p>
+                                          <li *ngFor="let item of setPojOutstandingTasks">
+                                            <div class="row">
+                                              <div class="col-md-3 col-sm-3 text-left">
+                                                <a>{{ item.name }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a>{{ item.start }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a>{{ item.finish }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a>{{ item.complete }}</a>
+                                              </div>
+                                              <div class="col-md-3 card-category col-sm-3">
+                                                <a>{{ item.champion.name }}</a>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <p *ngIf="(setPojCurrentTAsks != 0)" class="category text-success">Current Tasks.</p>
+                                          <li *ngFor="let item of setPojCurrentTAsks">
+                                            <div class="row">
+                                              <div class="col-md-3 col-sm-3 text-left">
+                                                <a> {{ item.name }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.start }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.finish }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.complete }}</a>
+                                              </div>
+                                              <div class="col-md-3 card-category  col-sm-3">
+                                                <a> {{ item.champion.name }}</a>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <p *ngIf="(setPojUpcomingTAsks != 0)" class="category text-info">Upcurrent Tasks.</p>
+                                          <li *ngFor="let item of setPojUpcomingTAsks">
+                                            <div class="row">
+                                              <div class="col-md-3 col-sm-3 text-left">
+                                                <a> {{ item.name }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.start }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.finish }}</a>
+                                              </div>
+                                              <div class="col-md-2 col-sm-2">
+                                                <a> {{ item.complete }}</a>
+                                              </div>
+                                              <div class="col-md-3 card-category  col-sm-3">
+                                                <a> {{ item.champion.name }}</a>
+                                              </div>
+                                            </div>
+                                          </li>
+                                        </ol>
+                                        </div>
+                                      </div>
+                                      <div class="tab-pane" id="projTimesheet">
+                                        Timesheet
+                                        <br>
+                                      </div>
+                                      <div class="tab-pane" id="projOther">
+                                        Other reports
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-10 ml-auto mr-auto">
+                              <p class="text-left title clrs-h4" style="color: darkslategray">Reference</p>
+                              <div class="card-plain card-content">
+                                <div class="text-left na-p">
+                                  <ol>
+                                    <li>Financial Capacity : view document</li>
+                                    <li>Management Capacity : view document</li>
+                                    <li>Key Personel : view document</li>
+                                    <li>Management Continuity : view document</li>
+                                    <li>Shareholder and Risk Management : view document</li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="tab-pane" id="publicReport" role="tabpanel" aria-expanded="false">
+
+                            <div class="col-md-10 ml-auto mr-auto">
+                              <p class="text-left title clrs-h4" style="color: darkslategray">Company Details</p>
+                              <div class="card-plain card-content">
+                                <div class="text-left na-p" style="margin-left:2em ">
+                                  <span class="row col-md-12">
+                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Company Name </span>
+                                    <span class="col-sm-9">: {{ (company)?.name }} </span>
+                                  </span><br>
+                                  <span class="row col-md-12">
+                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Sector </span>
+                                    <span class="col-sm-9">: {{ (company)?.sector }} </span>
+                                  </span><br>
+                                  <span class="row col-md-12">
+                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Services </span>
+                                    <span class="col-sm-9">
+                                      <a *ngFor="let service of (company)?.services">: {{ service.display }} <br></a>
+                                    </span>
+                                  </span><br>
+                                  <span class="row col-md-12">
+                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Location </span>
+                                    <span class="col-sm-9">: {{ (company)?.location }} </span>
+                                  </span><br>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="spacer" style="height: 2em"></div>
+                            <div class="col-md-10 ml-auto mr-auto">
+                              <p class="text-left title clrs-h4" style="color: darkslategray">Compliance</p>
+                              <div class="card-plain card-content">
+                                <div class="text-left na-p">
+                                  <ol>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-6" style="padding-left: 0px; padding-right: 0px;">Tax Clearance </span>
+                                        <span class="col-sm-6">: Document </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-6" style="padding-left: 0px; padding-right: 0px;">Industry sector registration </span>
+                                        <span class="col-sm-6">: Document </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-6" style="padding-left: 0px; padding-right: 0px;">Health and Safety </span>
+                                        <span class="col-sm-6">: Document </span>
+                                      </span>
+                                    </li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="spacer" style="height: 2em"></div>
+                            <div class="col-md-10 ml-auto mr-auto">
+                              <p class="text-left title clrs-h4" style="color: darkslategray">Metrics</p>
+                              <div class="card-plain card-content">
+                                <div class="text-left na-p">
+                                  <ol>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Revenue Per Capital </span>
+                                        <span class="col-sm-2">: 5/10 </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Annual staff costs percentage of
+                                          total Annual Revenue </span>
+                                        <span class="col-sm-2">: 70 % </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Sum of projects finished to projects
+                                          supposed to be finished to date </span>
+                                        <span class="col-sm-2">: 7/10 </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Tasks complete percentage to tasks
+                                          planned to Date </span>
+                                        <span class="col-sm-2">: 80 % </span>
+                                      </span>
+                                    </li>
+                                    <li>
+                                      <span class="row col-md-12">
+                                        <span class="col-sm-10" style="padding-left: 0px; padding-right: 0px;">Tasks complete percentage to tasks
+                                          planned to Date By Key Personel </span>
+                                        <span class="col-sm-2">: 60 % </span>
+                                      </span>
+                                    </li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="tab-pane" id="link8">
-                      Timesheet
-                      <br>
-                    </div>
-                    <div class="tab-pane" id="link9">
-                      Other reports
-                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-10 ml-auto mr-auto">
-            <p class="text-left title clrs-h4" style="color: darkslategray">Projects</p>
-            <div class="card-plain card-content">
-              <div *ngIf="displayProjReport" class="card-body">
-                <div class="row">
-                  <div class="col-sm-4">
-                    <!-- <h3>List of Employees</h3> -->
-                    <p class="clrs-h4" style="margin-top:0em; color:darkslategray">List of Projects...</p><br>
-                    <ol class="card-category">
-                      <li *ngFor="let project of allCompProjects | async" class="text-left">
-                        <a (click)="viewProjectReport(project)" style="cursor:context-menu">{{ project.name }}</a>
-                      </li>
-                    </ol>
-                  </div>
-                  <div *ngIf="ProjectDemoNotes" class="col-sm-8">
-                    <!-- <h3>Another Title Here</h3> -->
-                    <p class="clrs-h4" style="margin-top:0em; color:darkslategray">Project Details...</p>
-                    <p class="text-info ">Click to view on an Project to see their report.</p>
-                  </div>
-                </div>
-              </div>
-              <div *ngIf="displayProject" class="card-body" style="margin-top: -3em">
-                <div class="col-md-12">
-                  <div class="row">
-                    <div class="col-md-10">
-                      <p class="clrs-h4 pull-left" style="margin-top:0em; color:darkslategray; margin-bottom: 0px;"><span class="title card-category"
-                          style="color:darkslategray">{{ projectSet.name }}</span>`s project report overview...</p>
-                    </div>
-                    <div class="col-md-2">
-                      <button class="btn-link btn-magnify" (click)="back2Proj()">Back</button>
-                    </div>
-                  </div>
-                  <br><br>
-
-                  <nav aria-label="Page navigation example">
-                    <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-right" role="tablist" style="margin-top: -30px;">
-                      <li class="nav-item">
-                        <a class="pagination pagination-primary active" title="click to see the overview" data-toggle="tab" href="#projOverview"
-                          role="tablist">
-                          Overview
-                        </a>
-                      </li>
-                      <!-- <span style="color:darkslategrey"> -|- </span><li class="nav-item">
-                                                                                  <a class="pagination pagination-primary" title="click to see the timesheet" data-toggle="tab" href="#projTimesheet" role="tablist">
-                                                                                    Timesheet
-                                                                                  </a>         </li> -->
-                      <span style="color:darkslategrey"> -|- </span>
-                      <li class="nav-item">
-                        <a class="pagination pagination-primary" title="click to see the other reports" data-toggle="tab" href="#projOther"
-                          role="tablist">
-                          Other
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
-                  <div class="tab-content tab-space tab-subcategories col-md-12">
-                    <div class="tab-pane active" id="projOverview">
-                      <div class="col-md-11 mr-auto ml-auto text-left">
-                        Total Number of Tasks Complete : {{ (compProjectTasksComplete | async)?.length }}<br>
-                        Total Number of outstanding Tasks : {{ outstandingProjectTasks.length }}<br>
-                        Total Number of Tasks allocated : {{ (allProjectTasks | async)?.length }}<br>
-                      </div>
-                      <div class="col-md-12">
-                        <div *ngIf="((allProjectTasks | async)?.length != 0)" class="row">
-                          <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
-                          <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
-                          <div class="col-md-2 col-sm-2 card-header text-left">Start</div>
-                          <div class="col-md-2 col-sm-2 card-header text-left">Finish</div>
-                          <div class="col-md-2 col-sm-2 card-header text-left">Complete</div>
-                          <div class="col-md-3 col-sm-3 card-header text-left">Champion</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="tab-pane" id="projTimesheet">
-                      Timesheet
-                      <br>
-                    </div>
-                    <div class="tab-pane" id="projOther">
-                      Other reports
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-10 ml-auto mr-auto">
-            <p class="text-left title clrs-h4" style="color: darkslategray">Reference</p>
-            <div class="card-plain card-content">
-              <div class="text-left na-p">
-                <ol>
-                  <li>Financial Capacity : view document</li>
-                  <li>Management Capacity : view document</li>
-                  <li>Key Personel : view document</li>
-                  <li>Management Continuity : view document</li>
-                  <li>Shareholder and Risk Management : view document</li>
-                </ol>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="tab-pane" id="publicReport" role="tabpanel" aria-expanded="false">
-
-          Coming Soon......................
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
                   <!-- <div class="col-md-12">
                     <div class="card">

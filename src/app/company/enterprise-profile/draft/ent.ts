@@ -94,14 +94,6 @@ export class EnterpriseProfileComponent {
     public displayDeptReport: boolean = true;
 
 
-    setUserLongTermTAsks = [];
-    setUserMediumTermTAsks = [];
-    setUserShortTermTAsks = [];
-    setUserOutstandingTasks = [];
-    setUserCurrentTAsks = [];
-    setUserUpcomingTAsks = [];
-    setUserCompletedTasks: Observable<Task[]>
-
     allMyTasks: Observable<Task[]>;
     tasksComplete: Observable<Task[]>;
     compProjectTasksComplete: Observable<Task[]>;
@@ -806,40 +798,6 @@ export class EnterpriseProfileComponent {
         ).snapshotChanges().pipe(map(b => b.map(a => {
             const data = a.payload.doc.data() as Task;
             const id = a.payload.doc.id;
-
-
-            // this.myTaskData = data;
-            // this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
-            // this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
-            // this.categorizedTasks.push(this.myTaskData);
-            let today = moment(new Date(), "YYYY-MM-DD");
-            this.OutstandingTasks = [];
-            this.UpcomingTAsks = [];
-            this.ShortTermTAsks = [];
-            this.MediumTermTAsks = [];
-            this.LongTermTAsks = [];
-            if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
-
-                this.setUserCurrentTAsks.push(data);
-            };
-            // outstanding tasks
-            if (moment(data.finish).isBefore(today)) {
-                this.setUserOutstandingTasks.push(this.myTaskData);
-            };
-            // Upcoming tasks
-            if (moment(data.start).isAfter(today)) {
-                this.setUserUpcomingTAsks.push(data);
-                if (moment(data.start).isBefore(today.add(3, "month"))) {
-                    this.setUserShortTermTAsks.push(data);
-                }
-                if (moment(data.start).isAfter(today.add(6, "month"))) {
-                    this.setUserMediumTermTAsks.push(data);
-                }
-                if (moment(data.start).isAfter(today.add(12, "month"))) {
-                    this.setUserLongTermTAsks.push(data)
-                }
-
-            };
             return { id, ...data };
 
         })));

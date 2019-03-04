@@ -301,6 +301,7 @@ export class ViewComponent implements OnInit {
   viewDayActions: any;
   viewTodayWork: boolean = false;
   viewTodaystds: boolean = false;
+  entReport: Enterprise;
 
   constructor(public afAuth: AngularFireAuth, private is: InitialiseService, public router: Router, private authService: AuthService, private afs: AngularFirestore, private pns: PersonalService, private ts: TaskService,
     public es: EnterpriseService, private ps: ProjectService, private as: ActivatedRoute) {
@@ -773,6 +774,8 @@ export class ViewComponent implements OnInit {
   }
 
   viewUserReport(man: ParticipantData) {
+    let compId = this.project.companyId;
+
     this.compLabourer = man;
     this.displayCompanyReport = true;
     console.log(man);
@@ -780,7 +783,7 @@ export class ViewComponent implements OnInit {
     this.compLabourerTasks = this.afs.collection('Users').doc(this.userId).collection('tasks', ref => { return ref
       .where('champion.id', '==', man.id )
       .where('projectId', '==', proId)
-      .where('companyId', '==', this.entId)
+      .where('companyId', '==', compId)
       .limit(5) }).snapshotChanges().pipe(map(b => b.map(a => {
       const data = a.payload.doc.data() as MomentTask;
       const id = a.payload.doc.id;
@@ -840,13 +843,16 @@ export class ViewComponent implements OnInit {
 
   
 
-  viewCompanyReport(company) {
+  viewCompanyReport() {
+    let compId = this.project.companyId;
+    let compRef = this.ps.getCompanies(this.projectId);
     this.outstandingCompanyTasks = [];
+    let entReport: Enterprise;
     let today = moment(new Date(), "YYYY-MM-DD");
-    console.log(company);
-    let compId = company.id
-    this.entId = company.id
-    this.setCompany = company;
+    // console.log(companyId);
+    // let compId = companyId;
+    // this.entId = companyId;
+    // this.setCompany = company;
     this.companyDemoNotes = false;
     this.displayCompany = true;
 
@@ -865,6 +871,16 @@ export class ViewComponent implements OnInit {
 
     }))
     );
+    compRef.subscribe(ref => {
+      const index = ref.findIndex(ent => ent.id === compId);
+      if (index > -1) {
+        entReport = ref[index];
+        this.entReport = entReport;
+      } else {
+        console.log("didn`t get Company");
+        
+      }
+    })
 
     this.allCompanyTasks.subscribe(ptasks => {
       this.setCompCurrentTAsks = [];
@@ -905,7 +921,8 @@ export class ViewComponent implements OnInit {
         const data = a.payload.doc.data() as Task;
         const id = a.payload.doc.id;
         return { id, ...data };
-      })));
+      }))
+    );
 
 
   }
@@ -2222,6 +2239,8 @@ export class ViewComponent implements OnInit {
   checkDataComp(){
 
     let compId = this.project.companyId;
+    this.entId = compId;
+    // this.viewCompanyReport(compId);
     
     console.log(this.project.companyId);
     let tasksRef = this.afs.collection<Project>('Projects').doc(this.projectId);
@@ -2235,7 +2254,9 @@ export class ViewComponent implements OnInit {
         
         return { id, ...data };
       }))
-    )
+    );
+
+    this.allCompanyTasks = tasksRef.collection('enterprises').doc(compId).collection<Task>('tasks').valueChanges();
 
     this.companyTasks.subscribe(ttasks => {
 
@@ -2276,6 +2297,18 @@ export class ViewComponent implements OnInit {
       console.log(ttasks);
     })
     console.log(this.companyTasks.operator.call.length);
+
+    this.allCompanyTasksComplete = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(compId).collection('tasks', ref => ref
+      .where('complete', '==', true)).snapshotChanges().pipe(map(b => b.map(a => {
+        const data = a.payload.doc.data() as Task;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    console.log('Tasks complete' + ' ' + this.allCompanyTasksComplete.operator.call.length);
+    console.log('All company Tasks' + ' ' + this.companyTasks.operator.call.length);
+    
   }
   
   displayEnterprise(){
