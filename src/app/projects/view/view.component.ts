@@ -1440,7 +1440,8 @@ export class ViewComponent implements OnInit {
 
     let projectTaskDoc = this.afs.collection('Projects').doc(this.projectId);
     let projectTaskActions = projectTaskDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
-
+    let participantRef = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(this.selectedTask.companyId)
+      .collection('labour').doc(this.staffId).collection('actionItems');
     let projectDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('projects').doc(this.projectId);
     let actionRef = projectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
 
@@ -1450,6 +1451,7 @@ export class ViewComponent implements OnInit {
     actionRef.doc(this.setItem.id).set(this.setItem);
     userActionRef.doc(this.setItem.id).set(this.setItem);
     projectTaskActions.doc(this.setItem.id).set(this.setItem);
+    participantRef.doc(this.setItem.id).set(this.setItem);
 
     // this.setItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
     this.setItem = null;
@@ -1459,14 +1461,15 @@ export class ViewComponent implements OnInit {
     this.setItem = setItem;
   }
 
-  selectActions(e, action) {
+  selectActions(e, action: workItem) {
 
     if (e.target.checked) {
       console.log();
       this.selectedActionItems.push(action);
-
-      let userRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('WeeklyActions');
-      userRef.doc(action.id).set(action);
+      let participantRef = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(this.projectCompId)
+        .collection('labour').doc(action.champion.id).collection('WeeklyActions').doc(action.id).set(action);
+      // let userRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('WeeklyActions');
+      // userRef.doc(action.id).set(action);
       let compRef = this.afs.collection('Enterprises').doc(this.projectCompId).collection<workItem>('WeeklyActions');
       compRef.doc(action.id).set(action);
       let compProjRef = this.afs.collection('Enterprises').doc(this.projectCompId).collection('projects').doc(this.projectId);
@@ -1490,6 +1493,8 @@ export class ViewComponent implements OnInit {
       projectDoc.doc(action.id).delete();
       let cmpProjectDoc = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(this.selectedTask.companyId);
       cmpProjectDoc.collection<workItem>('WeeklyActions').doc(action.id).delete();
+      let participantRef = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(this.projectCompId)
+        .collection('labour').doc(action.champion.id).collection('WeeklyActions').doc(action.id).delete();
       console.log("action" + " " + action.name + " " + " has been Removed");
     }
   }

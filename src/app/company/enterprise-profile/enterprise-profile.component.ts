@@ -2065,18 +2065,22 @@ export class EnterpriseProfileComponent {
     return this.viewActions;
   }
 
-  selectActions(e, action) {
+  selectActions(e, action:workItem) {
 
     if (e.target.checked) {
       console.log();
 
       this.selectedActionItems.push(action);
+      let participantRef = this.afs.collection('Enterprises').doc(this.compId).collection('Participants').doc(action.champion.id).collection('WeeklyActions');
+      participantRef.doc(action.id).set(action);
       let compRef = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
       compRef.doc(action.id).set(action);
       console.log("action" + " " + action.name + " " + " has been added");
     }
     else {
       this.selectedActionItems.splice(this.selectedActionItems.indexOf(action), 1);
+      let participantRef = this.afs.collection('Enterprises').doc(this.compId).collection('Participants').doc(action.champion.id).collection('WeeklyActions');
+      participantRef.doc(action.id).delete();
       let compRef = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
       compRef.doc(action.id).delete();
     }

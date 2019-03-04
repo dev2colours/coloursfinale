@@ -111,6 +111,7 @@ export class NavbarComponent implements OnInit {
     colorScheme = {
         domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
     };
+    actiondsNo: number;
   
     // constructor(private afAuth: AngularFireAuth, private popComp: PopupComponent, private afs: AngularFirestore, public pns: PersonalService, public is: InitialiseService, public es: EnterpriseService, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private ps: ProjectService) {
     constructor(private modalService: NgbModal,private afAuth: AngularFireAuth, private afs: AngularFirestore, public pns: PersonalService, public is: InitialiseService, public es: EnterpriseService, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private ps: ProjectService) {
@@ -123,6 +124,7 @@ export class NavbarComponent implements OnInit {
         // setTimeout(() => {
         //     this.showModal();
         // }, 5000);
+        this.actiondsNo = 0;
         this.dmData = { updateTime: "", qty: 0 }
         this.selectedAction = is.getActionItem();
         this.actualData = { name: "", time: "", actionId: "", id: "", actuals: null };
@@ -168,6 +170,7 @@ export class NavbarComponent implements OnInit {
 
         this.viewActions.subscribe((actions) => {
             this.myActionItems = [];
+            this.actiondsNo = 0;
             actions.forEach(data => {
                 let element = data;
                 // const index = String(new Date().getTime());
@@ -178,11 +181,14 @@ export class NavbarComponent implements OnInit {
                     this.chartdata = true;
                     this.processData(this.myActionItems);
                 }
+                console.log(this.myActionItems.length);
+                this.actiondsNo = this.myActionItems.length;
+                
             })
             // this.myActionItems = actions;
             // console.log(actions.length)
             // console.log(actions)
-            this.actionNo = actions.length
+            this.actionNo = actions.length;
         })
 
         if (this.actionNo == 0) {
@@ -593,7 +599,7 @@ export class NavbarComponent implements OnInit {
         let classId;
         let champId = this.selectedAction.champion.id;
         let cleaningTime = this.aclear();
-        let notify = this.showNotification('Task', 'top', 'right');
+        // let notify = this.showNotification('Task', 'top', 'right');
         let item = this.selectedAction;
 
         this.actionData.name = item.name;
@@ -602,7 +608,7 @@ export class NavbarComponent implements OnInit {
         console.log(item);
 
 
-        let timesheetDocId = moment(new Date(), 'MM-DD-YYYY').format('L');
+        let timesheetDocId = String(moment(new Date()));
         let timesheetworktime = String(moment(new Date().getTime()));
         let work = {
             WorkingTime: moment().toString(),
@@ -624,7 +630,18 @@ export class NavbarComponent implements OnInit {
                 .collection('actionActuals').doc(dataId);
             let myTaskActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection('tasks').doc(item.taskId)
                 .collection<workItem>('actionItems').doc(item.id).collection('actionActuals').doc(dataId);
+            let champProjectCompWeeklyRef = this.afs.collection('Enterprises').doc(item.companyId)
+                .collection('Participants').doc(this.userId).collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
+            let champTimeSheetRef = this.afs.collection('Enterprises').doc(item.companyId)
+                .collection('Participants').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
 
+            champTimeSheetRef.update({
+                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+            }).then(() => {
+                console.log('update successful (document exists)');
+            }).catch((error) => {
+                champTimeSheetRef.set(this.actionData);
+            });
             allMyActionsRef.update({
                 actuals: firebase.firestore.FieldValue.arrayUnion(actual)
             }).then(() => {
@@ -646,6 +663,13 @@ export class NavbarComponent implements OnInit {
             }).catch((error) => {
                 myTaskActionsRef.set(this.actionData);
             });
+            champProjectCompWeeklyRef.update({
+                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+            }).then(() => {
+                console.log('update successful (document exists)');
+            }).catch((error) => {
+                champProjectCompWeeklyRef.set(this.actionData);
+            });
 
             if (item.projectId != "") {
 
@@ -655,7 +679,10 @@ export class NavbarComponent implements OnInit {
                     .collection('actionActuals').doc(dataId);
                 let prjectCompWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
                     .collection<workItem>('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
-
+                let champProjectCompWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+                    .collection('labour').doc(this.userId).collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId)
+                let champTimeSheetRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+                    .collection('labour').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
                 weeklyRef.update({
                     actuals: firebase.firestore.FieldValue.arrayUnion(actual)
                 }).then(() => {
@@ -667,6 +694,16 @@ export class NavbarComponent implements OnInit {
                     weeklyRef.set(this.actionData);
 
                 });
+                champTimeSheetRef.update({
+                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                }).then(() => {
+                    console.log('Update successful, document exists');
+                    // update successful (document exists)
+                }).catch((error) => {
+                    console.log('Error updating user, document does not exists', error);
+                    // .set({ data });
+                    champTimeSheetRef.set(this.actionData);
+                });
                 prjectWeeklyRef.update({
                     actuals: firebase.firestore.FieldValue.arrayUnion(actual)
                 }).then(() => {
@@ -676,19 +713,27 @@ export class NavbarComponent implements OnInit {
                     console.log('Error updating user, document does not exists', error);
                     // .set({ data });
                     prjectWeeklyRef.set(this.actionData);
-
                 });
                 prjectCompWeeklyRef.update({
                     actuals: firebase.firestore.FieldValue.arrayUnion(actual)
                 }).then(() => {
                     console.log('Update successful, document exists');
                     // update successful (document exists)
-                })
-                    .catch((error) => {
-                        console.log('Error updating user, document does not exists', error);
-                        // .set({ data });
-                        prjectCompWeeklyRef.set(this.actionData);
-                    });
+                }).catch((error) => {
+                    console.log('Error updating user, document does not exists', error);
+                    // .set({ data });
+                    prjectCompWeeklyRef.set(this.actionData);
+                });
+                champProjectCompWeeklyRef.update({
+                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                }).then(() => {
+                    console.log('Update successful, document exists');
+                    // update successful (document exists)
+                }).catch((error) => {
+                    console.log('Error updating user, document does not exists', error);
+                    // .set({ data });
+                    champProjectCompWeeklyRef.set(this.actionData);
+                });
             }
         };
 
@@ -742,20 +787,20 @@ export class NavbarComponent implements OnInit {
             }).then(() => {
                 console.log('Update successful, document exists');
                 cleaningTime;
-                notify;
+                // notify;
                 // update successful (document exists)
             }).catch((error) => {
                 console.log('Error updating user, document does not exists', error);
                 // .set({ data });
                 championRef.set(this.actionData).then(ref => {
                     cleaningTime;
-                    notify;
+                    // notify;
                 });
             });
         }
         else {
             cleaningTime;
-            notify;
+            // notify;
         }
     }
 
@@ -1122,13 +1167,15 @@ export class NavbarComponent implements OnInit {
         this.mytime = ((new Date().getTime()) / 1000)
         this.mytime = new Date().getTime()
         this.future = new Date();
-        let NoItems = this.myActionItems.length;
+        
+        let NoItems = this.actiondsNo;
+        // console.log(NoItems);
 
         this.afAuth.authState.subscribe(user => {
             if (user !== null) {
-                if (NoItems != 0){
-                    if (this.timedstamp > 0) {
-                        if (this.timedstamp % 600 == 0) {
+                if (this.timedstamp > 0) {
+                    if (NoItems != 0) {
+                        if (this.timedstamp % 3600 == 0) {
                             // alert('An hour has passed')
                             // this.showSwal('custom-html')
                             // if (!this.popData) {

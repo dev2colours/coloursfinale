@@ -412,7 +412,7 @@
   </div>
   <div class="modal-body"><!--  style="background-color: #d9dee0; color: white;" -->
     <div class="row">
-      <div class="col-md-5">
+      <div class="col-md-10 ml-auto mr-auto">
         <form>
           <p class="category text-left" style="margin-bottom:-1em; padding-left: 25px;">
             Click on the task to Enter the Actuals
@@ -473,13 +473,7 @@
             </ol>
           </div>
         </form>
-      </div>
-      <div class="col-md-7">
-        <ngx-charts-pie-chart *ngIf="chartdata" [view]="view" [scheme]="colorScheme" [results]="workItemData"
-          [explodeSlices]="explodeSlices" [labels]="showLabels" [doughnut]="doughnut" (select)="onSelect($event)">
-        </ngx-charts-pie-chart><!-- [labels]="showLabels" -->
-      </div>
-      <form>
+        <form>
         <code> add new work item</code>
         <div class="form-group">
           <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
@@ -497,6 +491,13 @@
           </div>
         </div>
       </form>
+      </div>
+      <!-- <div class="col-md-7">
+        <ngx-charts-pie-chart *ngIf="chartdata" [view]="view" [scheme]="colorScheme" [results]="workItemData"
+          [explodeSlices]="explodeSlices" [labels]="showLabels" [doughnut]="doughnut" (select)="onSelect($event)">
+        </ngx-charts-pie-chart><!- [labels]="showLabels" ->
+      </div> -->
+      
     </div>
   </div>
   <!-- <div class="modal-footer">
