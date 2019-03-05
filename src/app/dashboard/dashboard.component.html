@@ -20,7 +20,7 @@
                   <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let item of myActionItems">
                     <div class="row">
                       <a class="col-md-12" style="color:steelblue">
-                        <span class="col-md-8" style="width:24em;">{{ item.name }} </span> <!-- class="col-md-9 col-10" -->
+                        <span class="col-md-8 text-info" style="width:24em;">{{ item.name }} </span> <!-- class="col-md-9 col-10" -->
                         <span *ngIf="item.start" class="pull-right" style="margin-right:2em">
                           <span>@</span>
                           <span class="number text-warning"> {{ item.start }} hrs</span> <!-- col-md-3 mr-auto  -->
@@ -38,7 +38,7 @@
                         <li>
                           <div class="row">
                             <a style="color:lightgrey">
-                              <span class="col-md-9 col-10">Meeting @</span>
+                              <span class="col-md-9 col-10 text-info">Meeting </span>
                               <span class="col-md-3 mr-auto number text-warning"> 1000 hrs</span>
                             </a>
                           </div>
@@ -46,7 +46,7 @@
                         <li>
                           <div class="row">
                               <a style="color:lightgrey">
-                                <span class="col-md-9 ">Email @</span>
+                                <span class="col-md-9 text-info">Email </span>
                                 <span class="col-md-3 mr-auto ml-auto number text-success">1230 Hrs</span>
                               </a>
                           </div>
@@ -54,7 +54,7 @@
                         <li>
                           <div class="row">
                             <a style="color:lightgrey">
-                              <span class="col-md-9">Skype</span>
+                              <span class="col-md-9 text-info">Skype</span>
                               <span class="col-md-3 mr-auto ml-auto label text-success"> 1400 Hrs </span>
                             </a>
                           </div>
@@ -62,7 +62,7 @@
                         <li>
                           <div class="row ">
                             <a style="color:lightgrey">
-                              <span class="col-lg-9">Scheduling</span>
+                              <span class="col-lg-9 text-info">Scheduling</span>
                               <span class="col-lg-3 mr-auto ml-auto label text-success"> 0800 Hrs </span>
                             </a>
                           </div>
@@ -111,45 +111,51 @@
           </div>
           <div class="spacer" style="height: 1em;"></div>
           <div id="pTasklist">
-            <!-- <ol>
-              <li>
-                <div class="row">
-                  <div class="col-xs-10 " style="margin-left:2.0em">
-                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
-                      Joina City
-                    </a>
-                  </div>
+            <div class="content container scroll-em" *ngIf="hideProjs">
+              <div class="row">
+                <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
+                  <ol>
+                    <li>
+                      <div class="row">
+                        <div class="col-xs-10 " style="margin-left:2.0em">
+                          <a class="text-info" style="color:lightgrey" href="#send_agenda">
+                            Joina City
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="row">
+                        <div class="col-xs-10 " style="margin-left:2.0em">
+                          <a class="text-info" style="color:lightgrey" href="#send_agenda">
+                            Aripo Offices
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="row">
+                        <div class="col-xs-10 " style="margin-left:2.0em">
+                          <a class="text-info" style="color:lightgrey" href="#send_agenda">
+                            Colours Software
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="row">
+                        <div class="col-xs-10 " style="margin-left:2.0em">
+                          <a class="text-info" style="color:lightgrey" href="#send_agenda">
+                            Beitbridge
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                  </ol>
                 </div>
-              </li>
-              <li>
-                <div class="row">
-                  <div class="col-xs-10 " style="margin-left:2.0em">
-                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
-                      Aripo Offices
-                    </a>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div class="row">
-                  <div class="col-xs-10 " style="margin-left:2.0em">
-                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
-                      Colours Software
-                    </a>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div class="row">
-                  <div class="col-xs-10 " style="margin-left:2.0em">
-                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
-                      Beitbridge
-                    </a>
-                  </div>
-                </div>
-              </li>
-            </ol> -->
-            <div class="content container scroll-em">
+              </div>
+            </div>
+            <div class="content container scroll-em" *ngIf="showProjs">
               <ol>
                 <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let project of allMyProjects | async"><a
                     [routerLink]="[ '/projects/', project.id ]" style="color:slategray">{{ project.name }}</a>
@@ -212,7 +218,7 @@
               <li>
                 <div class="row">
                   <div class="col-xs-10 " style="margin-left: 2em">
-                    <a class="text-danger" style="color:lightgrey">
+                    <a class="text-info" style="color:lightgrey">
                       Send Agenda
                     </a>
                   </div>
@@ -221,7 +227,7 @@
               <li>
                 <div class="row">
                   <div class="col-xs-10" style="margin-left:2em">
-                    <a href="#Respond_to_mail" style="color:lightgrey">
+                    <a href="#Respond_to_mail" class="text-info" style="color:lightgrey">
                       Respond to Mail
                     </a>
                   </div>
@@ -230,7 +236,7 @@
               <li>
                 <div class="row">
                   <div class="col-xs-10" style="margin-left:2em">
-                    <a href="#Contact_Supplier" style="color:lightgrey">
+                    <a href="#Contact_Supplier" class="text-info" style="color:lightgrey">
                       Contact Supplier
                     </a>
                   </div>
@@ -239,7 +245,7 @@
               <li>
                 <div class="row">
                   <div class="col-xs-10" style="margin-left:2em">
-                    <a href="#Aripo" style="color:lightgrey">
+                    <a href="#Aripo" class="text-info" style="color:lightgrey">
                       Aripo
                     </a>
                   </div>
@@ -289,10 +295,16 @@
             </div>
           </div>
         </div>
-        <div class="card" data-background-color="blue">
+        <div class="card" data-background-color="blue" *ngIf="showMdata">
           <marquee>
             <a *ngFor="let project of allColoursProjects | async" style="color:rgb(35, 41, 49)" routerLink="#">
               A project has been created, location: {{ project.location }}, type: {{ project.sector }}. . . . . . . <span class="spacer" style="widows: 10px;"></span></a> <!--  in {{project.sector}}  -->
+          </marquee>
+        </div>
+        <div class="card" data-background-color="blue" *ngIf="hideMdata">
+          <marquee>
+            <a  style="color:rgb(35, 41, 49)" routerLink="#">
+              <i>Welcome to Colours Market place, this is where you will get all latest Colours Production News Feeds. . . . . . .</i> <span class="spacer" style="widows: 10px;"></span></a> <!--  in {{project.sector}}  -->
           </marquee>
         </div>
       </div>

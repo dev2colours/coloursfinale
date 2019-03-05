@@ -49,10 +49,19 @@ export class DashboardComponent implements OnInit {
   public hideActions: boolean = false;
 
 
+  public showProjs: boolean = false;
+  public hideProjs: boolean = false;
+
+
+  public showMdata: boolean = false;
+  public hideMdata: boolean = false;
+
+
   userProfile: Observable<coloursUser>;
   myDocment: AngularFirestoreDocument<{}>;
   userData: coloursUser;
   cdTimer: string;
+  projsNo: any;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
     this.afAuth.user.subscribe(user => {
@@ -141,6 +150,9 @@ export class DashboardComponent implements OnInit {
     this.showActions = false;
     this.hideActions = false;
 
+    this.showProjs = false;
+    this.hideProjs = false;
+
     let currentDate = moment(new Date()).format('L');;
 
     console.log(currentDate);
@@ -177,27 +189,23 @@ export class DashboardComponent implements OnInit {
     })
 
     this.allMyProjects = userDocRef.collection('projects', ref => ref.orderBy('createdOn', "desc").limit(4)).valueChanges();
-    // this.viewActions = userDocRef.collection<ActionItem>('WeeklyActions', ref => ref.where("startDate", '==', currentDate).limit(4))
-    // .snapshotChanges().pipe(
-    //   map(actions => actions.map(a => {
-    //     const data = a.payload.doc.data() as ActionItem;
-    //     const id = a.payload.doc.id;
-    //     return { id, ...data };
-    //   }))
-    // );
+    this.projsNo = 0;
+    this.allMyProjects.subscribe((projects) => {
+      console.log(projects);
 
-    // this.viewActions.subscribe((actions) =>{
-    //   this.myActionItems = actions
-    //   console.log(actions.length)
-    //   console.log(actions)
-    //   this.actionNo = actions.length
-    // })
+      this.projsNo = projects.length;
+      if (this.projsNo == 0) {
 
-    // if (this.actionNo > 0) {
-    //   this.showActions = true;      
-    // } else {
-    //   this.showActions = false;
-    // }
+        this.showProjs = false;
+        this.hideProjs = true;
+
+      } else {
+
+
+        this.showProjs = true;
+        this.hideProjs = false;
+      }
+    })
   }
 
 
@@ -464,10 +472,23 @@ export class DashboardComponent implements OnInit {
 
     var viewsChart = new Chart(this.ctx, a);
 
-    this.allColoursProjects = this.afs.collection('Projects', ref => ref.orderBy('createdOn', "desc").limit(5)).valueChanges();
+    this.allColoursProjects = this.afs.collection('Projects', ref => ref.orderBy('createdOn', "desc").limit(10)).valueChanges();
+    this.projsNo = 0;
+    this.allColoursProjects.subscribe((projects) => {
+      console.log(projects);
 
+      this.projsNo = projects.length;
+      if (this.projsNo == 0) {
 
-  }
+        this.showMdata = false;
+        this.hideMdata = true;
 
-  
+      } else {
+
+        this.showMdata = true;
+        this.hideMdata = false;
+
+      }
+    })
+  } 
 }
