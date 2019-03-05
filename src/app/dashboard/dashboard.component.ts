@@ -48,10 +48,8 @@ export class DashboardComponent implements OnInit {
   public showActions: boolean = false;
   public hideActions: boolean = false;
 
-
   public showProjs: boolean = false;
   public hideProjs: boolean = false;
-
 
   public showMdata: boolean = false;
   public hideMdata: boolean = false;

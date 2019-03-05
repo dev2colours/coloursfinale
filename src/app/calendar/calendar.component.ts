@@ -117,7 +117,10 @@ export class CalendarComponent implements OnInit {
   pro: profession;
   timesheetCollection: { date: string; name: string; }[];
   classificationsToDate: Observable<classification[]>;
+  projsNo: number;
 
+  public showProjs: boolean = false;
+  public hideProjs: boolean = false;
 
   constructor(public auth: AuthService, private pns: PersonalService , public afAuth: AngularFireAuth, public es: EnterpriseService,private ps:ProjectService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute)  { 
   
@@ -570,14 +573,15 @@ export class CalendarComponent implements OnInit {
   dataCall(){
 
     /* myData */
+    this.showProjs = false;
+    this.hideProjs = false;
 
     this.myDocment = this.afs.collection('Users').doc(this.userId);
     let noCompanies = 0;
     let noProjects = 0;
+    this.projsNo = 0;
     let myProjects = this.ps.getProjects(this.userId);  
-    // noProjects = myProjects.operator.call.length;
     let myCompanies = this.es.getCompanies(this.userId);
-    // let myEnts;
     myCompanies.subscribe(ents => {
       console.log('Ents N0' + ' ' + ents.length);
       noCompanies = ents.length;
@@ -585,8 +589,21 @@ export class CalendarComponent implements OnInit {
     // noCompanies = myCompanies.operator.call.length;
 
     myProjects.subscribe(projs => {
+      let projects = projs;
       console.log('Pojs N0' + ' ' + projs.length);
       noProjects = projs.length;
+      this.projsNo = projects.length;
+      if (this.projsNo == 0) {
+
+        this.showProjs = false;
+        this.hideProjs = true;
+
+      } else {
+
+
+        this.showProjs = true;
+        this.hideProjs = false;
+      }
 
     })
     this.userProfile = this.myDocment.snapshotChanges().pipe( map(a => {

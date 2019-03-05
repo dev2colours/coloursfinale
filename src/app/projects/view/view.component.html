@@ -68,8 +68,8 @@
                           <div class="row col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
                             <div class="clrs-h4 col-md-12" style="color:steelblue">
                               <a><i class="nc-icon nc-palette"></i> Colours Personal</a>
-                            </div><br>
-                            <div class="text-left col-md-10" style="padding-top: -1em; color: steelblue; ">
+                            </div>
+                            <div class="text-left col-md-10 category" style="margin-left:1.0em; color: steelblue; ">
                               <a>My Diary Today</a>
                             </div>
                           </div>
@@ -80,7 +80,7 @@
                                 <li>
                                   <div class="row">
                                     <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em">
-                                      <a style="color:lightgrey">
+                                      <a style="color:lightgrey" class="text-info">
                                         Meeting<span class="label text-warning"> 1000 hrs</span>
                                       </a>
                                     </div>
@@ -89,7 +89,7 @@
                                 <li>
                                   <div class="row">
                                     <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
-                                      <a style="color:lightgrey">
+                                      <a style="color:lightgrey" class="text-info">
                                         Email<span class="label text-success"> 1230 Hrs </span>
                                       </a>
                                     </div>
@@ -98,7 +98,7 @@
                                 <li>
                                   <div class="row">
                                     <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
-                                      <a style="color:lightgrey; margin-bottom: 0px;">
+                                      <a style="color:lightgrey; margin-bottom: 0px;" class="text-info">
                                         Skype<span class="label text-success"> 1400 Hrs </span>
                                       </a>
                                     </div>
@@ -107,7 +107,7 @@
                                 <li>
                                   <div class="row">
                                     <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
-                                      <a style="color:lightgrey; margin-bottom: 0px;">
+                                      <a style="color:lightgrey; margin-bottom: 0px;" class="text-info">
                                         Scheduling<span class="label text-success"> 0800 Hrs </span>
                                       </a>
                                     </div>
@@ -125,7 +125,7 @@
                           <hr>
                           <div class="row">
                             <div class="col-sm-7">
-                              <div class="footer-title">Financial Statistics</div>
+                              <div class="footer-title">View more.....</div>
                             </div>
                             <div class="col-sm-5">
                               <div class="pull-right">
@@ -144,8 +144,8 @@
                           <div class="row col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
                             <div class="clrs-h4" style="color:steelblue">
                               <a><i class="fa fa-tasks fa-fw"></i> Colours Projects</a>
-                            </div><br>
-                            <div class="text-left" style="padding-top: -1em; color: steelblue; ">
+                            </div>
+                            <div class="text-left category" style="margin-left:1.0em; color: steelblue; ">
                               <a>My Current Priority Projects</a>
                             </div>
                           </div>
@@ -155,7 +155,7 @@
                               <li>
                                 <div class="row">
                                   <div class="col-xs-10 " style="margin-left:2.0em">
-                                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                                    <a class="text-info" style="color:lightgrey" href="#send_agenda" >
                                       Joina City
                                     </a>
                                   </div>
@@ -164,7 +164,7 @@
                               <li>
                                 <div class="row">
                                   <div class="col-xs-10 " style="margin-left:2.0em">
-                                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                                    <a class="text-info" style="color:lightgrey" href="#send_agenda">
                                       Aripo Offices
                                     </a>
                                   </div>
@@ -173,7 +173,7 @@
                               <li>
                                 <div class="row">
                                   <div class="col-xs-10 " style="margin-left:2.0em">
-                                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                                    <a class="text-info" style="color:lightgrey" href="#send_agenda">
                                       Colours Software
                                     </a>
                                   </div>
@@ -182,7 +182,7 @@
                               <li>
                                 <div class="row">
                                   <div class="col-xs-10 " style="margin-left:2.0em">
-                                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                                    <a class="text-info" style="color:lightgrey" href="#send_agenda">
                                       Beitbridge
                                     </a>
                                   </div>
@@ -199,7 +199,7 @@
                           <hr>
                           <div class="row">
                             <div class="col-sm-7">
-                              <div class="footer-title">View all members</div>
+                              <div class="footer-title">View more.....</div>
                             </div>
                             <div class="col-sm-5">
                               <div class="pull-right">
@@ -217,10 +217,10 @@
                         <div class="card-content btn-magnify">
                           <div class="row col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
                             <div class="clrs-h4" style="color:steelblue">
-                              <a><i class="fa fa-feed  fa-flip-vertical fa-fw"></i> {{ (project)?.name }} News</a>
-                            </div><br>
-                            <div class="text-left" style="padding-top: -1em; color: steelblue;font-size: 2 ">
-                              <a>High Priority Enterprise Tasks</a>
+                              <a><i class="fa fa-feed fa-flip-vertical fa-fw"></i> {{ (project)?.name }} News</a>
+                            </div>
+                            <div class="text-left category" style="margin-left:1.0em; color: steelblue;font-size: 2 ">
+                              <a>All your {{ (project)?.name }} News</a>
                             </div>
                           </div>
                           <div class="spacer" style="height: 1em;"></div>
@@ -278,7 +278,7 @@
                           <hr>
                           <div class="row">
                             <div class="col-sm-7">
-                              <div class="footer-title">View more details</div>
+                              <div class="footer-title">View more.....</div>
                             </div>
                             <div class="col-sm-5">
                               <div class="pull-right">

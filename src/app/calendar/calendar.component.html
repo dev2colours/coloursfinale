@@ -82,42 +82,40 @@
                               <div class="content container scroll-em" *ngIf="hideActions">
                                 <div class="row">
                                   <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
-                                      <ol>
-                                        <li>
-                                          <div class="row">
+                                    <ol>
+                                      <li>
+                                        <div class="row">
+                                          <a style="color:lightgrey">
+                                            <span class="col-md-9 col-10 text-info">Meeting</span>
+                                            <span class="col-md-3 mr-auto number text-warning"> 1000 hrs</span>
+                                          </a>
+                                        </div>
+                                      </li>
+                                      <li>
+                                        <div class="row">
                                             <a style="color:lightgrey">
-                                              <span class="col-md-9 col-10">Meeting @</span>
-                                              <span class="col-md-3 mr-auto number text-warning"> 1000 hrs</span>
+                                              <span class="col-md-9 col-10 text-info">Email</span>
+                                              <span class="col-md-3 mr-auto ml-auto number text-success">1230 Hrs</span>
                                             </a>
-                                          </div>
-                                        </li>
-                                        <li>
-                                          <div class="row">
-                                              <a style="color:lightgrey">
-                                                <span class="col-md-9 ">Email @</span>
-                                                <span class="col-md-3 mr-auto ml-auto number text-success">1230 Hrs</span>
-                                              </a>
-                                          </div>
-                                        </li>
-                                        <li>
-                                          <div class="row">
-                                            <a style="color:lightgrey">
-                                              <span class="col-md-9">Skype</span>
-                                              <span class="col-md-3 mr-auto ml-auto label text-success"> 1400 Hrs </span>
-                                            </a>
-                                          </div>
-                                        </li>
-                                        <li>
-                                          <div class="row ">
-                                            <a style="color:lightgrey">
-                                              <span class="col-lg-9">Scheduling</span>
-                                              <span class="col-lg-3 mr-auto ml-auto label text-success"> 0800 Hrs </span>
-                                            </a>
-                                          </div>
-                                        </li>
-                                      </ol>
-                            
-                                    <!-- </a> -->
+                                        </div>
+                                      </li>
+                                      <li>
+                                        <div class="row">
+                                          <a style="color:lightgrey">
+                                            <span class="col-md-9 col-10 text-info">Skype</span>
+                                            <span class="col-md-3 mr-auto ml-auto label text-success"> 1400 Hrs </span>
+                                          </a>
+                                        </div>
+                                      </li>
+                                      <li>
+                                        <div class="row ">
+                                          <a style="color:lightgrey">
+                                            <span class="col-md-9 col-10 text-info">Scheduling</span>
+                                            <span class="col-lg-3 mr-auto ml-auto label text-success"> 0800 Hrs </span>
+                                          </a>
+                                        </div>
+                                      </li>
+                                    </ol>
                                   </div>
                                 </div>
                               </div>
@@ -160,11 +158,47 @@
                           </div>
                           <div class="spacer" style="height:2.4em;"></div>
                           <div class="col-sm-10" id="pTasklist"><!--  style="margin-left: 2em" -->
-                            <div class="content container scroll-em">
+                            <div class="content container scroll-em" *ngIf="showProjs">
                               <ol>
                                   <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let project of myProjects | async"><a [routerLink]="[ '/projects/', project.id ]" style="color:slategray">{{ project.name }}</a>
                                   </li>
                               </ol>
+                            </div>
+                            <div class="content container scroll-em" *ngIf="hideProjs">
+                              <div class="row">
+                                <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
+                                  <ol>
+                                    <li>
+                                      <div class="row">
+                                        <a style="color:lightgrey">
+                                          <span class="col-md-12 col-10 text-info">Project 1</span>
+                                        </a>
+                                      </div>
+                                    </li>
+                                    <li>
+                                      <div class="row">
+                                        <a style="color:lightgrey">
+                                          <span class="col-md-12 col-10 text-info">Project 2</span>
+                                        </a>
+                                      </div>
+                                    </li>
+                                    <li>
+                                      <div class="row">
+                                        <a style="color:lightgrey">
+                                          <span class="col-md-12 col-10 text-info">Project 3</span>
+                                        </a>
+                                      </div>
+                                    </li>
+                                    <li>
+                                      <div class="row ">
+                                        <a style="color:lightgrey">
+                                          <span class="col-md-12 col-10 text-info">Project 4</span>
+                                        </a>
+                                      </div>
+                                    </li>
+                                  </ol>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -210,7 +244,7 @@
                             <div class="content">
                               <div class="row">
                                 <div class="col-xs-12" style="margin-left:4.0em">
-                                  <a style="color:lightgrey">planning<span class="label text-warning">
+                                  <a style="color:lightgrey">Planning<span class="label text-warning">
                                       1000 hrs
                                     </span>
                                   </a>
@@ -226,7 +260,7 @@
                               </div>
                               <div class="row">
                                 <div class="col-sm-12" style="margin-left:3.0em; margin-right:-1em">
-                                  <a style="color:lightgrey">Email<span class="label text-success">
+                                  <a style="color:lightgrey">Design<span class="label text-success">
                                       1230 Hrs
                                     </span>
                                   </a>
@@ -234,7 +268,7 @@
                               </div>
                               <div class="row">
                                 <div class="col-sm-12" style="margin-left:3.0em; margin-right:-1em">
-                                  <a style="color:lightgrey; margin-bottom: 0px;">Skype<span class="label text-success">
+                                  <a style="color:lightgrey; margin-bottom: 0px;">Implementation<span class="label text-success">
                                       1400 Hrs
                                     </span>
                                   </a>
@@ -281,7 +315,7 @@
                           <hr>
                           <div class="row">
                             <div class="col-sm-7">
-                              <div class="footer-title">View more details</div>
+                              <div class="footer-title">View more.....</div>
                             </div>
                             <div class="col-sm-5">
                               <div class="pull-right">

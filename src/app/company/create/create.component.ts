@@ -34,6 +34,7 @@ export class CreateComponent implements OnInit {
     nation: string,
     nationalId: string
   }
+  phoneNumber: string;
   project: Project;
   task: Task;
   enterpriseProjects: Observable<any[]>;
@@ -95,6 +96,7 @@ export class CreateComponent implements OnInit {
     this.newEnterprise = is.getnewEnterprise();
     this.taxDocument = null;
     this.compUser = { bus_email: "", nation: "", nationalId: "" };
+    this.phoneNumber = null;
 
     console.log(this.afAuth.user);
 
@@ -527,7 +529,21 @@ export class CreateComponent implements OnInit {
       nationalId: this.compUser.nationalId
     };
 
-
+    if (this.user.phonNumber == "") {
+      pUser.phoneNumber = this.phoneNumber;
+    }
+    else {
+      if (this.user.phonNumber != this.phoneNumber) {
+        this.myDocment.update({ 'phoneNumber2': this.phoneNumber }).then(() => {
+          console.log('Update successful, new number stored');
+        }).catch((error) => {
+          console.log('Error updating user, document does not exists', error);
+        });
+      } else {
+        console.log('phoneNumber are the same');
+      }
+      console.log('phoneNumber field is non-empty');
+    }
     this.newEnterprise.by = this.user.displayName;
     this.newEnterprise.byId = this.user.uid
     this.newEnterprise.createdOn = new Date().toISOString();
@@ -562,6 +578,7 @@ export class CreateComponent implements OnInit {
     this.showNotification('comp', 'top', 'right');
 
     this.newEnterprise = this.is.getnewEnterprise();
+    this.phoneNumber = null;
   }
 
   callData() {
