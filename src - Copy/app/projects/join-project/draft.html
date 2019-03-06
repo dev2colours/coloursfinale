@@ -1,0 +1,8 @@
+<span *ngFor="let participant of enterprise.participants"><span *ngIf="participant.id==userId">
+    </span> </span>
+
+<button href="#" class="primary btn-link" ng-if="!isJoined(participant.id)" (click)="selectCompany(enterprise)"
+    data-toggle="modal" data-target="#myModal">join</button>
+<!-- Else Display Already Added -->
+<span ng-if="isJoined(participant.id)">joined</span>
+</td>

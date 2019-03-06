@@ -1,0 +1,416 @@
+<div class="col-md-12">
+    <div class="card-body nav-hor-tabs">
+        <div class="nav-tabs-navigation">
+            <div class="nav-tabs-wrapper">
+                <ul id="tabs" class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link nav-colors active" data-toggle="tab" href="#day" role="tab" aria-expanded="true">Day</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-colors" data-toggle="tab" href="#week" role="tab" aria-expanded="true">Week</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-colors" data-toggle="tab" href="#month" role="tab" aria-expanded="false">Month</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-colors" data-toggle="tab" href="#quarter" role="tab" aria-expanded="false">Quarter</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-colors" data-toggle="tab" href="#year" role="tab" aria-expanded="false">Year</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="my-tab-content" class="tab-content text-center">
+            <div class="tab-pane active" id="day" role="tabpanel" aria-expanded="true">
+                <div class="card">
+                    <div class="">
+                        <div class="card-text">
+                            <p class="card-title"><button class="btn-link"><i class="nc-icon nc-minimal-left" style="margin-right:3em"></i></button>
+                                Today's Tasks
+                                <button class="btn-link"><i class="nc-icon nc-minimal-right" style="margin-left:3em"></i></button></p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-primary">
+                                    <th class="text-left">Name</th>
+                                    <th class="text-center">Project</th>
+                                    <th class="text-center">Champion</th>
+                                    <th class="text-right">Actions</th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let tss of todayTasks | async">
+                                        <td class="text-left td-clrs">{{ tss.name }}</td>
+                                        <td class="text-center td-clrs">{{ tss.projectName }}</td>
+                                        <td class="text-center td-clrs">{{ tss.champion.name }}</td>
+                                        <td class="text-right td-clrs">
+                                            <button type="button" rel="tooltip" class="btn btn-info btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-user"></i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn btn-success btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn btn-danger btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="text-left">
+                                        <button rel="tooltip" title="click to create a task" class="btn-link"
+                                            data-toggle="modal" data-target="#tskModal">New Task</button>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="week" role="tabpanel" aria-expanded="false">
+                <div class="card">
+                    <div class="">
+                        <div class="card-text">
+                            <p class="card-title"><button class="btn-link"><i class="nc-icon nc-minimal-left" style="margin-right:3em"></i></button>
+                                Week {{ currentWeek }}'s Tasks
+                                <button class="btn-link"><i class="nc-icon nc-minimal-right" style="margin-left:3em"></i></button></p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-primary">
+                                    <th class="text-left">Name</th>
+                                    <th class="text-center">Project</th>
+                                    <th class="text-center">Champion</th>
+                                    <th class="text-right">Actions</th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let tss of WeekTasks | async">
+                                        <td class="text-left td-clrs">{{ tss.name }}</td>
+                                        <td class="text-center td-clrs">{{ tss.projectName }}</td>
+                                        <td class="text-center td-clrs">{{ tss.champion.name }}</td>
+                                        <td class="text-right td-clrs">
+                                            <button type="button" rel="tooltip" class="btn btn-info btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-user"></i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn btn-success btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn btn-danger btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="text-left">
+                                        <button rel="tooltip" title="click to create a task" class="btn-link"
+                                            data-toggle="modal" data-target="#tskModal">New Task</button>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="month" role="tabpanel" aria-expanded="false">
+                <div class="card">
+                    <div class="">
+                        <div class="card-text">
+                            <p class="card-title"><button class="btn-link"><i class="nc-icon nc-minimal-left" style="margin-right:3em"></i></button>
+                                {{ currentMonth }}<small>th</small> Month's Tasks
+                                <button class="btn-link"><i class="nc-icon nc-minimal-right" style="margin-left:3em"></i></button></p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-primary">
+                                    <th class="text-left">Name</th>
+                                    <th class="text-center">Project</th>
+                                    <th class="text-center">Champion</th>
+                                    <th class="text-right">Actions</th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let tss of MonthTasks | async">
+                                        <td class="text-left td-clrs">{{ tss.name }}</td>
+                                        <td class="text-center td-clrs">{{ tss.projectName }}</td>
+                                        <td class="text-center td-clrs">{{ tss.champion.name }}</td>
+                                        <td class="text-right td-clrs">
+                                            <button type="button" rel="tooltip" class="btn btn-info btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-user"></i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn btn-success btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn btn-danger btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="text-left">
+                                        <button rel="tooltip" title="click to create a task" class="btn-link"
+                                            data-toggle="modal" data-target="#tskModal">New Task</button>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="quarter" role="tabpanel" aria-expanded="false">
+                <div class="card">
+                    <div class="">
+                        <div class="card-text">
+                            <p class="card-title"><button class="btn-link"><i class="nc-icon nc-minimal-left" style="margin-right:3em"></i></button>
+                                {{ currentQuarter }}<small>th</small> Quarter's Tasks
+                                <button class="btn-link"><i class="nc-icon nc-minimal-right" style="margin-left:3em"></i></button></p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-primary">
+                                    <th class="text-left">Name</th>
+                                    <th class="text-center">Project</th>
+                                    <th class="text-center">Champion</th>
+                                    <th class="text-right">Actions</th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let tss of QuarterTasks | async">
+                                        <td class="text-left td-clrs">{{ tss.name }}</td>
+                                        <td class="text-center td-clrs">{{ tss.projectName }}</td>
+                                        <td class="text-center td-clrs">{{ tss.champion.name }}</td>
+                                        <td class="text-right td-clrs">
+                                            <button type="button" rel="tooltip" class="btn btn-info btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-user"></i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn btn-success btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn btn-danger btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="text-left">
+                                        <button rel="tooltip" title="click to create a task" class="btn-link"
+                                            data-toggle="modal" data-target="#tskModal">New Task</button>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="year" role="tabpanel" aria-expanded="false">
+                <div class="card">
+                    <div class="">
+                        <div class="card-text">
+                            <p class="card-title"><button class="btn-link"><i class="nc-icon nc-minimal-left" style="margin-right:3em"></i></button>
+                                Year {{ currentYear }}'s Tasks
+                                <button class="btn-link"><i class="nc-icon nc-minimal-right" style="margin-left:3em"></i></button></p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-primary">
+                                    <th class="text-left">Name</th>
+                                    <th class="text-center">Project</th>
+                                    <th class="text-center">Champion</th>
+                                    <th class="text-right">Actions</th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let tss of YearTasks | async">
+                                        <td class="text-left td-clrs">{{ tss.name }}</td>
+                                        <td class="text-center td-clrs">{{ tss.projectName }}</td>
+                                        <td class="text-center td-clrs">{{ tss.champion.name }}</td>
+                                        <td class="text-right td-clrs">
+                                            <button type="button" rel="tooltip" class="btn btn-info btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-user"></i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn btn-success btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn btn-danger btn-icon btn-sm   btn-neutral  ">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="text-left">
+                                        <button rel="tooltip" title="click to create a task" class="btn-link"
+                                            data-toggle="modal" data-target="#tskModal">New Task</button>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="tskModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="card-body ">
+                <div class="card-header text-center">
+                    <p class="col-md-8 ml-auto mr-auto col-form-label info">
+                        <font size=4>Create a Task</font>
+                    </p>
+                </div>
+                <hr>
+                <form class="form-horizontal">
+                    <div class="row">
+                        <label class="col-md-3 col-form-label">Task name</label>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="text" [(ngModel)]="task.name" name="taskName" class="form-control"
+                                    placeholder="Task name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-3 col-form-label">Start Date</label>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="date" [(ngModel)]="task.start" name="start" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-3 col-form-label">Finish Date</label>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="date" [(ngModel)]="task.finish" name="finish" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <ng-container *ngIf="showChamp">
+                        <div class="row">
+                            <label class="col-md-3 col-form-label">Champion</label>
+                            <div class="col-md-8">
+                                <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
+                                    {{(userChampion)?.name }}
+                                    <button type="text" name="taskChampion" class="btn btn-icon primary btn-link "
+                                        (click)="toggleUsersTable(); toggleChamp()">
+                                        <i class="fa fa-edit fa-fw"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="row">
+                        <div class="col-md-8 ml-auto mr-auto">
+                            <div class="form-group">
+                                <ng-container *ngIf="showUserTable">
+                                    <div class="table-responsive user_table">
+                                        <code>Select a Champion</code>
+                                        <table class="table">
+                                            <tbody class="">
+                                                <tr *ngFor="let user of coloursUsers | async " class="">
+                                                    <td>{{ user.name }}</td>
+                                                    <td><button class="primary btn-link" (click)="selectColoursUser(user)">
+                                                            select
+                                                        </button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                    <ng-container *ngIf="showProj">
+                        <div class="row">
+                            <label class="col-md-3 col-form-label">Project</label>
+                            <div class="col-md-8">
+                                <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
+                                    {{(selectedProject)?.name }}
+                                    <button type="text" name="taskProject" class="btn btn-icon primary btn-link "
+                                        (click)="toggleProjTable(); toggleProj()">
+                                        <i class="fa fa-edit fa-fw"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="row">
+                        <div class="col-md-8 ml-auto mr-auto">
+                            <div class="form-group">
+                                <ng-container *ngIf="showProjectTable">
+                                    <div class="table-responsive user_table">
+                                        <code>Select Project</code>
+
+                                        <table class="table">
+                                            <tbody>
+                                                <tr *ngFor="let project of projectsCollection | async " class="">
+                                                    <td>
+                                                        {{project.name}}</td>
+                                                    <td>
+                                                        <button class="primary btn-link" (click)="selectProject(project)">
+                                                            select
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                    <ng-container *ngIf="showCompany">
+                        <div class="row">
+                            <label class="col-md-3 col-form-label">Enterprise</label>
+                            <div class="col-md-8">
+                                <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
+                                    {{(selectedCompany)?.name }}
+                                    <button type="text" name="taskProject" class="btn btn-icon primary btn-link "
+                                        (click)="toggleCompTable(); toggleComp()">
+                                        <span class="pull-right"><i class="fa fa-edit fa-fw"></i></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="row">
+                        <div class="col-md-8 ml-auto mr-auto">
+                            <div class="form-group">
+                                <ng-container *ngIf="showCompanyTable">
+                                    <div class="table-responsive user_table">
+                                        <code>Select Company</code>
+                                        <table class="table">
+                                            <tbody>
+                                                <tr *ngFor="let company of enterpriseCollection | async " class="">
+                                                    <td>
+                                                        {{company.name}}</td>
+                                                    <td>
+                                                        <button class="primary btn-link" (click)="selectCompany(company)">
+                                                            select
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="modal-footer" style="margin-bottom:0%">
+                    <div class="left-side">
+                        <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="right-side">
+                        <button type="button" class="btn btn-success btn-link" (click)="newTask ()" data-dismiss="modal"
+                            title="save task">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

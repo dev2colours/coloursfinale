@@ -1,0 +1,36 @@
+.clrs-h1 {
+    font-family: AR ESSENCE;
+    color: steelblue;
+    font-size: 25px;
+}
+
+.dash-size {
+    width: 630px;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.dash-col {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.dash-col-left {
+    padding-left: 0px;
+    padding-right: 1px;
+}
+
+.dash-col-right {
+    padding-left: 1px;
+    padding-right: 0px;
+}
+
+/* .dmmm{
+
+} */
+
+.clrs-h2 {
+    font-family: AR ESSENCE;
+    /* color: steelblue; */
+    font-size: 20px;
+}
