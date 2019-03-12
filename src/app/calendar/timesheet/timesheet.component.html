@@ -14,7 +14,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="myDiaryItems != 0">
+      <div class="row" *ngIf="actNumber != 0">
         <div class="col-md-5">
           <p class="category text-left" style="margin-bottom:-1em; padding-left: 25px;">
             Click on the task to Enter the Actuals
@@ -105,11 +105,11 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-10 ml-auto mr-auto" *ngIf="myDiaryItems == 0">
+        <div class="col-md-10 ml-auto mr-auto" *ngIf="actNumber == 0">
           You have nothing in your Diary Today <br>
           <p class="category">To add Goto the Implementation Page on either Colours Personal, your enterprise in Colours Enterprises or existing Project Colours Projects dropdown</p>
         </div>
-        <div class="col-md-10 ml-auto mr-auto" *ngIf="myDiaryItems == 0">
+        <div class="col-md-10 ml-auto mr-auto" *ngIf="actNumber == 0">
           <form>
             <code> add new work item</code>
             <div class="form-group">

@@ -1199,7 +1199,7 @@ export class ViewComponent implements OnInit {
     console.log(this.selectedCompany);
     this.toggleComp();
     this.showChampForm();this.toggleCompTable();
-    this.compstaff = this.ps.getProCompanyLabour(this.projectId, compUid)
+    this.compstaff = this.ps.getProCompanyLabour(this.projectId, compUid);
   }
 
   selectSection(section) {
@@ -1404,6 +1404,11 @@ export class ViewComponent implements OnInit {
     this.setItem.companyId = this.selectedTask.companyId;
     this.setItem.companyName = this.selectedTask.companyName;
     this.setItem.type = "planned";
+
+    if (this.project.type == 'Enterprise') {
+      this.setItem.classificationName = 'Work';
+      this.setItem.classificationId = 'colourWorkId';      
+    }
     // set Time 
     // console.log('' + '' + moment(startDate, 'YYYY-MM-DD').format('L'));
 
@@ -1836,6 +1841,10 @@ export class ViewComponent implements OnInit {
     itemsCol.update({ 'totalAmount': this.selectedBill.totalAmount });
   }
 
+  resetForm(){
+    this.newWorkItem = this.is.getWorkItem();
+  }
+
   showWorkItems(billId){
     this.billWorkItems = this.ps.getBillWorkItems(this.projectId, this.projectCompId, billId);
 
@@ -1878,8 +1887,8 @@ export class ViewComponent implements OnInit {
     this.showPlantDetail = true;
   }
 
-  savePlantReturns(newPlant){
-
+  savePlantReturns(){
+    let newPlant: any;
     newPlant = this.selectedAsset;
     newPlant.unit = this.setSui.id;
     newPlant.rate = this.rate;

@@ -119,6 +119,11 @@ export class CalendarComponent implements OnInit {
   classificationsToDate: Observable<classification[]>;
   projsNo: number;
 
+  selectedDate: string;
+  selectedSumDate: string;
+  selectedWorkDate: string;
+  selectedStartDate: string
+
   public showProjs: boolean = false;
   public hideProjs: boolean = false;
 
@@ -129,6 +134,10 @@ export class CalendarComponent implements OnInit {
     this.userData = { name: "", gender: "", dob: "", age: 0, username: "", email: "", bus_email: "", phoneNumber: "", telephone: null, address: "", nationalId: "", nationality: "", zipCode: null, country: "", city: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", aboutMe: "", profession: [this.pro], qualifications: null, bodyWeight: 0, bodyHeight: 0, bodyMassIndex: 0, industrySector: "", personalAssets: null, personalLiabilities: null, reference: null, focusFactor: 0, referee: [this.userInit], userImg: "", LastTimeLogin: "" }; 
     this.asset = { name: '', value: '', id: '', by: '', byId: '', addeddOn: '', assetNumber: '' };
     this.liability = { name: '', amount: '', id: '', by: '', byId: '', addeddOn: '' };
+    this.selectedDate = null;
+    this.selectedSumDate = null;
+    this.selectedWorkDate = null;
+    this.selectedStartDate = null;
 
     this.stdPeriods = [
       { id: '3/Day', name: '3 times/Day' },
@@ -555,11 +564,12 @@ export class CalendarComponent implements OnInit {
     this.newStandard.createdOn = new Date().toString();
     this.newStandard.classificationName = this.selectedClassification.name;
     this.newStandard.classificationId = this.selectedClassification.id;
+    // this.newStandard.classifiation = this.selectClassification;
     console.log(this.newStandard);
 
     let data = this.newStandard;
     let standardRef = this.myDocment.collection('myStandards');
-    let setClass = this.afs.collection<Project>('Users').doc(this.userId).collection('classifications').doc(this.selectedClassification.id).collection('myStandards');
+    let setClass = this.afs.collection('Users').doc(this.userId).collection('classifications').doc(this.selectedClassification.id).collection('myStandards');
     setClass.add(data).then(function (ref) {
       const id = ref.id;
       standardRef.doc(id).set(data);

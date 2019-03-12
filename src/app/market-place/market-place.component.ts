@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
 import { map, timestamp } from 'rxjs/operators';
+import { Project } from 'app/models/project-model';
+import { InitialiseService } from 'app/services/initialise.service';
 
 @Component({
   selector: 'app-market-place',
@@ -14,8 +16,9 @@ import { map, timestamp } from 'rxjs/operators';
 })
 export class MarketPlaceComponent {
   allColoursProjects: Observable<any[]>;
+  project : Project;
 
-  constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
+  constructor(private is: InitialiseService,public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
     // this.allColoursProjects = this.afs.collection('Projects').snapshotChanges().pipe(
     //   map(actions => actions.map(a => {
     //     const data = a.payload.doc.data() as Project;
@@ -24,6 +27,7 @@ export class MarketPlaceComponent {
     //     }))
     //   );
     // }
+    this.project = this.is.getSelectedProject();
   }
 
   OnInit() { }

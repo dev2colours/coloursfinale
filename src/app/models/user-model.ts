@@ -73,7 +73,7 @@ export interface classification {
 
 export interface personalStandards {
     classificationName: string;
-    classificationId: string
+    classificationId: string;
     name: string;
     period: string; //  must be valid email format
     createdOn: string;

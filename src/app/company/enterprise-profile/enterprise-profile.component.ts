@@ -378,18 +378,22 @@ export class EnterpriseProfileComponent {
   newCompanystaff: companyStaff;
   allStaff: Observable<employeeData[]>;
   action: workItem;
+  startDate: string;
+  endDate: string;
 
   constructor(public afAuth: AngularFireAuth, private ts: TaskService, private is: InitialiseService, private pns: PersonalService, public es: EnterpriseService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
 
     this.selectedCity = { id: '', name: '' };
     // this.setSui = { id: '', name: '' };
+    this.startDate = null;
+    this.endDate = null;
     this.location = location;
     this.nativeElement = element.nativeElement;
     this.sidebarVisible = false;
     this.newPart = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
     this.counter = 1;
     this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
-    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: null, participants: null, classification: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, participants: null, classification: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
     this.dpt = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
     this.asset = { name: "", assetNumber: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", cost: "" };
     this.client = is.getClient();
@@ -404,8 +408,8 @@ export class EnterpriseProfileComponent {
     this.companystaff2 = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
     this.department = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null }
     this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null }
-    this.selectedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
-    this.editedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
+    this.editedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false};
     this.setUser = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
     this.joinmyProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
 
@@ -1840,6 +1844,8 @@ export class EnterpriseProfileComponent {
     action.departmentId = this.deptId;
     action.companyId = this.selectedTask.companyId;
     action.companyName = this.selectedTask.companyName;
+    action.classificationName = 'Work';
+    action.classificationId = 'colourWorkId';
     // action.startDate = moment(action.startDate).format('L');
     // action.endDate = moment(action.endDate).format('L');
     // action.startWeek = moment(action.startDate, 'MM-DD-YYYY').week().toString();
@@ -1879,10 +1885,10 @@ export class EnterpriseProfileComponent {
       userActionRef.doc(newActionId).update({ 'id': newActionId });
     })
     this.setSui = null;
-    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
   }
 
-  newActionToday(action) {
+  newActionToday(action: workItem) {
     console.log(action);
     action.startDate = moment(new Date()).format('L');
     action.endDate = moment(new Date()).format('L');
@@ -1891,16 +1897,18 @@ export class EnterpriseProfileComponent {
     let dptId = this.dp;
     action.createdOn = new Date().toISOString();
     action.taskId = this.taskId;
-    // action.departmentName = this.selectedTask.department;
+    action.classificationName = 'Work';
+    action.classificationId = 'colourWorkId';
+    action.type = "planned";
     action.departmentId = this.dp;
     action.startDate = moment(action.startDate).format('L');
-    action.endDate = moment(action.endDate).format('L');
-    // action.startWeek = moment(action.startDate, 'DD-MM-YYYY').subtract(3, 'w').week().toString();
+    action.endDate = moment(action.endDate).format('L'); 
     action.startWeek = moment(action.startDate, 'MM-DD-YYYY').week().toString();
+    action.endWeek = moment(action.endDate, 'MM-DD-YYYY').week().toString();
     action.startDay = moment(action.startDate, 'MM-DD-YYYY').format('ddd').toString();
     action.endDay = moment(action.endDate, 'MM-DD-YYYY').format('ddd').toString();
     action.champion = this.myData;
-    action.siu = this.setSui.id;
+    action.unit = this.setSui.id;
     console.log(action.unit);
     console.log(this.setSui.id);
     let mooom = action;
@@ -2352,8 +2360,10 @@ export class EnterpriseProfileComponent {
       };
     }
 
-    startDate = ""; endDate = null;
-    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+
+    this.startDate = null;
+    this.endDate = null;
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
   }
 
   compActions() {
@@ -2665,9 +2675,14 @@ export class EnterpriseProfileComponent {
       // what happens if projectID is personal
     }
 
-    console.log(this.task)
+    console.log('Task' + ' ' + this.task.name);
+    console.log('Company' + ' ' + this.company.name);
+    console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
 
-    this.ts.addTask(this.task, this.company, this.selectedDepartment);
+    this.ts.addTask(
+      this.task,
+      this.company,
+      this.selectedDepartment);
 
     this.selectedCompany = this.is.getSelectedCompany();
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "" };
@@ -2891,4 +2906,4 @@ export class EnterpriseProfileComponent {
       this.dataCall().subscribe();
     })
   }
-}
+} 

@@ -74,6 +74,7 @@ export class TimesheetComponent implements OnInit {
   myDocment: AngularFirestoreDocument<{}>;
   userProfile: Observable<coloursUser>;
   userData: coloursUser;
+  actNumber: number;
 
   constructor(public afAuth: AngularFireAuth, private is: InitialiseService, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
     
@@ -134,7 +135,10 @@ export class TimesheetComponent implements OnInit {
     console.log(item);
 
 
-    let timesheetDocId = String(moment(new Date()));
+    let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY')); //dd/mm/yyyy
+    console.log(timesheetDocId);
+
+    // let timesheetDocId = String(moment(new Date()));
     let timesheetworktime = String(moment(new Date().getTime()));
     let work = {
       WorkingTime: moment().toString(),
@@ -438,7 +442,7 @@ export class TimesheetComponent implements OnInit {
       allMyActionsRef.doc(newActionId).update({ 'id': newActionId });
     })
     console.log(unplannedTask);
-    this.item = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+    this.item = { uid: "", id: "", name: "", unit: "", quantity: 0, selectedWork: false, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "" };
   }
 
   aclear(){
@@ -486,19 +490,24 @@ export class TimesheetComponent implements OnInit {
       );
 
     this.viewActions.subscribe((actions) => {
-      
-      this.myDiaryItems =this.myActionItems = [];
+      this.actNumber = 0
+      this.myDiaryItems = [];
+      this.myActionItems = [];
       actions.forEach(data =>{
         let element = data;
         if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
-          this.myActionItems.push(element);
-          console.log(this.myActionItems);
+          if (element.selectedWork == true) {
+            this.myActionItems.push(element);
+            this.myDiaryItems.push(element);
+            console.log(this.myActionItems);
 
-          this.chartdata = true;
-          this.processData(this.myActionItems);
+            this.chartdata = true;
+            this.processData(this.myActionItems);
+          }
 
         }
       })
+      this.actNumber = this.myDiaryItems.length;
       // this.myActionItems = actions;
       // console.log(actions.length)
       // console.log(actions)

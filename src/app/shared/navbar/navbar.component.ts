@@ -157,7 +157,8 @@ export class NavbarComponent implements OnInit {
         console.log(currentDate);
         let userDocRef = this.myDocment;
         this.viewActions = userDocRef.collection<workItem>('WeeklyActions'
-        // , ref => ref
+        , ref => ref
+            .orderBy('start')
         // .where("startDate", '==', currentDate)
         // .limit(4)
         ).snapshotChanges().pipe(
@@ -176,18 +177,20 @@ export class NavbarComponent implements OnInit {
                 // const index = String(new Date().getTime());
                 // element.uid = index;
                 if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
-                    this.myActionItems.push(element);
-                    console.log(this.myActionItems);
-                    this.chartdata = true;
-                    this.processData(this.myActionItems);
+                    if (element.selectedWork == true) {
+                        this.myActionItems.push(element);
+                        console.log(this.myActionItems);
+                        this.chartdata = true;
+                        this.processData(this.myActionItems);
+                    }
                 }
                 console.log(this.myActionItems.length);
                 this.actiondsNo = this.myActionItems.length;
                 
             })
             // this.myActionItems = actions;
-            // console.log(actions.length)
-            // console.log(actions)
+            // console.log(actions.length);
+            // console.log(actions);
             this.actionNo = actions.length;
         })
 
@@ -316,7 +319,7 @@ export class NavbarComponent implements OnInit {
     acceptRequest() {
         let companyId = this.applicant.company.id;
         let deptId = this.applicant.department.id;
-        let man = { email: this.applicant.email, bus_email: this.applicant.bus_email, id: this.applicant.id, name: this.applicant.name, phoneNumber: this.applicant.phoneNumber, photoURL: this.applicant.photoURL }
+        let man = { email: this.applicant.email, departmentId: this.applicant.department.id,department: this.applicant.department.name, bus_email: this.applicant.bus_email, id: this.applicant.id, name: this.applicant.name, phoneNumber: this.applicant.phoneNumber, photoURL: this.applicant.photoURL }
 
         console.log(companyId);
 
@@ -608,7 +611,10 @@ export class NavbarComponent implements OnInit {
         console.log(item);
 
 
-        let timesheetDocId = String(moment(new Date()));
+        // let timesheetDocId = String(moment(new Date()));
+        
+        let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY')); //dd/mm/yyyy
+        console.log(timesheetDocId);
         let timesheetworktime = String(moment(new Date().getTime()));
         let work = {
             WorkingTime: moment().toString(),
@@ -807,6 +813,145 @@ export class NavbarComponent implements OnInit {
         }
     }
 
+    upDateTime(workAction: workItem){
+        console.log("ActionItem" + " " + workAction.name + " " + " updated");
+        workAction.UpdatedOn = moment().toString();
+
+        console.log(workAction);
+        let champId = this.userId
+        let cleaningTime = this.aclear();
+        // let notify = this.showNotification('Task', 'top', 'right');
+        let item = workAction;
+        console.log(item);
+
+
+        let dataId = item.id + moment().format('dd');
+        console.log(dataId);
+
+        let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
+        let timesheetworktime = String(moment(new Date().getTime()));
+
+        let work = {
+            name: 'responded',
+            action: item.name,
+            actionId: item.id,
+            time: moment().toString(),
+            hours: 1          
+        }
+        
+        let championRef2 = this.afs.collection('Users').doc(champId).collection('tasks').doc(item.taskId).collection<workItem>('actionItems').doc(item.id);
+        let weeklyRef = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
+        let allMyActionsRef = this.afs.collection('Users').doc(champId).collection<workItem>('actionItems').doc(item.id);
+
+        championRef2.update({ 
+            workHours: firebase.firestore.FieldValue.arrayUnion(work)
+        }).then(() => {
+            console.log('Update successful, document exists');
+            // update successful (document exists)
+        }).catch((error) => {
+            console.log('Error updating Enterprises/projects, document does not exists', error);
+            // .set({ data });
+            championRef2.set(item);
+            championRef2.update({
+                workHours: firebase.firestore.FieldValue.arrayUnion(work)
+            })
+        });
+        weeklyRef.update({ 
+            workHours: firebase.firestore.FieldValue.arrayUnion(work)    
+        }).then(() => {
+            console.log('Update successful, document exists');
+            // update successful (document exists)
+        }).catch((error) => {
+            console.log('Error updating Enterprises/projects, document does not exists', error);
+            // .set({ data });
+            weeklyRef.set(item);
+            weeklyRef.update({
+                workHours: firebase.firestore.FieldValue.arrayUnion(work)
+            })
+        });
+        allMyActionsRef.update({
+            workHours: firebase.firestore.FieldValue.arrayUnion(work)            
+        }).then(() => {
+            console.log('Update successful, document exists');
+            // update successful (document exists)
+        }).catch((error) => {
+            console.log('Error updating Enterprises/projects, document does not exists', error);
+            // .set({ data });
+            allMyActionsRef.set(item);
+            allMyActionsRef.update({
+                workHours: firebase.firestore.FieldValue.arrayUnion(work)
+            })
+        });
+
+        if (item.companyId != "") {
+            let championRef = this.afs.collection('Users').doc(champId).collection('enterprises').doc(item.companyId);
+            championRef.collection('WeeklyActions').doc(item.id).update({ 
+                workHours: firebase.firestore.FieldValue.arrayUnion(work)
+            }).then(() => {
+                console.log('Update successful, document exists');
+                // update successful (document exists)
+            }).catch((error) => {
+                console.log('Error updating Enterprises/projects, document does not exists', error);
+                // .set({ data });
+                championRef.set(item);
+                championRef.update({
+                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                })
+            });
+            if (item.projectId != "") {
+
+                let cmpProjectDoc = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId).collection('labour').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
+                let weeklyRef = this.afs.collection('Enterprises').doc(item.companyId).collection('projects').doc(item.projectId).collection('labour').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
+
+                let champTimeSheetRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+                    .collection('labour').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
+
+                champTimeSheetRef.update({ 
+                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                }).then(() => {
+                    console.log('Update successful, document exists');
+                    // update successful (document exists)
+                }).catch((error) => {
+                    console.log('Error updating Projects/enterprises/user, document does not exists', error);
+                    // .set({ data });
+                    champTimeSheetRef.set(item);
+                    champTimeSheetRef.update({
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                    })
+                });
+                cmpProjectDoc.update({
+                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                }).then(() => {
+                    console.log('Update successful, document exists');
+                    // update successful (document exists)
+                }).catch((error) => {
+                    console.log('Error updating Projects/enterprises, document does not exists', error);
+                    // .set({ data });
+                    cmpProjectDoc.set(item);
+                    cmpProjectDoc.update({
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                    })
+                });
+                weeklyRef.update({ 
+                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                }).then(() => {
+                    console.log('Update successful, document exists');
+                    // update successful (document exists)
+                }).catch((error) => {
+                    console.log('Error updating Enterprises/projects, document does not exists', error);
+                    // .set({ data });
+                    weeklyRef.set(item);
+                    weeklyRef.update({
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                    })
+                });
+            }
+
+            cleaningTime;
+            // notify;
+        }
+    }
+
     updateAction(e, workAction: workItem) {
 
         if (e.target.checked) {
@@ -828,7 +973,7 @@ export class NavbarComponent implements OnInit {
             let dataId = item.id + moment().format('dd');
             console.log(dataId);
 
-            let timesheetDocId = String(moment(new Date()));
+            let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
             let timesheetworktime = String(moment(new Date().getTime()));
             let work = {
                 WorkingTime: moment().toString(),
@@ -910,7 +1055,7 @@ export class NavbarComponent implements OnInit {
             allMyActionsRef.doc(newActionId).update({ 'id': newActionId });
         })
         console.log(unplannedTask);
-        this.item = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "" };
+        this.item = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false  };
     }
 
     // showNotification(data, from, align) {

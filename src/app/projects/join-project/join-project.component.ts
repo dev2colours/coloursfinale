@@ -38,12 +38,14 @@ export class JoinProjectComponent {
   compId: string;
   newPart: ParticipantData;
   selectedStaff: ParticipantData;
+  person: ParticipantData;
   myData: ParticipantData;
   selectedProjects: Observable<Project[]>;
   // public isjoined: boolean = false;
   searchData: string;
   projectToJoin: any;
 
+  ent: Enterprise;
   // showSearch: boolean = false;
   staff: Observable<ParticipantData[]>;
   selectedProject: Project;

@@ -17,6 +17,7 @@ import { EnterpriseViewComponent } from './enterprise-view/enterprise-view.compo
 import { EnterpriseProfileComponent } from './enterprise-profile/enterprise-profile.component';
 import { SetupComponent } from './setup/setup.component';
 import { CreateComponent } from './create/create.component';
+import { CreateEnterpriseComponent } from './create-enterprise/create-enterprise.component';
 
 @NgModule({
     imports: [
@@ -24,7 +25,7 @@ import { CreateComponent } from './create/create.component';
         RouterModule.forChild(CompanyRoutes),
         FormsModule, JWBootstrapSwitchModule, NgbModule, TagInputModule, NgSelectModule,
     ],
-    declarations: [CompanyComponent, JoinEnterpriseComponent, EnterpriseViewComponent, EnterpriseProfileComponent, SetupComponent, CreateComponent, ]
+    declarations: [CompanyComponent, JoinEnterpriseComponent, EnterpriseViewComponent, EnterpriseProfileComponent, SetupComponent, CreateComponent, CreateEnterpriseComponent ]
 })
 
 export class CompanyModule {}

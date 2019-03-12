@@ -211,8 +211,7 @@
         </div>
       </div>
       <div class="tab-pane" id="weekly" role="tabpanel" aria-expanded="false">
-
-        <div class="col-md-11 col-sm-11 ml-auto mr-auto">
+        <div class="col-md-12 col-sm-12 ml-auto mr-auto">
           <p class="clrs-h4 text-left" style="margin-top:-1em; color: darkslategrey">Calendar Weekly Activities.</p>
           <p class="category text-left" style="margin-top:-1em">
             These are task classification standard action and work action Items picked for this week's activities
@@ -223,61 +222,16 @@
           </div>
           <div class="col-sm-8">
             <div class="row">
-              <div class="col-sm-6 text-left na-an">Classification</div>
-              <div class="col-sm-6 text-left ma-an">Period</div>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <ol>
-            <li *ngFor="let item of standards | async">
-              <div class="row" style="color: darkslategrey">
-                <div class="col-sm-4 text-left" style="padding-left: 2em">
-                  {{ item.name }}
-                </div>
-                <div class="col-sm-8">
-                  <div class="row">
-                    <div class="col-sm-6 text-left">{{ item.classificationName }}</div>
-                    <div class="col-sm-4 text-left">{{ item.period }}</div>
-                      <!-- <button class="primary btn-link" data-toggle="modal" (click)="selectEditAction(item)" data-target="#editAction">
-                        Edit</button> -->
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ol>
-        </div>
-        <div class="row card-category clrs-h4">
-          <div class="col-sm-4">Work Action Item
-          </div>
-          <div class="col-sm-8">
-            <div class="row">
               <div class="col-sm-6 text-left na-an">Start Date</div>
               <div class="col-sm-6 text-left ma-an">Finish Date</div>
             </div>
           </div>
         </div>
         <div class="card-body">
-          <!-- <ol>
+          <ol>
             <li *ngFor="let item of standards | async">
               <div class="row" style="color: darkslategrey">
-                <div class="col-sm-3">
-                  {{ item.name }}
-                </div>
-                <div class="col-sm-9">
-                  <div class="row">
-                    <div class="col-sm-6">{{ item.classificationName }}</div>
-                    <div class="col-sm-4">{{ item.period }}</div>
-                      <button class="primary btn-link" data-toggle="modal" (click)="selectEditAction(item)" data-target="#editAction">
-                        Edit</button>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ol> -->
-          <ol>
-            <li *ngFor="let item of myWeeklyActions | async">
-              <div class="row">
+              <!-- <div class="row text-info"> -->
                 <div class="col-sm-3 text-left" style="padding-left: 2em">
                   {{ item.name }}
                 </div>
@@ -285,23 +239,36 @@
                   <div class="row">
                     <div class="col-sm-5 text-left">{{ item.startDay }}, {{ item.startDate }}</div>
                     <div class="col-sm-5 text-left">{{ item.endDay }}, {{ item.endDate }}</div>
-                      <button class="primary btn-link" (click)="selectEditAction(item)" data-toggle="modal" data-target="#editAction" style=" padding-top: 0px; padding-bottom: 0px;">
-                        Add date</button>
+                    <button class="primary btn-link" (click)="selectClassAction(item)" data-toggle="modal" data-target="#editClassActionItem"
+                      style=" padding-top: 0px; padding-bottom: 0px;">
+                      Add date</button>
                   </div>
-                  <!-- <p>{{ item.startDay }}, {{ item.startDate }} | {{ item.endDay }}, {{ item.endDate }}<span> -->
-                      <!-- <button class="primary btn-link" data-toggle="modal" (click)="selectEditAction(item)" data-target="#editAction">
-                        Edit</button> -->
-                      <!-- </span></p> -->
-                  <!-- <input [(ngModel)]="item.startDate" type="date"> -->
-                  <!-- <div id="{{ item.id }}" class="slider slider-primary"></div> -->
 
-                  <!-- <div id="{{ item.id }}" class="slider slider-primary"></div> -->
-                  <!-- <div id="sliderDouble"  class="slider slider-primary"></div> -->
-                  <!-- <div id="sliderDouble" class="slider slider-primary"></div> -->
+                </div>
+              </div>
+            </li>
+            <li *ngFor="let item of myWeeklyActions | async">
+              <div class="row text-info">
+                <div class="col-sm-3 text-left" style="padding-left: 2em">
+                  {{ item.name }}
+                </div>
+                <div class="col-sm-9">
+                  <div class="row">
+                    <div class="col-sm-5 text-left">{{ item.startDay }}, {{ item.startDate }}</div>
+                    <div class="col-sm-5 text-left">{{ item.endDay }}, {{ item.endDate }}</div>
+                    <button class="primary btn-link" (click)="selectEditAction(item)" data-toggle="modal" data-target="#editAction"
+                      style=" padding-top: 0px; padding-bottom: 0px;">
+                      Add date</button>
+                  </div>
                 </div>
               </div>
             </li>
           </ol>
+        </div>
+        <div class="row card-category">
+          <div class="col-md-12 col-sm-12">
+            <p class="category">Click Add date to add or edit the start and end date for the Action Item</p>
+          </div>
         </div>
       </div>
       <div class="tab-pane" id="diary" role="tabpanel" aria-expanded="false">
@@ -317,43 +284,47 @@
         </div>
         <div class="card-body" style="margin-top: -10px">
           <div class="row" *ngIf= "viewTodaystds || viewTodays">
-            <div class="col-sm-3 card-header text-center">Action Item</div>
-            <div class="col-sm-3 card-header">Target Qty</div>
+            <div class="card-header text-left"><i class="fa fa-check-box"></i></div>
+            <div class="col-sm-2 card-header text-center">Action<small class="category"> Item</small></div>
+            <div class="col-sm-3 card-header">Target Qty<small class="category"> for today</small></div>
             <div class="col-sm-2 card-header text-left">Start time</div>
             <div class="col-sm-2 card-header text-left">Finish time</div>
             <div class="col-sm-2 card-header text-left"></div>
           </div>
           <ng-container>
             <div class="col-sm-12">
-              <div class="row col-md-11 col-sm-11 ml-auto mr-auto">
+              <!-- <div class="row col-md-11 col-sm-11 ml-auto mr-auto">
                 <p class="category text-left" style="padding-top :2em">
                   Task classification standard action items
                 </p>
               </div>
               <div *ngIf="!viewTodaystds">
                 <p class="na-p"> No standard actions </p>
-              </div>
-              <ol style="padding-left: 10px;">
-                <li *ngFor="let item of standards | async">
+              </div> -->
+              <ul style="list-style-type:none;padding-left: 10px;">
+                <li *ngFor="let item of allMystandards | async">
                   <div class="row">
-                    <div class="col-sm-3 text-left">
-                      {{ item.name }}
+                    <div class="text-left">
+                      <input style="margin-top: 4px;" class="pull-right col-form-label" *ngIf=" item.selectedWork == true; else UCK" type="checkbox" checked (change)="setDiary($event, item)">
+                      <ng-template #UCK>
+                        <input style="margin-top: 4px;" class="pull-right col-form-label" type="checkbox" (change)="setDiary($event, item)">
+                      </ng-template>
                     </div>
-                    <div class="col-sm-3" style="padding-left: 5px; padding-right:5px">
+                    <div class="col-sm-3 pull-left">
+                      <!-- {{ item.name }} -->
+                      <button class="form-control panel-boader clrs-cell btn-link text-left" [ngClass]="{'text-success' : item.selectedWork == true}"
+                        style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em">{{ item.name }}
+                      </button>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
                       <div class="form-group">
                         <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
                           <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                            placeholder="1 200" /><!-- clrs-cell  -->
+                            placeholder="1 200" />
                           <div class="input-group-postpend">
                             <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
-                              <small>
-                                <button class="" *ngIf="!item.unit; else showBTNB" (click)="theItem(item)" title="Add units to {{ item.name }}" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;"  data-toggle="modal" data-target="#editUnits">
-                                  Add units</button>
-                                <ng-template #showBTNB>
-                                  <a class="" title="change units" (click)="theItem(item)" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer"  data-toggle="modal" data-target="#editUnits" >
-                                    {{ item.unit.id }}</a>
-                                </ng-template>
-                              </small>
+                              
+                              <small>{{ item.unit }}</small>
                             </span>
                           </div>
                         </div>
@@ -372,32 +343,47 @@
                       </div>
                     </div>
                     <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
-                      <div class="form-group">
-                        <button class="form-control panel-boader clrs-cell btn-link" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                          (click)="addActionTime(item)">Save</button> <!-- clrs-cell  -->
+                      <!-- <div class="form-group">
+                        <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
+                          (click)="addActionTime(item)"><small>Save</small></button>
+                      </div> -->
+
+
+                      <div class="btn-group btn-group-toggle">
+                        <label class="btn-primary" ngbButtonLabel>
+                          <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
+                            (click)="addActionTime(item)"><small>Save</small></button>
+                        </label>
+                        <label class="btn-primary" ngbButtonLabel>
+                          <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
+                            (click)="addActionTime(item)"><small>Complete</small></button>
+                        </label>
                       </div>
+
+
                     </div>
                   </div>
                 </li>
-              </ol>
-            </div>
-            <div class="col-sm-12">
-              <div class="row col-md-11 col-sm-11 ml-auto mr-auto">
-                <p class="category text-left">
-                  Work action Items
-                </p>
-              </div>
-              <div *ngIf="!viewTodayWork">
-                <p class="na-p"> No work actions </p>
-              </div>
-              <ol style="padding-left: 10px;">
-                <!-- <li *ngFor="let item of viewActions | async"> -->
                 <li *ngFor="let item of viewDayActions">
                   <div class="row">
-                    <div class="col-sm-3 text-left">
-                      {{ item.name }}
+                    <!-- <div class="text-left">
+                      <input style="margin-top: 4px;" class="pull-right col-form-label" type="checkbox" (change)="setDiaryAction($event, item)">
+                    </div> -->
+                    <div class="text-left">
+                      <input style="margin-top: 4px;" class="pull-right col-form-label" *ngIf="item.selectedWork == true; else NCK" type="checkbox" checked (change)="setDiaryAction($event, item)">
+                      <ng-template #NCK>
+                        <input style="margin-top: 4px;" class="pull-right col-form-label" type="checkbox" (change)="setDiaryAction($event, item)">
+                      </ng-template>
                     </div>
-                    <div class="col-sm-3" style="padding-left: 5px; padding-right:5px">
+                    <!-- <div class="col-sm-3 text-left" [ngClass]="{'text-success' : item.selectedWork == true}">
+                      {{ item.name }}
+                    </div> -->
+                    <div class="col-sm-3 pull-left">
+                      <button class="form-control panel-boader clrs-cell btn-link text-left" [ngClass]="{'text-success' : item.selectedWork == true}"
+                        style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em">{{ item.name }}
+                      </button>
+                    </div>
+                    <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
                       <div class="form-group">
                         <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
                           <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty" 
@@ -428,14 +414,27 @@
                       </div>
                     </div>
                     <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
-                      <div class="form-group">
+                      <!-- <div class="form-group">
                         <button  class="form-control panel-boader clrs-cell btn-link"
-                          style=" padding-left: 10px; padding-right: 10px; height:2em" (click)="addActionTime(item)">Save</button> <!-- clrs-cell  -->
+                          style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em" (click)="addActionTime(item)">Save</button>
+                      </div> -->
+
+                      <div class="btn-group btn-group-toggle">
+                        <label class="btn-primary" ngbButtonLabel>
+                          <button  class="form-control panel-boader clrs-cell btn-link"
+                            style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em" (click)="addActionTime(item)"><small>Save</small></button>
+                        </label>
+                        <label class="btn-primary" ngbButtonLabel>
+                          <!-- <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
+                            (click)="setComplete(item)"><small>Complete</small></button> -->
+                            <button (click)="setAction(item)" class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
+                             data-toggle="modal" data-target="#actionClosure"><small>Complete</small></button>
+                        </label>
                       </div>
                     </div>
                   </div>
                 </li>
-              </ol>
+              </ul>
             </div>
           </ng-container>
           <ng-container *ngIf="!viewTodaystds && !viewTodayWork">
@@ -443,10 +442,12 @@
               You have no activity planned Today
             </h4>
           </ng-container>
-          <div class="card-footer text-right">
+          <div class="card-footer">
             <div class="row">
-              <div class="col-md-9"></div>
-              <div class="col-md-3">
+              <div class="col-md-9 text-left">
+                <p class="category">To create new task under<b> Daily Diary </b>If the new action Item does not belong to any existing task Goto Planning & create the Task for your action Item and remember to add the task to weekly Tasks</p>
+              </div>
+              <div class="col-md-3 text-right">
                 <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday"> <!-- (click)="selectEditAction(item);showActionParticipants()"  -->
                   New Action
                 </button>
@@ -571,7 +572,7 @@
             <label class="col-md-4 col-form-label">Start Date</label>
             <div class="col-md-7">
               <div class="form-group">
-                <input type="date" [(ngModel)]="startDate" name="siu" class="form-control">
+                <input type="date" [(ngModel)]="startDate" name="startD" class="form-control">
               </div>
             </div>
           </div>
@@ -579,7 +580,7 @@
             <label class="col-md-4 col-form-label">End Date</label>
             <div class="col-md-7">
               <div class="form-group">
-                <input type="date" [(ngModel)]="endDate" name="siu" class="form-control">
+                <input type="date" [(ngModel)]="endDate" name="endD" class="form-control">
               </div>
             </div>
           </div>
@@ -593,6 +594,51 @@
           <div class="right-side">
             <button type="button" class="btn btn-success btn-link" (click)="editAction(startDate,endDate)" data-dismiss="modal"
               title="save action">Enter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editClassActionItem" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="card-body ">
+        <div class="card-header text-center">
+          <p class="col-md-8 ml-auto mr-auto col-form-label clrs-h1 info" style="color:steelblue">
+            <!-- <font size=4>Edit Action item <br> "{{ selectedClassAction.name }}"</font> -->
+            Edit Action item <br> "{{ selectedClassAction.name }}"
+          </p>
+        </div>
+        <hr>
+        <form class="form-horizontal">
+          <div class="row">
+            <label class="col-md-4 col-form-label">Start Date</label>
+            <div class="col-md-7">
+              <div class="form-group">
+                <input type="date" [(ngModel)]="startDate" name="start" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-4 col-form-label">End Date</label>
+            <div class="col-md-7">
+              <div class="form-group">
+                <input type="date" [(ngModel)]="endDate" name="end" class="form-control">
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="modal-footer" style="margin-bottom:0%">
+          <div class="left-side">
+            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
+          </div>
+          <div class="divider"></div>
+          <div class="right-side">
+            <button type="button" class="btn btn-success btn-link" (click)="editClassAction(startDate,endDate)"
+              data-dismiss="modal" title="save action">Enter</button>
           </div>
         </div>
       </div>
@@ -763,7 +809,7 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-10 ml-auto mr-auto title na-an info" style="color:steelblue">
-            <font size=4>New Action Item for {{ selectedTask.name }} task</font>
+            <font size=4>New Action Item for Today</font>
           </p>
         </div>
         <hr>
@@ -780,7 +826,7 @@
             <label class="col-md-4 col-form-label">Unit measure</label>
             <div class="col-md-7 col-lg-6 col-sm-5">
               <div class="form-group">
-                <ng-select [items]="SIunits" bindLabel="name" name="jyu" id="sui3" placeholder="Select unit of Measure"
+                <ng-select [items]="SIunits" bindLabel="name" name="unitss" id="sui3" placeholder="Select unit of Measure"
                   [(ngModel)]="setSui">
                 </ng-select>
               </div>
@@ -790,15 +836,14 @@
             <label class="col-md-4 col-form-label">Task</label>
             <div class="col-md-7 col-lg-6 col-sm-5">
               <div class="form-group">
-                <ng-select placeholder="Select Task" [(ngModel)]="taskId" name="actionTask">
-                  <ng-option *ngFor="let tas of dptTasks | async" [value]="tas.id">
-                    {{ tas.name }}</ng-option>
+                <ng-select [items]="tasks | async" bindLabel="name" placeholder="Select Task" [(ngModel)]="actionTask" name="actionTask"> <!-- (click)="setActiomTask()" -->
+                  <!-- <ng-option *ngFor="let tas of dptTasks | async" [value]="tas.id"> {{ tas.name }}</ng-option> -->
                 </ng-select>
               </div>
             </div>
           </div>
           <div class="row">
-            <label class="col-md-4 col-form-label">Start Date</label>
+            <label class="col-md-4 col-form-label">Start Time</label>
             <div class="col-md-7">
               <div class="form-group">
                 <input type="time" [(ngModel)]="actionItem.start" name="siu" class="form-control">
@@ -806,7 +851,7 @@
             </div>
           </div>
           <div class="row">
-            <label class="col-md-4 col-form-label">End Date</label>
+            <label class="col-md-4 col-form-label">End Time</label>
             <div class="col-md-7">
               <div class="form-group">
                 <input type="time" [(ngModel)]="actionItem.end" name="siu" class="form-control">
@@ -825,6 +870,34 @@
               title="save action">Enter</button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="actionClosure" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-notice">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+        <h5 class="modal-title" id="myModalLabel">{{ actionSet.name }}</h5>
+      </div>
+      <div class="modal-body">
+        <div class="instruction">
+          <div class="row">
+            <div class="col-md-10 text-center">
+              <strong>Are you sure you have completed full quantites of this work item</strong>
+              <!-- <p class="description">The first step is to create an account at
+                <a href="https://www.creative-tim.com/">Creative Tim</a>. You can choose a social network or go for the
+                classic version, whatever works best for you.</p> -->
+          </div>
+        </div>
+        <br>
+        <p>If you have completed, Click Confirm to complete</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-info btn-round" (click)="setComplete()" data-dismiss="modal">Confirm</button>
       </div>
     </div>
   </div>
