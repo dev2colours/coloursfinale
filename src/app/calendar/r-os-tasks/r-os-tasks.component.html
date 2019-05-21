@@ -1,0 +1,25 @@
+<div class="main-content">
+    <div style="text-align:left;margin-left: 0px">
+        <img alt="Colours Logo" width="100" src="../../assets/Colourslogo.png">
+    </div>
+    
+    <!-- <h2 id="orgP">Personal Reports</h2> -->
+
+    <!-- Table heading -->
+    <h1>{{ userName }}</h1>
+
+    <h3>Schedule of Outstanding Tasks as at <span>
+            <!-- placeholder will not work, so stuck with dd----yyyyy -->
+            <input type="date" id="startdateP">
+    <button (click)="rService.rostasks()">View Oustanding Tasks for selected date</button>
+    </span></h3>
+    <!-- Table rows and headings only -->
+    <table id="TbIdP">
+        <!-- headings -->
+        <tr>
+            <th align="left">Task</th>
+            <th align="left">Planned Finish Date</th>
+            <th align="left">Classification</th>
+        </tr>
+    </table>
+</div>

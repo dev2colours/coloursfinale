@@ -9,15 +9,16 @@
 
     <h3>Total Time spent on an Activity for the period from <span>
             <!-- placeholder will not work, so stuck with dd----yyyyy -->
-            <input type="date" id="startdate">
+            <input type="date" id="startdateP1">
         </span> to <span>
-            <input type="date" id="enddate">
-    <button (click)="rService.rtimespentshow()">Generate report for selected period</button>
+            <input type="date" id="enddateP1">
+    <!-- <button (click)="rService.rtimespentshow()">Generate report for selected period</button> -->
+    <button (click)="rService.rtimespent()">Generate report for selected period</button>
     </span></h3>
     <!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
     <!-- button (click)="rService.clearTable()">Clear table</button> -->
     <!-- Table rows and headings only -->
-    <table id="tableList">
+    <table id="TbIdP1">
         <!-- headings -->
         <tr>
             <th align="left">Activity</th>

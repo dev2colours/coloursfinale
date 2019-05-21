@@ -21,18 +21,18 @@ export class RTimeSpentEComponent implements OnInit {
     
     //14-May-2019. Show current company
     // document.getElementById("org").innerText = this.rService.Enterprise + " Individual Total Time spent Report";
-    document.getElementById("org").innerText = this.rService.Enterprise + " Individual Report";
-    this.company = this.rService.Enterprise;
-    if (this.company === undefined || this.company === '') {
-      this.routerTo();
-    } else {
+    document.getElementById("org1").innerText = "Enterprise" + this.rService.EnterpriseName;
+    // this.company = this.rService.EnterpriseName;
+    // if (this.company === undefined || this.company === '') {
+    //   this.routerTo();
+    // } else {
       // 15-May-2019. Create name drop down list based on hierarchy
       // document.getElementById("org").innerText = this.rService.EnterpriseName + " Individual Report";
 
       // 15-May-2019. Create name drop down list based on hierarchy
       this.rService.getParticipants(this.rService.EnterpriseID, "Executive");
       //populate users generated from above
-      var namelist = document.getElementById("name-list");
+      var namelist = document.getElementById("name-list1");
       var opt: HTMLOptionElement;
       this.rService.Participants.forEach(doc => {
         for (let i = 0; i < doc.length; i++) {
@@ -49,16 +49,16 @@ export class RTimeSpentEComponent implements OnInit {
 
       //06-05-2019. Had to use value instead of Value for this to work
       // need to cast element type to prevent compile error
-      let Inp1 = (<HTMLInputElement>document.getElementById("startdate"));
+      let Inp1 = (<HTMLInputElement>document.getElementById("startdate1"));
       Inp1.value = date;
-      let Inp2 = (<HTMLInputElement>document.getElementById("enddate"));
+      let Inp2 = (<HTMLInputElement>document.getElementById("enddate1"));
       Inp2.value = date;
 
     }
 
     
 
-  }
+  // }
 
   routerTo() {
     this.router.navigate(['./dashboard']);

@@ -184,7 +184,7 @@
           <div class="col-md-6 ml-auto mr-auto">
             <div class="card">
               <div class="card-body text-center" style="padding-top:0px">
-                <div class="card-category clrs-h4">
+                <div class="card-category clrs-h4-font">
                   <a>My Weekly To Do List</a>
                 </div>
                 <div>
@@ -240,12 +240,12 @@
       </div>
       <div class="tab-pane" id="weekly" role="tabpanel" aria-expanded="false">
         <div class="col-md-12 col-sm-12 ml-auto mr-auto">
-          <p class="clrs-h4 text-left" style="margin-top:-1em; color: darkslategrey">Calendar Weekly Activities.</p>
+          <p class="clrs-h4-font text-left" style="margin-top:-1em; color: darkslategrey">Calendar Weekly Activities.</p>
           <p class="category text-left" style="margin-top:-1em">
             These are task classification standard activities and work activities picked for this week's activities
           </p>
         </div>
-        <div class="row card-category clrs-h4">
+        <div class="row card-category clrs-h4-font">
           <div class="col-sm-4">Activity
           </div>
           <div class="col-sm-8">
@@ -300,14 +300,14 @@
         </div>
       </div>
       <div class="tab-pane" id="diary" role="tabpanel" aria-expanded="false">
-        <div class="row card-category clrs-h4">
+        <div class="row card-category clrs-h4-font">
           <div class="col-sm-3">
             <a class="clrs-h1 text-left">Daily Diary</a>
           </div>
           <div class="col-sm-2"></div>
           <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol" (click)="changeDay('previous')">Previous</a></div>
           <!-- <div class="col-sm-3 clrs-h1 text-info">{{ workWeekDay }}, {{ workDay }}</div> -->
-          <div class="col-sm-3 clrs-h4 text-info">{{ workWeekDay }}, {{ workDay }}</div>
+          <div class="col-sm-3 clrs-h4-font text-info">{{ workWeekDay }}, {{ workDay }}</div>
           <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol" (click)="changeDay('next')">Next</a></div>
         </div>
         <div class="card-body" style="margin-top: -10px">
@@ -429,7 +429,7 @@
             </div>
           </ng-container>
           <ng-container *ngIf="!viewTodaystds && !viewTodayWork">
-            <h4 class="clrs-h4">
+            <h4 class="clrs-h4-font">
               You have no activity planned Today
             </h4>
           </ng-container>

@@ -3,6 +3,8 @@ import { Routes } from '@angular/router';
 import { IndividualRptsComponent } from './individual-rpts.component';
 import { RActivityLogEComponent } from './r-activity-log-e/r-activity-log-e.component';
 import { RTimeSpentEComponent } from './r-time-spent-e/r-time-spent-e.component';
+import { ROsActionsEComponent } from './r-os-actions-e/r-os-actions-e.component';
+import { ROsTasksEComponent } from './r-os-tasks-e/r-os-tasks-e.component';
 
 export const IndividualRptsRoutes: Routes = [{
     path: '',
@@ -15,5 +17,11 @@ export const IndividualRptsRoutes: Routes = [{
     },{
         path: 'activity-log',
         component: RActivityLogEComponent
+    },{
+        path: 'outstanding-log',
+        component: ROsActionsEComponent
+    },{
+        path: 'outstandingTasks-log',
+        component: ROsTasksEComponent
     },]
 }];

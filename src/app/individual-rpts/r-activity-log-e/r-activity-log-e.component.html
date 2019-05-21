@@ -1,26 +1,22 @@
-<div style="text-align:left;margin-left: 0px">
-    <!-- <img alt="Southland Logo" src="/src/app/southland-logo.jpg"> -->
-    <img alt="Colours Logo" width="100" src="../../assets/Colourslogo.png">
-</div>
 
-<h2 id="org">Personal Reports</h2>
+<h2 id="org2">Personal Reports</h2>
 
 <h2>Participant:
-    <span><select id="name-list" (click)="rService.getParticipantData()"></select></span>
+    <span><select id="name-list2" (click)="rService.getParticipantData('name-list2')"></select></span>
     <span> &nbsp;&nbsp; Hierarchy:</span><span id="hierarchy"></span></h2>
 
 <h3>Time Sheet Report for the period from <span>
         <!-- placeholder will not work, so stuck with dd----yyyyy -->
-        <input type="date" id="startdate" (click)="rService.getParticipantData()">
+        <input type="date" id="startdate2">
     </span> to <span>
-        <input type="date" id="enddate" (click)="rService.getParticipantData()">
-        <button (click)="rService.ractivitylogshow_e()">Generate report for selected period</button>
+        <input type="date" id="enddate2">
+        <button (click)="rService.ractivitylog_e()">Generate report for selected period</button>
     </span></h3>
 
 <!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
 <!-- button (click)="rService.clearTable()">Clear table</button> -->
 <!-- Table rows and headings only -->
-<table id="tableList">
+<table id="TbId2">
     <!-- headings -->
     <tr>
         <th align="left">Action Item</th>

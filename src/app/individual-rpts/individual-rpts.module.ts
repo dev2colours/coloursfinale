@@ -7,6 +7,8 @@ import { IndividualRptsComponent } from './individual-rpts.component';
 import { IndividualRptsRoutes } from './individual-rpts.routing';
 import { RTimeSpentEComponent } from './r-time-spent-e/r-time-spent-e.component';
 import { RActivityLogEComponent } from 'app/individual-rpts/r-activity-log-e/r-activity-log-e.component';
+import { ROsActionsEComponent } from './r-os-actions-e/r-os-actions-e.component';
+import { ROsTasksEComponent } from './r-os-tasks-e/r-os-tasks-e.component';
 
 @NgModule({
     imports: [
@@ -17,7 +19,9 @@ import { RActivityLogEComponent } from 'app/individual-rpts/r-activity-log-e/r-a
     declarations: [
         IndividualRptsComponent,
         RTimeSpentEComponent,
-        RActivityLogEComponent]
+        RActivityLogEComponent,
+        ROsActionsEComponent,
+        ROsTasksEComponent]
 })
 
 export class IndividualRptsModule {}

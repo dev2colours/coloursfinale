@@ -13,6 +13,7 @@ import { RdashboardComponent } from './rdashboard/rdashboard.component';
 import { RTimeSpentComponent } from './r-time-spent/r-time-spent.component';
 import { PersonalInfoReportComponent } from './personal-info-report/personal-info-report.component';
 import { DiaryComponent } from './diary/diary.component';
+import { ROsTasksComponent } from './r-os-tasks/r-os-tasks.component';
 
 
 export const CalendarRoutes: Routes = [{
@@ -66,5 +67,9 @@ export const CalendarRoutes: Routes = [{
     {
         path: 'personalInfo-report',
         component: PersonalInfoReportComponent
+    },
+    {
+        path: 'outstandingTask-report',
+        component: ROsTasksComponent
     }]
 }];

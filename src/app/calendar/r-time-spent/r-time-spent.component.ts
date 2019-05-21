@@ -33,9 +33,9 @@ export class RTimeSpentComponent implements OnInit {
 
     //06-05-2019. Had to use value instead of Value for this to work
     // need to cast element type to prevent compile error
-    let Inp1=(<HTMLInputElement>document.getElementById("startdate"));
+    let Inp1=(<HTMLInputElement>document.getElementById("startdateP1"));
     Inp1.value=date;
-    let Inp2 = (<HTMLInputElement>document.getElementById("enddate"));
+    let Inp2 = (<HTMLInputElement>document.getElementById("enddateP1"));
     Inp2.value=date;
 
   }

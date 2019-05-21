@@ -21,7 +21,9 @@ export class ReportsService {
 	public Selected_User: Observable<{}>;
 	WeeklyActions: Observable<any[]>;
 	public stdd; public endd;
-	public Enterprise: string;
+	// public Enterprise: string;
+	public Enterprise; public EnterpriseName;
+
 	public EnterpriseID: string;
 	public ActivityClass = "Work";
 	public Drop_User;
@@ -29,6 +31,9 @@ export class ReportsService {
 	public Participants;
 	public Time_Spent: Observable<any[]>;
 	public Activity_Log: Observable<any[]>;
+	public Tasks: Observable<any[]>;
+	public MyEnterprises: Observable<any[]>;
+
 	user: any;
 	userId: string;
 	currentCompany: any;
@@ -46,101 +51,121 @@ export class ReportsService {
 
 	compParams(company) {
 		this.currentCompany = company;
-		this.Enterprise = company.name;
+		this.EnterpriseName = company.name;
 		this.EnterpriseID = company.id;
+		console.log(this.EnterpriseName);
+		
 		console.log(this.currentCompany);
 	}
 
 	rtimespent() {
-		this.clearTable();
-		this.readDates();
-		this.timespent('', '', '', this.stdd, this.endd, this.WeeklyActions);
+		let tbId = "#TbIdP1";
+		this.getData();
+		this.clearTable('TbIdP1');
+		this.readDates('startdateP1', 'enddateP1');
+		this.timespent('', '', '', this.stdd, this.endd, this.WeeklyActions, tbId);
 	}
 
 	ractivitylog() {
-		this.clearTable();
-		this.readDates();
-		this.activitylog('', '', '', this.stdd, this.endd, this.WeeklyActions);
+		let tbId = "#TbIdP2";
+		this.getData();
+		this.clearTable('TbIdP2');
+		this.readDates('startdateP2', 'enddateP2');
+		this.activitylog('', '', '', this.stdd, this.endd, this.WeeklyActions, tbId);
 	}
 
 	rostasks() {
-		this.clearTable();
-		this.readDate();
-		this.OS_Tasks('', '', '', this.stdd, this.Tasks);
+		let tbId = "#TbIdP";
+		this.getData();
+		this.clearTable('TbIdP');
+		this.readDate('startdateP');
+		this.OS_Tasks('', '', '', this.stdd, this.Tasks, tbId);
 	}
 
 	rostasks_e() {
-		this.getParticipantData();
-		this.clearTable();
-		this.readDate();
-		this.OS_Tasks(this.EnterpriseID, '', '', this.stdd, this.Tasks);
+		let tbId = "#TbId4";
+		this.getParticipantData('name-list4');
+		this.clearTable("TbId4");
+		this.readDate('startdate4');
+		console.log(tbId);
+
+		this.OS_Tasks(this.EnterpriseID, '', '', this.stdd, this.Tasks, tbId);
 	}
 
 	rosactions_e() {
-		this.getParticipantData();
-		this.clearTable();
-		this.readDates();
-		alert(this.EnterpriseID);
-		this.OS_Actions(this.EnterpriseID, '', '', this.stdd, this.endd, this.WeeklyActions);
+		let tbId = "#TbId3";
+		this.getParticipantData('name-list3');
+		this.clearTable('TbId3');
+		this.readDates('startdate3', 'enddate3');
+		// alert(this.EnterpriseID);
+		console.log(tbId);
+
+		this.OS_Actions(this.EnterpriseID, '', '', this.stdd, this.endd, this.WeeklyActions, tbId);
 	}
 
 	rtimespent_e() {
-		this.getParticipantData();
-		this.clearTable();
-		this.readDates();
-		this.timespent(this.EnterpriseID, '', '', this.stdd, this.endd, this.WeeklyActions);
+		let tbId = "#TbId1";
+		this.getParticipantData('name-list1');
+		this.clearTable("TbId1");
+		this.readDates('startdate1', 'enddate1');
+		console.log(tbId);
+		this.timespent(this.EnterpriseID, '', '', this.stdd, this.endd, this.WeeklyActions, tbId);
 	}
 
 	ractivitylog_e() {
-		this.getParticipantData();
-		this.clearTable();
-		this.readDates();
-		this.activitylog(this.EnterpriseID, '', '', this.stdd, this.endd, this.WeeklyActions);
+		let tbId = "#TbId2";
+		this.getParticipantData('name-list2');
+		this.clearTable('TbId2');
+
+		console.log(tbId);
+		this.activitylog(this.EnterpriseID, '', '', this.stdd, this.endd, this.WeeklyActions, tbId);
 	}
 
-	readDate() {
+	readDate(date) {
 		//06-May-2019. <HTMLInputElement> casts the HTML type to Input to prevent a compile error
 		//which says property value does not exist on HTML element
-		this.stdd = (<HTMLInputElement>document.getElementById("startdate")).value;
+		this.stdd = (<HTMLInputElement>document.getElementById(date)).value;
 	}
 
-	readDates() {
+	readDates(sDate, eDate) {
 		//06-May-2019. <HTMLInputElement> casts the HTML type to Input to prevent a compile error
 		//which says property value does not exist on HTML element
-		this.stdd = (<HTMLInputElement>document.getElementById("startdate")).value;
-		this.endd = (<HTMLInputElement>document.getElementById("enddate")).value;
+		this.stdd = (<HTMLInputElement>document.getElementById(sDate)).value;
+		this.endd = (<HTMLInputElement>document.getElementById(eDate)).value;
 	}
 
 	getData() {
 		this.Users = this.db.collection('Users', ref => ref.orderBy('name', 'asc')).valueChanges();
-		this.User = this.db.collection('Users').doc('YvhAwbGZ2dZ1dvTDEqBSPVAHG0s2').valueChanges();
-		this.WeeklyActions = this.db.collection('Users').doc('YvhAwbGZ2dZ1dvTDEqBSPVAHG0s2').collection('WeeklyActions').valueChanges();
-		this.Tasks = this.db.collection('Users').doc('YvhAwbGZ2dZ1dvTDEqBSPVAHG0s2').collection('tasks').valueChanges();
+		this.User = this.db.collection('Users').doc(this.userId).valueChanges();
+		this.WeeklyActions = this.db.collection('Users').doc(this.userId).collection('WeeklyActions').valueChanges();
+		this.Tasks = this.db.collection('Users').doc(this.userId).collection('tasks').valueChanges();
 	}
 
 	getMyEnterprises() {
-		this.MyEnterprises = this.db.collection('Users').doc('YvhAwbGZ2dZ1dvTDEqBSPVAHG0s2').collection('myenterprises', ref => ref.
+		this.MyEnterprises = this.db.collection('Users').doc(this.userId).collection('myenterprises', ref => ref.
 			orderBy('name', 'asc')
 		).valueChanges();
 	}
 
-	getEnterpriseID() {
-		let entp = this.optValue("enterprise-list");
-		this.EnterpriseName = entp;
-		document.getElementById("Ent-reps").innerText = entp + " Reports";
-		this.Enterprise = this.db.collection('Enterprises', ref => ref.
-			where('name', '==', entp)).valueChanges();
-		this.Enterprise.forEach(doc => {
-			for (let i = 0; i < doc.length; i++) {
-				this.EnterpriseID = doc[i].id;
-				//alert(entp + ' ID = ' + this.EnterpriseID);
-			}
-		});
-	}
+	// getEnterpriseID() {
+	// 	let entp = this.optValue("enterprise-list");
+	// 	this.EnterpriseName = entp;
+	// 	document.getElementById("Ent-reps").innerText = entp + " Reports";
+	// 	this.Enterprise = this.db.collection('Enterprises', ref => ref.
+	// 		where('name', '==', entp)).valueChanges();
+	// 	this.Enterprise.forEach(doc => {
+	// 		for (let i = 0; i < doc.length; i++) {
+	// 			this.EnterpriseID = doc[i].id;
+	// 			//alert(entp + ' ID = ' + this.EnterpriseID);
+	// 		}
+	// 	});
+	// }
 
-	getParticipantData() {
+	getParticipantData(listName) {
+
+		/* "name-list" */
 		this.clearTable;
-		let selected_user = this.optValue("name-list");
+		let selected_user = this.optValue(listName);
 		this.Users = this.db.collection('Enterprises').doc(this.EnterpriseID).collection('Participants', ref => ref.
 			where('name', '==', selected_user)
 		).valueChanges();
@@ -194,8 +219,8 @@ export class ReportsService {
 		});
 	}
 
-	clearTable() {
-		var table = (<HTMLTableElement>document.getElementById("tableList"));
+	clearTable(TbId) {
+		var table = (<HTMLTableElement>document.getElementById(TbId));
 		if (table.rows.length > 1) {
 			for (var i = table.rows.length - 1; i > 0; i--) {
 				table.deleteRow(i);
@@ -229,10 +254,11 @@ export class ReportsService {
 		}
 	}
 
-	timespent(EntID, actType, actCateg, start, end, Actions) {
-
+	timespent(EntID, actType, actCateg, start, end, Actions, TbId) {
+		console.log(TbId);
+		
 		var arrayall = Array();
-		const tableList = document.querySelector('#tableList');
+		let tableList = document.querySelector(TbId);
 		var rowCnt = 1;
 
 		// create element and render table
@@ -317,11 +343,11 @@ export class ReportsService {
 		});
 	}//rtimespent closing bracket
 
-	activitylog(EntID, actType, actCateg, start, end, Actions) {
+	activitylog(EntID, actType, actCateg, start, end, Actions, TbId) {
 
 		var Arr_All = Array();
 		var arrayall = Array();
-		const tableList = document.querySelector('#tableList');
+		let tableList = document.querySelector(TbId);
 
 		function push_elements(doc, sd, ed, numMonth) {
 			var wrkHrs = doc.workHours
@@ -433,10 +459,10 @@ export class ReportsService {
 
 	} //ractivitylog closing bracket
 
-	OS_Actions(EntID, actType, actCateg, start, end, Actions) {
+	OS_Actions(EntID, actType, actCateg, start, end, Actions, TbId) {
 
 		var arrayall = Array();
-		const tableList = document.querySelector('#tableList');
+		let tableList = document.querySelector(TbId);
 		var rowCnt = 1;
 
 		// create element and render table
@@ -538,10 +564,10 @@ export class ReportsService {
 
 	}// rsosactions taken from rtimespent closing bracket
 
-	OS_Tasks(EntID, actType, actCateg, DateAsAt, Tasks) {
+	OS_Tasks(EntID, actType, actCateg, DateAsAt, Tasks, TbId) {
 
 		var arrayall = Array();
-		const tableList = document.querySelector('#tableList');
+		let tableList = document.querySelector(TbId);
 		var rowCnt = 1;
 
 		// create element and render table
