@@ -32,7 +32,7 @@ export class PopupComponent implements OnInit {
   myData: ParticipantData
 
   
-  myDocment: AngularFirestoreDocument<{}>;
+  myDocument: AngularFirestoreDocument<{}>;
   userProfile: Observable<coloursUser>;
   userData: coloursUser;
 
@@ -64,8 +64,8 @@ export class PopupComponent implements OnInit {
     this.modalService.open(content, { centered: true });
   }
   dataCall(){
-    this.myDocment = this.afs.collection('Users').doc(this.userId);
-    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+    this.myDocument = this.afs.collection('Users').doc(this.userId);
+    this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
@@ -79,8 +79,42 @@ export class PopupComponent implements OnInit {
         bus_email: userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationalId: userData.nationalId,
+        nationality: userData.nationality,
       }
+
+      if (userData.address == "" || userData.address == null || userData.address == undefined) {
+        userData.address = ""
+      } else {
+
+      }
+
+      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ""
+      } else {
+
+      }
+
+      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ""
+      } else {
+
+      }
+
+      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ""
+      } else {
+
+      }
+
+      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ""
+      } else {
+
+      }
+      
       this.myData = myData;
       this.userData = userData;
     });

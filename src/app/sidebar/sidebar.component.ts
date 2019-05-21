@@ -33,42 +33,63 @@ export const ROUTES: RouteInfo[] = [{
         type: 'link',
         icontype: 'nc-icon nc-bank'
     },{
+        path: '/notebook',
+        title: 'Notebook',
+        type: 'link',
+        icontype: 'fa fa-pied-piper-alt',
+    },{
         path: '/calendar',
-        title: 'Tasks 360',
+        title: 'Tasks 24/7',
+        type: 'link',
+        icontype: 'fa fa-codiepie',
+    }, {
+        path: '/meeting-assistant',
+        title: 'Meeting Assistant',
+        type: 'link',
+        icontype: 'fa fa-users',
+    }, {
+        path: '/document-manager',
+        title: 'Document Manager',
         type: 'link',
         icontype: 'nc-icon nc-box',
-    },{
-        path: '/enterprises',
-        title: 'Company',
-        type: 'sub',
-        icontype: 'nc-icon nc-layout-11',
-        children: [
-            { path: 'company-register', title: 'Enterprise Register', ab: 'ER' },
-            { path: 'join-enterprise', title: 'Join Enterprise', ab: 'JP' },
-            { path: 'create', title: 'Create Enterprise', ab: 'CE' },
-            // { path: 'enterprise-projects', title: 'Enterprise projects', ab: 'UP' }
-        ]
-    },{
-        path: '/projects',
-        title: 'Projects',
-        type: 'sub',
-        icontype: 'nc-icon nc-book-bookmark',
-        children: [
-            { path: 'management', title: 'Projects Register', ab: 'PR' },
-            { path: 'join-project', title: 'Join Project', ab: 'JP' },
-            { path: 'p-create', title: 'Create Project', ab: 'CP' },
-        ]
-    },{
-        path: '/tasks',
-        title: 'tasks',
-        type: 'link',
-        icontype: 'nc-icon nc-box'
     }, {
-        path: '/messages',
-        title: 'Messages',
+        path: '/reporting-assistant',
+        title: 'Reporting Assistant',
         type: 'link',
-        icontype: 'nc-icon nc-email-85'
-    }
+        icontype: 'fa fa-black-tie',
+    },
+    // {
+    //     path: '/enterprises',
+    //     title: 'Company',
+    //     type: 'sub',
+    //     icontype: 'nc-icon nc-layout-11',
+    //     children: [
+    //         { path: 'company-register', title: 'Enterprise Register', ab: 'ER' },
+    //         { path: 'join-enterprise', title: 'Join Enterprise', ab: 'JP' },
+    //         { path: 'create', title: 'Create Enterprise', ab: 'CE' },
+    //         // { path: 'enterprise-projects', title: 'Enterprise projects', ab: 'UP' }
+    //     ]
+    // },{
+    //     path: '/projects',
+    //     title: 'Projects',
+    //     type: 'sub',
+    //     icontype: 'nc-icon nc-book-bookmark',
+    //     children: [
+    //         { path: 'management', title: 'Projects Register', ab: 'PR' },
+    //         { path: 'join-project', title: 'Join Project', ab: 'JP' },
+    //         { path: 'p-create', title: 'Create Project', ab: 'CP' },
+    //     ]
+    // },{
+    //     path: '/tasks',
+    //     title: 'tasks',
+    //     type: 'link',
+    //     icontype: 'nc-icon nc-box'
+    // }, {
+    //     path: '/messages',
+    //     title: 'Messages',
+    //     type: 'link',
+    //     icontype: 'nc-icon nc-email-85'
+    // }
 ];
 
 @Component({
@@ -132,7 +153,10 @@ export class SidebarComponent {
     }
 
     logout() {
-        this.afAuth.auth.signOut();
+        // this.afAuth.auth.signOut();
+        this.afAuth.auth.signOut().then(()=>{
+            this.router.navigate(['./pages/login'])
+        })
         // this.router.navigate(['./pages/login'])
     }
 

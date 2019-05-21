@@ -131,7 +131,8 @@
                       </tr>
                       <tr>
                         <td> <input class="form-control" placeholder="Add Department" type="text" [(ngModel)]="dpt.name"></td>
-                        <td>{{ today }}</td>
+                        <td></td>
+                        <!-- <td>{{ today }}</td> -->
                         <td class="">
                           <button class="btn-primary btn-link" (click)="save(dpt)">save</button>
                         </td>
@@ -296,7 +297,7 @@
                                 <label class="col-md-3 col-form-label">Champion</label>
                                 <div class="col-md-8">
                                   <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
-                                    {{(selectedParticipant)?.name }}
+                                    {{ (selectedParticipant)?.name }}
                                     <button type="text" name="taskChampion" class="btn btn-icon primary btn-link " (click)="toggleUsersTable(); toggleChamp()">
                                       <i class="fa fa-edit fa-fw"></i>
                                     </button>
@@ -473,9 +474,9 @@
                                     <code>Select a Champion</code>
                                     <table class="table">
                                       <tbody class="">
-                                        <tr *ngFor="let stuff of companyStuff | async ">
-                                          <td>{{ stuff.name }}</td>
-                                          <td><button class="primary btn-link" (click)="selectColoursUser(stuff)"> select </button></td>
+                                        <tr *ngFor="let staff of companyStaff | async ">
+                                          <td>{{ staff.name }}</td>
+                                          <td><button class="primary btn-link" (click)="selectColoursUser(staff)"> select </button></td>
                                         </tr>
                                       </tbody>
                                     </table>

@@ -7,9 +7,9 @@ dataCall(){
 
 
 
-this.myDocment = this.afs.collection('Users').doc(this.userId);
-let myCompanies = this.myDocment.collection('myenterprises').valueChanges;
-let myProjects = this.myDocment.collection('projects').valueChanges;
+this.myDocument = this.afs.collection('Users').doc(this.userId);
+let myCompanies = this.myDocument.collection('myenterprises').valueChanges;
+let myProjects = this.myDocument.collection('projects').valueChanges;
 let noCompanies = 0;
 let noProjects = 0;
 noProjects = myProjects.length;
@@ -22,7 +22,7 @@ console.log('No of my projects' + ' ' + myProjects.length);
 let pc = (noCompanies + noProjects);
 let ff
 
-this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
   const data = a.payload.data() as coloursUser;
   const id = a.payload.id;
   return { id, ...data };

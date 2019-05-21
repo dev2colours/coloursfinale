@@ -79,7 +79,7 @@ export class JoinEnterpriseComponent {
   userDetail: Observable<employeeData>;
 
   userProfile: Observable<coloursUser>;
-  myDocment: AngularFirestoreDocument<{}>;
+  myDocument: AngularFirestoreDocument<{}>;
   userData: coloursUser;
 
   constructor(private es: EnterpriseService, public afAuth: AngularFireAuth, private is: InitialiseService, public router: Router, private afs: AngularFirestore) {
@@ -239,11 +239,17 @@ export class JoinEnterpriseComponent {
     this.showSearch = true;
   }
 
-  search(testVariavle, x){
+  clearSearchData() {
+    this.searchData = "";
+  }
+
+  search(testVariavle, x:string){
+
+    let xCapitalized = x.charAt(0).toUpperCase() + x.slice(1)
     // this.viewEnterprises(testVariavle, x);
     this.minimizeSidebar();
-    console.log(testVariavle + " " + x);
-    this.viewEnterprises(testVariavle, x);
+    console.log(testVariavle + " " + xCapitalized);
+    this.viewEnterprises(testVariavle, xCapitalized);
   }
 
   viewEnterprises(checkVariable, testData ) {
@@ -325,7 +331,6 @@ export class JoinEnterpriseComponent {
 
     console.log(this.employeeData);
     
-
     let me: any;
     me = this.myData;
     me.company = this.selectedCompany;
@@ -339,7 +344,7 @@ export class JoinEnterpriseComponent {
     console.log('check participants array,if updated' + this.selectedCompany.participants)
     this.afs.collection('/Users').doc(partId).collection('enterprisesRequested').doc(companyId).set(this.newEnterprise);
     this.afs.collection('Enterprises').doc(companyId).collection('Requests').doc(partId).set(me);
-    this.afs.collection('/Users').doc(this.newEnterprise.byId).collection('joinEnterprisesRequests').doc(companyId).set(this.newEnterprise);
+    // this.afs.collection('/Users').doc(this.newEnterprise.byId).collection('joinEnterprisesRequests').doc(companyId).set(this.newEnterprise);
     this.afs.collection('/Users').doc(this.newEnterprise.byId).collection('EnterprisesRequests').doc(partId).set(me);
   })
 
@@ -366,9 +371,9 @@ export class JoinEnterpriseComponent {
 
   dataCall(){
 
-    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+    this.myDocument = this.afs.collection('Users').doc(this.user.uid);
 
-    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+    this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
@@ -381,12 +386,48 @@ export class JoinEnterpriseComponent {
         email: this.user.email,
         bus_email: userData.bus_email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        phoneNumber: userData.phoneNumber,
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationality: userData.nationality,
+        nationalId: userData.nationalId
+
       }
+
+      if (userData.address == "" || userData.address == null || userData.address == undefined) {
+        userData.address = ""
+      } else {
+
+      }
+
+      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ""
+      } else {
+
+      }
+
+      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ""
+      } else {
+
+      }
+
+      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ""
+      } else {
+
+      }
+
+      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ""
+      } else {
+
+      }
+
       this.myData = myData;
       this.userData = userData;
-    });
+    })
+    
     this.enterprises = this.afs.collection<Enterprise>('Enterprises').snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Enterprise;
@@ -395,6 +436,10 @@ export class JoinEnterpriseComponent {
       })),      
     );
 
+  }
+
+  saveDpt(department:Department){
+    department
   }
 
   OnInit(){

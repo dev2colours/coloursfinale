@@ -71,7 +71,7 @@ export class TimesheetComponent implements OnInit {
   mytime: number;
   selectedTest: workItem;
   myDiaryItems: any[];
-  myDocment: AngularFirestoreDocument<{}>;
+  myDocument: AngularFirestoreDocument<{}>;
   userProfile: Observable<coloursUser>;
   userData: coloursUser;
   actNumber: number;
@@ -311,7 +311,7 @@ export class TimesheetComponent implements OnInit {
     });
 
     if (item.companyId != "") {
-      let championRef = this.afs.collection('Users').doc(champId).collection('enterprises').doc(item.companyId)
+      let championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(item.companyId)
         .collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
       // championRef.collection('actuals').add(actual);
 
@@ -420,7 +420,11 @@ export class TimesheetComponent implements OnInit {
 
   unPlannedTAsk(unplannedTask: workItem) {
     let champId = this.userId;
+    let selectedWork = true;
+
     console.log(unplannedTask);
+    unplannedTask.selectedWork = selectedWork;
+    // unplannedTask.start = String(this.nHrs + this.nMin);
     unplannedTask.startDate = moment(new Date(), 'MM-DD-YYYY').format('L');
     unplannedTask.endDate = moment(new Date(), 'MM-DD-YYYY').format('L');
     unplannedTask.startDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
@@ -442,7 +446,7 @@ export class TimesheetComponent implements OnInit {
       allMyActionsRef.doc(newActionId).update({ 'id': newActionId });
     })
     console.log(unplannedTask);
-    this.item = { uid: "", id: "", name: "", unit: "", quantity: 0, selectedWork: false, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "" };
+    this.item = { uid: "", id: "", name: "", unit: "", quantity: 0, selectedWork: false, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
   }
 
   aclear(){
@@ -451,9 +455,24 @@ export class TimesheetComponent implements OnInit {
     // this.selectedAction = this.is.getActionItem();
   }
 
+  setDiary(e: { target: { checked: any; }; }, action: workItem) {
+
+    if (e.target.checked) {
+      let selectedWork = true;
+      console.log(action.name + '' + 'action checked');
+
+      this.myDocument.collection<workItem>('myStandards').doc(action.id).update({ 'selectedWork': selectedWork });
+    } else {
+      console.log(action.name + '' + 'action unchecked');
+
+      let selectedWork = false;
+      this.myDocument.collection<workItem>('myStandards').doc(action.id).update({ 'selectedWork': selectedWork });
+    }
+  }
+
   dataCall() {
-    this.myDocment = this.afs.collection('Users').doc(this.userId);
-    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+    this.myDocument = this.afs.collection('Users').doc(this.userId);
+    this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
@@ -467,8 +486,42 @@ export class TimesheetComponent implements OnInit {
         bus_email: userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationality: userData.nationality,
+        nationalId: userData.nationalId,
       }
+
+      if (userData.address == "" || userData.address == null || userData.address == undefined) {
+        userData.address = ""
+      } else {
+
+      }
+
+      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ""
+      } else {
+
+      }
+
+      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ""
+      } else {
+
+      }
+
+      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ""
+      } else {
+
+      }
+
+      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ""
+      } else {
+
+      }
+
       this.myData = myData;
       this.userData = userData;
     });
@@ -476,7 +529,7 @@ export class TimesheetComponent implements OnInit {
     let currentDate = moment(new Date()).format('L');;
     let today = moment(new Date(), "YYYY-MM-DD");
     console.log(currentDate);
-    let userDocRef = this.myDocment;
+    let userDocRef = this.myDocument;
     this.viewActions = userDocRef.collection<workItem>('WeeklyActions'
     // , ref => ref
     // .where("startDate", '==', currentDate)

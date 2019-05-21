@@ -15,6 +15,7 @@ export interface Project {
     sector: string,
     champion: ParticipantData,
     id: string,
+    completion: string,
 }
 
 export interface projectCompDetail { id: string, name: string };
@@ -23,6 +24,7 @@ export interface abridgedBill {
     projectName: string, companyId: string, companyName: string, totalAmount: number,
     createdOn: string, UpdatedOn: string
 };
+
 export interface workItem {
     id: string, uid: string, name: string, unit: string, quantity: number, rate: number, amount: number, billID: string,
     billName: string, projectId: string, projectName: string, byId: string, by: string, createdOn: string,
@@ -30,18 +32,18 @@ export interface workItem {
     startWeek: string, startDay: string, startDate: string, endDay: string, endDate: string, endWeek: string, taskName: string,
     taskId: string, companyName: string, companyId: string, champion: ParticipantData, participants: [ParticipantData],
     departmentName: string, departmentId: string, classification: classification, type: string, targetQty: number,
-    classificationName: string, classificationId: string, selectedWork: boolean, workHours: [workHours]
- } ;
+    classificationName: string, classificationId: string, selectedWork: boolean, workHours: [workHours], section: Section,
+    actualStart: string, actualEnd: string, Hours: string
+ };
 
 export interface Section {
-    id: string, no: number, name: string, projectId: string, projectName: string, companyId: string, companyName: string, Bills: [abridgedBill]
+    id: string, no: number, name: string, projectId: string, projectName: string, companyId: string, companyName: string, Bills: [abridgedBill],
 }
 
-
 export interface workHours {
-    name: string;
-    action: string;
-    actionId: string;
-    hours: number,
-    time: string;
+    name: string; action: string; actionId: string; hours: number, time: string;
 } 
+
+export interface setTime {
+    name: string; id: string;
+}

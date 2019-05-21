@@ -6,11 +6,17 @@
                     <div class="nav-tabs-navigation" style="margin-bottom: 0px;">
                         <div class="nav-tabs-wrapper">
                             <ul id="tabs" class="nav nav-tabs" role="tablist">
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="nav-link active" data-toggle="tab" href="#project" role="tab" aria-expanded="true">Projects</a>
+                                </li> -->
+                                <!-- <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#company" role="tab" aria-expanded="false">Enterprise</a>
+                                </li> -->
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" routerLink="/projects/p-create" role="tab" aria-expanded="true">Projects</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#company" role="tab" aria-expanded="false">Enterprise</a>
+                                    <a class="nav-link" data-toggle="tab" routerLink="/enterprises/create" role="tab" aria-expanded="false">Enterprise</a>
                                 </li>
                             </ul>
                         </div>
@@ -110,7 +116,8 @@
                                                         <!-- <button type="submit" style="padding-right:0em" class="pull-left primary btn-link" routerLink="/join-project">Join a Project</button> -->
                                                     </div>
                                                     <div class="col-md-1 mr-auto">
-                                                        <button type="submit" (click)="testProjectFilds(project, typeSet, setCompany, setChampion)" name="enterprise_sector" class="btn-link">Next</button>
+                                                        <button type="submit" (click)="testProjectFilds(project, typeSet, setCompany, setChampion)"
+                                                         name="enterprise_sector" class="btn-link">Next</button>
                                                     </div><!-- (click)="saveProject()" -->
                                                 </div>
                                             </div>
@@ -195,12 +202,13 @@
                                     <div *ngIf="firstPage" class="col-md-10 ml-auto mr-auto">
                                         <div class="card-body">
                                             <div class="row">
-                                                <label class="col-md-3 col-form-label">Company Name</label>
+                                                <label class="col-md-3 col-form-label">Enterprise Name</label>
                                                 <div class="col-md-9">
                                                     <div class="form-group">
                                                         <input type="text" [(ngModel)]="newEnterprise.name" name="enterprise_name"
                                                             class="form-control" placeholder="e.g..Bob Corp">
                                                     </div>
+                                                    <p *ngIf="entName" class="category text-danger pull-right"><small>Enterprise name required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -210,6 +218,7 @@
                                                         <input type="text" [(ngModel)]="newEnterprise.location" name="enterprise_location"
                                                             class="form-control" placeholder="e.g..Mutare">
                                                     </div>
+                                                <p *ngIf="entLocation" class="category text-danger"><small>Locarion required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -219,6 +228,7 @@
                                                         <input type="text" [(ngModel)]="newEnterprise.sector" class="form-control"
                                                             placeholder="e.g..Transport">
                                                     </div>
+                                                    <p *ngIf="entSector" class="category text-danger"><small>Sector required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -226,6 +236,7 @@
                                                 <div class="col-md-9">
                                                     <tag-input [(ngModel)]='serviceTags' theme='minimal'></tag-input>
                                                 </div>
+                                                <p *ngIf="entServices" class="category text-danger"><small>Services required</small></p>
                                             </div>
                                         </div>
                                         <div class="card-footer ">
@@ -246,6 +257,17 @@
                                                         <input type="text" [(ngModel)]="newEnterprise.telephone" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. 06 66666666">
                                                     </div>
+                                                    <p *ngIf="telMsg" class="category text-danger pull-right"><small>Telephone required</small></p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label">Mobile</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <input type="text" [(ngModel)]="compUser.phoneNumber" name="enterprise_location" class="form-control"
+                                                            placeholder="e.g. +263778880000">
+                                                    </div>
+                                                    <p *ngIf="mobileMsg" class="category text-danger"><small>Your Mobile required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -255,6 +277,7 @@
                                                         <input type="text" [(ngModel)]="newEnterprise.address" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. House#, street, location ,Town">
                                                     </div>
+                                                    <p *ngIf="addressMsg" class="category text-danger"><small>Address required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -264,15 +287,17 @@
                                                         <input type="email" [(ngModel)]="compUser.bus_email" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. name@bus_email.com">
                                                     </div>
+                                                    <p *ngIf="emailMsg" class="category text-danger"><small>Email required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <label class="col-md-3 col-form-label">Nation</label>
                                                 <div class="col-md-9">
                                                     <div class="form-group">
-                                                        <input type="text" [(ngModel)]="compUser.nation" name="enterprise_location"
+                                                        <input type="text" [(ngModel)]="compUser.nationality" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. Zimbabwe">
                                                     </div>
+                                                    <p *ngIf="countryMsg" class="category text-danger"><small>Country required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -282,8 +307,10 @@
                                                         <input type="text" [(ngModel)]="compUser.nationalId" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. 08-1112389 N13">
                                                     </div>
+                                                    <p *ngIf="nidMsg" class="category text-danger pull-right"><small>National ID required</small></p>
                                                 </div>
                                             </div>
+
                                             <!-- <div class="row">
                                                 <label class="col-md-3 col-form-label">Tax Clearance Doc</label>
                                                 <div class="col-md-9">
@@ -299,7 +326,8 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <button type="submit" name="nextBtn" (click)="bckPage()" class="btn-link text-info">Back</button>                                                    
-                                                    <button type="submit" (click)="saveEnterprise()" name="enterprise_sector" class="btn-link text-info">Save company</button>
+                                                    <!-- <button type="submit" (click)="saveEnterprise()" name="enterprise_sector" class="btn-link text-info">Save company</button> -->
+                                                    <button type="submit" (click)="testFileds()" name="enterprise_sector" class="btn-link text-info">Save company</button>
                                                 </div>
                                             </div>
                                         </div>

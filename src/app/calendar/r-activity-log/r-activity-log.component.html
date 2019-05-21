@@ -1,0 +1,31 @@
+<div class="main-content">
+
+    <div style="text-align:left">
+        <img alt="Southland Logo" src="/src/app/southland-logo.jpg">
+    </div>
+    
+    <!-- Table heading -->
+    <h1 id="currUser"></h1>
+
+    <h3>Time Sheet Report for the period from <span>
+        <!-- placeholder will not work, so stuck with dd----yyyyy -->
+        <input type="date" id="startdate">
+    </span> to <span>
+        <input type="date" id="enddate">
+    <button (click)="rService.ractivitylogshow()">Generate report for selected period</button>
+    </span></h3>
+
+    <!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
+    <!-- button (click)="rService.clearTable()">Clear table</button> -->
+    <!-- Table rows and headings only -->
+    <table id="tableList">
+        <!-- headings -->
+        <tr>
+            <th align="left">Activity</th>
+            <th align="left">Task Name</th>
+            <th align="left">Start Date</th>
+            <th align="left">End Date</th>
+            <th>Hours Spent</th>
+        </tr>
+    </table>
+</div>

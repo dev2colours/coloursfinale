@@ -3,13 +3,18 @@
     <div class="col-md-12">
       <div class="card">
         <div class="row">
-          <div class="col-md-5">
+          <div class="col-md-10">
             <div class="card-header" *ngIf="afAuth.user | async as user" style=" margin-top: -2.5em;">
-              <h4 class="card-category clrs-h1"><!-- style="height: 28px; font-size: 8;" -->
+              <!-- <h4 class="card-category clrs-h1-font"> -->
+              <h4 class="card-category clrs-h1-font"><!-- style="height: 28px; font-size: 8;" clrs-h4-font -->
                 Hi : {{ user.displayName }}
                 <!-- Hi {{ myData.name }} -->
               </h4>
             </div>
+          </div>
+          <div class="col-md-2">
+            <!-- <button class="btn-link btn-magnify" (click)="Update()">Update</button> -->
+            <button class="btn-link btn-magnify" (click)="update2()">Update</button>
           </div>
         </div>
         <div class="card-body">
@@ -37,7 +42,7 @@
                       <a class="nav-link" href="#reports" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Reporting</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link nav-colors" href="#popups" (click)="minimizeSidebar();" role="tab" data-toggle="tab">Popup</a>
+                      <a class="nav-link nav-colors" href="#popups" (click)="minimizeSidebar();" role="tab" data-toggle="tab">Diary</a>
                     </li>
                   </ul>
                 </div>
@@ -50,70 +55,72 @@
                     <div class="col-xs-3 col-sm-4 dash-col-left">
                       <div class="card card-category">
                         <div class="btn-magnify">
-                          <div class="row col-xs-5" style="margin-left:1em; padding-bottom: -1em ">
-                            <div class="pull-left card-category clrs-h1">
+                          <div class="row col-md-12" style="margin-left:1em; padding-bottom: -1em ">
+                            <div class="pull-left card-category clrs-h1-font">
                               <a>
                                 <i class="nc-icon nc-palette"></i> Colours Personal</a>
                             </div>
                           </div>
-                          <div class="pull-left" style="margin-left:2em;padding-top: -1em; color: steelblue ">
+                          <div class="pull-left col-md-10" style="margin-left:1em;padding-top: -1em; color: steelblue ">
                             <a>My Diary Today</a>
                           </div>
                           <div class="spacer" style="height: 2.4em;"></div>
                           <div class="row" style="height: 100px" >
                             <div  id="container">
-                              <div class="content container scroll-em" *ngIf="showActions">
+                              <!-- <div class="content container scroll-em" *ngIf="showActions"> -->
+                              <div class="content container scroll-em" *ngIf="myActionItems.length != 0">
                                 <ol>
                                   <!-- <li style="color:lightgrey" class="mr-auto ml-auto" *ngFor="let event of theseTasks"><a>{{ event.name }}</a><br><small class="label text-success"> {{ event.when }}</small>
-                                  </li> -->
-                                  <!-- <li class="" style="color:steelblue" *ngFor="let event of theseTasks"> -->
-                                  <!-- <li class="" style="color:steelblue" *ngFor="let event of viewActions | async"> -->
+                                  </li> ->
+                                  <!- <li class="" style="color:steelblue" *ngFor="let event of theseTasks"> ->
+                                  <!- <li class="" style="color:steelblue" *ngFor="let event of viewActions | async"> -->
                                   <li class="" style="color:steelblue" *ngFor="let event of myActionItems">
-                                    <div class="row">
-                                      <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em">
+                                    <!-- <div class="row"> -->
+                                      <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em"><!-- margin-left:1.0em; -->
                                         <a style="color:slategrey">
                                           {{ event.name }}<span class="label text-warning"> {{ event.when }}</span>
                                         </a>
                                       </div>
-                                    </div>
+                                    <!-- </div> -->
                                   </li>
                                 </ol>
                               </div>
-                              <div class="content container scroll-em" *ngIf="hideActions">
+                              <!-- <div class="content container scroll-em" *ngIf="hideActions"> -->
+                              <div class="content container scroll-em" *ngIf="myActionItems.length === 0">
                                 <div class="row">
                                   <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
                                     <ol>
                                       <li>
-                                        <div class="row">
+                                        <!-- <div class="row"> -->
                                           <a style="color:lightgrey">
                                             <span class="col-md-9 text-info">Meeting</span>
                                             <span class="col-md-3 mr-auto number text-warning"> 1000 hrs</span>
                                           </a>
-                                        </div>
+                                        <!-- </div> -->
                                       </li>
                                       <li>
-                                        <div class="row">
+                                        <!-- <div class="row"> -->
                                             <a style="color:lightgrey">
                                               <span class="col-md-9 text-info">Email</span>
                                               <span class="col-md-3 mr-auto ml-auto number text-success">1230 Hrs</span>
                                             </a>
-                                        </div>
+                                        <!-- </div> -->
                                       </li>
                                       <li>
-                                        <div class="row">
+                                        <!-- <div class="row"> -->
                                           <a style="color:lightgrey">
                                             <span class="col-md-9 text-info">Skype</span>
                                             <span class="col-md-3 mr-auto ml-auto label text-success"> 1400 Hrs </span>
                                           </a>
-                                        </div>
+                                        <!-- </div> -->
                                       </li>
                                       <li>
-                                        <div class="row ">
+                                        <!-- <div class="row "> -->
                                           <a style="color:lightgrey">
                                             <span class="col-md-9 text-info">Scheduling</span>
                                             <span class="col-lg-3 mr-auto ml-auto label text-success"> 0800 Hrs </span>
                                           </a>
-                                        </div>
+                                        <!-- </div> -->
                                       </li>
                                     </ol>
                                   </div>
@@ -146,14 +153,15 @@
                     <div class="col-xs-3 col-sm-4 dash-col">
                       <div class="card card-category">
                         <div class="btn-magnify">
-                          <div class="row col-xs-5" style="margin-left:1em; padding-bottom: -1em ">
-                            <div class="pull-left card-category clrs-h1">
+                          <div class="row col-md-12" style="margin-left:1em; padding-bottom: -1em ">
+                            <div class="pull-left card-category clrs-h1-font">
                               <a>
-                                <i class="fa fa-tasks fa-fw"></i> Colours Projects</a>
+                                <i class="fa fa-folder-o [&#xf114;]"></i> Colours Projects</a>
                             </div>
                           </div>
                           <!-- <hr class="line" style="padding-bottom:0em; padding-top: -1em"> -->
-                          <div class="pull-left card-category" style="margin-left:2em;padding-top: -1em; color: steelblue; ">
+                          <!-- <div class="pull-left col-md-12 card-category" style="margin-left:2em;padding-top: -1em; color: steelblue; "> -->
+                          <div class="pull-left col-md-12" style="margin-left:1em;padding-top: -1em; color: steelblue; ">
                             <a>My Current Priority Projects</a>
                           </div>
                           <div class="spacer" style="height:2.4em;"></div>
@@ -169,32 +177,32 @@
                                 <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
                                   <ol>
                                     <li>
-                                      <div class="row">
+                                      <!-- <div class="row"> -->
                                         <a style="color:lightgrey">
                                           <span class="col-md-12 text-info">Project 1</span>
                                         </a>
-                                      </div>
+                                      <!-- </div> -->
                                     </li>
                                     <li>
-                                      <div class="row">
+                                      <!-- <div class="row"> -->
                                         <a style="color:lightgrey">
                                           <span class="col-md-12 text-info">Project 2</span>
                                         </a>
-                                      </div>
+                                      <!-- </div> -->
                                     </li>
                                     <li>
-                                      <div class="row">
+                                      <!-- <div class="row"> -->
                                         <a style="color:lightgrey">
                                           <span class="col-md-12 text-info">Project 3</span>
                                         </a>
-                                      </div>
+                                      <!-- </div> -->
                                     </li>
                                     <li>
-                                      <div class="row ">
+                                      <!-- <div class="row "> -->
                                         <a style="color:lightgrey">
                                           <span class="col-md-12 text-info">Project 4</span>
                                         </a>
-                                      </div>
+                                      <!-- </div> -->
                                     </li>
                                   </ol>
                                 </div>
@@ -226,14 +234,14 @@
                     <div class="col-xs-3 col-sm-4 ml-auto mar-auto dash-col-right">
                       <div class="card card-category">
                         <div class="btn-magnify">
-                          <div class="row col-xs-5" style="margin-left:2em; padding-bottom: -1em ">
-                            <div class="pull-left card-category clrs-h1">
+                          <div class="row col-md-12 col-xs-12" style="margin-left:2em; padding-bottom: -1em ">
+                            <div class="pull-left card-category clrs-h1-font">
                               <a>
-                                <i class="fa fa-briefcase fa-fw"></i> Colours Enterprise</a>
+                                <i class="nc-icon nc-globe-2"></i> Colours Enterprise</a>
                             </div>
                           </div>
                           <!-- <hr class="line" style="padding-bottom:0em; padding-top: -1em"> -->
-                          <div class="pull-left" style="margin-left:2em;padding-top: -1em; color: steelblue; ">
+                          <div class="pull-left col-md-12" style="margin-left:2em;padding-top: -1em; color: steelblue; ">
                             <a>High Priority Enterprise Tasks</a>
                           </div>
                           <!-- <div class="numbers" style="margin-left:1em; color:rgb(15, 4, 4)">High Priority Enterprise Tasks</div> -->
@@ -242,36 +250,36 @@
                             <div class="content">
                               <ol>
                                 <li>
-                                  <div class="row">
+                                  <!-- <div class="row"> -->
                                     <div class="col-xs-12" style="margin-left:4.0em">
                                       <a style="color:lightgrey" class="text-info">Planning
                                       </a>
                                     </div>
-                                  </div>
+                                  <!-- </div> -->
                                 </li>
                                 <li>
-                                  <div class="row">
+                                  <!-- <div class="row"> -->
                                     <div class="col-xs-12" style="margin-left:4.0em">
                                       <a style="color:lightgrey" class="text-info">Business Case
                                       </a>
                                     </div>
-                                  </div>
+                                  <!-- </div> -->
                                 </li>
                                 <li>
-                                  <div class="row">
+                                  <!-- <div class="row"> -->
                                     <div class="col-sm-12" style="margin-left:3.0em; margin-right:-1em">
                                       <a style="color:lightgrey" class="text-info">Design
                                       </a>
                                     </div>
-                                  </div>
+                                  <!-- </div> -->
                                 </li>
                                 <li>
-                                  <div class="row">
+                                  <!-- <div class="row"> -->
                                     <div class="col-sm-12" style="margin-left:3.0em; margin-right:-1em">
                                       <a style="color:lightgrey; margin-bottom: 0px;" class="text-info">Implementation
                                       </a>
                                     </div>
-                                  </div>
+                                  <!-- </div> -->
                                 </li>
                               </ol>                             
                             </div>
@@ -299,14 +307,14 @@
                 <div class="tab-pane" id="standards">
                   <div class="row">
                     <div class="col-md-12">
-                      <p class="card-category title clrs-h1" style=" color:darkslategray">My standards</p>
+                      <p class="card-category title clrs-h1-font" style=" color:darkslategray">My Standards</p>
                       <div class="card-content table-responsive table-full-width">
-                        <table class="table">
+                        <table class="table table-striped">
                           <thead>
                             <th>Name</th>
                             <th>Classification</th>
-                            <th>Repetition</th>
-                            <th></th>
+                            <th>Frequence</th>
+                            <!-- <th></th> -->
                           </thead>
                           <tbody>
                             <tr *ngFor="let std of standards | async">
@@ -335,7 +343,7 @@
                   <div class="col-md-12">
                     <!-- <div class="col-md-10 col-md-offset-1  "> -->
                       <div class="">
-                        <p class="clrs-h1" style="margin-top:0em; color:darkslategray">Setup Your Personal Account...</p>
+                        <p class="clrs-h1-font" style="margin-top:0em; color:darkslategray">Setup Your Personal Account...</p>
                         <p class="category" style="margin-top:-1em">Map out your main life activities.
                           <br>These are task classifications under which you do most of your daily activities</p>
                       </div>
@@ -404,7 +412,7 @@
                   <app-implementation></app-implementation>
                 </div>
                 <div class="tab-pane" id="reports">
-                  <p class="clrs-h1" style="margin-top:0em; color:darkslategray">Personal Report...</p>
+                  <p class="clrs-h1-font" style="margin-top:0em; color:darkslategray">Personal Report...</p>
 
                   <div class="col-md-12">
                     <div class="card">
@@ -428,802 +436,139 @@
                           </div>
                         </div>
                         <div id="my-tab-content" class="tab-content text-center">
+                          <!-- start Here -->
+                          
+                          
+                          
                           <div class="tab-pane active" id="personal" role="tabpanel" aria-expanded="true">
-                            <div class="row">
-                              <div class="col-md-9">
-                                <p class="text-left clrs-h4" style="color: darkslategray">Personal Details</p>
-                              </div>
-                              <div class="col-md-3">
-                                <button *ngIf="!editRpt" class="btn-link btn-magnify" (click)="editReport()">Edit</button>
-                                <button *ngIf="editRpt" class="btn-link btn-magnify" (click)="saveProfile(userData)">Save</button>
-                                <button *ngIf="editRpt" class="btn-link btn-magnify" (click)="returnReport()">Back</button>
-                              </div>
-                            </div>
-                            <div class="col-md-10">
-                              <div *ngIf="!editRpt" class="card-plain card-content">
-                                <div class="text-left na-p" style="margin-left:2em ">
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Full name </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9 card-category" style="color:black">: {{ (userData)?.name }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Gender </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9 card-category" style="color:black">: {{ (userData)?.gender }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Age </span>
-                                    <span class="col-sm-9">                                    
-                                      <span class="col-sm-9">: {{ (userData)?.age }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Profession </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9 card-category" style="color:black">: {{ (userData)?.profession.name }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Qualifications </span>
-                                    <span class="col-sm-9">
-                                      <a class="col-sm-9" *ngFor="let doc of (userData)?.qualifications">: {{ doc.display }} <br></a>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Body weight </span>
-                                    <span class="col-sm-9">
-                                    <span class="col-sm-9">: {{ (userData)?.bodyWeight }} Kg</span>                                      
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Body height </span>
-                                    <span class="col-sm-9">
-                                    <span class="col-sm-9">: {{ (userData)?.bodyHeight }} cm</span>                                      
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Body Mass Index </span>
-                                    <span class="col-sm-9">
-                                    <span class="col-sm-9">: {{ (userData)?.bodyMassIndex }} </span>                                      
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Industry Sector </span>
-                                    <span class="col-sm-9">                                      
-                                      <span class="col-sm-9">: {{ (userData)?.industrySector.name }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Assets </span>
-                                    <span class="col-sm-9">                                      
-                                      <a class="col-sm-9" *ngFor="let asset of (userData)?.personalAssets">: {{ asset.name }} <br></a>
-                                    </span>
-                                      <!-- <a *ngFor="let asset of (userData)?.personalAssets">: {{ asset.name }}
-                                         <span *ngIf="(userData.personalAssets),length > 1">,</span></a> -->
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Liabilities </span>
-                                      <!-- <a *ngFor="let item of (userData)?.personalLiabilities">: {{ item.name }} <br></a> -->
-                                      <!-- <a *ngFor="let item of (userData)?.personalLiabilities">: <span> {{ item.name }} </span></a> -->
-                                      <span class="col-sm-9">                                      
-                                        <a class="col-sm-9" *ngFor="let item of (userData)?.personalLiabilities">: {{ item.name }} <br></a>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Focus Factor</span>
-                                    <span class="col-sm-9">
-                                    <span class="col-sm-9">: {{ (userData)?.focusFactor }} </span>                                      
-                                    </span>
-                                  </span><br>
-                                </div>
-                              </div>
-
-                              <div *ngIf="editRpt" class="card-plain card-content">
-                                Edit and Save
-                                <div class="text-left na-p" style="margin-left:2em ">
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Full name </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9 card-category" style="color:black">{{ (userData)?.name }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Gender </span>
-                                      <span class="col-sm-9">
-                                        <input  type="text" class="form-control col-sm-9" name="userGender" [(ngModel)]="userData.gender" required (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
-                                          (blur)="focus1=false">
-                                      </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Date of Birth </span>
-                                      <span class="col-sm-9">
-                                        <input  type="test" class="form-control col-sm-9" placeholder="dd/mm/yyyy" name="userDob" [(ngModel)]="userData.dob" required (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
-                                          (blur)="focus1=false">
-                                      </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Profession </span>
-                                      <span class="col-sm-9">
-                                        <!-- <input  type="text" class="form-control col-sm-9" name="userGender" [(ngModel)]="userData.profession" required (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
-                                          (blur)="focus1=false"> -->
-                                          <ng-select [items]="professions" bindLabel="name" name="industrySector" placeholder="Select Period" [(ngModel)]="userData.profession"></ng-select>
-                                      </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Qualifications </span>
-                                      <span class="col-sm-9">
-                                        <tag-input [(ngModel)]='userData.qualifications' theme='minimal'></tag-input>
-
-                                        <!-- <input  type="text" class="form-control col-sm-9" name="sName" [(ngModel)]="userData.qualifications" required (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
-                                          (blur)="focus1=false"> -->
-                                      </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Body weight </span>
-                                    <div class="input-group col-md-8 col-sm-8">
-                                      <input  type="number" class="form-control col-sm-9" name="userWeight" [(ngModel)]="userData.bodyWeight" required (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
-                                          (blur)="focus1=false">
-                                      <div class="input-group-postpand" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
-                                        <span class="input-group-text"><small>Kg</small>
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Body height </span>
-                                    <div class="input-group col-md-8 col-sm-8">                                    
-                                      <input  type="number" class="form-control col-sm-9" name="userHeight" [(ngModel)]="userData.bodyHeight" required (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
-                                          (blur)="focus1=false">
-                                      <div class="input-group-postpand" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
-                                        <span class="input-group-text"><small>cm</small>
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Body Mass Index </span>
-                                    <!-- <span class="col-sm-9"> -->
-                                    <span class="col-sm-9">
-                                      <p type="number" class="form-control col-sm-9" name="userBmi" required (focus)="focus1=true" style="padding-top: 7px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
-                                        {{ userData.bodyMassIndex }}
-                                      </p>
-                                    </span>                                      
-                                    <!-- </span> -->
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Industry Sector </span>
-                                    <span class="col-sm-9">
-                                        <!-- <input  type="text" class="form-control col-sm-9" name="sName" [(ngModel)]="userData.sector" required (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
-                                          (blur)="focus1=false"> -->
-                                          <ng-select [items]="industrySectors" bindLabel="name" name="industrySector" placeholder="Select Period" [(ngModel)]="userData.industrySector"></ng-select>
-                                      </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Assets </span>
-                                      <span class="col-sm-9">
-                                        <!-- <input  type="text" data-toggle="modal" data-target="#myAssets" class="form-control col-sm-9" name="sName" [(ngModel)]="userData.assets" required (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
-                                          (blur)="focus1=false"> -->
-                                          <p type="text" *ngFor="let item of (userData)?.personalAssets" data-toggle="modal" data-target="#myAssets" class="form-control col-sm-9" name="userAssets" style="padding-top: 7px;padding-bottom: 0px; height: 32px;"
-                                          (blur)="focus1=false">{{ item.name }}</p>
-                                          <button *ngIf="!userData.personalLiabilities" data-toggle="modal" data-target="#myAssets" class="primary btn-link">Add assets</button>
-
-                                          <!-- <a *ngFor="let service of (userData)?.personalAssets">: {{ service.name }} <br></a> -->
-                                      </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Liabilities </span>
-                                      <span class="col-sm-9">
-                                        <p type="text" *ngFor="let item of (userData)?.personalLiabilities" data-toggle="modal" data-target="#myLiabilities" class="form-control col-sm-9" name="userLiabilities" style="padding-top: 7px;padding-bottom: 0px; height: 32px;"
-                                          (blur)="focus1=false">{{ item.name }}</p>
-
-                                        <button *ngIf="!userData.personalLiabilities" data-toggle="modal" data-target="#myLiabilities" class="primary btn-link">Add liabilities</button>
-
-
-                                      <!-- <a *ngFor="let service of (userData)?.personalLiabilities">: {{ service.name }} <br></a> -->
-
-                                      </span>
-                                  </span><br>
-                                </div>
-                              </div>
-                            </div>
-
                             <div class="col-md-12 ml-auto mr-auto">
                               <div class="row">
                                 <div class="col-md-6">
-                                  <p class="text-left title clrs-h4" style="color: darkslategray">My Time Sheet for each day</p>
-                                </div>
-                                <div class="col-md-6">
-                                  <div class="col-md-9">
-                                    <ng-select [items]="timesheetCollection" bindLabel="name" name="sPeriod" placeholder="Select Period" [(ngModel)]="selectedDate"></ng-select>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <button *ngIf="editRpt" class="btn-link btn-magnify">search</button>                                    
-                                  </div>
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../total-actions">Personal Details</a></span>
+                                  </p>
                                 </div>
                               </div>
-                              <div class="card-plain card-content table-responsive table-full-width">
-                                <table class="table">
-                                  <thead class="title clrs-h4 text-info">
-                                    <th class="text-left">Name</th>
-                                    <th>Start Time <small>(Hrs)</small></th>
-                                    <th>Finish Time <small>(Hrs)</small></th>
-                                    <th>Hours <small></small></th>
-                                  </thead>
-                                  <tbody>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Meeting: Project A</td>
-                                      <td class="table td-clrs">0800</td>
-                                      <td class="table td-clrs">1045</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">0245</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="table td-clrs">--------</td>
-                                      <td class="table td-clrs">--------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">-----</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="table td-clrs">--------</td>
-                                      <td class="table td-clrs">--------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">-----</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="table td-clrs">--------</td>
-                                      <td class="table td-clrs">--------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">------</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="table td-clrs">--------</td>
-                                      <td class="table td-clrs">--------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">-----</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Meeting: Project B</td>
-                                      <td class="table td-clrs">1400</td>
-                                      <td class="table td-clrs">1545</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">0145</td>
-                                    </tr>
-                                    <!-- <tr>
-                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray">Totals</td>
-                                      <td class="table td-clrs">{{ totalPlannedTime }}</td>
-                                      <td class="table td-clrs">{{ totalActualTime }}</td>
-                                      <td class="text-right table td-clrs">{{ totalVarience }}</td>
-                                    </tr> -->
-                                  </tbody>
-                                </table>
-                              </div>
-                              <small>Each time sheet must have a total 24 hours. (must include sleeping)</small>
                             </div>
-
-                            <div class="spacer" style="height: 2em"></div>
-
+                          
+                          
+                          
                             <div class="col-md-12 ml-auto mr-auto">
                               <div class="row">
                                 <div class="col-md-6">
-                                  <p class="text-left title clrs-h4" style="color: darkslategray">My Summerized Time Sheet as @</p>
-                                </div>
-                                <div class="col-md-6">
-                                  <div class="col-md-9">
-                                    <ng-select [items]="timesheetCollection" bindLabel="name" name="sPeriod" placeholder="Select Period"
-                                      [(ngModel)]="selectedSumDate"></ng-select>
-                                  </div>
-                                  <!-- <div class="col-md-3">
-                                    <button *ngIf="editRpt" class="btn-link btn-magnify">search</button>
-                                  </div> -->
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../timeSpent-report">Total time spent on an activity in a period</a></span>
+                                  </p>
                                 </div>
                               </div>
-                              <div class="card-plain card-content table-responsive table-full-width">
-                                <table class="table">
-                                  <thead class="title clrs-h4 text-info">
-                                    <th class="text-left">Classification</th>
-                                    <th class="text-right">Hours <small>(Hrs)</small></th>
-                                  </thead>
-                                  <tbody>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Work</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">1200</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Sleeping</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">0500</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Gym</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">0130</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">------</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">------</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Desing B</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">0200</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">2400</td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </div>
-                              <!-- <small>Each time sheet must have a total 24 hours. (must include sleeping)</small> -->
                             </div>
-
-                            <div class="spacer" style="height: 2em"></div>
-
+                          
+                          
+                          
                             <div class="col-md-12 ml-auto mr-auto">
                               <div class="row">
                                 <div class="col-md-6">
-                                  <p class="text-left title clrs-h4" style="color: darkslategray">My Work Time Sheet as @</p>
-                                </div>
-                                <div class="col-md-6">
-                                  <div class="col-md-9">
-                                    <ng-select [items]="timesheetCollection" bindLabel="name" name="sPeriod" placeholder="Select Period"
-                                      [(ngModel)]="selectedWorkDate"></ng-select>
-                                  </div>
-                                  <!-- <div class="col-md-3">
-                                    <button *ngIf="editRpt" class="btn-link btn-magnify">search</button>
-                                  </div> -->
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../activity-reportLog">Time sheet report in a period</a></span>
+                                  </p>
                                 </div>
                               </div>
-                              <div class="card-plain card-content table-responsive table-full-width">
-                                <table class="table">
-                                  <thead class="title clrs-h4 text-info">
-                                    <th class="text-left">Action Item</th>
-                                    <th class="text-right">Hours <small>(Hrs)</small></th>
-                                  </thead>
-                                  <tbody>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Meeting: Project A</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">01</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Document Department</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">02</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Assembly</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">01</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Reports</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">03</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">14</td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </div>
-                              <!-- <small>Each time sheet must have a total 24 hours. (must include sleeping)</small> -->
                             </div>
-
-                            <div class="spacer" style="height: 2em"></div>
-
+                          
+                          
+                          
                             <div class="col-md-12 ml-auto mr-auto">
                               <div class="row">
                                 <div class="col-md-6">
-                                  <p class="text-left title clrs-h4" style="color: darkslategray">My Cumulative Time Sheet for Period</p>
-                                </div>
-                                <div class="row col-md-6">
-                                  <div class="col-md-6">
-                                    <ng-select [items]="timesheetCollection" bindLabel="name" name="sPeriod" placeholder="Select Start"
-                                      [(ngModel)]="selectedStartDate"></ng-select>
-                                  </div>
-                                  <div class="col-md-6">
-                                    <ng-select [items]="timesheetCollection" bindLabel="name" name="sPeriod" placeholder="Select Last"
-                                      [(ngModel)]="selectedEndDate"></ng-select>
-                                  </div>
-                                  <!-- <div class="col-md-3">
-                                    <button *ngIf="editRpt" class="btn-link btn-magnify">search</button>
-                                  </div> -->
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../total-actions">My Time Sheet for each day</a></span>
+                                  </p>
                                 </div>
                               </div>
-                              <div class="card-plain card-content table-responsive table-full-width">
-                                <table class="table">
-                                  <thead class="title clrs-h4 text-info">
-                                    <th class="text-left">Action Item</th>
-                                    <th class="text-right" >Hours <small>(Hrs)</small></th>
-                                    <th class="text-right" style="padding-right:2em">%</th>
-                                  </thead>
-                                  <tbody>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Work</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">80</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">60</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">Sleeping</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">14</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">---</td>
-
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </div>
-                              <!-- <small>Each time sheet must have a total 24 hours. (must include sleeping)</small> -->
                             </div>
-                            
-                            <div class="spacer" style="height: 2em"></div>
-
+                          
+                          
+                          
                             <div class="col-md-12 ml-auto mr-auto">
-                              <!-- <div class="row"> -->
-                                <p class="text-left title clrs-h4" style="color: darkslategray">My Weekly Time Budget</p>
-                              <!-- </div> -->
-                              <div class="card-plain card-content table-responsive table-full-width">
-                                <table class="table">
-                                  <thead class="title clrs-h4 text-info">
-                                    <th class="text-left">Action Item</th>
-                                    <th class="text-right">Hours <small>(Hrs)</small></th>
-                                    <th>Action</th>
-                                  </thead>
-                                  <tbody>
-                                    <!-- <tr> -->
-                                    <tr *ngFor="let item of classifications | async">
-<!-- 
-                                      <td class="text-left table td-clrs">Work</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">80</td> -->
-
-                                      <td class="text-left table td-clrs">{{ item.name }}</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">{{ item.plannedTime }}</td>
-                                      <td class="text-center table td-clrs" style="padding-right:2em">
-                                      <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget">
-                                        <i class="fa fa-calendar-plus-o"></i>
-                                      </button>
-                                      </td>
-                                    </tr>
-                                    <!-- <tr>
-                                      <td class="text-left table td-clrs">Sleeping</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                      <td class="text-center table td-clrs" style="padding-right:2em">
-                                        <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget">
-                                        <i class="fa fa-calendar-plus-o"></i>
-                                      </button>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                      <td class="text-center table td-clrs" style="padding-right:2em">
-                                        <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget">
-                                          <i class="fa fa-calendar-plus-o"></i>
-                                        </button>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs">-----------</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">---</td>
-                                      <td class="text-center table td-clrs" style="padding-right:2em">
-                                        <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget">
-                                          <i class="fa fa-calendar-plus-o"></i>
-                                        </button>
-                                      </td>
-                                    </tr> -->
-                                    <tr>
-                                      <td class="text-left table td-clrs title clrs-h4" style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">168</td>
-                                    </tr>
-                                  </tbody>
-                                </table>
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../classification-log">My Summerized Time Sheet as @</a></span>
+                                  </p>
+                                </div>
                               </div>
-                              <!-- <small>Each time sheet must have a total 24 hours. (must include sleeping)</small> -->
                             </div>
-                            
-                            <div class="spacer" style="height: 2em"></div>
-
+                          
+                          
+                          
                             <div class="col-md-12 ml-auto mr-auto">
-                              <p class="text-left title clrs-h4" style = "color: darkslategray">Time Budget Actual vs Planned</p>
-                              <div class="card-plain card-content table-responsive table-full-width">
-                                <table class="table">
-                                  <thead class="title clrs-h4 text-info">
-                                    <th class="text-left">Name</th>
-                                    <th>Planned Time <small>(Hrs/week)</small></th>
-                                    <th>Actual Time <small>(Hrs/week)</small></th>
-                                    <th>Varience <small>(Hrs)</small></th>
-                                  </thead>
-                                  <tbody>
-                                    <tr *ngFor="let item of classifications | async">
-                                      <td class="text-left table td-clrs">{{ item.name }}</td>
-                                      <td class="table td-clrs">{{ item.plannedTime }}</td>
-                                      <td class="table td-clrs">{{ item.actualdTime }}</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em">{{ item.actualTime }}</td>
-                                    </tr>
-                                    <tr>
-                                      <td class="text-left table td-clrs title clrs-h4"  style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
-                                      <td class="table td-clrs" style = "border-bottom-style: double; border-top-color: black;border-bottom-color: black;">{{ totalPlannedTime }}</td>
-                                      <td class="table td-clrs" style = "border-bottom-style: double; border-top-color: black;border-bottom-color: black;">{{ totalActualTime }}</td>
-                                      <td class="text-right table td-clrs" style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">{{ totalVarience }}</td>
-                                    </tr>
-                                  </tbody>
-                                </table>
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">My Work Time Sheet as @</p>
+                                </div>
                               </div>
                             </div>
                             <div class="col-md-12 ml-auto mr-auto">
-                              <small>Make sure totals don't exceed total week hours (168 hrs)</small>
-                              <p class="text-left title clrs-h4" style = "color: darkslategray">Tasks</p>
-
-                              <div class="col-md-9 text-left na-p">
-                                Total Number of Tasks Im' Champion : {{ (tasksImChamp | async)?.length }} <br>
-                                <!-- Total Number of Tasks complete to Date: {{ (tasksComplete | async)?.length }}  or  <br> -->
-                                Total Number of Tasks complete to Date: {{ completeTasksRt }} %<br>
-                                Total Number of Enterprises Tasks: {{ (enterprisesTasks)?.length }} <br>
-                                Total Number of Projects Tasks: {{ (projectsTasks)?.length }} <br>
-                                Total Number of Tasks : {{ (allMyTasks | async)?.length }}
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">My Cumulative Time Sheet for Period
+                                  </p>
+                                </div>
                               </div>
-                              <br>
                             </div>
                             <div class="col-md-12 ml-auto mr-auto">
-                                <p class="text-left title clrs-h4" style = "color: darkslategray">Health Factor</p>
-                              <div class="col-md-9 text-left na-p">
-                                Total Hours spent on Health and Exercise per week: {{ (tasksImChamp | async)?.length }} <br>
-                                Ratio of health to total week hours: {{ completeTasksRt }} %<br>
-                              </div>
-                              <br>
-                              </div>
-                              <div class="col-md-12 ml-auto mr-auto">
-                                <p class="text-left title clrs-h4" style="color: darkslategray">Work Factor</p>
-                              <div class="col-md-9 text-left na-p">
-                                Total Hours spent on Work per week: {{ (tasksImChamp | async)?.length }} <br>
-                                Ratio of Work to total week hours: {{ completeTasksRt }} %<br>
-                              </div>
-                              <br>
+                              <p class="text-left title " style="color: darkslategray">My Weekly Time Budget</p>
                             </div>
                             <div class="col-md-12 ml-auto mr-auto">
-                                <p class="text-left" style="color: darkslategray"><span class="title clrs-h4">Net Worth</span> (<small>As to date</small>)</p>
-                              <div class="col-md-9 text-left na-p">
-                                Networth: {{ completeTasksRt }} %<br>
-                              </div>
-                              <br>
+                              <p class="text-left title " style="color: darkslategray">Time Budget Actual vs
+                                Planned</p>
                             </div>
                             <div class="col-md-12 ml-auto mr-auto">
-                                <p class="text-left title clrs-h4" style="color: darkslategray">Schedule of Outstanding Personal Tasks</p>
-                              <div class="col-md-9 text-left na-p">                              
-                                Total Hours spent on Work per week: {{ (tasksImChamp | async)?.length }} <br>
-                                Ratio of Work to total week hours: {{ completeTasksRt }} %<br>
-                              </div>
-                              <br>
+                              <p class="text-left title " style="color: darkslategray">Tasks</p>
+                              <!-- <br> -->
                             </div>
                             <div class="col-md-12 ml-auto mr-auto">
-                              <p class="text-left title clrs-h4" style="color: darkslategray">Personal Project Reports</p>
-                              <div class="col-md-9 text-left na-p">
-                                Total Number of Tasks complete to Date: {{ proRatio }} %<br>
-                                Total Number of Projects Tasks : {{ NoOfProjectsTasks }} <br>
-                                Revenue per Capital per each project you are involved:
-                                Project productivity Factor:
-                                <!-- Number of users project Tasks finished on or before deadline as a percentage all user project specific tasks that are planned to have been finished as at date ogf this matric -->
-                                List of all project outstanding Tasks as to date
-                                List of all project upcoming Tasks as to datein the next 4 weeks
-                                list all Projects you are involved
-                                percentage of user projects tasks timeously completed to all users project tasks
-
-                              </div>
-                              <br>
+                              <p class="text-left title " style="color: darkslategray">Health Factor</p>
+                              <!-- <br> -->
                             </div>
                             <div class="col-md-12 ml-auto mr-auto">
-                              <p class="text-left title clrs-h4" style="color: darkslategray">User`s Enterprise Internal Reports</p>
-                              <div class="col-md-9 text-left na-p">
-                                Percentage of user`s cost to the Company as a percentage of the company Revenue per Capital <br>
-                                Percentage of total tasks timeosly completed to total users enterprise tasks planned to have been finished to date <br>
-                                Daily work Time sheet report <br>
-                                List of user`s outstanding enterprise tasks as at date ofreport <br>
-                                List of user`s upcoming enterprise tasks as at date of report <br>
-                                Total Number of Tasks complete to Date: {{ compRatio }} %<br>
-                                Total Number of companies Tasks : {{ NoOfCompanyTasks }}
-                              </div>
-                              <br>
+                              <p class="text-left title " style="color: darkslategray">Work Factor</p>
+                              <!-- <br> -->
                             </div>
                             <div class="col-md-12 ml-auto mr-auto">
-                              <p class="text-left title clrs-h4" style="color: darkslategray">Personal Internal Perfomance reviews</p>
-                              <div class="col-md-9 text-left na-p">
-                                Practive : [5] <br>
-                                Personal Discipline : [3] <br>
-                                Attention to Details : [4] <br>
-                                Conceptual Framework : [3] <br>
-                                Self Starter : [4] <br>
-                                Result Oriented : [3] <br>
-                                Sociable : [4] <br>
-                                Pragmatic : [2] <br>
-                                Mental Stamina : [4] <br>
-                                Physical Stamina : [3] <br>
-                                Average : [4]
-                              </div>
-                              <br>
+                              <p class="text-left" style="color: darkslategray"><span class="title ">Net Worth</span>
+                                (<small>As to date</small>)</p>
+                              <!-- <br> -->
                             </div>
                             <div class="col-md-12 ml-auto mr-auto">
-                              <p class="text-left title clrs-h4" style="color: darkslategray">Profile Summary</p>
-                              <div class="col-md-9 text-left na-p">
-                                <p>User own profile Sammary.</p>
-                              </div>
-                              <br>
+                              <p class="text-left title " style="color: darkslategray">Schedule of Outstanding Personal Tasks
+                              </p>
+                              <!-- <br> -->
                             </div>
-                            <div class="spacer" style="height: 2em"></div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <p class="text-left title " style="color: darkslategray">Personal Project Reports
+                              </p>
+                              <!-- <br> -->
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <p class="text-left title " style="color: darkslategray">User`s Enterprise Internal Reports</p>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <p class="text-left title " style="color: darkslategray">Personal Internal Perfomance reviews</p>
+                              <!-- <br> -->
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <p class="text-left title " style="color: darkslategray">Profile Summary</p>
+                              <!-- <br> -->
+                            </div>
+                          
                           </div>
-                          <div class="tab-pane" id="public" role="tabpanel" aria-expanded="false">
-                            
-                            <div class="col-md-10 ml-auto mr-auto">
-
-                              <p class="text-left title clrs-h4" style="color: darkslategray">Public Profile</p>
-
-                              <div class="card-plain card-content">
-                                <div class="text-left na-p" style="margin-left:2em ">
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Full name </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9 card-category" style="color:black">: {{ (userData)?.name }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Gender </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9 card-category" style="color:black">: {{ (userData)?.gender }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Age </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9">: {{ (userData)?.age }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Profession </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9 card-category" style="color:black">: {{ (userData)?.profession.name }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Qualifications </span>
-                                    <span class="col-sm-9">
-                                      <a class="col-sm-9" *ngFor="let doc of (userData)?.qualifications">: {{ doc.display }} <br></a>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Body weight </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9">: {{ (userData)?.bodyWeight }} Kg</span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Body height </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9">: {{ (userData)?.bodyHeight }} cm</span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Body Mass Index </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9">: {{ (userData)?.bodyMassIndex }} </span>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Industry Sector </span>
-                                    <span class="col-sm-9">
-                                      <span class="col-sm-9">: {{ (userData)?.industrySector.name }} </span>
-                                    </span>
-                                  </span><br>
-                                  <!-- <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Assets </span>
-                                    <span class="col-sm-9">
-                                      <a class="col-sm-9" *ngFor="let asset of (userData)?.personalAssets">: {{ asset.name }} <br></a>
-                                    </span>
-                                  </span><br>
-                                  <span class="row col-md-12">
-                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Liabilities </span>
-                                    <span class="col-sm-9">
-                                      <a class="col-sm-9" *ngFor="let item of (userData)?.personalLiabilities">: {{ item.name }} <br></a>
-                                    </span>
-                                  </span><br> -->
-                                </div>
-                              </div>
-                              
-                            </div>
-
-                            <div class="col-md-10 ml-auto mr-auto">
-                              <div class="col-md-12 ml-auto mr-auto">
-                                <small>Make sure totals don't exceed total week hours (168 hrs)</small>
-                                <p class="text-left title clrs-h4" style="color: darkslategray">Tasks</p>
-                              
-                                <div class="col-md-9 text-left na-p">
-                                  Total Number of Tasks Im' Champion : {{ (tasksImChamp | async)?.length }} <br>
-                                  <!-- Total Number of Tasks complete to Date: {{ (tasksComplete | async)?.length }}  or  <br> -->
-                                  Total Number of Tasks complete to Date: {{ completeTasksRt }} %<br>
-                                  Total Number of Enterprises Tasks: {{ (enterprisesTasks)?.length }} <br>
-                                  Total Number of Projects Tasks: {{ (projectsTasks)?.length }} <br>
-                                  Total Number of Tasks : {{ (allMyTasks | async)?.length }}
-                                </div>
-                                <br>
-                              </div>
-                              <div class="col-md-12 ml-auto mr-auto">
-                                <p class="text-left title clrs-h4" style="color: darkslategray">Health Factor</p>
-                                <div class="col-md-9 text-left na-p">
-                                  Total Hours spent on Health and Exercise per week: {{ (tasksImChamp | async)?.length }} <br>
-                                  Ratio of health to total week hours: {{ completeTasksRt }} %<br>
-                                </div>
-                                <br>
-                              </div>
-                              <div class="col-md-12 ml-auto mr-auto">
-                                <p class="text-left title clrs-h4" style="color: darkslategray">Work Factor</p>
-                                <div class="col-md-9 text-left na-p">
-                                  Total Hours spent on Work per week: {{ (tasksImChamp | async)?.length }} <br>
-                                  Ratio of Work to total week hours: {{ completeTasksRt }} %<br>
-                                </div>
-                                <br>
-                              </div>
-                              <div class="col-md-12 ml-auto mr-auto">
-                                <p class="text-left title clrs-h4" style="color: darkslategray">Focus Factor</p>
-                                <span class="row col-md-12">
-                                  <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Focus Factor</span>
-                                  <span class="col-sm-9">
-                                    <span class="col-sm-9">: {{ (userData)?.focusFactor }} </span>
-                                  </span>
-                                </span><br>
-                              </div>
-                              <div class="col-md-12 ml-auto mr-auto">
-                                <p class="text-left title clrs-h4" style="color: darkslategray">Personal Project Reports</p>
-                                <div class="col-md-9 text-left na-p">
-                                  Total Number of Tasks complete to Date: {{ proRatio }} %<br>
-                                  Total Number of Projects Tasks : {{ NoOfProjectsTasks }} <br>
-                                  Revenue per Capital per each project you are involved:
-                                  Project productivity Factor:
-                                  <!-- Number of users project Tasks finished on or before deadline as a percentage all user project specific tasks that are planned to have been finished as at date ogf this matric -->
-                                  List of all project outstanding Tasks as to date
-                                  List of all project upcoming Tasks as to datein the next 4 weeks
-                                  list all Projects you are involved
-                                  percentage of user projects tasks timeously completed to all users project tasks
-                              
-                                </div>
-                                <br>
-                              </div>
-                              <div class="col-md-12 ml-auto mr-auto">
-                                <p class="text-left title clrs-h4" style="color: darkslategray">User`s Enterprise Internal Reports</p>
-                                <div class="col-md-9 text-left na-p">
-                                  Percentage of user`s cost to the Company as a percentage of the company Revenue per Capital <br>
-                                  Percentage of total tasks timeosly completed to total users enterprise tasks planned to have been finished to date
-                                  <br>
-                                  Daily work Time sheet report <br>
-                                  List of user`s outstanding enterprise tasks as at date ofreport <br>
-                                  List of user`s upcoming enterprise tasks as at date of report <br>
-                                  Total Number of Tasks complete to Date: {{ compRatio }} %<br>
-                                  Total Number of companies Tasks : {{ NoOfCompanyTasks }}
-                                </div>
-                                <br>
-                              </div>
-                            </div>
-                            <div class="spacer" style="height: 2em"></div>
-                          </div>
+                          
+                          
+                          
+                          
+                          
+                          <!-- End Here -->
                         </div>
                       </div>
                     </div>
@@ -1248,7 +593,7 @@
         <!-- <code>Time Budget</code> -->
         <!-- <form> -->
           <div class="card-header ">
-            <p class="title clrs-h1">Time Budget</p>
+            <p class="title clrs-h1-font">Time Budget</p>
             <p class="category">Add or Edit the classifications Time</p>
           </div>
           <div class="card-body ">
@@ -1323,7 +668,7 @@
         <!-- <code>Personal Standards</code> -->
           <form >
             <div class="card-header ">
-              <h4 class="title clrs-h1">Classification: {{ selectedClassification.name }}</h4>
+              <h4 class="title clrs-h1-font">Classification: {{ selectedClassification.name }}</h4>
               <p class="title na-p">Add Personal Standards</p>
               
             </div>
@@ -1342,8 +687,18 @@
                   [(ngModel)]="selectedPeriod"></ng-select>
               </div>
               <div class="category"> <span class="star">*</span> Required fields</div>
+              <div class="form-group">
+                <label for="" class="control-label">Units
+                  <span class="star">*</span>
+                </label>
+                <ng-select [items]="SIunits" bindLabel="name" name="jyu" placeholder="Select unit of Measure"
+                  [(ngModel)]="setUnit">
+                </ng-select>
+              </div>
+              <div class="category"> <span class="star">*</span> Required fields</div>
+              
             </div>
-            <div class="card-footer text-center">
+            <div class="footer text-center pull-right">
               <button (click)="addPersonalStandards()" data-dismiss="modal" class="btn btn-primary">Add</button>
             </div>
           </form>
@@ -1358,7 +713,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <i class="nc-icon nc-simple-remove"></i>
         </button>
-        <h4 class="title clrs-h1 title-up">Assets</h4>
+        <h4 class="title clrs-h1-font title-up">Assets</h4>
       </div>
       <div class="modal-body">
         <div class="col-md-12">
@@ -1375,7 +730,7 @@
           <div class="row">
             <h4 class=" clrs-h4"> Add new assets</h4>
           </div>
-          <form action="">
+          <!-- <form action=""> -->
             <div class="row">
               <div class="col-md-6 pr-1">
                 <div class="form-group">
@@ -1401,7 +756,7 @@
                 </div>
               </div>
             </div>
-          </form>
+          <!-- </form> -->
         </div>
       </div>
       <div class="modal-footer">
@@ -1424,7 +779,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <i class="nc-icon nc-simple-remove"></i>
         </button>
-        <h4 class="title clrs-h1 title-up">Liabilities</h4>
+        <h4 class="title clrs-h1-font title-up">Liabilities</h4>
       </div>
       <div class="modal-body">
         <div class="col-md-12">

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { Enterprise, ParticipantData, companyChampion, Department } from "../../models/enterprise-model";
+import { Enterprise, ParticipantData, companyChampion, Department, service, projectRole } from "../../models/enterprise-model";
 import { Project } from "../../models/project-model";
 import { InitialiseService } from 'app/services/initialise.service';
 import { EnterpriseService } from 'app/services/enterprise.service';
@@ -45,11 +45,12 @@ export class JoinProjectComponent {
   searchData: string;
   projectToJoin: any;
 
-  ent: Enterprise;
+  ent: projectRole;
   // showSearch: boolean = false;
   staff: Observable<ParticipantData[]>;
   selectedProject: Project;
   projectId: string;
+  roles: [service];
 
   public showme: boolean = false;
   public showText: boolean = false;
@@ -63,16 +64,21 @@ export class JoinProjectComponent {
   public buttonName: any = 'Show';
   enterprises2nd: Observable<Enterprise[]>;
   company: Enterprise;
-  
+
   userProfile: Observable<coloursUser>;
-  myDocment: AngularFirestoreDocument<{}>;
+  myDocument: AngularFirestoreDocument<{}>;
   userData: coloursUser;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private es: EnterpriseService, private afs: AngularFirestore) {
     this.selectedCompany = this.is.getSelectedCompany();
     this.company = this.is.getSelectedCompany();
     this.selectedProject = this.is.getSelectedProject();
-    this.searchData = ""; this.projectToJoin = { name: "", type: "", by: "", byId: "", joiningCompanyChampion: "" };  
+    this.searchData = "";
+    this.projectToJoin = { name: "", type: "", by: "", byId: "", joiningCompanyChampion: "" };
+  }
+
+  clearSearchData(){
+    this.searchData = "";
   }
 
   toggle() {
@@ -166,13 +172,13 @@ export class JoinProjectComponent {
       misc.sidebar_mini_active = false;
 
     }
-     else {
+    else {
       setTimeout(function () {
         body.classList.add('sidebar-mini');
 
         // misc.sidebar_mini_active = true;
       }
-    , 300);
+        , 300);
     }
 
     // we simulate the window Resize so the charts will get updated in realtime.
@@ -188,9 +194,11 @@ export class JoinProjectComponent {
 
   search(testVariavle, x) {
     // this.viewEnterprises(testVariavle, x);
+    let xCapitalized = x.charAt(0).toUpperCase() + x.slice(1)
+
     this.minimizeSidebar();
-    console.log(testVariavle + " " + x);
-    this.viewProjects(testVariavle, x);
+    console.log(testVariavle + " " + xCapitalized);
+    this.viewProjects(testVariavle, xCapitalized);
   }
 
   viewProjects(checkVariable, testData) {
@@ -205,9 +213,10 @@ export class JoinProjectComponent {
   }
 
   sendRequest() {
-    let companyId = this.selectedCompany.id;
+    let companyId = this.ent.id;
     console.log(companyId);
-    console.log(this.selectedCompany);
+    console.log(this.ent);
+    this.ent.roles = this.roles;
     // let project = this.projectToJoin;
 
     let project = {
@@ -220,6 +229,7 @@ export class JoinProjectComponent {
       companyId: this.projectToJoin.companyId,
     };
     let champId = this.projectToJoin.champion.id;
+    let champById = this.projectToJoin.byId;
     console.log(champId);
     let partId;
     console.log(this.user);
@@ -230,22 +240,18 @@ export class JoinProjectComponent {
     let champion: any;
     champion = this.selectedStaff;
     champion.project = project;
-    
+    champion.company = this.ent;
+
+
     let me: any;
     me = this.myData;
     me.project = project;
-    // console.log(me);
-    // console.log('check participants array,if updated' + this.projectToJoin.participants)
-    // this.afs.collection('Users').doc(partId).collection('projectsRequested').doc(companyId).set(this.projectToJoin);
-    // this.afs.collection('Projects').doc(companyId).collection('Requests').doc(partId).set(me);
-    // this.afs.collection('Users').doc(this.projectToJoin.byId).collection('joinEnterprisesRequests').doc(companyId).set(this.projectToJoin);
-    // this.afs.collection('Users').doc(this.projectToJoin.byId).collection('ProjectRequests').doc(partId).set(me);
-
+    me.company = this.ent;
 
     let championdataId = champId + moment().format('DDDDYYYY');
     champion.dataId = championdataId;
 
-    let champion2dataId = projectId + moment().format('DDDDYYYY');
+    let champion2dataId = champById + moment().format('DDDDYYYY');
     me.dataId = champion2dataId;
 
     if (champId != "") {
@@ -273,7 +279,7 @@ export class JoinProjectComponent {
     this.resetForm();
   }
 
-  resetForm(){
+  resetForm() {
     this.selectedCompany = this.is.getSelectedCompany();
   }
 
@@ -285,7 +291,7 @@ export class JoinProjectComponent {
 
     let user: any;
     user.project = this.projectToJoin.
-    user.company = this.selectedCompany
+      user.company = this.selectedCompany
     user = this.selectedStaff;
     let me: any;
     me.project = this.projectToJoin;
@@ -295,7 +301,7 @@ export class JoinProjectComponent {
     this.selectedCompany.champion = user;
 
     console.log(this.selectedCompany)
-  
+
     let projectId = this.projectToJoin.id;
     console.log(projectId)
     let scompanyId = this.selectedCompany.id;
@@ -320,9 +326,9 @@ export class JoinProjectComponent {
 
 
   dataCall() {
-    this.myDocment = this.afs.collection('Users').doc(this.userId);
+    this.myDocument = this.afs.collection('Users').doc(this.userId);
 
-    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+    this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
@@ -336,10 +342,45 @@ export class JoinProjectComponent {
         bus_email: userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationalId: userData.nationalId,
+        nationality: userData.nationality,
       }
+
+      if (userData.address == "" || userData.address == null || userData.address == undefined) {
+        userData.address = ""
+      } else {
+
+      }
+
+      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ""
+      } else {
+
+      }
+
+      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ""
+      } else {
+
+      }
+
+      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ""
+      } else {
+
+      }
+
+      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ""
+      } else {
+
+      }
+
       this.myData = myData;
       this.userData = userData;
+
     });
 
     this.enterprises = this.es.getCompanies(this.userId);

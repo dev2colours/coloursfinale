@@ -15,6 +15,7 @@ import { Project } from "../models/project-model";
 import { Task } from "../models/task-model";
 import { ProjectService } from '../services/project.service';
 import { InitialiseService } from 'app/services/initialise.service';
+import { coloursUser } from 'app/models/user-model';
 
 // export interface ProjectId extends Project { id: string; }
 // export interface projectTaskChamp extends Task { championId: string; }
@@ -81,7 +82,7 @@ export class ProjectsComponent {
     public showUserTable: boolean = false;
     compId: any;
 
-    selectedParticipant: firebase.User;
+    selectedParticipant: coloursUser;
     userChampion: ParticipantData;
     selParticipantId: any;
     selParticipantName: any;
@@ -98,10 +99,12 @@ export class ProjectsComponent {
         this.selectedProject = this.is.getSelectedProject();
         this.userChampion = this.is.getUserChampion(); 
 
+        this.selectedParticipant = this.is.initColUserData();
+
         this.enterprise = this.is.getSelectedCompany();
         this.selectedCompany = this.is.getSelectedCompany();
-        this.project = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", champion: null, location: "", sector: "", id: "",};
-        this.selectedProject = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", champion: null, location: "", sector: "", id: "",};
+        this.project = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", champion: null, location: "", sector: "", id: "", completion: ""};
+        this.selectedProject = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", champion: null, location: "", sector: "", id: "", completion: ""};
         this.projectToJoin = { name: "", type: "", by: "", byId: "", joiningCompanyChampion:"" };  
             console.log(this.afAuth.user);
 
@@ -134,7 +137,7 @@ export class ProjectsComponent {
             
         });
         
-        this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+        this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null  };
     
         this.afAuth.authState.subscribe(user => {
             console.log(user.uid)
@@ -188,7 +191,7 @@ export class ProjectsComponent {
             let company = this.selectedCompany
             
             this.ps.addProject(pUser, project, company);
-            this.project = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", champion: null, location: "", sector: "", id: "", };
+            this.project = { name: "", type: "", by: "", byId: "", createdOn: null, companyName: "", companyId: "", champion: null, location: "", sector: "", id: "", completion: ""  };
 
         })
     }
@@ -376,7 +379,10 @@ export class ProjectsComponent {
             bus_email: x.bus_email,
             id: x.id,
             phoneNumber: x.phoneNumber,
-            photoURL: x.photoURL
+            photoURL: x.photoURL,
+            address: x.address,
+            nationalId: x.nationalId,
+            nationality: x.nationality
         }
         this.userChampion = cUser;
         console.log(x);
@@ -429,7 +435,7 @@ export class ProjectsComponent {
                 this.afs.collection('Users').doc(user.uid).collection('tasks').add(createdTask);
 
             }
-            this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+            this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
 
         })
     }

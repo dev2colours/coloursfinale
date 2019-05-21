@@ -9,6 +9,7 @@ import { RegisterComponent } from './register/register.component';
 import { LockComponent } from './lock/lock.component';
 import { LoginComponent } from './login/login.component';
 import { MomentDatesComponent } from './moment-dates/moment-dates.component';
+import { WelcomeComponent } from './welcome/welcome.component';
 
 @NgModule({
     imports: [
@@ -21,7 +22,8 @@ import { MomentDatesComponent } from './moment-dates/moment-dates.component';
         LoginComponent,
         RegisterComponent,
         LockComponent,
-        MomentDatesComponent
+        MomentDatesComponent,
+        WelcomeComponent,
     ]
 })
 

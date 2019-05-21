@@ -14,11 +14,11 @@
                       <div class="nav-tabs-wrapper">
                         <ul id="tabs" class="nav nav-tabs" role="tablist">
                           <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#home" role="tab" aria-expanded="true">Search
+                            <a class="nav-link active" data-toggle="tab" href="#home" (click)="clearSearchData()" role="tab" aria-expanded="true">Search
                               by Location</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#profile" role="tab" aria-expanded="false">Sector</a>
+                            <a class="nav-link" data-toggle="tab" href="#profile" (click)="clearSearchData()" role="tab" aria-expanded="false">Sector</a>
                           </li>
                         </ul>
                       </div>
@@ -162,12 +162,12 @@
                           </tr>
 
                           <div class="AddDpt">
-                            <form action="">
+                            <!-- <form action=""> -->
                               <div class="spacer" style="height:2em"></div>
                               <input class="form-control" placeholder="Add Department" type="text" [(ngModel)]="dpt.name" name="dpt_name">
                               <!-- {{ today }} -->
                               <button class="primary btn-link" (click)="saveDpt(dpt)">save</button>
-                          </form>
+                          <!-- </form> -->
                           </div>
                         </tbody>
                       </table>
@@ -248,8 +248,8 @@
               <label class="col-md-3 col-form-label">Phone</label>
               <div class="col-md-9">
                 <div class="form-group">
-                  <input type="text" [(ngModel)]="myData.phoneNumber" name="enterprise_location"
-                      class="form-control" placeholder="e.g. 06 66666666">
+                  <input type="text" [(ngModel)]="myData.phoneNumber" name="enterprise_phoneNumber"
+                      class="form-control" placeholder="e.g. 077 3273 876">
                 </div>
               </div>
             </div>
@@ -266,7 +266,7 @@
               <label class="col-md-3 col-form-label">Nation</label>
               <div class="col-md-9">
                 <div class="form-group">
-                  <input type="text" [(ngModel)]="myData.nation" name="enterprise_location" class="form-control" placeholder="e.g. Zimbabwe">
+                  <input type="text" [(ngModel)]="myData.nationality" name="enterprise_location" class="form-control" placeholder="e.g. Zimbabwe">
                 </div>
               </div>
             </div>

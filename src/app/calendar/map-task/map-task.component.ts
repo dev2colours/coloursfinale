@@ -150,7 +150,7 @@ export class MapTaskComponent {
   myContacts: Observable<ParticipantData[]>;
 
   userProfile: Observable<coloursUser>;
-  myDocment: AngularFirestoreDocument<{}>;
+  myDocument: AngularFirestoreDocument<{}>;
   userData: coloursUser;
   myData: ParticipantData;
 
@@ -286,13 +286,13 @@ export class MapTaskComponent {
     this.task.finishQuarter = moment(this.task.finish, "YYYY-MM-DD").quarter().toString();
     this.task.finishYear = moment(this.task.finish, "YYYY-MM-DD").year().toString();
 
-    this.task.companyName = 'NaN';
-    this.task.companyId = '';
-    this.task.projectId = '';
-    this.task.projectName = 'NaN';
-    this.task.projectType = 'NaN';
+    this.task.companyName = "";
+    this.task.companyId = "";
+    this.task.projectId = "";
+    this.task.projectName = "";
+    this.task.projectType = "";
 
-     if (this.myChampion.id != '') {
+     if (this.myChampion.id != "") {
        this.task.champion = this.myChampion;  
        this.task.participants = [this.myChampion]; 
     }
@@ -331,17 +331,18 @@ export class MapTaskComponent {
         champRef.doc(newTaskId).update({ 'id': newTaskId });
      });    
 
-     this.task = this.is.getTask();
-     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
-     this.myChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: ""};
+    //  this.task = this.is.getTask();
+     this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", classification: null };
+    //  this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
+     this.myChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
   }
 
 
   async dataCall(){
 
-    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+    this.myDocument = this.afs.collection('Users').doc(this.user.uid);
 
-    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+    this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
@@ -355,7 +356,40 @@ export class MapTaskComponent {
         bus_email: userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationalId: userData.nationalId,
+        nationality: userData.nationality,
+      }
+
+      if (userData.address == "" || userData.address == null || userData.address == undefined) {
+        userData.address = ""
+      } else {
+
+      }
+
+      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ""
+      } else {
+
+      }
+
+      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ""
+      } else {
+
+      }
+
+      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ""
+      } else {
+
+      }
+
+      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ""
+      } else {
+
       }
       this.userChampion = myData;
 
@@ -523,13 +557,46 @@ export class MapTaskComponent {
   }
 
   selectColoursUser(x) {
+
+    if (x.phoneNumber == "" || x.phoneNumber == null || x.phoneNumber == undefined) {
+      x.phoneNumber = ""
+    } else {
+
+    }
+
+    if (x.address == "" || x.address == null || x.address == undefined) {
+      x.address = ""
+    } else {
+
+    }
+
+    if (x.bus_email == "" || x.bus_email == null || x.bus_email == undefined) {
+      x.bus_email = ""
+    } else {
+
+    }
+
+    if (x.nationalId == "" || x.nationalId == null || x.nationalId == undefined) {
+      x.nationalId = ""
+    } else {
+
+    }
+
+    if (x.nationality == "" || x.nationality == null || x.nationality == undefined) {
+      x.nationality = ""
+    } else {
+
+    }
     let cUser = {
       name: x.name,
       email: x.email,
       bus_email: x.bus_email,
       id: x.id,
       phoneNumber: x.phoneNumber,
-      photoURL: this.user.photoURL
+      photoURL: x.photoURL,
+      address: x.address,
+      nationalId: x.nationalId,
+      nationality: x.nationality
     };
     this.userChampion = cUser;
     console.log(x);

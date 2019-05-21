@@ -28,36 +28,36 @@
                 <div class="card-category clrs-h1 text-left">
                   <a>Things To Do In Tray</a>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="padding-left: 0px;padding-right: 0px;">
                   <div id="accordionTsk" role="tablist" aria-multiselectable="true" class="card-collapse">
                     <div class="card card-plain">
                       <div class="card-header text-left" role="tab" id="headingOne">
-                        <a data-toggle="collapse" href="#Outstanding" (click)="dataCALL()" aria-expanded="true" aria-controls="Outstanding">
+                        <a data-toggle="collapse" href="#Outstanding" aria-expanded="true" aria-controls="Outstanding"> <!--  (click)="dataCALL()" -->
                           Outstanding Tasks
                           <i class="nc-icon nc-minimal-down"></i>
                         </a>
                       </div>
                       <div id="Outstanding" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordionTsk">
-                        <div class="card-body">
-                          <div class="content container scroll-em">
-                            <ol style="padding-left:18px;">
+                        <div class="card-body" style="padding-left: 0px;padding-right: 0px;">
+                          <div class="content container scroll-task" style="padding-left: 0px;">
+                            <ol> 
                               <li class="" style="color:steelblue" *ngFor="let tss of OutstandingTasks">
                                 <div class="row">
                                   <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown"
-                                      aria-haspopup="true" aria-expanded="false" style="color:slategrey">
+                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:slategrey">
                                       {{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                      <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)"
-                                        data-toggle="modal" data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">Add
-                                        to my Week's tasks
+                                      <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal" data-target="#dptModal"
+                                       title="Add {{ tss.name }} to a week`s tasks">
+                                        Add to my Week's tasks
                                       </button>
                                     </div>
                                   </div>
                                 </div>
                               </li>
                             </ol>
+                            <p *ngIf="OutstandingTasks.length == 0">No Outstanding Tasks</p>
                           </div>
                         </div>
                       </div>
@@ -70,20 +70,19 @@
                         </a>
                       </div>
                       <div id="currentTsk" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionTsk">
-                        <div class="card-body">
-                          <div class="content container scroll-em">
+                        <div class="card-body" style="padding-left: 0px;padding-right: 0px;">
+                          <div class="content container scroll-task" style="padding-left: 0px;">
                             <ol>
                               <li class="" style="color:steelblue" *ngFor="let tss of CurrentTAsks">
                                 <div class="row">
                                   <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown"
-                                      aria-haspopup="true" aria-expanded="false" style="color:slategrey">
+                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:slategrey">
                                       {{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                      <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)"
-                                        data-toggle="modal" data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">Add
-                                        to my Week's tasks
+                                      <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal" data-target="#dptModal"
+                                       title="Add {{ tss.name }} to a week`s tasks">
+                                        Add to my Week's tasks
                                       </button>
                                       <!-- <button class="dropdown-item primary btn-link" rel="tooltip" (click)="closeTask(project)" title="Set task as completed">Task
                                         Complete</button> -->
@@ -92,6 +91,7 @@
                                 </div>
                               </li>
                             </ol>
+                            <p *ngIf="CurrentTAsks.length == 0">No Current Tasks</p>
                           </div>
                         </div>
                       </div>
@@ -104,40 +104,70 @@
                         </a>
                       </div>
                       <div id="upcoming" class="collapse" aria-labelledby="headingThree" data-parent="#accordionTsk">
-                        <div class="card-body">
-                          <div class="content container scroll-em">
-                            Short Term Tasks<br>
+                        <div class="card-body" style="padding-left: 0px;padding-right: 0px;">
+                          <div class="content container scroll-task" style="padding-left: 0px;">
+                            <!-- Short Term Tasks<br> -->
+                          <div class="card-header text-left"> Short Term Tasks</div><br>
                             <ol>
                               <li class="" style="color:steelblue" *ngFor="let tss of ShortTermTAsks">
                                 <div class="row">
-                                  <div class="col-sm-12" style="margin-left:.5em; margin-right:-.5em">
-                                    <button class="btn-link" style="color:slategrey">
+                                  <div class="col-sm-12 text-left" style="margin-right:-.5em">
+                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                      aria-expanded="false" style="color:slategrey">
                                       {{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                     </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                      <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal"
+                                        data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">Add
+                                        to my Week's tasks
+                                      </button>
+                                      <!-- <button class="dropdown-item primary btn-link" rel="tooltip" (click)="closeTask(project)" title="Set task as completed">Task
+                                                                        Complete</button> -->
+                                    </div>
                                   </div>
                                 </div>
                               </li>
                             </ol>
-                            Medium Term Tasks<br>
+                            <!-- Medium Term Tasks<br> -->
+                          <div class="card-header text-left">Medium Term Tasks</div><br>
                             <ol>
                               <li class="" style="color:steelblue" *ngFor="let tss of MediumTermTAsks">
                                 <div class="row">
-                                  <div class="col-sm-12" style="margin-left:.5em; margin-right:-.5em">
-                                    <button class="btn-link" style="color:slategrey">
-                                      {{ tss.name }}<span class="label text-warning"> {{ event.when }}</span>
+                                  <div class="col-sm-12 text-left" style="margin-right:-.5em">
+                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                      aria-expanded="false" style="color:slategrey">
+                                      {{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                     </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                      <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal"
+                                        data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">Add
+                                        to my Week's tasks
+                                      </button>
+                                      <!-- <button class="dropdown-item primary btn-link" rel="tooltip" (click)="closeTask(project)" title="Set task as completed">Task
+                                                                        Complete</button> -->
+                                    </div>
                                   </div>
                                 </div>
                               </li>
                             </ol>
-                            Long Term Tasks<br>
+                            <!-- Long Term Tasks<br> -->
+                          <div class="card-header text-left">Long Term Tasks</div><br>                          
                             <ol>
-                              <li class="" style="color:steelblue" *ngFor="let event of LongTermTAsks">
+                              <li class="" style="color:steelblue" *ngFor="let tss of LongTermTAsks">
                                 <div class="row">
-                                  <div class="col-sm-12" style="margin-left:.5em; margin-right:-.5em">
-                                    <button class="btn-link" style="color:slategrey">
+                                  <div class="col-sm-12 text-left" style="margin-right:-.5em">
+                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                      aria-expanded="false" style="color:slategrey">
                                       {{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                     </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                      <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal"
+                                        data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">Add
+                                        to my Week's tasks
+                                      </button>
+                                      <!-- <button class="dropdown-item primary btn-link" rel="tooltip" (click)="closeTask(project)" title="Set task as completed">Task
+                                                                        Complete</button> -->
+                                    </div>
                                   </div>
                                 </div>
                               </li>
@@ -181,7 +211,7 @@
                                 </div>
                                 <button class="btn-link btn-round primary" (click)="selectTask(tss)" data-toggle="modal"
                                   data-target="#newAction">
-                                  <small>Add action item</small>
+                                  <small>Add activity</small>
                                 </button>
                               </div>
                             </div>
@@ -196,11 +226,9 @@
                   </div>
                 </div>
                 <div class="row">
-                  <p class="na-an" style="color: steelblue; margin-bottom: 0px;"><i class="ti-palette"></i>list of this
-                    weeks selected action items</p>
+                  <p class="na-an" style="color: steelblue; margin-bottom: 0px;margin-left: 1em;"><i class="ti-palette"></i>list of week's selected activities</p>
                   <ol>
                     <li *ngFor="let item of selectedActionItems">
-                      <!-- <li *ngFor="let item of myWeeklyActions"> -->
                       {{ item.name }}
                     </li>
                   </ol>
@@ -214,11 +242,11 @@
         <div class="col-md-12 col-sm-12 ml-auto mr-auto">
           <p class="clrs-h4 text-left" style="margin-top:-1em; color: darkslategrey">Calendar Weekly Activities.</p>
           <p class="category text-left" style="margin-top:-1em">
-            These are task classification standard action and work action Items picked for this week's activities
+            These are task classification standard activities and work activities picked for this week's activities
           </p>
         </div>
         <div class="row card-category clrs-h4">
-          <div class="col-sm-4">Action Item
+          <div class="col-sm-4">Activity
           </div>
           <div class="col-sm-8">
             <div class="row">
@@ -267,7 +295,7 @@
         </div>
         <div class="row card-category">
           <div class="col-md-12 col-sm-12">
-            <p class="category">Click Add date to add or edit the start and end date for the Action Item</p>
+            <p class="category">Click Add date to add or edit the start and end date for the Activity</p>
           </div>
         </div>
       </div>
@@ -277,30 +305,23 @@
             <a class="clrs-h1 text-left">Daily Diary</a>
           </div>
           <div class="col-sm-2"></div>
-          <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol" (click)="changeDay('previous','startDate')">Previous</a></div>
+          <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol" (click)="changeDay('previous')">Previous</a></div>
           <!-- <div class="col-sm-3 clrs-h1 text-info">{{ workWeekDay }}, {{ workDay }}</div> -->
           <div class="col-sm-3 clrs-h4 text-info">{{ workWeekDay }}, {{ workDay }}</div>
-          <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol" (click)="changeDay('next','startDate')">Next</a></div>
+          <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol" (click)="changeDay('next')">Next</a></div>
         </div>
         <div class="card-body" style="margin-top: -10px">
-          <div class="row" *ngIf= "viewTodaystds || viewTodays">
+          <!-- <div class="row" *ngIf= "viewTodaystds || viewTodays"> -->
+          <div class="row" *ngIf= "viewTodaystds">
             <div class="card-header text-left"><i class="fa fa-check-box"></i></div>
-            <div class="col-sm-2 card-header text-center">Action<small class="category"> Item</small></div>
-            <div class="col-sm-3 card-header">Target Qty<small class="category"> for today</small></div>
+            <div class="col-sm-2 card-header text-center">Activity<small class="category"> Item</small></div>
+            <div class="col-sm-3 card-header text-right">Target Qty<small class="category"> for today</small></div>
             <div class="col-sm-2 card-header text-left">Start time</div>
             <div class="col-sm-2 card-header text-left">Finish time</div>
             <div class="col-sm-2 card-header text-left"></div>
           </div>
           <ng-container>
             <div class="col-sm-12">
-              <!-- <div class="row col-md-11 col-sm-11 ml-auto mr-auto">
-                <p class="category text-left" style="padding-top :2em">
-                  Task classification standard action items
-                </p>
-              </div>
-              <div *ngIf="!viewTodaystds">
-                <p class="na-p"> No standard actions </p>
-              </div> -->
               <ul style="list-style-type:none;padding-left: 10px;">
                 <li *ngFor="let item of allMystandards | async">
                   <div class="row">
@@ -311,7 +332,6 @@
                       </ng-template>
                     </div>
                     <div class="col-sm-3 pull-left">
-                      <!-- {{ item.name }} -->
                       <button class="form-control panel-boader clrs-cell btn-link text-left" [ngClass]="{'text-success' : item.selectedWork == true}"
                         style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em">{{ item.name }}
                       </button>
@@ -320,7 +340,7 @@
                       <div class="form-group">
                         <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
                           <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                            placeholder="1 200" />
+                            placeholder="No" rel="tooltip" title="Click and enter todays'arget quantity"/>
                           <div class="input-group-postpend">
                             <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
                               
@@ -333,51 +353,33 @@
                     <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
                       <div class="form-group">
                         <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                          placeholder="Time from" />
+                          rel="tooltip" title="Click, enter start time" placeholder="Time from" />
                       </div>
                     </div>
                     <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
                       <div class="form-group">
                         <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end" style=" padding-left: 10px; padding-right: 10px;  height:2em"
-                          placeholder="Time to" /> <!-- clrs-cell  -->
+                          rel="tooltip" title="Click, enter end time" placeholder="Time to" /> 
                       </div>
                     </div>
                     <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
-                      <!-- <div class="form-group">
-                        <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
-                          (click)="addActionTime(item)"><small>Save</small></button>
-                      </div> -->
-
-
                       <div class="btn-group btn-group-toggle">
-                        <label class="btn-primary" ngbButtonLabel>
-                          <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
-                            (click)="addActionTime(item)"><small>Save</small></button>
-                        </label>
-                        <label class="btn-primary" ngbButtonLabel>
-                          <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
-                            (click)="addActionTime(item)"><small>Complete</small></button>
-                        </label>
+                        <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
+                            rel="tooltip" title="Click to  update the activity" (click)="addClassActionTime(item)"><small>Save</small></button>
+                        <!-- <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
+                          rel="tooltip" title="Click to confirm complete"><small>Complete</small></button> -->
                       </div>
-
-
                     </div>
                   </div>
                 </li>
                 <li *ngFor="let item of viewDayActions">
                   <div class="row">
-                    <!-- <div class="text-left">
-                      <input style="margin-top: 4px;" class="pull-right col-form-label" type="checkbox" (change)="setDiaryAction($event, item)">
-                    </div> -->
                     <div class="text-left">
                       <input style="margin-top: 4px;" class="pull-right col-form-label" *ngIf="item.selectedWork == true; else NCK" type="checkbox" checked (change)="setDiaryAction($event, item)">
                       <ng-template #NCK>
                         <input style="margin-top: 4px;" class="pull-right col-form-label" type="checkbox" (change)="setDiaryAction($event, item)">
                       </ng-template>
                     </div>
-                    <!-- <div class="col-sm-3 text-left" [ngClass]="{'text-success' : item.selectedWork == true}">
-                      {{ item.name }}
-                    </div> -->
                     <div class="col-sm-3 pull-left">
                       <button class="form-control panel-boader clrs-cell btn-link text-left" [ngClass]="{'text-success' : item.selectedWork == true}"
                         style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em">{{ item.name }}
@@ -387,7 +389,7 @@
                       <div class="form-group">
                         <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
                           <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty" 
-                            style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="1 200" /><!-- clrs-cell  -->
+                            style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="No"  rel="tooltip" title="Click and enter todays'arget quantity"/>
                           <div class="input-group-postpend">
                             <span  *ngIf="!item.unit.id; else showUnit" class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
                               <small><span>{{ item.unit.id }}</span><span *ngIf="!item.unit.id">{{ item.unit }}</span></small>
@@ -403,33 +405,22 @@
                     </div>
                     <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
                       <div class="form-group">
-                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start"
+                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start" rel="tooltip" title="Click, enter start time"
                           style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="Time from" /> <!-- clrs-cell  -->
                       </div>
                     </div>
                     <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
                       <div class="form-group">
-                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end"
-                          style=" padding-left: 10px; padding-right: 10px;  height:2em" placeholder="Time to" /> <!-- clrs-cell  -->
+                        <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end" rel="tooltip" title="Click, enter end time"
+                          style=" padding-left: 10px; padding-right: 10px;  height:2em" placeholder="Time to" />
                       </div>
                     </div>
                     <div class="col-sm-2" style="padding-left: 5px; padding-right:5px">
-                      <!-- <div class="form-group">
-                        <button  class="form-control panel-boader clrs-cell btn-link"
-                          style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em" (click)="addActionTime(item)">Save</button>
-                      </div> -->
-
                       <div class="btn-group btn-group-toggle">
-                        <label class="btn-primary" ngbButtonLabel>
-                          <button  class="form-control panel-boader clrs-cell btn-link"
-                            style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em" (click)="addActionTime(item)"><small>Save</small></button>
-                        </label>
-                        <label class="btn-primary" ngbButtonLabel>
-                          <!-- <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
-                            (click)="setComplete(item)"><small>Complete</small></button> -->
-                            <button (click)="setAction(item)" class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
-                             data-toggle="modal" data-target="#actionClosure"><small>Complete</small></button>
-                        </label>
+                        <button  class="form-control panel-boader clrs-cell btn-link" rel="tooltip" title="Click to update the activity"
+                          style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em" (click)="addActionTime(item)"><small>Save</small></button>
+                        <button (click)="setAction(item)" class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
+                          rel="tooltip" title="Click to confirm complete" data-toggle="modal" data-target="#actionClosure"><small>Complete</small></button>
                       </div>
                     </div>
                   </div>
@@ -445,11 +436,11 @@
           <div class="card-footer">
             <div class="row">
               <div class="col-md-9 text-left">
-                <p class="category">To create new task under<b> Daily Diary </b>If the new action Item does not belong to any existing task Goto Planning & create the Task for your action Item and remember to add the task to weekly Tasks</p>
+                <p class="category">To create new task under<b> Daily Diary </b>If the new activity does not belong to any existing task Goto Planning & create the Task for your activity and remember to add the task to weekly Tasks</p>
               </div>
               <div class="col-md-3 text-right">
-                <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday"> <!-- (click)="selectEditAction(item);showActionParticipants()"  -->
-                  New Action
+                <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday" rel="tooltip" title="Create new Activity"> <!-- (click)="selectEditAction(item);showActionParticipants()"  -->
+                  New Activity
                 </button>
               </div>
             </div>
@@ -501,17 +492,17 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-            <font size=4>New Action Item for <br>{{ selectedTask.name }} task</font>
+            <font size=4>New Activity for <br>{{ selectedTask.name }} task</font>
           </p>
         </div>
         <!-- <a *ngIf="setUnit.id"> Selected Unit: <span></span><small> {{ (setUnit)?.id }}</small></a><br> -->
         <hr>
         <form class="form-horizontal">
           <div class="row">
-            <label class="col-md-4 col-form-label">Action Name</label>
+            <label class="col-md-4 col-form-label">New Activity Name</label>
             <div class="col-md-7">
               <div class="form-group">
-                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Action name">
+                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="New Activity name">
               </div>
             </div>
           </div>
@@ -549,7 +540,7 @@
           <div class="divider"></div>
           <div class="right-side">
             <button type="button" class="btn btn-success btn-link" (click)="newAction(actionItem)" data-dismiss="modal"
-              title="save action">Enter</button>
+              title="save activity">Enter</button>
           </div>
         </div>
       </div>
@@ -563,7 +554,7 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-            <font size=4>Edit Action item <br> "{{ selectedAction.name }}"</font>
+            <font size=4>Edit New Activity item <br> "{{ selectedAction.name }}"</font>
           </p>
         </div>
         <hr>
@@ -593,7 +584,7 @@
           <div class="divider"></div>
           <div class="right-side">
             <button type="button" class="btn btn-success btn-link" (click)="editAction(startDate,endDate)" data-dismiss="modal"
-              title="save action">Enter</button>
+              title="save activity">Enter</button>
           </div>
         </div>
       </div>
@@ -607,8 +598,8 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-8 ml-auto mr-auto col-form-label clrs-h1 info" style="color:steelblue">
-            <!-- <font size=4>Edit Action item <br> "{{ selectedClassAction.name }}"</font> -->
-            Edit Action item <br> "{{ selectedClassAction.name }}"
+            <!-- <font size=4>Edit New Activity item <br> "{{ selectedClassAction.name }}"</font> -->
+            Edit New Activity item <br> "{{ selectedClassAction.name }}"
           </p>
         </div>
         <hr>
@@ -638,7 +629,7 @@
           <div class="divider"></div>
           <div class="right-side">
             <button type="button" class="btn btn-success btn-link" (click)="editClassAction(startDate,endDate)"
-              data-dismiss="modal" title="save action">Enter</button>
+              data-dismiss="modal" title="save activity">Enter</button>
           </div>
         </div>
       </div>
@@ -648,232 +639,6 @@
 
 
 <!-- 00000000000000000000000000000000000000000  old Stuff  00000000000000000000000000000000000000000 -->
-<div class="modal fade" id="tskModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="card-body ">
-        <div class="card-header text-center">
-          <p class="col-md-8 ml-auto mr-auto col-form-label info">
-            <font size=4>Create a Task</font>
-          </p>
-        </div>
-        <hr>
-        <form class="form-horizontal">
-          <div class="row">
-            <label class="col-md-3 col-form-label">Task name</label>
-            <div class="col-md-8">
-              <div class="form-group">
-                <input type="text" [(ngModel)]="task.name" name="taskName" class="form-control" placeholder="Task name">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label class="col-md-3 col-form-label">Start Date</label>
-            <div class="col-md-8">
-              <div class="form-group">
-                <input type="date" [(ngModel)]="task.start" name="start" class="form-control">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label class="col-md-3 col-form-label">Finish Date</label>
-            <div class="col-md-8">
-              <div class="form-group">
-                <input type="date" [(ngModel)]="task.finish" name="finish" class="form-control">
-              </div>
-            </div>
-          </div>
-          <ng-container *ngIf="showChamp">
-            <div class="row">
-              <label class="col-md-3 col-form-label">Champion</label>
-              <div class="col-md-8">
-                <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
-                  {{(userChampion)?.name }}
-                  <button type="text" name="taskChampion" class="btn btn-icon primary btn-link " (click)="toggleUsersTable(); toggleChamp()">
-                    <i class="fa fa-edit fa-fw"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-          <div class="row">
-            <div class="col-md-8 ml-auto mr-auto">
-              <div class="form-group">
-                <ng-container *ngIf="showUserTable">
-                  <div class="table-responsive user_table">
-                    <code>Select a Champion</code>
-                    <table class="table">
-                      <tbody class="">
-                        <tr *ngFor="let user of coloursUsers | async " class="">
-                          <td>{{ user.name }}</td>
-                          <td><button class="primary btn-link" (click)="selectColoursUser(user)"> select
-                            </button></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </ng-container>
-              </div>
-            </div>
-          </div>
-          <ng-container *ngIf="showProj">
-            <div class="row">
-              <label class="col-md-3 col-form-label">Project</label>
-              <div class="col-md-8">
-                <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
-                  {{(selectedProject)?.name }}
-                  <button type="text" name="taskProject" class="btn btn-icon primary btn-link " (click)="toggleProjTable(); toggleProj()">
-                    <i class="fa fa-edit fa-fw"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-          <div class="row">
-            <div class="col-md-8 ml-auto mr-auto">
-              <div class="form-group">
-                <ng-container *ngIf="showProjectTable">
-                  <div class="table-responsive user_table">
-                    <code>Select Project</code>
-
-                    <table class="table">
-                      <tbody>
-                        <tr *ngFor="let project of projectsCollection | async " class="">
-                          <td>
-                            {{project.name}}</td>
-                          <td>
-                            <button class="primary btn-link" (click)="selectProject(project)"> select
-                            </button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </ng-container>
-              </div>
-            </div>
-          </div>
-          <ng-container *ngIf="showCompany">
-            <div class="row">
-              <label class="col-md-3 col-form-label">Enterprise</label>
-              <div class="col-md-8">
-                <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
-                  {{(selectedCompany)?.name }}
-                  <button type="text" name="taskProject" class="btn btn-icon primary btn-link " (click)="toggleCompTable(); toggleComp()">
-                    <span class="pull-right"><i class="fa fa-edit fa-fw"></i></span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-          <div class="row">
-            <div class="col-md-8 ml-auto mr-auto">
-              <div class="form-group">
-                <ng-container *ngIf="showCompanyTable">
-                  <div class="table-responsive user_table">
-                    <code>Select Company</code>
-                    <table class="table">
-                      <tbody>
-                        <tr *ngFor="let company of enterpriseCollection | async " class="">
-                          <td>
-                            {{company.name}}</td>
-                          <td>
-                            <button class="primary btn-link" (click)="selectCompany(company)"> select
-                            </button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </ng-container>
-              </div>
-            </div>
-          </div>
-        </form>
-        <div class="modal-footer" style="margin-bottom:0%">
-          <div class="left-side">
-            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
-          </div>
-          <div class="divider"></div>
-          <div class="right-side">
-            <button type="button" class="btn btn-success btn-link" (click)="newTask()" data-dismiss="modal" title="save task">Save</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="newActionToday" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="card-body ">
-        <div class="card-header text-center">
-          <p class="col-md-10 ml-auto mr-auto title na-an info" style="color:steelblue">
-            <font size=4>New Action Item for Today</font>
-          </p>
-        </div>
-        <hr>
-        <form class="form-horizontal">
-          <div class="row">
-            <label class="col-md-4 col-form-label">Action Name</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Action name">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label class="col-md-4 col-form-label">Unit measure</label>
-            <div class="col-md-7 col-lg-6 col-sm-5">
-              <div class="form-group">
-                <ng-select [items]="SIunits" bindLabel="name" name="unitss" id="sui3" placeholder="Select unit of Measure"
-                  [(ngModel)]="setSui">
-                </ng-select>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label class="col-md-4 col-form-label">Task</label>
-            <div class="col-md-7 col-lg-6 col-sm-5">
-              <div class="form-group">
-                <ng-select [items]="tasks | async" bindLabel="name" placeholder="Select Task" [(ngModel)]="actionTask" name="actionTask"> <!-- (click)="setActiomTask()" -->
-                  <!-- <ng-option *ngFor="let tas of dptTasks | async" [value]="tas.id"> {{ tas.name }}</ng-option> -->
-                </ng-select>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label class="col-md-4 col-form-label">Start Time</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <input type="time" [(ngModel)]="actionItem.start" name="siu" class="form-control">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label class="col-md-4 col-form-label">End Time</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <input type="time" [(ngModel)]="actionItem.end" name="siu" class="form-control">
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <div class="modal-footer" style="margin-bottom:0%">
-          <div class="left-side">
-            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
-          </div>
-          <div class="divider"></div>
-          <div class="right-side">
-            <button type="button" class="btn btn-success btn-link" (click)="newActionToday(actionItem)" data-dismiss="modal"
-              title="save action">Enter</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="modal fade" id="actionClosure" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-notice">
     <div class="modal-content">
@@ -887,18 +652,20 @@
         <div class="instruction">
           <div class="row">
             <div class="col-md-10 text-center">
-              <strong>Are you sure you have completed full quantites of this work item</strong>
+              <strong>Are you sure you have completed full quantites of this activity</strong>
               <!-- <p class="description">The first step is to create an account at
                 <a href="https://www.creative-tim.com/">Creative Tim</a>. You can choose a social network or go for the
                 classic version, whatever works best for you.</p> -->
+            </div>
           </div>
+          <br>
+          <p>If you have completed, Click Confirm to complete</p>
         </div>
-        <br>
-        <p>If you have completed, Click Confirm to complete</p>
-      </div>
-      <div class="modal-footer justify-content-center">
-        <button type="button" class="btn btn-info btn-round" (click)="setComplete()" data-dismiss="modal">Confirm</button>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-info btn-round" (click)="setComplete()"
+            data-dismiss="modal">Confirm</button>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  </div>  
+</div>  

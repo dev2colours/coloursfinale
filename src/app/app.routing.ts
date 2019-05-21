@@ -5,7 +5,7 @@ import { AuthLayoutComponent } from './layouts/auth/auth-layout.component';
 
 export const AppRoutes: Routes = [{
         path: '',
-    redirectTo: '/pages/login',
+    redirectTo: '/pages/welcome',
         pathMatch: 'full',
       },{
         path: '',
@@ -16,7 +16,12 @@ export const AppRoutes: Routes = [{
         },{
             path: '',
             loadChildren: './userpage/user.module#UserModule'
-        },{
+        },
+        // {
+        //     path: '',
+        //     loadChildren: './r-time-spent-e/r-time-spent-e.module#RTimeSpentEModule'
+        // },
+        {
             path: '',
             loadChildren: './projects/projects.module#ProjectsModule'
         },{
@@ -36,6 +41,18 @@ export const AppRoutes: Routes = [{
             loadChildren: './tasks/tasks.module#TasksModule'
         },{
             path: '',
+            loadChildren: './notebook/notebook.module#NotebookModule'
+        },{
+            path: '',
+            loadChildren: './meeting-assistant/meeting-assistant.module#MeetingAssistantModule'
+        },{
+            path: '',
+            loadChildren: './document-manager/document-manager.module#DocumentManagerModule'
+        },{
+            path: '',
+            loadChildren: './reporting-assistant/reporting-assistant.module#ReportingAssistantModule'
+        },{
+            path: '',
             loadChildren: './market-place/market-place.module#MarketPlaceModule'
         },{
             path: '',
@@ -53,7 +70,13 @@ export const AppRoutes: Routes = [{
         children: [{
             path: 'pages',
             loadChildren: './pages/pages.module#PagesModule'
-        }]
+        },{
+            path: '',
+            loadChildren: './individual-rpts/individual-rpts.module#IndividualRptsModule'
+        },{
+            path: '',
+            loadChildren: './departmental-rpts/departmental-rpts.module#DepartmentalRptsModule'
+        },]
     }
 
 ];

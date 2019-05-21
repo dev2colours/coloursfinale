@@ -19,7 +19,7 @@
       </div>
     </div>
     <div id="my-tab-content" class="tab-content text-center">
-      <div class="tab-pane" id="day" role="tabpanel" aria-expanded="true">
+      <!-- <div class="tab-pane" id="day" role="tabpanel" aria-expanded="true">
         <div class="card">
           <div class="">
             <div class="card-text">
@@ -55,18 +55,17 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="tab-pane active" id="week" role="tabpanel" aria-expanded="false">
         <div class="card">
           <div class="">
             <div class="card-text">
-              <p class="card-title">
-                <button class="btn-link" title="goto the previous week {{ currentWeek.subtract(1, 'W').week() }}" (click)="changePeriod('previous','startWeek')"><i class="nc-icon nc-minimal-left"
-                    style="margin-right:3em"></i></button>Week {{ currentWeek.week() }}'s Tasks of
-                Year {{ currentWeek.year() }}
-                <button class="btn-link" title="goto the next week {{ currentWeek.add(1, 'W').week() }}" (click)="changePeriod('next','startWeek')"><i class="nc-icon nc-minimal-right"
+              <p class="card-title"><!--  {{ currentWeek.subtract(1, 'W').week() }} -->
+                <button class="btn-link" title="goto the previous week" (click)="changePeriod('previous','startWeek')"><i class="nc-icon nc-minimal-left"
+                    style="margin-right:3em"></i></button>Week {{ currentWeek.week() }}'s Tasks of Year {{ currentWeek.year() }}
+                <button class="btn-link" title="goto the next week" (click)="changePeriod('next','startWeek')"><i class="nc-icon nc-minimal-right"
                     style="margin-left:3em"></i></button>
-              </p>
+              </p><!--  {{ currentWeek.add(1, 'W').week() }} -->
             </div>
           </div>
           <div class="card-body">
@@ -608,7 +607,7 @@
                 <div class="card-header" role="tab" id="pQuarter">
                   <a class="collapsed" (click)="setQuarter('quarter0')" title="click to view tasks" data-toggle="collapse" href="#planQuarter0"
                     aria-expanded="false" aria-controls="planQuarter0">
-                    {{ quarter0label.quarter() }} Quarter of year {{ quarter0label.year() }}
+                    Quarter {{ quarter0label.quarter() }} of year {{ quarter0label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
                   </a>
                 </div>
@@ -648,7 +647,7 @@
                 <div class="card-header" role="tab" id="pQuarter">
                   <a class="collapsed" (click)="setQuarter('quarter1')" title="click to view tasks" data-toggle="collapse" href="#planQuarter1"
                     aria-expanded="false" aria-controls="planQuarter1">
-                    {{ quarter1label.quarter() }} Quarter of year {{ quarter1label.year() }}
+                    Quarter {{ quarter1label.quarter() }} of year {{ quarter1label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
                   </a>
                 </div>
@@ -693,7 +692,7 @@
                 <div class="card-header" role="tab" id="pQuarter">
                   <a class="collapsed" (click)="setQuarter('quarter2')" title="click to view tasks" data-toggle="collapse" href="#planQuarter2"
                     aria-expanded="false" aria-controls="planQuarter2">
-                    {{ quarter2label.quarter() }} Quarter of year {{ quarter2label.year() }}
+                    Quarter {{ quarter2label.quarter() }} of year {{ quarter2label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
                   </a>
                 </div>
@@ -738,7 +737,7 @@
                 <div class="card-header" role="tab" id="pQuarter">
                   <a class="collapsed" (click)="setQuarter('quarter3')" title="click to view tasks" data-toggle="collapse" href="#planQuarter3"
                     aria-expanded="false" aria-controls="planQuarter3">
-                    {{ quarter3label.quarter() }} Quarter of year {{ quarter3label.year() }}
+                    Quarter {{ quarter3label.quarter() }} of year {{ quarter3label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
                   </a>
                 </div>

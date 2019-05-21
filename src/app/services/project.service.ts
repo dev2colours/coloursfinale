@@ -8,9 +8,9 @@ import { Observable, Observer } from 'rxjs';
 import { map, timestamp } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
-import { Enterprise, ParticipantData, companyChampion, Department, asset, assetInProject } from "../models/enterprise-model";
+import { Enterprise, ParticipantData, companyChampion, Department, asset, assetInProject, scheduleRate, projectRole } from "../models/enterprise-model";
 import { Project, abridgedBill, workItem, Section } from "../models/project-model";
-import { Task } from "../models/task-model";
+import { Task, MomentTask } from "../models/task-model";
 
 @Injectable({
   providedIn: 'root'
@@ -25,10 +25,10 @@ export class ProjectService {
   currentProject: Project;
   project: Project;
   currentProjectId: any;
-  companies: Observable<Enterprise[]>;
+  companies: Observable<projectRole[]>;
   participants: Observable<any[]>;
   companyTasks: Observable<Task[]>;
-  showStaffTasks: Observable<Task[]>;
+  showStaffTasks: Observable<MomentTask[]>;
   labour: Observable<ParticipantData[]>;
   staffTaskActions: Observable<workItem[]>;
   Bill: Observable<abridgedBill[]>;
@@ -36,6 +36,8 @@ export class ProjectService {
   ProjectPlantReturns: Observable<assetInProject[]>;
   projectSections: Observable<Section[]>;
   billWorks: Observable<workItem[]>;
+  billSections: Observable<Section[]>;
+  scheduleOfRates: Observable<scheduleRate[]>;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
     afAuth.authState.subscribe(user => {
@@ -93,21 +95,39 @@ export class ProjectService {
     return this.ProjectPlantReturns;
   }
 
+  getEnterpriseScheduleOfRates(companyId, projectId) {
+    let plantRef = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(companyId).collection<scheduleRate>('ScheduleOfRates');
+    this.scheduleOfRates = plantRef.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as scheduleRate;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    return this.scheduleOfRates;
+  }
+
   getStaffProjTasks(projId, staffId) {
+    let myTaskData: MomentTask;
 
     console.log('project Id -->' + ' ' + projId);
     console.log('staff Id -->' + ' ' + staffId);
     let proRef = this.afs.collection('Users').doc(staffId).collection<Project>('projects').doc(projId);
     this.showStaffTasks = proRef.collection<Task>('tasks').snapshotChanges().pipe(
       map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as Task;
+        const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
+
+        myTaskData = data;
+        myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
+        myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
         return { id, ...data };
       }))
     );
     return this.showStaffTasks;
   }
-
+/*  */
   getProCompanyABOQ(projectId, compId) {
     let compRef = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(compId);
     this.Bill = compRef.collection<abridgedBill>('abridgedBOQ', ref => ref.orderBy('No', 'asc')).snapshotChanges().pipe(
@@ -137,6 +157,18 @@ export class ProjectService {
     this.billWorkItems = BillRef.collection<workItem>('workItems').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as workItem;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+    return this.billWorkItems;
+  }
+
+  getBillSections(projectId, compId, billID) {
+    let BillRef = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(compId).collection<abridgedBill>('abridgedBOQ').doc(billID);
+    this.billSections = BillRef.collection<Section>('sections').snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Section;
         const id = a.payload.doc.id;
         return { id, ...data };
       }))
@@ -193,7 +225,7 @@ export class ProjectService {
   getCompanies(projId){
     this.companies = this.afs.collection('Projects').doc(projId).collection('enterprises').snapshotChanges().pipe(
       map(b => b.map(a => {
-        const data = a.payload.doc.data() as Enterprise;
+        const data = a.payload.doc.data() as projectRole;
         const id = a.payload.doc.id;
         return { id, ...data };
       }))

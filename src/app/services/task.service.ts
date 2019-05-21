@@ -155,6 +155,8 @@ export class TaskService {
   }
 
   addProjectTask(task, company) {
+    let newClassification = { name: "Work", createdOn: new Date().toISOString(), id: "colourWorkId", plannedTime: "", actualTime: "", Varience: "" };
+
     console.log('task created' + task.name)
     let oop = company.id;
     let createdTask = task;
@@ -167,6 +169,8 @@ export class TaskService {
     let entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
     let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
     let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
+    let userClassRef = this.afs.collection('Users').doc(this.userId).collection('classifications').doc(newClassification.id).collection('tasks');
+
 
     //set task under a user
     userRef.add(createdTask).then(function (Ref) {
@@ -214,6 +218,7 @@ export class TaskService {
       };
     });
   }
+
   addTask( task, company, dept ){
     console.log('Company' + ' ' + company.name)
     console.log('task created' + ' ' + task.name)
@@ -223,8 +228,8 @@ export class TaskService {
     let createdTask = task;
     let tasksRef = this.afs.collection('tasks');
     let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
-    let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
     let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
     let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
     let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
     let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
@@ -232,7 +237,7 @@ export class TaskService {
     let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
     let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
 
-    if (dept.departmentId !="") {
+    if (task.departmentId !="") {
       entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');      
       entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
       .doc(task.champion.id).collection('tasks');      
@@ -278,8 +283,17 @@ export class TaskService {
           //set task under a champion
           champRef.doc(newTaskId).set(createdTask);
           champProjRef.doc(newTaskId).set(createdTask);
+
+          // update id for champion
+          champRef.doc(newTaskId).update({ 'id': newTaskId });
+          champProjRef.doc(newTaskId).update({ 'id': newTaskId });
+
           // set task in user project tasks
           userProjRef.doc(newTaskId).set(createdTask);
+          
+          // update id for task in user project tasks
+          userProjRef.doc(newTaskId).update({ 'id': newTaskId });
+
           //set task under a project
           projectsRef.doc(newTaskId).set(createdTask);
           //set task under a company                
@@ -288,16 +302,283 @@ export class TaskService {
           projectCompanyRef.doc(newTaskId).set(createdTask);
           //update task id under a company
           entProjRef.doc(newTaskId).update({ 'id': newTaskId });
-          // update id for task in user project tasks
-          userProjRef.doc(newTaskId).update({ 'id': newTaskId });
-          // update id for champion
-          champRef.doc(newTaskId).update({ 'id': newTaskId });
-          champProjRef.doc(newTaskId).update({ 'id': newTaskId });
           //update id for task under a project
           projectsRef.doc(newTaskId).update({ 'id': newTaskId });
           projectCompanyRef.doc(newTaskId).update({ 'id': newTaskId });
       };
     });    
+  }
+
+  updateTask(task, company, dept) {
+    console.log('Company' + ' ' + company.name)
+    console.log('task created' + ' ' + task.name)
+    let oop = company.id;
+    let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+    let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+    let createdTask = task;
+    let tasksRef = this.afs.collection('tasks');
+    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
+    let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+    let entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
+    let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
+    let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
+
+    if (task.departmentId != "") {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
+        .doc(task.champion.id).collection('tasks');
+    }
+
+    let newTaskId = task.id;
+
+    //set task under a user
+    userRef.doc(newTaskId).update(createdTask);
+      //set champ task under a enterprise
+      entTaskChamp.doc(newTaskId).update(createdTask);
+      //update id for champ task under a enterprise
+      //set task under a tasks
+      tasksRef.doc(newTaskId).update(createdTask);
+      //set task under a company                        
+      entRef.doc(newTaskId).update(createdTask);
+
+      if (task.departmentId != "") {
+
+        //set task under a enterprise dept
+        entDeptRef.doc(newTaskId).update(createdTask);
+        //update id for task under a enterprise dept
+        //set champ task under a enterprise dept
+        entDepStafftRef.doc(newTaskId).update(createdTask);
+        //update id for champ task under a enterprise dept
+      }
+
+      if (task.projectType === 'Enterprise') {
+        // console.log(Ref);
+        //set task under a champion
+        champRef.doc(newTaskId).update(createdTask);
+        champProjRef.doc(newTaskId).update(createdTask);
+        // set task in user project tasks
+        userProjRef.doc(newTaskId).update(createdTask);
+        //set task under a project
+        projectsRef.doc(newTaskId).update(createdTask);
+        //set task under a company                
+        entProjRef.doc(newTaskId).update(createdTask);
+        //set task under a projectCompanyRef
+        projectCompanyRef.doc(newTaskId).update(createdTask);;
+      };
+    // });
+  }
+
+  updateTask2(task) {
+    console.log('CompanyId' + ' ' + task.companyId)
+    console.log('task created' + ' ' + task.name)
+    let oop = task.companyId;
+    let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+    let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+    let createdTask = task;
+    let tasksRef = this.afs.collection('tasks');
+    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
+    let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+    let entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
+    let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
+    let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
+
+    if (task.departmentId != "") {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
+        .doc(task.champion.id).collection('tasks');
+    }
+
+    let newTaskId = task.id;
+
+    //set task under a user
+    userRef.doc(newTaskId).update(createdTask);
+    //set champ task under a enterprise
+    entTaskChamp.doc(newTaskId).update(createdTask);
+    //update id for champ task under a enterprise
+    //set task under a tasks
+    tasksRef.doc(newTaskId).update(createdTask);
+    //set task under a company                        
+    entRef.doc(newTaskId).update(createdTask);
+
+    if (task.departmentId != "") {
+
+      //set task under a enterprise dept
+      entDeptRef.doc(newTaskId).update(createdTask);
+      //update id for task under a enterprise dept
+      //set champ task under a enterprise dept
+      entDepStafftRef.doc(newTaskId).update(createdTask);
+      //update id for champ task under a enterprise dept
+    }
+
+    if (task.projectType === 'Enterprise') {
+      // console.log(Ref);
+      //set task under a champion
+      champRef.doc(newTaskId).update(createdTask);
+      champProjRef.doc(newTaskId).update(createdTask);
+      // set task in user project tasks
+      userProjRef.doc(newTaskId).update(createdTask);
+      //set task under a project
+      projectsRef.doc(newTaskId).update(createdTask);
+      //set task under a company                
+      entProjRef.doc(newTaskId).update(createdTask);
+      //set task under a projectCompanyRef
+      projectCompanyRef.doc(newTaskId).update(createdTask);;
+    };
+    // });
+  }
+
+  addplainCompTask(task: Task, company: Enterprise, dept: Department) {
+    console.log('Company' + ' ' + company.name)
+    console.log('task created' + ' ' + task.name)
+    let oop = company.id;
+    let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+    let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+    let createdTask = task;
+    let tasksRef = this.afs.collection('tasks');
+    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+
+    if (dept.id != "") {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
+        .doc(task.champion.id).collection('tasks');
+    }
+
+    //set task under a user
+    userRef.add(createdTask).then(function (Ref) {
+      let newTaskId = Ref.id;
+      userRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      //set task under a champion
+      champRef.doc(newTaskId).set(createdTask);
+
+      // update id for champion
+      champRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      //set champ task under a enterprise
+      entTaskChamp.doc(newTaskId).set(createdTask);
+      //update id for champ task under a enterprise
+      entTaskChamp.doc(newTaskId).update({ 'id': newTaskId });
+
+      //set task under a tasks
+      tasksRef.doc(newTaskId).set(createdTask);
+      //update id for task under a tasks
+      tasksRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      //set task under a company                        
+      entRef.doc(newTaskId).set(createdTask);
+
+      //update id for task under a company
+      entRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      if (task.departmentId != "") {
+
+        //set task under a enterprise dept
+        entDeptRef.doc(newTaskId).set(createdTask);
+        //update id for task under a enterprise dept
+        entDeptRef.doc(newTaskId).update({ 'id': newTaskId });
+
+        //set champ task under a enterprise dept
+        entDepStafftRef.doc(newTaskId).set(createdTask);
+        //update id for champ task under a enterprise dept
+        entDepStafftRef.doc(newTaskId).update({ 'id': newTaskId });
+
+      }
+    });
+  }
+
+  update2plainCompTask(task: Task) {
+    console.log('CompanyId' + ' ' + task.companyId)
+    console.log('task created' + ' ' + task.name)
+    let oop = task.companyId;
+    let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+    let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+    let createdTask = task;
+    let tasksRef = this.afs.collection('tasks');
+    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+
+    if (task.departmentId != "") {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
+        .doc(task.champion.id).collection('tasks');
+    }
+    let newTaskId = task.id;
+
+    //set task under a user
+    userRef.doc(newTaskId).update(createdTask);
+    //set task under a champion
+    champRef.doc(newTaskId).update(createdTask);
+    //set champ task under a enterprise
+    entTaskChamp.doc(newTaskId).update(createdTask);
+    //set task under a tasks
+    tasksRef.doc(newTaskId).update(createdTask);
+
+    //set task under a company                        
+    entRef.doc(newTaskId).update(createdTask);
+
+    if (task.departmentId != "") {
+
+      //set task under a enterprise dept
+      entDeptRef.doc(newTaskId).update(createdTask);
+      //set champ task under a enterprise dept
+      entDepStafftRef.doc(newTaskId).update(createdTask);
+    }
+    // });
+  }
+
+  updateCompTask(task: Task, company: Enterprise, dept: Department) {
+    console.log('Company' + ' ' + company.name)
+    console.log('task created' + ' ' + task.name)
+    let oop = company.id;
+    let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+    let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+    let createdTask = task;
+    let tasksRef = this.afs.collection('tasks');
+    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+
+    if (dept.id != "") {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
+        .doc(task.champion.id).collection('tasks');
+    }
+    let newTaskId = task.id;
+
+    //set task under a user
+    userRef.doc(newTaskId).update(createdTask);
+      //set task under a champion
+    champRef.doc(newTaskId).update(createdTask);
+      //set champ task under a enterprise
+    entTaskChamp.doc(newTaskId).update(createdTask);
+      //set task under a tasks
+    tasksRef.doc(newTaskId).update(createdTask);
+
+      //set task under a company                        
+    entRef.doc(newTaskId).update(createdTask);
+
+    if (task.departmentId != "") {
+
+      //set task under a enterprise dept
+      entDeptRef.doc(newTaskId).update(createdTask);
+      //set champ task under a enterprise dept
+      entDepStafftRef.doc(newTaskId).update(createdTask);
+    }
+    // });
   }
 
 
@@ -312,48 +593,6 @@ export class TaskService {
     );
     return this.Tasks;
   }
-
-  // getImplementationTAsks(object ,id){
-  //   this.tasks = this.afs.collection(object).doc(id).collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
-  //     map(b => b.map(a => {
-  //       const data = a.payload.doc.data() as MomentTask;
-  //       const id = a.payload.doc.id;
-  //       this.myTaskData = data;
-  //       this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
-  //       this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
-  //       // this.categorizedTasks.push(this.myTaskData);
-  //       let today = moment(new Date(), "YYYY-MM-DD");
-
-  //       if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
-
-  //         this.CurrentTAsks.push(data);
-  //       };
-  //       // outstanding tasks
-  //       if (moment(data.finish).isBefore(today)) {
-  //         this.OutstandingTasks.push(this.myTaskData);
-  //       };
-  //       // Upcoming tasks
-  //       if (moment(data.start).isAfter(today)) {
-  //         this.UpcomingTAsks.push(data);
-  //         if (moment(data.start).isBefore(today.add(3, "month"))) {
-  //           this.ShortTermTAsks.push(data);
-  //         }
-  //         if (moment(data.start).isAfter(today.add(6, "month"))) {
-  //           this.MediumTermTAsks.push(data);
-  //         }
-  //         if (moment(data.start).isAfter(today.add(12, "month"))) {
-  //           this.LongTermTAsks.push(data)
-  //         }
-
-  //       };
-
-  //       this.CompanyTasks.push(this.myTaskData);
-  //       // this.checkTask(this.CompanyTasks);
-  //       return { id, ...data };
-  //     }))
-  //   );
-  //   return this.ShortTermTAsks, this.MediumTermTAsks, this.LongTermTAsks, this.OutstandingTasks,this.UpcomingTAsks
-  // }
 
   getOutstandingTAsks(object, id) {
     console.log("from" + " " + object + " companyID==> " + id);

@@ -348,3 +348,31 @@
   border-left-width: 0px;
   border-right-width: 0px;
 }
+
+.scroll-em {
+  width: 330px;
+  height: 110px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* overscroll-behavior: */
+  white-space: nowrap;
+
+}
+
+.scroll-task {
+  /* width: 350px; */
+  min-width: 350px;
+  height: 200px;
+  /* overflow-y: auto;
+  overflow-x: hidden; */
+  overflow: auto;
+  /* overscroll-behavior: */
+  white-space: nowrap;
+
+}
+
+div.scrollmenu {
+  background-color: #333;
+  overflow: auto;
+  white-space: nowrap;
+}

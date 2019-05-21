@@ -12,13 +12,16 @@ import { ActionItem } from 'app/models/task-model';
 import * as moment from 'moment';
 import { Project, workItem } from 'app/models/project-model';
 import { coloursUser } from 'app/models/user-model';
-
+import { ProjectService } from 'app/services/project.service';
+import PerfectScrollbar from 'perfect-scrollbar';
 
 declare const $: any;
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html'
+  templateUrl: './dashboard.component.html',
+  // styleUrls: ['./dashboard.component.css']
+
 })
 export class DashboardComponent implements OnInit {
   public gradientStroke;
@@ -56,7 +59,7 @@ export class DashboardComponent implements OnInit {
 
 
   userProfile: Observable<coloursUser>;
-  myDocment: AngularFirestoreDocument<{}>;
+  myDocument: AngularFirestoreDocument<{}>;
   userData: coloursUser;
   cdTimer: string;
   projsNo: any;
@@ -64,14 +67,23 @@ export class DashboardComponent implements OnInit {
   thyProjects: any;
   marketProjects: any;
   projs2No: number;
+  viewProjects: any;
 
-  constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
-    this.afAuth.user.subscribe(user => {
-      this.userId = user.uid;
-      this.user = user;
-      this.dataCall();
-    });
-    
+  constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore, private ps: ProjectService) {
+    // this.afAuth.user.subscribe(user => {
+    //   this.userId = user.uid;
+    //   this.user = user;
+    //   this.dataCall();
+    // });
+    this.afAuth.authState.subscribe(user => {
+      if (user === null) {
+        this.router.navigate(['/pages/login']);
+      } else {
+        this.userId = user.uid;
+        this.user = user;
+        this.dataCall();
+      }
+    })
     // this.countDown(10, "status");
     // this.countDownPopup(10);
   }
@@ -123,9 +135,9 @@ export class DashboardComponent implements OnInit {
   // }
 
   dataCall(){
-    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+    this.myDocument = this.afs.collection('Users').doc(this.user.uid);
 
-    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+    this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
@@ -139,10 +151,45 @@ export class DashboardComponent implements OnInit {
         bus_email: userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationality: userData.nationality,
+        nationalId: userData.nationalId
       }
+
+      if (userData.address == "" || userData.address == null || userData.address == undefined) {
+        userData.address = ""
+      } else {
+
+      }
+
+      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ""
+      } else {
+
+      }
+
+      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ""
+      } else {
+
+      }
+
+      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ""
+      } else {
+
+      }
+
+      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ""
+      } else {
+
+      }
+
       this.myData = myData;
       this.userData = userData;
+
     });
 
 
@@ -156,6 +203,7 @@ export class DashboardComponent implements OnInit {
     // this.hideProjs = false;
 
     let currentDate = moment(new Date()).format('L');;
+    let today = moment(new Date(), "YYYY-MM-DD");
 
     console.log(currentDate);
 
@@ -163,8 +211,11 @@ export class DashboardComponent implements OnInit {
     let userDocRef = this.afs.collection('Users').doc(this.userId);
     this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
       // .limit(4)
-      .where("startDate", '==', currentDate).limit(4))
-      .snapshotChanges().pipe(
+      // .where("startDate", '==', currentDate)
+      // .orderBy('start', 'asc')
+      
+      // .limit(4)
+      ).snapshotChanges().pipe(
         map(actions => actions.map(a => {
           const data = a.payload.doc.data() as workItem;
           const id = a.payload.doc.id;
@@ -176,7 +227,13 @@ export class DashboardComponent implements OnInit {
       console.log(actions);
       
       this.myActionItems = [];
-      this.myActionItems = actions;
+
+      actions.forEach(element => {
+        if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
+          this.myActionItems.push(element);
+        }
+      });
+
       console.log(actions.length);
       console.log(actions);
       this.actionNo = actions.length;
@@ -189,7 +246,7 @@ export class DashboardComponent implements OnInit {
         this.showActions = true;
       }
     })
-    let myProjects = userDocRef.collection('projects', ref => ref.orderBy('createdOn', "desc").limit(4)).valueChanges();
+    let myProjects = userDocRef.collection('projects', ref => ref.orderBy('createdOn', "desc").limit(5)).valueChanges();
 
     this.thyProjects = 0;
     myProjects.subscribe((projects) => {
@@ -214,12 +271,13 @@ export class DashboardComponent implements OnInit {
 
     this.myProjects = myProjects;
 
-    this.allMyProjects = userDocRef.collection('projects', ref => ref.orderBy('createdOn', "desc").limit(4)).valueChanges();
+    // this.allMyProjects = userDocRef.collection('projects', ref => ref.orderBy('createdOn', "desc").limit(4)).valueChanges();
+    this.allMyProjects = this.ps.getProjects(this.userId);
     this.projsNo = 0;
     this.allMyProjects.subscribe((projects) => {
       console.log(projects);
       console.log(this.allMyProjects);
-
+      this.viewProjects = projects;
       this.projsNo = projects.length;
       if (this.projsNo == 0) {
 
@@ -237,6 +295,7 @@ export class DashboardComponent implements OnInit {
 
 
   public ngOnInit() {
+
     this.chartColor = "#FFFFFF";
 
     var cardStatsMiniLineColor = "#fff",
@@ -520,6 +579,16 @@ export class DashboardComponent implements OnInit {
         this.hideMdata = false;
 
       }
-    })
+    });
+
+    const lists = document.getElementsByClassName('setLists')[0];
+    if (window.matchMedia(`(height: 100px)`).matches) {
+      // let ps = new PerfectScrollbar(elemMainPanel);
+      // ps = new PerfectScrollbar(elemSidebar);
+      lists.classList.add('perfect-scrollbar-on');
+    }
+    else {
+      lists.classList.add('perfect-scrollbar-off');
+    }
   } 
 }

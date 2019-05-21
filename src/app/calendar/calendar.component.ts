@@ -10,7 +10,7 @@ import { map, switchMap, mapTo } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { Enterprise, ParticipantData, companyChampion, Department } from "../models/enterprise-model";
 import { Project, workItem } from "../models/project-model";
-import { personalStandards, selectedPeriod, personalLiability, personalAsset, profession } from "../models/user-model";
+import { personalStandards, selectedPeriod, personalLiability, personalAsset, profession, timeSheetDate, unRespondedWorkReport, rpt } from "../models/user-model";
 import { Task, TaskData, MomentTask } from "../models/task-model";
 import { PersonalService } from '../services/personal.service';
 import PerfectScrollbar from 'perfect-scrollbar';
@@ -32,7 +32,8 @@ var misc: any = {
   active_collapse: true,
   disabled_collapse_init: 0,
 }
-var $: any;
+
+declare var $: any;
 
 @Component({
   selector: 'app-calendar',
@@ -92,7 +93,6 @@ export class CalendarComponent implements OnInit {
   viewActions: any;
   actionNo: number;
   showActions: boolean;
-  // myActionItems: any;
   hideActions: boolean;
   myActionItems: any;
   allprojectsTasks: Task[];
@@ -110,34 +110,65 @@ export class CalendarComponent implements OnInit {
   userData: coloursUser;
   asset: personalAsset;
   liability: personalLiability;
-  myDocment: AngularFirestoreDocument<{}>;
-  industrySectors: { name: string; }[];
-  professions: { name: string; }[];
+  myDocument: AngularFirestoreDocument<{}>;
+  industrySectors: string[];
+  professions: string[];
   userInit: ParticipantData;
   pro: profession;
-  timesheetCollection: { date: string; name: string; }[];
+  // timesheetCollection: { date: string; name: string; }[];
   classificationsToDate: Observable<classification[]>;
   projsNo: number;
 
   selectedDate: string;
   selectedSumDate: string;
   selectedWorkDate: string;
-  selectedStartDate: string
+  selectedStartDate: string;
+  selectedEndDate: string;
+
+  SIunits: { id: string; name: string; }[];
+  setUnit: ({ id: string; name: string });
+  viewDailyTimeSheets: Observable<rpt[]>;
+
 
   public showProjs: boolean = false;
   public hideProjs: boolean = false;
+  timesheetCollection: Observable<{ name: string; id: string; }[]>;
 
-  constructor(public auth: AuthService, private pns: PersonalService , public afAuth: AngularFireAuth, public es: EnterpriseService,private ps:ProjectService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute)  { 
+  public dailyTimeSheetDemo: boolean = true;
+  mlapsdata: number;
+
+
+  constructor(public auth: AuthService, private pns: PersonalService , public afAuth: AngularFireAuth, public es: EnterpriseService, private ps:ProjectService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute)  { 
   
     this.pro = { name:"" }
-    this.classification = { name: '', createdOn: '', plannedTime: '', actualTime: '', Varience: '', id: '' };
-    this.userData = { name: "", gender: "", dob: "", age: 0, username: "", email: "", bus_email: "", phoneNumber: "", telephone: null, address: "", nationalId: "", nationality: "", zipCode: null, country: "", city: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", aboutMe: "", profession: [this.pro], qualifications: null, bodyWeight: 0, bodyHeight: 0, bodyMassIndex: 0, industrySector: "", personalAssets: null, personalLiabilities: null, reference: null, focusFactor: 0, referee: [this.userInit], userImg: "", LastTimeLogin: "" }; 
-    this.asset = { name: '', value: '', id: '', by: '', byId: '', addeddOn: '', assetNumber: '' };
-    this.liability = { name: '', amount: '', id: '', by: '', byId: '', addeddOn: '' };
+    this.classification = { name: "", createdOn: "", plannedTime: "", actualTime: "", Varience: "", id: "" };
+    this.userData = { name: "", gender: "", dob: "", age: 0, username: "", email: "", bus_email: "", phoneNumber: "", telephone: null, address: "", nationalId: "", nationality: "", zipCode: null, country: "", city: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", aboutMe: "", profession: [this.pro], qualifications: null, bodyWeight: 0, bodyHeight: 0, bodyMassIndex: 0, industrySector: "", personalAssets: null, personalLiabilities: null, reference: null, focusFactor: 0, referee: [this.userInit], userImg: "", LastTimeLogin: "", hierarchy: "", updated: false }; 
+    this.asset = { name: "", value: "", id: "", by: "", byId: "", addeddOn: "", assetNumber: "" };
+    this.liability = { name: "", amount: "", id: "", by: "", byId: "", addeddOn: "" };
     this.selectedDate = null;
     this.selectedSumDate = null;
     this.selectedWorkDate = null;
     this.selectedStartDate = null;
+    this.selectedEndDate = null;
+
+    this.SIunits = [
+      { id: 'hours', name: 'Time(hrs)' },
+      { id: 'items', name: 'Items' },
+      { id: 'kg', name: 'Kilograms(Kg)' },
+      { id: 'm2', name: 'Area(m2)' },
+      { id: 'm3', name: 'Volume(m3)' },
+      { id: 'mi', name: 'Miles(mi)' },
+      { id: 'yd', name: 'Yards(yd)' },
+      { id: 'mm', name: 'Millimeters(mm)' },
+      { id: 'cm', name: 'Centimeters(cm)' },
+      { id: 'm', name: 'Meters(m)' },
+      { id: 'Km', name: 'Kilometers(km)' },
+      { id: 'in', name: 'Inches(in)' },
+      { id: 'ft', name: 'Feet(ft)' },
+      { id: 'g', name: 'Grams(g)' },
+    ];
+
+    this.setUnit = null;
 
     this.stdPeriods = [
       { id: '3/Day', name: '3 times/Day' },
@@ -149,305 +180,302 @@ export class CalendarComponent implements OnInit {
       { id: 'term', name: 'Term' },
     ];
 
-    this.timesheetCollection = [
-      { date: '01/01/2019', name: '01/01/2019' },
-      { date: '03/01/2019', name: '03/01/2019' },
-      { date: '05/01/2019', name: '05/01/2019' },
-      { date: '08/01/2019', name: '08/01/2019' },
-      { date: '09/01/2019', name: '09/01/2019' },
-      { date: '10/01/2019', name: '10/01/2019' },
-      { date: '11/01/2019', name: '11/01/2019' },
-      { date: '12/01/2019', name: '12/01/2019' },
-    ]
+    // this.timesheetCollection = [
+    //   { date: '01/01/2019', name: '01/01/2019' },
+    //   { date: '03/01/2019', name: '03/01/2019' },
+    //   { date: '05/01/2019', name: '05/01/2019' },
+    //   { date: '08/01/2019', name: '08/01/2019' },
+    //   { date: '09/01/2019', name: '09/01/2019' },
+    //   { date: '10/01/2019', name: '10/01/2019' },
+    //   { date: '11/01/2019', name: '11/01/2019' },
+    //   { date: '12/01/2019', name: '12/01/2019' },
+    // ]
 
     this.professions = [
-      { name: 'Physician' },
-      { name: 'Engineer' },
-      { name: 'Technician' },
-      { name: 'Teacher' },
-      { name: 'Accountant' },
-      { name: 'Veterinarian' },
-      { name: 'Lawyer' },
-      { name: 'Pharmacist' },
-      { name: 'Psychologist' },
-      { name: 'Software Developer' },
-      { name: 'Architect' },
-      { name: 'Surgeon' },
-      { name: 'Midwife' },
-      { name: 'Dietitian' },
-      { name: 'Designer' },
-      { name: 'Physiotherapist' },
-      { name: 'Scientist' },
-      { name: 'Consultant' },
-      { name: 'Electrician' },
-      { name: 'Mechanic' },
-      { name: 'Surveyor' },
-      { name: 'Labourer' },
-      { name: 'Hairdresser' },
-      { name: 'Plumber' },
-      { name: 'Police officer' },
-      { name: 'Health professional' },
-      { name: 'Broker' },
-      { name: 'Tradesman' },
-      { name: 'Chef' },
-      { name: 'Radiographer' },
-      { name: 'Dentist' },
-      { name: 'Expert' },
-      { name: 'Medical laboratory scientist' },
-      { name: 'Dental hygienist' },
-      { name: 'Artist' },
-      { name: 'Operator' },
-      { name: 'Butcher' },
-      { name: 'Actuary' },
-      { name: 'Secretary' },
-      { name: 'Firefighter' },
-      { name: 'Musician' },
-      { name: 'Technologist' },
-      { name: 'Paramedic' },
-      { name: 'Actor' },
-      { name: 'Labourer' },
-      { name: 'Librarian' },
-      { name: 'Machinist' },
-      { name: 'Waiting staff' },
-      { name: 'Aviator' },
-      { name: 'Farmer' },
-      { name: 'Mechanical Engineer' },
+      'Physician',
+      'Engineer',
+      'Technician',
+      'Teacher',
+      'Accountant',
+      'Veterinarian',
+      'Lawyer',
+      'Pharmacist',
+      'Psychologist',
+      'Software Developer',
+      'Architect',
+      'Surgeon',
+      'Midwife',
+      'Dietitian',
+      'Designer',
+      'Physiotherapist',
+      'Scientist',
+      'Consultant',
+      'Electrician',
+      'Mechanic',
+      'Surveyor',
+      'Labourer',
+      'Hairdresser',
+      'Plumber',
+      'Police officer',
+      'Health professional',
+      'Broker',
+      'Tradesman',
+      'Chef',
+      'Radiographer',
+      'Dentist',
+      'Expert',
+      'Medical laboratory scientist',
+      'Dental hygienist',
+      'Artist',
+      'Operator',
+      'Butcher',
+      'Actuary',
+      'Secretary',
+      'Firefighter',
+      'Musician',
+      'Technologist',
+      'Paramedic',
+      'Actor',
+      'Labourer',
+      'Librarian',
+      'Machinist',
+      'Waiting staff',
+      'Aviator',
+      'Farmer',
+      'Mechanical Engineer',
     ]
 
     this.industrySectors = [
-      { name: 'Accountants' },
-      { name: 'Advertising/ Public Relations' },
-      { name: 'Aerospace, Defense Contractors ' },
-      { name: 'Agribusiness ' },
-      { name: 'Agricultural Services & Products' },
-      { name: 'Air Transport' },
-      { name: 'Air Transport Unions' },
-      { name: 'Airlines' },
-      { name: 'Alcoholic Beverages' },
-      { name: 'Alternative Energy Production & Services' },
-      { name: 'Architectural Services' },
-      { name: 'Attorneys / Law Firms' },
-      { name: 'Auto Dealers' },
-      { name: 'Auto Dealers, Japanese' },
-      { name: ' Auto Manufacturers' },
-      { name: 'Automotive' },
-      { name: 'Abortion Policy / Anti - Abortion' },
-      { name: 'Abortion Policy / Pro - Abortion Rights' },
+      'Accountants',
+      'Advertising/ Public Relations',
+      'Aerospace, Defense Contractors ',
+      'Agribusiness ',
+      'Agricultural Services & Products',
+      'Air Transport',
+      'Air Transport Unions',
+      'Airlines',
+      'Alcoholic Beverages',
+      'Alternative Energy Production & Services',
+      'Architectural Services',
+      'Attorneys / Law Firms',
+      'Auto Dealers',
+      'Auto Dealers, Japanese',
+      ' Auto Manufacturers',
+      'Automotive',
+      'Abortion Policy / Anti - Abortion',
+      'Abortion Policy / Pro - Abortion Rights',
+      'Banking, Mortgage',
+      'Banks, Commercial',
+      'Banks, Savings & Loans',
+      'Bars & Restaurants',
+      'Beer, Wine & Liquor',
+      'Books, Magazines & Newspapers',
+      ' Broadcasters, Radio / TV',
+      'Builders / General Contractors',
+      'Builders / Residential',
+      'Building Materials & Equipment',
+      'Building Trade Unions ',
+      'Business Associations',
+      'Business Services',
 
-      { name: 'Banking, Mortgage' },
-      { name: 'Banks, Commercial' },
-      { name: 'Banks, Savings & Loans' },
-      { name: 'Bars & Restaurants' },
-      { name: 'Beer, Wine & Liquor' },
-      { name: 'Books, Magazines & Newspapers' },
-      { name: ' Broadcasters, Radio / TV' },
-      { name: 'Builders / General Contractors' },
-      { name: 'Builders / Residential' },
-      { name: 'Building Materials & Equipment' },
-      { name: 'Building Trade Unions ' },
-      { name: 'Business Associations' },
-      { name: 'Business Services' },
+      'Cable & Satellite TV Production & Distribution',
+      'Candidate Committees ',
+      'Candidate Committees, Democratic',
+      'Candidate Committees, Republican',
+      'Car Dealers',
+      'Car Dealers, Imports',
+      'Car Manufacturers',
+      'Casinos / Gambling',
+      'Cattle Ranchers / Livestock',
+      'Chemical & Related Manufacturing',
+      'Chiropractors',
+      'Civil Servants / Public Officials',
+      'Clergy & Religious Organizations ',
+      'Clothing Manufacturing',
+      'Coal Mining',
+      'Colleges, Universities & Schools',
+      'Commercial Banks',
+      'Commercial TV & Radio Stations',
+      'Communications / Electronics',
+      'Computer Software',
+      'Conservative / Republican',
+      'Construction',
+      'Construction Services',
+      'Construction Unions',
+      'Credit Unions',
+      'Crop Production & Basic Processing',
+      'Cruise Lines',
+      'Cruise Ships & Lines',
 
-      { name: 'Cable & Satellite TV Production & Distribution' },
-      { name: 'Candidate Committees ' },
-      { name: 'Candidate Committees, Democratic' },
-      { name: 'Candidate Committees, Republican' },
-      { name: 'Car Dealers' },
-      { name: 'Car Dealers, Imports' },
-      { name: 'Car Manufacturers' },
-      { name: 'Casinos / Gambling' },
-      { name: 'Cattle Ranchers / Livestock' },
-      { name: 'Chemical & Related Manufacturing' },
-      { name: 'Chiropractors' },
-      { name: 'Civil Servants / Public Officials' },
-      { name: 'Clergy & Religious Organizations ' },
-      { name: 'Clothing Manufacturing' },
-      { name: 'Coal Mining' },
-      { name: 'Colleges, Universities & Schools' },
-      { name: 'Commercial Banks' },
-      { name: 'Commercial TV & Radio Stations' },
-      { name: 'Communications / Electronics' },
-      { name: 'Computer Software' },
-      { name: 'Conservative / Republican' },
-      { name: 'Construction' },
-      { name: 'Construction Services' },
-      { name: 'Construction Unions' },
-      { name: 'Credit Unions' },
-      { name: 'Crop Production & Basic Processing' },
-      { name: 'Cruise Lines' },
-      { name: 'Cruise Ships & Lines' },
+      'Dairy',
+      'Defense',
+      'Defense Aerospace',
+      'Defense Electronics',
+      'Defense / Foreign Policy Advocates',
+      'Democratic Candidate Committees ',
+      'Democratic Leadership PACs',
+      'Democratic / Liberal ',
+      'Dentists',
+      'Doctors & Other Health Professionals',
+      'Drug Manufacturers',
 
-      { name: 'Dairy' },
-      { name: 'Defense' },
-      { name: 'Defense Aerospace' },
-      { name: 'Defense Electronics' },
-      { name: 'Defense / Foreign Policy Advocates' },
-      { name: 'Democratic Candidate Committees ' },
-      { name: 'Democratic Leadership PACs' },
-      { name: ' Democratic / Liberal ' },
-      { name: ' Dentists' },
-      { name: ' Doctors & Other Health Professionals' },
-      { name: ' Drug Manufacturers' },
+      'Education ',
+      'Electric Utilities',
+      'Electronics Manufacturing & Equipment',
+      'Electronics, Defense Contractors',
+      'Energy & Natural Resources',
+      'Entertainment Industry',
+      'Environment ',
+      'Farm Bureaus',
+      'Farming',
+      'Finance / Credit Companies',
+      'Finance, Insurance & Real Estate',
+      'Food & Beverage',
+      'Food Processing & Sales',
+      'Food Products Manufacturing',
+      'Food Stores',
+      'For - profit Education',
+      'For - profit Prisons',
+      'Foreign & Defense Policy ',
+      'Forestry & Forest Products',
+      'Foundations, Philanthropists & Non - Profits',
+      'Funeral Services',
 
-      { name: 'Education ' },
-      { name: 'Electric Utilities' },
-      { name: 'Electronics Manufacturing & Equipment' },
-      { name: 'Electronics, Defense Contractors' },
-      { name: 'Energy & Natural Resources' },
-      { name: 'Entertainment Industry' },
-      { name: 'Environment ' },
-      { name: 'Farm Bureaus' },
-      { name: 'Farming' },
-      { name: 'Finance / Credit Companies' },
-      { name: 'Finance, Insurance & Real Estate' },
-      { name: 'Food & Beverage' },
-      { name: 'Food Processing & Sales' },
-      { name: 'Food Products Manufacturing' },
-      { name: 'Food Stores' },
-      { name: 'For - profit Education' },
-      { name: 'For - profit Prisons' },
-      { name: 'Foreign & Defense Policy ' },
-      { name: 'Forestry & Forest Products' },
-      { name: 'Foundations, Philanthropists & Non - Profits' },
-      { name: 'Funeral Services' },
+      'Gambling & Casinos',
+      'Gambling, Indian Casinos',
+      'Garbage Collection / Waste Management',
+      'Gas & Oil',
+      'Gay & Lesbian Rights & Issues',
+      'General Contractors',
+      'Government Employee Unions',
+      'Government Employees',
+      'Gun Control ',
+      'Gun Rights ',
 
-      { name: 'Gambling & Casinos' },
-      { name: 'Gambling, Indian Casinos' },
-      { name: 'Garbage Collection / Waste Management' },
-      { name: 'Gas & Oil' },
-      { name: 'Gay & Lesbian Rights & Issues' },
-      { name: 'General Contractors' },
-      { name: 'Government Employee Unions' },
-      { name: 'Government Employees' },
-      { name: 'Gun Control ' },
-      { name: 'Gun Rights ' },
+      'Health',
+      'Health Professionals',
+      'Health Services / HMOs',
+      'Hedge Funds',
+      'HMOs & Health Care Services',
+      'Home Builders',
+      'Hospitals & Nursing Homes',
+      'Hotels, Motels & Tourism',
+      'Human Rights ',
 
-      { name: 'Health' },
-      { name: 'Health Professionals' },
-      { name: 'Health Services / HMOs' },
-      { name: 'Hedge Funds' },
-      { name: 'HMOs & Health Care Services' },
-      { name: 'Home Builders' },
-      { name: 'Hospitals & Nursing Homes' },
-      { name: 'Hotels, Motels & Tourism' },
-      { name: 'Human Rights ' },
+      'Ideological / Single - Issue',
+      'Indian Gaming',
+      'Industrial Unions',
+      'Insurance',
+      'Internet',
+      'Israel Policy',
 
-      { name: 'Ideological / Single - Issue' },
-      { name: 'Indian Gaming' },
-      { name: 'Industrial Unions' },
-      { name: 'Insurance' },
-      { name: 'Internet' },
-      { name: 'Israel Policy' },
+      'Labor',
+      'Lawyers & Lobbyists',
+      'Lawyers / Law Firms',
+      'Leadership PACs ',
+      'Liberal / Democratic',
+      'Liquor, Wine & Beer',
+      'Livestock',
+      'Lobbyists',
+      'Lodging / Tourism',
+      'Logging, Timber & Paper Mills',
 
-      { name: 'Labor' },
-      { name: 'Lawyers & Lobbyists' },
-      { name: 'Lawyers / Law Firms' },
-      { name: 'Leadership PACs ' },
-      { name: 'Liberal / Democratic' },
-      { name: 'Liquor, Wine & Beer' },
-      { name: 'Livestock' },
-      { name: 'Lobbyists' },
-      { name: 'Lodging / Tourism' },
-      { name: 'Logging, Timber & Paper Mills' },
+      'Manufacturing, Misc',
+      'Marine Transport',
+      'Meat processing & products',
+      'Medical Supplies',
+      'Mining',
+      'Misc Business',
+      'Misc Finance',
+      'Misc Manufacturing & Distributing ',
+      'Misc Unions ',
+      'Miscellaneous Defense',
+      'Miscellaneous Services',
+      'Mortgage Bankers & Brokers',
+      'Motion Picture Production & Distribution',
+      'Music Production',
 
-      { name: 'Manufacturing, Misc' },
-      { name: 'Marine Transport' },
-      { name: 'Meat processing & products' },
-      { name: 'Medical Supplies' },
-      { name: 'Mining' },
-      { name: 'Misc Business' },
-      { name: 'Misc Finance' },
-      { name: 'Misc Manufacturing & Distributing ' },
-      { name: 'Misc Unions ' },
-      { name: 'Miscellaneous Defense' },
-      { name: 'Miscellaneous Services' },
-      { name: 'Mortgage Bankers & Brokers' },
-      { name: 'Motion Picture Production & Distribution' },
-      { name: 'Music Production' },
+      'Natural Gas Pipelines',
+      'Newspaper, Magazine & Book Publishing',
+      'Non - profits, Foundations & Philanthropists',
+      'Nurses',
+      'Nursing Homes / Hospitals',
+      'Nutritional & Dietary Supplements',
 
-      { name: 'Natural Gas Pipelines' },
-      { name: 'Newspaper, Magazine & Book Publishing' },
-      { name: 'Non - profits, Foundations & Philanthropists' },
-      { name: 'Nurses' },
-      { name: 'Nursing Homes / Hospitals' },
-      { name: 'Nutritional & Dietary Supplements' },
+      'Oil & Gas',
+      'Other',
 
-      { name: 'Oil & Gas' },
-      { name: 'Other' },
+      'Payday Lenders',
+      'Pharmaceutical Manufacturing',
+      'Pharmaceuticals / Health Products',
+      'Phone Companies',
+      'Physicians & Other Health Professionals',
+      'Postal Unions',
+      'Poultry & Eggs',
+      'Power Utilities',
+      'Printing & Publishing',
+      'Private Equity & Investment Firms',
+      'Pro - Israel ',
+      'Professional Sports, Sports Arenas & Related Equipment & Services',
+      'Progressive / Democratic',
+      'Public Employees',
+      'Public Sector Unions ',
+      'Publishing & Printing',
 
-      { name: 'Payday Lenders' },
-      { name: 'Pharmaceutical Manufacturing' },
-      { name: 'Pharmaceuticals / Health Products' },
-      { name: 'Phone Companies' },
-      { name: 'Physicians & Other Health Professionals' },
-      { name: 'Postal Unions' },
-      { name: 'Poultry & Eggs' },
-      { name: 'Power Utilities' },
-      { name: 'Printing & Publishing' },
-      { name: 'Private Equity & Investment Firms' },
-      { name: 'Pro - Israel ' },
-      { name: 'Professional Sports, Sports Arenas & Related Equipment & Services' },
-      { name: 'Progressive / Democratic' },
-      { name: 'Public Employees' },
-      { name: 'Public Sector Unions ' },
-      { name: 'Publishing & Printing' },
+      'Radio / TV Stations',
+      'Railroads',
+      'Real Estate',
+      'Record Companies / Singers',
+      'Recorded Music & Music Production',
+      'Recreation / Live Entertainment',
+      'Religious Organizations / Clergy',
+      'Republican Candidate Committees ',
+      'Republican Leadership PACs',
+      'Republican / Conservative ',
+      'Residential Construction',
+      'Restaurants & Drinking Establishments',
+      'Retail Sales',
+      'Retired ',
 
-      { name: 'Radio / TV Stations' },
-      { name: 'Railroads' },
-      { name: 'Real Estate' },
-      { name: 'Record Companies / Singers' },
-      { name: 'Recorded Music & Music Production' },
-      { name: 'Recreation / Live Entertainment' },
-      { name: 'Religious Organizations / Clergy' },
-      { name: 'Republican Candidate Committees ' },
-      { name: 'Republican Leadership PACs' },
-      { name: 'Republican / Conservative ' },
-      { name: 'Residential Construction' },
-      { name: 'Restaurants & Drinking Establishments' },
-      { name: 'Retail Sales' },
-      { name: 'Retired ' },
+      'Savings & Loans',
+      'Schools / Education',
+      'Sea Transport',
+      'Securities & Investment',
+      'Special Trade Contractors',
+      'Sports, Professional',
+      'Steel Production ',
+      'Stock Brokers / Investment Industry',
+      'Student Loan Companies',
+      'Sugar Cane & Sugar Beets',
+      'Teachers Unions',
+      'Teachers / Education',
+      'Telecom Services & Equipment',
+      'Telephone Utilities',
+      'Textiles ',
+      'Timber, Logging & Paper Mills',
+      'Tobacco',
+      'Transportation',
+      'Transportation Unions ',
+      'Trash Collection / Waste Management',
+      'Trucking',
+      'TV / Movies / Music',
+      'TV Production',
 
-      { name: 'Savings & Loans' },
-      { name: 'Schools / Education' },
-      { name: 'Sea Transport' },
-      { name: 'Securities & Investment' },
-      { name: 'Special Trade Contractors' },
-      { name: 'Sports, Professional' },
-      { name: 'Steel Production ' },
-      { name: 'Stock Brokers / Investment Industry' },
-      { name: 'Student Loan Companies' },
-      { name: 'Sugar Cane & Sugar Beets' },
+      'Unions',
+      'Unions, Airline',
+      'Unions, Building Trades',
+      'Unions, Industrial',
+      'Unions, Misc',
+      'Unions, Public Sector',
+      'Unions, Teacher',
+      'Unions, Transportation',
+      'Universities, Colleges & Schools',
 
-      { name: 'Teachers Unions' },
-      { name: 'Teachers / Education' },
-      { name: 'Telecom Services & Equipment' },
-      { name: 'Telephone Utilities' },
-      { name: 'Textiles ' },
-      { name: 'Timber, Logging & Paper Mills' },
-      { name: 'Tobacco' },
-      { name: 'Transportation' },
-      { name: 'Transportation Unions ' },
-      { name: 'Trash Collection / Waste Management' },
-      { name: 'Trucking' },
-      { name: 'TV / Movies / Music' },
-      { name: 'TV Production' },
-
-      { name: 'Unions' },
-      { name: 'Unions, Airline' },
-      { name: 'Unions, Building Trades' },
-      { name: 'Unions, Industrial' },
-      { name: 'Unions, Misc' },
-      { name: 'Unions, Public Sector' },
-      { name: 'Unions, Teacher' },
-      { name: 'Unions, Transportation' },
-      { name: 'Universities, Colleges & Schools' },
-
-      { name: 'Vegetables & Fruits' },
-      { name: 'Venture Capital' },
-
-      { name: 'Waste Management' },
-      { name: 'Wine, Beer & Liquor' },
-      { name: 'Womens Issues' },
+      'Vegetables & Fruits',
+      'Venture Capital',
+      'Waste Management',
+      'Wine, Beer & Liquor',
+      'Womens Issues',
     ];
 
 
@@ -498,10 +526,10 @@ export class CalendarComponent implements OnInit {
   addWork(){
 
     this.classesArray = [];
-    let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: '', actualTime: '', Varience: '' };
+    let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: "", actualTime: "", Varience: "" };
     let value;
-    let setClass = this.myDocment.collection('classifications').doc(newClassification.id);
-    this.workClassifications = this.myDocment.collection('classifications').snapshotChanges().pipe(
+    let setClass = this.myDocument.collection('classifications').doc(newClassification.id);
+    this.workClassifications = this.myDocument.collection('classifications').snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as classification;
         const id = a.payload.doc.id;
@@ -532,9 +560,8 @@ export class CalendarComponent implements OnInit {
     console.log(classification);
     this.classification.createdOn = new Date().toISOString();
     this.pns.addClassifications(this.userId, classification);
-    this.classification = { name: '', createdOn: '', plannedTime: '', actualTime: '', Varience: '', id: '' };    
+    this.classification = { name: "", createdOn: "", plannedTime: "", actualTime: "", Varience: "", id: "" };    
   }
-
 
   addTimeBudget(item: classification){
     let time = item.plannedTime;
@@ -549,12 +576,12 @@ export class CalendarComponent implements OnInit {
     let setClass = this.afs.collection<Project>('Users').doc(this.userId).collection('classifications').doc(this.selectedClassification.id);
     setClass.update({ 'plannedTime': time });
     this.time = 0;
-    this.selectedClassification = { name: '', createdOn: '', plannedTime: '', actualTime: '', Varience: '', id: '' };   
+    this.selectedClassification = { name: "", createdOn: "", plannedTime: "", actualTime: "", Varience: "", id: "" };   
     this.showNotification('timeBudget', 'top', 'right'); 
   }
 
   dismissTimeBudgdet(){
-    this.selectedClassification = { name: '', createdOn: '', plannedTime: '', actualTime: '', Varience: '', id: '' };    
+    this.selectedClassification = { name: "", createdOn: "", plannedTime: "", actualTime: "", Varience: "", id: "" };    
   }
 
   addPersonalStandards() {
@@ -564,11 +591,13 @@ export class CalendarComponent implements OnInit {
     this.newStandard.createdOn = new Date().toString();
     this.newStandard.classificationName = this.selectedClassification.name;
     this.newStandard.classificationId = this.selectedClassification.id;
+    this.newStandard.unit = this.setUnit.id;
+
     // this.newStandard.classifiation = this.selectClassification;
     console.log(this.newStandard);
 
     let data = this.newStandard;
-    let standardRef = this.myDocment.collection('myStandards');
+    let standardRef = this.myDocument.collection('myStandards');
     let setClass = this.afs.collection('Users').doc(this.userId).collection('classifications').doc(this.selectedClassification.id).collection('myStandards');
     setClass.add(data).then(function (ref) {
       const id = ref.id;
@@ -576,9 +605,132 @@ export class CalendarComponent implements OnInit {
       setClass.doc(id).update({ 'id': id });
       standardRef.doc(id).update({ 'id': id });
     });
-    this.newStandard = { name: '', createdOn: '', id: '', period: '', classificationName: '', classificationId: '' };
-    this.selectedClassification = { name: '', createdOn: '', plannedTime: '', actualTime: '', Varience: '', id: '' };
+    this.newStandard = { name: "", createdOn: "", id: "", period: "", classificationName: "", classificationId: "", unit:"" };
+    this.selectedClassification = { name: "", createdOn: "", plannedTime: "", actualTime: "", Varience: "", id: "" };
+    this.setUnit = null; 
   }
+
+  Update(){
+    let usersRef = this.afs.collection('Users').snapshotChanges().pipe(
+      map(b => b.map(a => {
+        const data = a.payload.doc.data() as coloursUser;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    usersRef.subscribe(allusers => {
+      allusers.forEach(element => {
+        // totalLialibility$ = + element.amount;
+
+
+        if (element.hierarchy == "" || element.hierarchy == null || element.hierarchy == undefined) {
+          element.hierarchy = ""
+        } else {
+
+        }
+
+
+        if (element.address == "" || element.address == null || element.address == undefined) {
+          element.address = "";
+          this.afs.collection('Users').doc(element.id).update({ 'address': "" });
+          console.log('Done');
+
+        } else {
+
+        }
+
+        if (element.phoneNumber == "" || element.phoneNumber == null || element.phoneNumber == undefined) {
+          element.phoneNumber = "";
+          this.afs.collection('Users').doc(element.id).update({ 'phoneNumber': "" });
+          console.log('Done');
+
+
+        } else {
+
+        }
+
+        if (element.bus_email == "" || element.bus_email == null || element.bus_email == undefined) {
+          element.bus_email = "";
+          this.afs.collection('Users').doc(element.id).update({ 'bus_email': "" });
+          console.log('Done');
+
+        } else {
+
+        }
+
+        if (element.nationalId == "" || element.nationalId == null || element.nationalId == undefined) {
+          element.nationalId = "";
+          this.afs.collection('Users').doc(element.id).update({ 'nationalId': "" });
+          console.log('Done');
+
+        } else {
+
+        }
+
+        if (element.nationality == "" || element.nationality == null || element.nationality == undefined) {
+          element.nationality = "";
+          this.afs.collection('Users').doc(element.id).update({ 'nationality': "" });
+          console.log('Done');
+
+        } else {
+
+        }
+      });
+      this.showNotification('update', 'top', 'right');
+    })
+
+  }
+
+  // personal reports
+
+  dailyTimeSheet() {
+    let timesheetDocId;
+
+    console.log(this.selectedDate);
+    timesheetDocId = this.selectedDate;
+    let myLapses = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId.id).collection<workItem>('actionItems');
+    this.viewDailyTimeSheets = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId.id).collection<workItem>('actionItems').snapshotChanges().pipe(
+      map(b => b.map(a => {
+        let data = a.payload.doc.data() as rpt;
+        const id = a.payload.doc.id;
+        let workStatus = 0;
+        let mlapsdata: number;
+        // let mlapsdata
+        // data.Hours = String(moment(moment(data.actualStart).diff(moment(data.actualEnd))).format('hh:mm:ss'));
+        data.Hours = String(moment(moment(data.actualStart).diff(moment(data.actualEnd))).format('hh'));
+        console.log(data.Hours);
+
+        if (data.name === 'Lapsed') {
+
+          let lapData = myLapses.doc('lapsed').collection<unRespondedWorkReport>('lapses').snapshotChanges().pipe(
+            map(b => b.map(a => {
+              const data = a.payload.doc.data() as unRespondedWorkReport;
+              const id = a.payload.doc.id;
+              return { id, ...data };
+            }))
+          );
+
+          lapData.subscribe(ldata => {
+            console.log(ldata);
+
+            mlapsdata = (ldata.length);
+            this.mlapsdata = mlapsdata;
+            console.log(mlapsdata);
+
+          })
+          data.wrkHours = String(mlapsdata)
+
+        }
+        return { id, ...data };
+      }))
+    );
+
+    
+    this.dailyTimeSheetDemo = false;
+  }
+
+  /* end of personal Reports */
 
   dataCall(){
 
@@ -586,7 +738,19 @@ export class CalendarComponent implements OnInit {
     this.showProjs = false;
     this.hideProjs = false;
 
-    this.myDocment = this.afs.collection('Users').doc(this.userId);
+    
+    this.myDocument = this.afs.collection('Users').doc(this.userId);
+
+
+    this.timesheetCollection = this.myDocument.collection('TimeSheets').snapshotChanges().pipe(
+      map(b => b.map(a => {
+        const data = a.payload.doc.data() as timeSheetDate;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    ); 
+    console.log(this.timesheetCollection);
+    
     let noCompanies = 0;
     let noProjects = 0;
     this.projsNo = 0;
@@ -616,24 +780,57 @@ export class CalendarComponent implements OnInit {
       }
 
     })
-    this.userProfile = this.myDocment.snapshotChanges().pipe( map(a => {
+    this.userProfile = this.myDocument.snapshotChanges().pipe( map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
     }));
 
-    this.userProfile.subscribe(userData=>{
+    this.userProfile.subscribe(userData => {
       console.log(userData);
-
       let myData = {
         name: this.user.displayName,
         email: this.user.email,
         bus_email: userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationalId: userData.nationalId,
+        nationality: userData.nationality,
+      }
+
+      if (userData.address == "" || userData.address == null || userData.address == undefined) {
+        userData.address = ""
+      } else {
+
+      }
+
+      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ""
+      } else {
+
+      }
+
+      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ""
+      } else {
+
+      }
+
+      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ""
+      } else {
+
+      }
+
+      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ""
+      } else {
+
       }
       this.myData = myData;
+      // this.userData = userData;
 
       let liabilityArr = userData.personalLiabilities;
       let totalLialibility$ = 0;
@@ -694,15 +891,19 @@ export class CalendarComponent implements OnInit {
     let tct: number, tt: number, percentage: number;
 
     let currentDate = moment(new Date()).format('L');;
+    let today = moment(new Date(), "YYYY-MM-DD");
 
     console.log(currentDate);
 
 
-    let userDocRef = this.myDocment;
+    let userDocRef = this.myDocument;
     this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
     // .limit(4)
-    .where("startDate", '==', currentDate).limit(4))
-      .snapshotChanges().pipe(
+    // .where("startDate", '==', currentDate)
+      // .orderBy('start', 'asc')
+
+      // .limit(4)
+      ).snapshotChanges().pipe(
         map(actions => actions.map(a => {
           const data = a.payload.doc.data() as workItem;
           const id = a.payload.doc.id;
@@ -714,7 +915,13 @@ export class CalendarComponent implements OnInit {
       console.log(actions);
 
       this.myActionItems = [];
-      this.myActionItems = actions;
+
+      actions.forEach(element => {
+        if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
+          this.myActionItems.push(element);
+        }
+      });
+
       console.log(actions.length);
       console.log(actions);
       this.actionNo = actions.length;
@@ -727,8 +934,8 @@ export class CalendarComponent implements OnInit {
       }
     })
 
-    let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: '', actualTime: '', Varience: '' };
-    let setClass = this.myDocment.collection('classifications').doc(newClassification.id);
+    let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: "", actualTime: "", Varience: "" };
+    let setClass = this.myDocument.collection('classifications').doc(newClassification.id);
     let qq = [];
     let value;
     this.classifications = this.pns.getClassifications(this.userId);
@@ -751,7 +958,7 @@ export class CalendarComponent implements OnInit {
     let TaskswithpId = [], TaskswithoutpID = [];
     let TaskswithcompId = [], TaskswithoutCompID = [];
 
-    let projectsTasks = this.myDocment.collection('tasks').snapshotChanges().pipe(
+    let projectsTasks = this.myDocument.collection('tasks').snapshotChanges().pipe(
         map(b => b.map(a => {
           const data = a.payload.doc.data() as Task;
           const id = a.payload.doc.id;
@@ -778,7 +985,7 @@ export class CalendarComponent implements OnInit {
 
       let withcompId = [], withoutCompID = [];
 
-      let enterprisesTasks = this.myDocment.collection('tasks').snapshotChanges().pipe(
+      let enterprisesTasks = this.myDocument.collection('tasks').snapshotChanges().pipe(
         map(b => b.map(a => {
           const data = a.payload.doc.data() as Task;
           const id = a.payload.doc.id;
@@ -803,14 +1010,14 @@ export class CalendarComponent implements OnInit {
       console.log('Tasks array without cid' + TaskswithoutCompID);
     
 
-    this.allMyTasks = this.myDocment.collection('tasks').snapshotChanges().pipe(map(b => b.map(a => {
+    this.allMyTasks = this.myDocument.collection('tasks').snapshotChanges().pipe(map(b => b.map(a => {
         const data = a.payload.doc.data() as Task;
         const id = a.payload.doc.id;
         return { id, ...data };
        }))
     );
 
-    this.tasksComplete = this.myDocment.collection('tasks', ref => { return ref
+    this.tasksComplete = this.myDocument.collection('tasks', ref => { return ref
       .where('start', '==', moment(new Date()).format('YYYY-MM-DD'))
       .where('complete', '==', true)      
       }).snapshotChanges().pipe(
@@ -911,9 +1118,9 @@ export class CalendarComponent implements OnInit {
 
     console.log('ók')
 
-    this.myProjects = this.ps.getProjects(this.userId)
+    this.myProjects = this.ps.getProjects(this.userId);
 
-    this.standards = this.myDocment.collection<personalStandards>('myStandards', ref => ref.orderBy('classificationName')).snapshotChanges().pipe(
+    this.standards = this.myDocument.collection<personalStandards>('myStandards', ref => ref.orderBy('classificationName')).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as personalStandards;
         const id = a.payload.doc.id;
@@ -921,7 +1128,7 @@ export class CalendarComponent implements OnInit {
       }))
     );
 
-    this.tasks = this.myDocment.collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
+    this.tasks = this.myDocument.collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
@@ -953,23 +1160,23 @@ export class CalendarComponent implements OnInit {
     this.asset.addeddOn = new Date().toISOString();
     this.asset.by = this.userData.name;
     this.asset.byId = this.userData.id;
-    this.myDocment.update({
+    this.myDocument.update({
       personalAssets: firebase.firestore.FieldValue.arrayUnion(this.asset)
     });
-    this.myDocment.collection('assets').add(this.asset).then(asset => {
+    this.myDocument.collection('assets').add(this.asset).then(asset => {
       const id = asset.id;
-      this.myDocment.collection('assets').doc(id).update({ 'id': id });
+      this.myDocument.collection('assets').doc(id).update({ 'id': id });
     });
-    this.asset = { name: '', value: '', id: '', by: '', byId: '', addeddOn: '', assetNumber: '' };
+    this.asset = { name: "", value: "", id: "", by: "", byId: "", addeddOn: "", assetNumber: "" };
   }
 
   removeAsset(asset:personalAsset){
     const id = asset.id;
 
-    this.myDocment.update({
+    this.myDocument.update({
       personalAssets: firebase.firestore.FieldValue.arrayRemove(asset)
     });
-      this.myDocment.collection('assets').doc(id).delete();
+      this.myDocument.collection('assets').doc(id).delete();
   }
 
   addLiability(){
@@ -978,34 +1185,35 @@ export class CalendarComponent implements OnInit {
     this.liability.addeddOn = new Date().toISOString();
     this.liability.by = this.userData.name;
     this.liability.byId = this.userData.id;
-    this.myDocment.update({
+    this.myDocument.update({
       personalLiabilities: firebase.firestore.FieldValue.arrayUnion(this.liability)
     });
-    this.myDocment.collection('liabilities').add(this.liability).then(liabDoc => {
+    this.myDocument.collection('liabilities').add(this.liability).then(liabDoc => {
       const id = liabDoc.id;
-      this.myDocment.collection('liabilities').doc(id).update({ 'id': id });
+      this.myDocument.collection('liabilities').doc(id).update({ 'id': id });
     });
-    this.liability = { name: '', amount: '', id: '', by: '', byId: '', addeddOn: '' };
+    this.liability = { name: "", amount: "", id: "", by: "", byId: "", addeddOn: "" };
   }
 
   removeLiability(item: personalLiability) {
     const id = item.id;
 
-    this.myDocment.update({
+    this.myDocument.update({
       personalLiabilities: firebase.firestore.FieldValue.arrayRemove(item)
     });
-    this.myDocment.collection('liabilities').doc(id).delete();
+    this.myDocument.collection('liabilities').doc(id).delete();
   }
 
-  saveProfile(userData) {
+  saveProfile(userData: coloursUser) {
     console.log(userData);
-    this.myDocment.set(userData);
+    userData.nationality = userData.country
+    this.myDocument.set(userData);
     this.dataCall();
   }
 
   showNotification(data, from, align) {
-    // var type = ['', 'info', 'success', 'warning', 'danger'];
-    var type = ['', 'info', 'success', 'warning', 'danger'];
+    // var type = ["", 'info', 'success', 'warning', 'danger'];
+    var type = ["", 'info', 'success', 'warning', 'danger'];
 
     var color = Math.floor((Math.random() * 4) + 1);
 
@@ -1023,6 +1231,22 @@ export class CalendarComponent implements OnInit {
           template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove"></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
         });
     }
+
+    if (data === 'update') {
+      $.notify({
+        icon: "ti-gift",
+        message: "Please fill the following fields <br>1. address, <br>2. business email,<br>3. phoneNumber,<br>4. Country,<br>5. National Id,<br><br><br>You will not be able to create Tasks untill you have filled those filleds"
+      }, {
+          type: type[color],
+          timer: 4000,
+          placement: {
+            from: from,
+            align: align
+          },
+          template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove"></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+        });
+    }
+
     if (data === 'timeBudget') {
       $.notify({
         icon: "ti-gift",
@@ -1037,6 +1261,22 @@ export class CalendarComponent implements OnInit {
           template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove"></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
         });
     }
+
+    if (data === 'timeBudget') {
+      $.notify({
+        icon: "ti-gift",
+        message: "Time Budget has been updated !!!."
+      }, {
+          type: type[color],
+          timer: 4000,
+          placement: {
+            from: from,
+            align: align
+          },
+          template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove"></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+        });
+    }
+    
     if (data === 'Task') {
       $.notify({
         icon: "ti-gift",
@@ -1068,13 +1308,44 @@ export class CalendarComponent implements OnInit {
 
   }
 
+  update2() {
+    let compCollection = this.afs.collection('Enterprises').snapshotChanges().pipe(
+      map(b => b.map(a => {
+        const data = a.payload.doc.data() as any;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+    compCollection.subscribe(allcomps => {
+      allcomps.forEach(element => {
+        if (element.updated == "" || element.updated == null || element.updated == undefined) {
+          this.afs.collection<Enterprise>('Enterprises').doc(element.id).update({ 'updated': true })
+        }
+      });
+    });
+    let usersCollection = this.afs.collection('Enterprises').snapshotChanges().pipe(
+      map(b => b.map(a => {
+        const data = a.payload.doc.data() as any;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+    usersCollection.subscribe(allcomps => {
+      allcomps.forEach(element => {
+        if (element.updated == "" || element.updated == null || element.updated == undefined) {
+          this.afs.collection<Enterprise>('Users').doc(element.id).update({ 'updated': true })
+        }
+      });
+    });
+  }
+
   ngOnInit() {
 
     this.newStandard = {
-      name: '', createdOn: '', id: '', period: '', classificationName: '', classificationId: ''
+      name: "", createdOn: "", id: "", period: "", classificationName: "", classificationId: "", unit: ""
     };
     this.selectedClassification = {
-      name: '', createdOn: '', plannedTime: '', actualTime: '', Varience: '', id: ''
+      name: "", createdOn: "", plannedTime: "", actualTime: "", Varience: "", id: ""
     };
 
     var ps = new PerfectScrollbar('#container');

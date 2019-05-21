@@ -14,6 +14,14 @@ import { MapTaskComponent } from './map-task/map-task.component';
 import { ImplementationComponent } from './implementation/implementation.component';
 import { TimesheetComponent } from './timesheet/timesheet.component';
 import { PopupComponent } from './popup/popup.component';
+import { TotalsActionItemsComponent } from './totals-action-items/totals-action-items.component';
+import { ActivityLogComponent } from './activity-log/activity-log.component';
+import { ClassificationTimesheetComponent } from './classification-timesheet/classification-timesheet.component';
+import { RActivityLogComponent } from './r-activity-log/r-activity-log.component';
+import { RdashboardComponent } from './rdashboard/rdashboard.component';
+import { RTimeSpentComponent } from './r-time-spent/r-time-spent.component';
+import { PersonalInfoReportComponent } from './personal-info-report/personal-info-report.component';
+import { DiaryComponent } from './diary/diary.component';
 
 @NgModule({
     imports: [
@@ -21,7 +29,8 @@ import { PopupComponent } from './popup/popup.component';
         RouterModule.forChild(CalendarRoutes),
         FormsModule, NgSelectModule, NgxChartsModule, TagInputModule,
     ],
-    declarations: [CalendarComponent, MapTaskComponent, ImplementationComponent, TimesheetComponent, PopupComponent]
+    declarations: [CalendarComponent, MapTaskComponent, ImplementationComponent, DiaryComponent, TimesheetComponent, PopupComponent, TotalsActionItemsComponent,
+        ActivityLogComponent, ClassificationTimesheetComponent, RActivityLogComponent, RdashboardComponent, RTimeSpentComponent, PersonalInfoReportComponent]
 })
 
 export class CalendarModule {}

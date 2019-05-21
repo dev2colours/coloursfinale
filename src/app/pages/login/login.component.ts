@@ -25,6 +25,23 @@ declare var $:any;
 
 
 export class LoginComponent implements OnInit{
+
+    actionCodeSettings = {
+    // URL you want to redirect back to. The domain (www.example.com) for this
+    // URL must be whitelisted in the Firebase Console.
+    url: 'http://www.colourssystem.com/',
+    // This must be true.
+    handleCodeInApp: true,
+    // iOS: {
+    //     bundleId: 'com.example.ios'
+    // },
+    // android: {
+    //     packageName: 'com.example.android',
+    //     installApp: true,
+    //     minimumVersion: '12'
+    // },
+    dynamicLinkDomain: 'http://www.colourssystem.com/'
+};
     showless: boolean = false;
     show1: boolean = false;
     showmoreP: boolean = false;
@@ -51,6 +68,10 @@ export class LoginComponent implements OnInit{
     statusLoginPwd: boolean = false;
     nullSigninPwd: boolean = true;
     statusSigninPwd: boolean = false;
+    emailId: string;
+    emailVerifiedinit: boolean = false;
+    emailVerified: boolean = true;
+    emailUser: firebase.User;
 
     // cuser: coloursUser
 
@@ -59,7 +80,10 @@ export class LoginComponent implements OnInit{
         this.dataCall();
         this.nativeElement = element.nativeElement;
         this.sidebarVisible = false;      
-        this.emailPasswordLogin = { email: '', password: ''};      
+        this.emailPasswordLogin = { email: '', password: ''};   
+        // this.emailVerified = true;        
+        this.emailId = '';
+        
 
     }
     
@@ -72,44 +96,6 @@ export class LoginComponent implements OnInit{
         this.showemailLogin = true;
         this.showEmailRegister = false;
     }
-
-    // toggleSignIn() {
-    //     if (firebase.auth().currentUser) {
-    //         // [START signout]
-    //         firebase.auth().signOut();
-    //         // [END signout]
-    //     } else {
-    //         var email = document.getElementById('email').value;
-    //         var password = document.getElementById('password').value;
-    //         if (email.length < 4) {
-    //             alert('Please enter an email address.');
-    //             return;
-    //         }
-    //         if (password.length < 4) {
-    //             alert('Please enter a password.');
-    //             return;
-    //         }
-    //         // Sign in with email and pass.
-    //         // [START authwithemail]
-    //         firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
-    //             // Handle Errors here.
-    //             var errorCode = error.code;
-    //             var errorMessage = error.message;
-    //             // [START_EXCLUDE]
-    //             if (errorCode === 'auth/wrong-password') {
-    //                 alert('Wrong password.');
-    //             } else {
-    //                 alert(errorMessage);
-    //             }
-    //             console.log(error);
-    //             document.getElementById('quickstart-sign-in').disabled = false;
-    //             // [END_EXCLUDE]
-    //         });
-    //         // [END authwithemail]
-    //     }
-    //     document.getElementById('quickstart-sign-in').disabled = true;
-    // }
-
 
     toggleLogIn(credentials ) {
         if (credentials.email != "" ) {
@@ -151,19 +137,22 @@ export class LoginComponent implements OnInit{
                             email: coloursUser.email,
                             id: coloursUser.uid,
                             userImg: coloursUser.photoURL,
-                            phoneNumber: coloursUser.phoneNumber,
+                            //phoneNumber: coloursUser.phoneNumber,
                             LastTimeLogin: new Date().toString()
                         }
                         console.log(userData);
                         if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
                             this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
                             this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
+                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
+                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
+                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
                             console.log("userData is set");
                         }
                         else {
-                            this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
+                            // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
                             
-                            console.log("userData is updated");
+                            console.log("userData is not updated");
                         }
                         let value;
                         let setUser = this.afs.collection('Users').doc(coloursUser.uid);
@@ -186,7 +175,9 @@ export class LoginComponent implements OnInit{
                                 }
                             }
                         })
-                        this.router.navigateByUrl('dashboard');
+                        // this.router.navigateByUrl('dashboard');
+                        //return
+
                         // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
                         // You can use these server side with your app's credentials to access the Twitter API.
                         // var token = result.credential.accessToken;
@@ -227,6 +218,22 @@ export class LoginComponent implements OnInit{
         }
         // document.getElementById('quickstart-sign-in').disabled = true;
     }
+
+    sendEmailVerification(email) {
+    // [START sendemailverification]
+
+        firebase.auth().sendSignInLinkToEmail(email, this.actionCodeSettings).then(function () {
+            // The link was successfully sent. Inform the user.
+            // Save the email locally so you don't need to ask the user for it again
+            // if they open the link on the same device.
+            window.localStorage.setItem('emailForSignIn', email);
+            alert('Email Verification Sent!'); 
+        })
+        .catch(function (error) {
+            // Some error occurred, you can inspect the code: error.code
+        });
+    }
+
 
     sendPasswordReset(email) {
         // var email = document.getElementById('email').value;
@@ -280,60 +287,93 @@ export class LoginComponent implements OnInit{
                     }
                     // Sign in with email and pass.
                     // [START authwithemail]
+
+
+                    // this.sendEmailVerification(credentials.email);
+
+
                     firebase.auth().createUserWithEmailAndPassword(credentials.email, credentials.password).then(ref => {
                         console.log("Check User collection for doc");
 
+                        // userRef.sendEmailVerification();
+                        // userRef.user.sendEmailVerification();
                         // console.log(ref);
                         this.coloursUserDetails = ref;
 
+                        console.log(firebase.auth.EmailAuthProvider);
+                        
+                        console.log(firebase.auth().currentUser.providerData[0].providerId);
+                        
                         let coloursUser = ref.user;
-                        let userData = {
-                            name: coloursUser.displayName,
-                            email: coloursUser.email,
-                            id: coloursUser.uid,
-                            userImg: coloursUser.photoURL,
-                            phoneNumber: coloursUser.phoneNumber,
-                            LastTimeLogin: new Date().toString()
-                        }
-                        console.log(userData);
-                        if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-                            this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                            console.log("userData is set");
 
-                        }
-                        else {
-                            this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                            console.log("userData is updated");
-                        }
-                        let value;
-                        let setUser = this.afs.collection('Users').doc(coloursUser.uid);
-                        this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
-                            map(b => b.map(a => {
-                                const data = a.payload.doc.data() as any;
-                                const id = a.payload.doc.id;
-                                return { id, ...data };
-                            }))
-                        );
-                        this.userCollection.subscribe(ref => {
-                            const index = ref.findIndex(user => user.name === userData.name);
-                            if (index > -1) {
-                                value = ref[index].name;
-                            } else {
-                                if (value === userData.name) {
-                                    setUser.update(userData);
-                                } else {
-                                    setUser.set(userData);
-                                }
+                        this.emailUser = coloursUser;
+
+                        console.log(coloursUser.emailVerified);
+                        
+
+                        coloursUser.sendEmailVerification();
+
+                        if (coloursUser !== null) {
+                            // this.emailId = coloursUser.email;
+
+                            if (coloursUser.emailVerified === false) {
+                                let emailVerified = false;
+                                this.emailVerified = false;
+                                this.emailVerifiedinit = true;
                             }
-                        })
-                        this.router.navigateByUrl('dashboard');
-                        // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-                        // You can use these server side with your app's credentials to access the Twitter API.
-                        // var token = result.credential.accessToken;
-                        // var secret = result.credential.secret;
-                        // The signed-in user info.
-                        console.log(ref.credential);
+
+                            let userData = {
+                                name: coloursUser.displayName,
+                                email: coloursUser.email,
+                                id: coloursUser.uid,
+                                userImg: coloursUser.photoURL,
+                                //phoneNumber: coloursUser.phoneNumber,
+                                LastTimeLogin: new Date().toString()
+                            }
+                            console.log(userData);
+                            if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                                this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
+                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
+                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
+                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
+                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
+                                console.log("userData is set");
+
+                            }
+                            else {
+                                // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
+                                console.log("userData is not updated");
+                            }
+                            let value;
+                            let setUser = this.afs.collection('Users').doc(coloursUser.uid);
+                            this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
+                                map(b => b.map(a => {
+                                    const data = a.payload.doc.data() as any;
+                                    const id = a.payload.doc.id;
+                                    return { id, ...data };
+                                }))
+                            );
+                            this.userCollection.subscribe(ref => {
+                                const index = ref.findIndex(user => user.name === userData.name);
+                                if (index > -1) {
+                                    value = ref[index].name;
+                                } else {
+                                    if (value === userData.name) {
+                                        setUser.update(userData);
+                                    } else {
+                                        setUser.set(userData);
+                                    }
+                                }
+                            })
+                            
+                            // this.router.navigateByUrl('dashboard');
+
+                        } else {
+                            
+                        }
+                        
+
+                        // console.log(ref.credential);
 
                         var user = ref.user;
                         // ...
@@ -351,6 +391,8 @@ export class LoginComponent implements OnInit{
                         // document.getElementById('quickstart-sign-in').disabled = false;
                         // [END_EXCLUDE]
                     });
+
+
                     // [END authwithemail]
                 }
             }
@@ -364,11 +406,33 @@ export class LoginComponent implements OnInit{
             }
         }
         else {
+            var email = window.prompt('Please provide your email');
             this.nullSigninEmail = false;
             this.statusSigninEmail = true;
             console.log('Enter Your Correct email');
         }
         // document.getElementById('quickstart-sign-in').disabled = true;
+
+        // if (this.emailUser.emailVerified == true) {
+        //     // this.router.navigateByUrl('dashboard');
+        // }
+    }
+
+
+    sendVerification(){
+        this.user.sendEmailVerification().then(function () {
+            // Password Reset Email Sent!
+            // [START_EXCLUDE]
+            alert('Verification sent!, Please check your email before the link expires');
+            // [END_EXCLUDE]
+        }).catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            alert(errorCode + ' ' + errorMessage);
+            console.log(error);
+            // [END_EXCLUDE]
+        });
     }
 
     run1(){
@@ -412,6 +476,9 @@ export class LoginComponent implements OnInit{
         this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider()).then(ref => {
             console.log("Check User collection for doc");
 
+            console.log(firebase.auth().currentUser.providerData[0].providerId);
+
+
             // console.log(ref);
             this.coloursUserDetails = ref;
 
@@ -421,42 +488,54 @@ export class LoginComponent implements OnInit{
                 email: coloursUser.email,
                 id: coloursUser.uid,
                 userImg: coloursUser.photoURL,
-                phoneNumber: coloursUser.phoneNumber,
+                address: "",
+                nationality: "",
+                nationalId: "",
+                bus_email: "",
+                // phoneNumber: coloursUser.phoneNumber,
                 LastTimeLogin: new Date().toString()
             }
             console.log(userData);
             if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
                 this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                console.log("userData is set");
+                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
+                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
+                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
+                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
+                // console.log("userData is set");
 
             }
             else {
-                this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                console.log("userData is updated");
+                // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
+                console.log("userData is not updated");
             }
-            let value;
-            let setUser = this.afs.collection('Users').doc(coloursUser.uid);
-            this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
-                map(b => b.map(a => {
-                    const data = a.payload.doc.data() as any;
-                    const id = a.payload.doc.id;
-                    return { id, ...data };
-                }))
-            );
-            this.userCollection.subscribe(ref => {
-                const index = ref.findIndex(user => user.name === userData.name);
-                if (index > -1) {
-                    value = ref[index].name;
-                } else {
-                    if (value === userData.name) {
-                        setUser.update(userData);
-                    } else {
-                        setUser.set(userData);
-                    }
-                }
-            })
-            this.router.navigateByUrl('dashboard');
+            // let value;
+            // let setUser = this.afs.collection('Users').doc(coloursUser.uid);
+            // this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
+            //     map(b => b.map(a => {
+            //         const data = a.payload.doc.data() as any;
+            //         const id = a.payload.doc.id;
+            //         return { id, ...data };
+            //     }))
+            // );
+            // this.userCollection.subscribe(ref => {
+            //     const index = ref.findIndex(user => user.name === userData.name);
+            //     if (index > -1) {
+            //         value = ref[index].name;
+            //     } else {
+            //         if (value === userData.name) {
+            //             setUser.update(userData);
+            //         } else {
+            //             setUser.set(userData);
+            //         }
+            //     }
+            // })
+            // this.router.navigateByUrl('dashboard');
+
+                //return
+
+
+
         }).catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -475,6 +554,9 @@ export class LoginComponent implements OnInit{
         new firebase.auth.TwitterAuthProvider()).then(ref => {
         console.log("Check User collection for doc");
 
+            console.log(firebase.auth().currentUser.providerData[0].providerId);
+
+
         // console.log(ref);
         this.coloursUserDetails = ref;
 
@@ -484,42 +566,48 @@ export class LoginComponent implements OnInit{
             email: coloursUser.email,
             id: coloursUser.uid,
             userImg: coloursUser.photoURL,
-            phoneNumber: coloursUser.phoneNumber,
+            //phoneNumber: coloursUser.phoneNumber,
             LastTimeLogin: new Date().toString()
         }
         console.log(userData);
         if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
             this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
             this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
+            this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
+            this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
+            this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
             console.log("userData is set");
 
         }
         else {
-            this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-            console.log("userData is updated");
+            // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
+            console.log("userData is not updated");
         }
-        let value;
-        let setUser = this.afs.collection('Users').doc(coloursUser.uid);
-        this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
-            map(b => b.map(a => {
-                const data = a.payload.doc.data() as any;
-                const id = a.payload.doc.id;
-                return { id, ...data };
-            }))
-        );
-        this.userCollection.subscribe(ref => {
-            const index = ref.findIndex(user => user.name === userData.name);
-            if (index > -1) {
-                value = ref[index].name;
-            } else {
-                if (value === userData.name) {
-                    setUser.update(userData);
-                } else {
-                    setUser.set(userData);
-                }
-            }
-        })
-        this.router.navigateByUrl('dashboard');
+        // let value;
+        // let setUser = this.afs.collection('Users').doc(coloursUser.uid);
+        // this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
+        //     map(b => b.map(a => {
+        //         const data = a.payload.doc.data() as any;
+        //         const id = a.payload.doc.id;
+        //         return { id, ...data };
+        //     }))
+        // );
+        // this.userCollection.subscribe(ref => {
+        //     const index = ref.findIndex(user => user.name === userData.name);
+        //     if (index > -1) {
+        //         value = ref[index].name;
+        //     } else {
+        //         if (value === userData.name) {
+        //             setUser.update(userData);
+        //         } else {
+        //             setUser.set(userData);
+        //         }
+        //     }
+        // })
+        // this.router.navigateByUrl('dashboard');
+                //return
+
+
         // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
         // You can use these server side with your app's credentials to access the Twitter API.
         // var token = result.credential.accessToken;
@@ -548,6 +636,8 @@ export class LoginComponent implements OnInit{
             .then(ref => {
                 console.log("Check User collection for doc");
 
+                console.log(firebase.auth().currentUser.providerData[0].providerId);
+
                 console.log(ref);
                 this.coloursUserDetails = ref;
 
@@ -557,42 +647,48 @@ export class LoginComponent implements OnInit{
                     email: coloursUser.email,
                     id: coloursUser.uid,
                     userImg: coloursUser.photoURL,
-                    phoneNumber: coloursUser.phoneNumber,
+                    //phoneNumber: coloursUser.phoneNumber,
                     LastTimeLogin: new Date().toString()
                 }
                 console.log(userData);
                 if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
                     this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                    this.afs.collection('Users').doc(coloursUser.uid).update({'bus_email': ""});
+                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
+                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
+                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
+                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
                     console.log("userData is set");
 
                 }
                 else {
-                    this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                    console.log("userData is updated");
+                    // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
+                    console.log("userData is not updated");
                 }
-                let value;
-                let setUser = this.afs.collection('Users').doc(coloursUser.uid);
-                this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
-                    map(b => b.map(a => {
-                        const data = a.payload.doc.data() as any;
-                        const id = a.payload.doc.id;
-                        return { id, ...data };
-                    }))
-                );
-                this.userCollection.subscribe(ref => {
-                    const index = ref.findIndex(user => user.name === userData.name);
-                    if (index > -1) {
-                        value = ref[index].name;
-                    } else {
-                        if (value === userData.name) {
-                            setUser.update(userData);
-                        } else {
-                            setUser.set(userData);
-                        }
-                    }
-                })
-                this.router.navigateByUrl('dashboard');
+                // let value;
+                // let setUser = this.afs.collection('Users').doc(coloursUser.uid);
+                // this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
+                //     map(b => b.map(a => {
+                //         const data = a.payload.doc.data() as any;
+                //         const id = a.payload.doc.id;
+                //         return { id, ...data };
+                //     }))
+                // );
+                // this.userCollection.subscribe(ref => {
+                //     const index = ref.findIndex(user => user.name === userData.name);
+                //     if (index > -1) {
+                //         value = ref[index].name;
+                //     } else {
+                //         if (value === userData.name) {
+                //             setUser.update(userData);
+                //         } else {
+                //             setUser.set(userData);
+                //         }
+                //     }
+                // })
+                // this.router.navigateByUrl('dashboard');
+                //return
+
+
                 // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
                 // You can use these server side with your app's credentials to access the Twitter API.
                 // var token = result.credential.accessToken;
@@ -614,9 +710,14 @@ export class LoginComponent implements OnInit{
         });
     }
     
-
     logout() {
         this.afAuth.auth.signOut();
+    }
+
+    dismiss() {
+        this.afAuth.auth.signOut();
+        this.emailVerifiedinit = false;
+        this.emailVerified = true;
     }
 
     dataCall() {
@@ -627,15 +728,38 @@ export class LoginComponent implements OnInit{
             }
 
             else {
+                if (user !== null){
 
-                this.user = user;
-                this.userId = user.uid;
-                this.router.navigate(['/dashboard']);
+                    this.user = user;
+                    this.userId = user.uid;
+
+                    if (firebase.auth().currentUser.providerData[0].providerId === 'password') {
+                        if (firebase.auth().currentUser.emailVerified === true) {
+                            this.router.navigate(['/dashboard']);
+                        } else {
+                            this.emailId = firebase.auth().currentUser.email;
+                            this.emailVerifiedinit = true;
+                            this.emailVerified = false;
+                        }
+                    }
+
+                    if (firebase.auth().currentUser.providerData[0].providerId === 'google.com') {
+                        this.router.navigate(['/dashboard']);
+                    }
+
+                    if (firebase.auth().currentUser.providerData[0].providerId === 'facebook.com') {
+                        this.router.navigate(['/dashboard']);
+                    }
+
+                    if (firebase.auth().currentUser.providerData[0].providerId === 'twitter.com') {
+                        this.router.navigate(['/dashboard']);
+                    }
+                }
+
+                // this.router.navigate(['/dashboard']);
             }
         })
     }
-
-
 
     checkFullPageBackgroundImage(){
         var $page = $('.full-page');

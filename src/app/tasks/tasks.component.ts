@@ -12,6 +12,7 @@ import { Task } from "../models/task-model";
 import * as moment from 'moment';
 import { TaskService } from 'app/services/task.service';
 import { InitialiseService } from 'app/services/initialise.service';
+import { coloursUser } from 'app/models/user-model';
 // import { coloursUser } from 'app/models/user-model';
 
 
@@ -48,9 +49,10 @@ export class TasksComponent {
   projects: Observable<Project[]>;
 
   coloursUserDetails: auth.UserCredential;
-  coloursUser: auth.AdditionalUserInfo;
+  coloursUser: coloursUser;
   user: auth.AdditionalUserInfo
-  selectedParticipant: auth.AdditionalUserInfo;
+  // selectedParticipant: auth.AdditionalUserInfo;
+  selectedParticipant: coloursUser;
   selParticipantId: any;
 
   public show: boolean = false;
@@ -86,7 +88,7 @@ export class TasksComponent {
   myEnterpriseCollection: Observable<Enterprise[]>;
   coloursUsername: string;
   proj_ID: any;
-  coloursUsers: Observable<firebase.User[]>;
+  coloursUsers: Observable<coloursUser[]>;
   selParticipantName: any;
   rDaily: string;
   rWeekly: string;
@@ -107,6 +109,7 @@ export class TasksComponent {
     this.selectedProject = is.getSelectedProject();
     this.userChampion = is.getUserChampion();
     this.selectedCompany = is.getSelectedCompany();
+    this.selectedParticipant = is.initColUserData();
 
     this.currentYear = moment(new Date().toISOString(), "YYYY-MM-DD").year().toString();
     this.currentQuarter = moment(new Date().toISOString(), "YYYY-MM-DD").quarter().toString();
@@ -197,13 +200,15 @@ export class TasksComponent {
 
       this.coloursUsers = this.afs.collection('Users').snapshotChanges().pipe(
         map(actions => actions.map(a => {
-          const data = a.payload.doc.data() as firebase.User;
+          const data = a.payload.doc.data() as coloursUser;
           const id = a.payload.doc.id;
           return { id, ...data };
         }))
       );
 
     });
+
+    // this.afs.collection('Users/tasks').ref.firestore.app.delete;
 
   }
 
@@ -215,6 +220,10 @@ export class TasksComponent {
         return { id, ...data };
       }))
     );
+  }
+
+  selectProject3(pro){
+    console.log(pro);
   }
 
   toggle() {
@@ -302,7 +311,10 @@ export class TasksComponent {
       bus_email: x.bus_email,
       id: x.id,
       phoneNumber: x.phoneNumber,
-      photoURL: x.photoURL
+      photoURL: x.photoURL,
+      address: x.address,
+      nationalId: x.nationalId,
+      nationality: x.nationality
     };
     this.userChampion = cUser;
     console.log(x);

@@ -42,6 +42,7 @@ export class CompanyComponent implements OnInit {
   myUser: string;
   selectedCompany: Enterprise;
   selectedDepartment : Department;
+  department: Department; 
   userMatrix: {};
   enterprise: Enterprise;
   enterprises: Observable<Enterprise[]>;
@@ -55,11 +56,11 @@ export class CompanyComponent implements OnInit {
   private CompanyCollection: AngularFirestoreCollection<Enterprise>;
   newEnterprise: Enterprise;
   companyParticipants: Observable<any[]>;
-  companyStuff: Observable<any[]>;
+  companyStaff: Observable<any[]>;
   dptId: any;
   coloursUserDetails: auth.UserCredential;
   coloursUser: auth.AdditionalUserInfo;
-  selectedParticipant: firebase.User;
+  selectedParticipant: coloursUser;
   selParticipantId: any;
   coloursUsername: string;
   selParticipantName: string
@@ -100,23 +101,24 @@ export class CompanyComponent implements OnInit {
   userId: string;
 
   userProfile: Observable<coloursUser>;
-  myDocment: AngularFirestoreDocument<{}>;
+  myDocument: AngularFirestoreDocument<{}>;
   userData: coloursUser;
   myData: ParticipantData;
+  today: { (): string; (locales?: string | string[], options?: Intl.DateTimeFormatOptions): string; };
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private authService: AuthService, private afs: AngularFirestore) {
     
     this.dpt = { name: "", by: "", byId: "", companyName: "",companyId: "", createdOn: ""}
     this.newEnterprise = is.getSelectedCompany();
-    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
-    this.projectToJoin = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", companyChampion:null, leader:null }
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: ""}
+    this.projectToJoin = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", companyChampion: null, leader: null, completion: "" }
     this.userMatrix = {companiesCreated: "", projectsCreated: "", companiesJoined: "", projectsJoined: ""}
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
-
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" }
+    this.department = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null }
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
     this.companyProjectChamp = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "" }
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL:"" }
-
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" }
+    this.today = new Date().toLocaleDateString;
     console.log(this.userId);
 
 
@@ -250,7 +252,10 @@ export class CompanyComponent implements OnInit {
         bus_email: this.userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: this.userData.address,
+        nationality: this.userData.nationality,
+        nationalId: this.userData.nationalId,
       }; 
 
       this.newEnterprise.by = this.user.displayName;
@@ -301,7 +306,7 @@ export class CompanyComponent implements OnInit {
         return { id, ...data };
       }))
     );  
-    this.companyStuff = this.afs.collection<Enterprise>('Enterprises').doc(company.id).collection('Participants').snapshotChanges().pipe(
+    this.companyStaff = this.afs.collection<Enterprise>('Enterprises').doc(company.id).collection('Participants').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as ParticipantData;
         const id = a.payload.doc.id;
@@ -354,17 +359,17 @@ export class CompanyComponent implements OnInit {
     projectsRef.doc(projectId).collection('enterprises').doc(scompanyId).set(this.selectedCompany);
     projectsRef.doc(projectId).collection('Participants').doc(partId).set(this.userChampion);
     console.log(this.projectToJoin)
-    this.projectToJoin = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", companyChampion: null, leader: null }
+    this.projectToJoin = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", companyChampion: null, leader: null, completion: "" }
     this.selectedCompany = this.is.getSelectedCompany();
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: ""};
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
 
     // })
   }
 
   saveProject() {
-    let pRefId: string = '';
-    let myref: string = '';
-    let pId: string = '';
+    let pRefId: string = "";
+    let myref: string = "";
+    let pId: string = "";
     let pr: Project;
     let dref;
     this.afAuth.user.subscribe(user => {
@@ -402,7 +407,7 @@ export class CompanyComponent implements OnInit {
           console.log('enterprise project')
         }
       });
-      this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
+      this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" }
 
     })
   }
@@ -450,7 +455,7 @@ export class CompanyComponent implements OnInit {
         //set task to the champion tasks collection                        
         champRef.doc(newTaskId).set(createdTask);
       });
-      this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL:""}
+      this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: ""}
 
     }
 
@@ -462,8 +467,8 @@ export class CompanyComponent implements OnInit {
 
     }
     this.companyProjectChamp = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "" }
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" }
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" }
   }
 
   save(department){
@@ -547,7 +552,10 @@ export class CompanyComponent implements OnInit {
         bus_email: this.userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: this.userData.address,
+        nationality: this.userData.nationality,
+        nationalId: this.userData.nationalId,
       }; 
 
       this.newPart = pUser;
@@ -597,9 +605,9 @@ export class CompanyComponent implements OnInit {
   }
 
   dataCall(){
-    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+    this.myDocument = this.afs.collection('Users').doc(this.user.uid);
 
-    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+    this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
@@ -613,8 +621,42 @@ export class CompanyComponent implements OnInit {
         bus_email: userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationality: userData.nationality,
+        nationalId: userData.nationalId,
       }
+
+      if (userData.address == "" || userData.address == null || userData.address == undefined) {
+        userData.address = ""
+      } else {
+
+      }
+
+      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ""
+      } else {
+
+      }
+
+      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ""
+      } else {
+
+      }
+
+      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ""
+      } else {
+
+      }
+
+      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ""
+      } else {
+
+      }
+      
       this.myData = myData;
       this.userData = userData;
     });

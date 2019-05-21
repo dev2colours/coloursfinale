@@ -1936,7 +1936,7 @@
                                       </div>
                                       <div id="Outstanding" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordionTsk">
                                         <div class="card-body">
-                                          <div class="content container scroll-em">
+                                          <div class="content container scroll-task">
                                             <ol style="padding-left:18px;">
                                               <li class="" style="color:steelblue" *ngFor="let tss of OutstandingTasks">
                                                 <div class="row">
@@ -1968,7 +1968,7 @@
                                       </div>
                                       <div id="currentTsk" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionTsk">
                                         <div class="card-body">
-                                          <div class="content container scroll-em">
+                                          <div class="content container scroll-task">
                                             <ol>
                                               <li class="" style="color:steelblue" *ngFor="let tss of CurrentTAsks">
                                                 <div class="row">
@@ -2000,7 +2000,7 @@
                                       </div>
                                       <div id="upcoming" class="collapse" aria-labelledby="headingThree" data-parent="#accordionTsk">
                                         <div class="card-body">
-                                          <div class="content container scroll-em">
+                                          <div class="content container scroll-task">
                                             Short Term Tasks<br>
                                             <ol>
                                               <li class="" style="color:steelblue" *ngFor="let event of ShortTermTAsks">
@@ -2186,7 +2186,7 @@
                                                                   (click)="selectAction(item)" title="Set task as completed">Add
                                                                   Participants</button>
                                                                 <button class="dropdown-item btn-info btn-link" rel="tooltip"
-                                                                  title="Assign action to Staff" (click)="showDpTasks(dp)"
+                                                                  title="Assign activity to Staff" (click)="showDpTasks(dp)"
                                                                   data-toggle="modal" data-target="#dptStaffList">Assign
                                                                   Champion</button>
                                                               </div>
@@ -2201,7 +2201,7 @@
                                                     </div>
                                                     <button class="btn-link btn-round primary" (click)="selectTask(tss)"
                                                       data-toggle="modal" data-target="#newAction">
-                                                      <small>Add action item</small></button>
+                                                      <small>Add activity</small></button>
                                                   </div>
                                                 </div>
                                               </li>
@@ -2211,8 +2211,7 @@
                                       </div>
                                       <!-- <div class="row text-center"> -->
                                       <p class="na-an text-center" style="color: steelblue; margin-bottom: 0px;"><i
-                                          class="ti-palette"></i>list of this weeks selected
-                                        action items</p><br><br>
+                                          class="ti-palette"></i>list of this week's selected activities</p><br><br>
                                       <!-- </div> -->
                                       <div class="col-sm-10">
                                         <ol>
@@ -2233,7 +2232,7 @@
                         <div class="tab-pane" id="weekly" role="tabpanel" aria-expanded="false">
                           <div class="row card-category clrs-h4">
                             <div class="col-xs-1"></div>                            
-                            <div class="col-md-3">Action Item</div>
+                            <div class="col-md-3">Activity</div>
                             <div class="col-md-3 text-left na-an">Start</div>
                             <div class="col-md-3 text-left ma-an">Finish</div>
                             <div class="col-md-3 text-left ma-an">Actions</div>
@@ -2275,7 +2274,7 @@
                           <div class="card-body" style="margin-top: -10px">
                             <div class="row">
                               <!-- <div class="col-sm-1 card-header text-center"></div> -->
-                              <div class="col-sm-2 card-header text-center">Item</div>
+                              <div class="col-sm-2 card-header text-center">Activity</div>
                               <div class="col-sm-3 card-header">Target Qty</div>
                               <div class="col-sm-2 card-header text-left">Start </div>
                               <div class="col-sm-2 card-header text-left">Finish </div>
@@ -2334,7 +2333,7 @@
                                 <div class="col-md-9"></div>
                                 <div class="col-md-3">
                                   <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday"> <!-- (click)="selectEditAction(item);showActionParticipants()"  -->
-                                    New Action
+                                    New Activity
                                   </button>
                                 </div>
                               </div>
@@ -3065,7 +3064,7 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-8 ml-auto mr-auto col-form-label na-an info" style="color:steelblue">
-            <font size=4>New Action Item for <br>{{ selectedTask.name }} task</font>
+            <font size=4>New Activity for <br>{{ selectedTask.name }} task</font>
           </p>
         </div>
         <hr>
@@ -3116,7 +3115,7 @@
           <div class="divider"></div>
           <div class="right-side">
             <button type="button" class="btn btn-success btn-link" (click)="newAction(actionItem)" data-dismiss="modal"
-              title="save action">Enter</button>
+              title="save activity">Enter</button>
           </div>
         </div>
       </div>
@@ -3130,7 +3129,7 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-10 ml-auto mr-auto title na-an info" style="color:steelblue">
-            <font size=4>New Action Item for {{ selectedTask.name }} task</font>
+            <font size=4>New Activity for {{ selectedTask.name }} task</font>
           </p>
         </div>
         <hr>
@@ -3211,7 +3210,7 @@
           <div class="divider"></div>
           <div class="right-side">
             <button type="button" class="btn btn-success btn-link" (click)="newActionToday(actionItem)" data-dismiss="modal"
-              title="save action">Enter</button>
+              title="save activity">Enter</button>
           </div>
         </div>
       </div>
@@ -3301,7 +3300,7 @@
           <div class="divider"></div>
           <div class="right-side">
             <button type="button" class="btn btn-success btn-link" (click)="editAction(startDate,endDate)" data-dismiss="modal"
-              title="save action">Enter</button>
+              title="save activity">Enter</button>
           </div>
         </div>
       </div>

@@ -349,6 +349,14 @@
               </div>
             </div>
             <div class="row">
+              <div class="col-md-8 pr-1">
+                <div class="form-group">
+                  <label>National Id</label>
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="nationalId"[(ngModel)]="userData.nationalId">
+                </div>
+              </div>
+            </div>
+            <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
                   <label>About Me</label>
@@ -367,7 +375,11 @@
         <div class="card-header">
           <div class="row">
             <div class="col-md-8">
-              <h5 class="card-category na-am">{{ userData.username || userData.name }}'s Profile preview</h5>
+              <h5 *ngIf="userData.username !== '' || userData.username !== undefined; else showName" class="na-am">{{ userData.username }}'s Profile preview</h5>
+              <!-- <h5 class="card-category na-am">{{ userData.username || userData.name }}'s Profile preview</h5> -->
+              <ng-template #showName>
+                <h5 class="card-category na-am">{{ userData.name }}'s Profile preview</h5>                
+              </ng-template>
             </div>
             <div class="col-md-2">
               <button class="info btn-link" (click)="run1()">Edit</button>
@@ -378,15 +390,7 @@
           </div>
         </div>
         <div class="card-body">
-          <form>
-            <!-- <div class="row">
-              <div class="col-md-8 pr-1">
-                <div class="form-group">
-                  <label>Company (disabled)</label>
-                  <input type="text" class="form-control" name="Company" disabled="" placeholder="Company" value="Creative Code Inc.">
-                </div>
-              </div>
-            </div> -->
+          <!-- <form> -->
             <div class="row">
               <div class="col-md-7 pr-1">
                 <div class="form-group">
@@ -511,6 +515,15 @@
               </div>
             </div>
             <div class="row">
+              <div class="col-md-7 pr-1">
+                <div class="form-group">
+                  <label>National Id</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="nId">{{ userData.nationalId }}</p> 
+                  <!-- [(ngModel)]="userData.username"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
                   <label>About Me</label>
@@ -518,7 +531,7 @@
                 </div>
               </div>
             </div>
-          </form>
+          <!-- </form> -->
         </div>
       </div>
     </div>

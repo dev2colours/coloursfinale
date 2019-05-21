@@ -56,7 +56,7 @@ export class UserComponent{
                 }
             })
         );
-        this.userData = { name: "", gender: "", dob: "", age: 0, username: "", email: "", bus_email: "", phoneNumber: "", telephone: null, address: "", nationalId: "", nationality: "", zipCode: null, country: "", city: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", aboutMe: "", profession: null, qualifications: null, bodyWeight: 0, bodyHeight: 0, bodyMassIndex: 0, industrySector: "", personalAssets: null, personalLiabilities: null, reference: null, focusFactor: 0, userImg: "", LastTimeLogin: "", referee: [this.userInit] }; 
+        this.userData = { name: "", gender: "", dob: "", age: 0, username: "", email: "", bus_email: "", phoneNumber: "", telephone: null, address: "", nationalId: "", nationality: "", zipCode: null, country: "", city: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", aboutMe: "", profession: null, qualifications: null, bodyWeight: 0, bodyHeight: 0, bodyMassIndex: 0, industrySector: "", personalAssets: null, personalLiabilities: null, reference: null, focusFactor: 0, userImg: "", LastTimeLogin: "", referee: [this.userInit], hierarchy: "", updated: false }; 
         // this.contact = { name: "", id: "", email: "", phoneNumber: "" };
 
         
@@ -104,6 +104,7 @@ export class UserComponent{
 
     saveProfile(userData) {
         console.log(userData);
+        userData.nationality = userData.country;
         console.log(this.aboutMe);
         this.afs.collection('Users').doc(this.userId)
         .set(userData);
@@ -134,8 +135,7 @@ export class UserComponent{
         
         this.afs.collection('Users').doc(this.userId).collection('contacts').doc(newcontact.id).set(newcontact);
         this.selectedContacts.push(newcontact);
-        this.contact = {
-            name: '', id: '', email: '', bus_email: '', phoneNumber: '', photoURL: "" };
+        this.contact = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
         this.newContact = null;
     }
     

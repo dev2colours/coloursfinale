@@ -8,7 +8,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { EnterpriseService } from '../../services/enterprise.service';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentSnapshotExists, DocumentSnapshotDoesNotExist, Action } from 'angularfire2/firestore';
 import { map, switchMap, mapTo } from 'rxjs/operators';
-import { Enterprise, Subsidiary, ParticipantData, companyChampion, Department, companyStaff, asset, client, employeeData } from "../../models/enterprise-model";
+import { Enterprise, Subsidiary, ParticipantData, companyChampion, Department, companyStaff, asset, client, employeeData, compProfile } from "../../models/enterprise-model";
 import { Project, workItem } from "../../models/project-model";;
 import * as moment from 'moment';
 import { scaleLinear } from "d3-scale";
@@ -18,6 +18,8 @@ import { coloursUser, mail } from 'app/models/user-model';
 import { Task, MomentTask } from "../../models/task-model";
 import { PersonalService } from 'app/services/personal.service';
 import { InitialiseService } from 'app/services/initialise.service';
+import { ProjectService } from 'app/services/project.service';
+import { ReportsService } from 'app/services/reports.service';
 // import firebase = require('firebase');
 
 var misc: any = {
@@ -47,10 +49,18 @@ export class EnterpriseProfileComponent {
   public buttonName: any = 'Show';
   public btnName: any = 'Show';
 
+  public pgOne: boolean = true;
+  public pgTwo: boolean = false;
+  public pgThree: boolean = false;
+  
   public btnTable: any = 'Show';
   public showUserTable: boolean = false;
+  public btnDptTable: any = 'Show';
+  public showDptUserTable: boolean = false;
   public showChamp: boolean = true;
   public btnChamp: any = 'Show';
+  public showDptChamp: boolean = true;
+  public btnDptChamp: any = 'Show';
 
   public showdept: boolean = true;
   public btndept: any = 'Show';
@@ -124,7 +134,7 @@ export class EnterpriseProfileComponent {
   tasksOutstanding = [];
 
 
-  tasks: Observable<Task[]>;
+  tasks: Observable<MomentTask[]>;
   myTasks: Observable<Task[]>;
   todayTasks: Observable<Task[]>;
   day1Tasks: Observable<Task[]>;
@@ -159,7 +169,7 @@ export class EnterpriseProfileComponent {
   currentCompany: Enterprise;
   currentCompanyId: string;
 
-  company: Enterprise;
+  company: compProfile;
   location: Location;
   private listTitles: any[];
   private nativeElement: Node;
@@ -173,12 +183,12 @@ export class EnterpriseProfileComponent {
   userId: string
   companyData: Observable<{ name: string; by: string; byId: string; createdOn: string; id: string; location: string; sector: string; participants: ParticipantData; }>;
 
-  testCompany: Enterprise;
-  tryComp: Enterprise;
+  testCompany: compProfile;
+  tryComp: compProfile;
   comp: Observable<any>;
   dataId: {};
   compId: string;
-  newCompany: Observable<Enterprise>;
+  newCompany: Observable<compProfile>;
   tasksImChamp: Observable<{}>;
   coloursUsers: Observable<coloursUser[]>;
   theTasks = [];
@@ -209,7 +219,7 @@ export class EnterpriseProfileComponent {
   selParticipantName: any;
   staff: Observable<ParticipantData[]>;
   staff2: Observable<ParticipantData[]>;
-  clients: Observable<ParticipantData[]>;
+  clients: Observable<client[]>;
   compProjects: Observable<Project[]>;
   companyProjects: Observable<Project[]>;
   companyName: any;
@@ -284,7 +294,7 @@ export class EnterpriseProfileComponent {
   model2: Date;
   depts: Observable<Department[]>;
   companyDpts: Observable<Department[]>;
-  dptTasks: Observable<Task[]>;
+  dptTasks: Observable<MomentTask[]>;
   dptIntrayTasks: Observable<Task[]>;
   department: Department;
   selectedTask: Task;
@@ -303,7 +313,7 @@ export class EnterpriseProfileComponent {
   staffId: string;
   selectedStaffId: string;
   setSui: ({ id: string; name: string });
-  staffTasks: Observable<Task[]>;
+  staffTasks: Observable<MomentTask[]>;
   companyDptStaff: [ParticipantData];
   // deptStaff: [ParticipantData];
   companyDptsArray: Observable<Department[]>;
@@ -369,7 +379,7 @@ export class EnterpriseProfileComponent {
   staff3: Observable<employeeData[]>;
   industrySectors: { name: string; }[];
   userProfile: Observable<coloursUser>;
-  myDocment: AngularFirestoreDocument<{}>;
+  myDocument: AngularFirestoreDocument<{}>;
   userData: coloursUser;
 
   selectedActions: workItem[];
@@ -380,39 +390,66 @@ export class EnterpriseProfileComponent {
   action: workItem;
   startDate: string;
   endDate: string;
+  departments1: Observable<any[]>;
+  departments3: Observable<any[]>;
+  departments2: Observable<any[]>;
+  companyDpts1: Observable<any[]>;
+  selectedColUser: coloursUser;
+  setCompStaff: companyStaff;
+  departments4: Observable<any[]>;
+  staffDepartment: Department;
+  hierarchies: string[];
+  myCompProfile: { name: string; phoneNumber: string; by: string; byId: string; createdOn: string; email: string; bus_email: string; id: string; photoURL: string; departmentId: string; department: string; address: String; nationalId: string; nationality: string; hierarchy: string; };
+  allEnterpriseTasks: Task[];
+  tss: Task;
 
-  constructor(public afAuth: AngularFireAuth, private ts: TaskService, private is: InitialiseService, private pns: PersonalService, public es: EnterpriseService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
+  // Dashboard
 
-    this.selectedCity = { id: '', name: '' };
-    // this.setSui = { id: '', name: '' };
+  diaryActionItems: any;
+  actionNo2: number;
+  myProjects: Observable<Project[]>;
+  projsNo: number;
+
+  public showProjs: boolean = false;
+  public hideProjs: boolean = false;
+  projs: Project[];
+
+
+  /*   end */
+
+  constructor(public afAuth: AngularFireAuth, public rp: ReportsService, private ts: TaskService, private is: InitialiseService, private ps: ProjectService, private pns: PersonalService, public es: EnterpriseService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
+
+    this.selectedCity = { id: "", name: "" };
+    // this.setSui = { id: "", name: "" };
     this.startDate = null;
     this.endDate = null;
     this.location = location;
     this.nativeElement = element.nativeElement;
     this.sidebarVisible = false;
-    this.newPart = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
+    this.newPart = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationality: "", nationalId: "" };
     this.counter = 1;
-    this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
-    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, participants: null, classification: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
+    this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, participants: null, classification: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
     this.dpt = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
     this.asset = { name: "", assetNumber: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", cost: "" };
     this.client = is.getClient();
     this.subsidiary = is.getSubsidiary();
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
-    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", nationalId: "", nationality: "", address: "", department: "", departmentId: "" };
-    this.contactPerson = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" }
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", nationalId: "", nationality: "", address: "", department: "", departmentId: "", hierarchy: "" };
+    this.contactPerson = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationality: "", nationalId: "" };
     this.selectedCompany = is.getSelectedCompany();
-    this.selectedStaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
-    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
-    this.companystaff2 = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
-    this.department = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null }
-    this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null }
-    this.selectedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
-    this.editedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false};
-    this.setUser = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
-    this.joinmyProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" }
-
+    this.setCompStaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: "" };
+    this.selectedStaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: ""};
+    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: ""  };
+    this.companystaff2 = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: ""  };
+    this.department = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
+    this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
+    this.editedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
+    this.setUser = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationality: "", nationalId: ""};
+    this.joinmyProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" }
+    this.tss = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
     let mmm = moment(new Date(), "DD-MM-YYYY");
     this.todayDate = moment(new Date(), "DD-MM-YYYY").format('dddd');
     console.log(this.todayDate);
@@ -428,6 +465,13 @@ export class EnterpriseProfileComponent {
       { id: 5, name: 'Klaipėda' }
     ];
 
+    this.hierarchies = [
+      'Executive',
+      'Middle management',
+      'Operations',
+      'None'
+    ];
+    
     this.SIunits = [
       { id: 'hours', name: 'Time(hrs)' },
       { id: 'items', name: 'Items' },
@@ -785,7 +829,7 @@ export class EnterpriseProfileComponent {
   }
 
   minimizeSidebar() {
-    const body = document.getElementsByTagName('body')[0];
+    let body = document.getElementsByTagName('body')[0];
 
     if (misc.sidebar_mini_active === true) {
       body.classList.remove('sidebar-mini');
@@ -799,7 +843,7 @@ export class EnterpriseProfileComponent {
     }
 
     // we simulate the window Resize so the charts will get updated in realtime.
-    const simulateWindowResize = setInterval(function () {
+    let simulateWindowResize = setInterval(function () {
       window.dispatchEvent(new Event('resize'));
     }, 180);
 
@@ -857,19 +901,24 @@ export class EnterpriseProfileComponent {
           this.setUserOutstandingTasks.push(data);
         };
         // Upcoming tasks
+
+
         if (moment(data.start).isAfter(today)) {
-          this.setUserUpcomingTAsks.push(data);
-          if (moment(data.start).isBefore(today.add(3, "month"))) {
+          this.setUserUpcomingTAsks.push(data);          
+          if (moment(data.start).isSameOrBefore(today.add(3, "month"))) {
             this.setUserShortTermTAsks.push(data);
           }
-          if (moment(data.start).isAfter(today.add(6, "month"))) {
+          else if (moment(data.start).isSameOrBefore(today.add(12, "month"))) {
             this.setUserMediumTermTAsks.push(data);
           }
-          if (moment(data.start).isAfter(today.add(12, "month"))) {
+          else if (moment(data.start).isBefore(today.add(12, "month"))) {
             this.setUserLongTermTAsks.push(data)
+            console.log('long term Tasks' + ' ' + this.setUserLongTermTAsks);
           }
-
+          // console.log(this.OutstandingTasks);
         };
+
+
       });
     })
 
@@ -930,19 +979,23 @@ export class EnterpriseProfileComponent {
         console.log(this.setPojOutstandingTasks);
         
         // Upcoming tasks
+
         if (moment(data.start).isAfter(today)) {
           this.setPojUpcomingTAsks.push(data);
-          if (moment(data.start).isBefore(today.add(3, "month"))) {
+          if (moment(data.start).isSameOrBefore(today.add(3, "month"))) {
             this.setPojShortTermTAsks.push(data);
           }
-          if (moment(data.start).isAfter(today.add(6, "month"))) {
+          else if (moment(data.start).isSameOrBefore(today.add(12, "month"))) {
             this.setPojMediumTermTAsks.push(data);
           }
-          if (moment(data.start).isAfter(today.add(12, "month"))) {
-            this.setPojLongTermTAsks.push(data)
+          else if (moment(data.start).isBefore(today.add(12, "month"))) {
+            this.setPojLongTermTAsks.push(data);
+            console.log('long term Tasks' + ' ' + this.LongTermTAsks);
           }
-
+          // console.log(this.OutstandingTasks);
         };
+
+
       });
     })
 
@@ -993,7 +1046,6 @@ export class EnterpriseProfileComponent {
         };
 
         if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
-
           this.setDeptCurrentTAsks.push(data);
         };
         // outstanding tasks
@@ -1001,18 +1053,20 @@ export class EnterpriseProfileComponent {
           this.setDeptOutstandingTasks.push(data);
         };
         // Upcoming tasks
-        if (moment(data.start).isAfter(today)) {
-          this.setDeptUpcomingTAsks.push(data);
-          if (moment(data.start).isBefore(today.add(3, "month"))) {
-            this.setDeptShortTermTAsks.push(data);
-          }
-          if (moment(data.start).isAfter(today.add(6, "month"))) {
-            this.setDeptMediumTermTAsks.push(data);
-          }
-          if (moment(data.start).isAfter(today.add(12, "month"))) {
-            this.setDeptLongTermTAsks.push(data)
-          }
 
+
+        if (moment(data.start).isAfter(today)) {
+          this.setDeptUpcomingTAsks.push(data);          
+          if (moment(data.start).isSameOrBefore(today.add(3, "month"))) {
+            this.setDeptShortTermTAsks.push(data);            
+          }
+          else if (moment(data.start).isSameOrBefore(today.add(12, "month"))) {
+            this.setDeptMediumTermTAsks.push(data);            
+          }
+          else if (moment(data.start).isBefore(today.add(12, "month"))) {
+            this.setDeptLongTermTAsks.push(data);
+            console.log('long term Tasks' + ' ' + this.setDeptLongTermTAsks);
+          }
         };
       });
     })
@@ -1026,6 +1080,14 @@ export class EnterpriseProfileComponent {
     );
 
 
+  }
+
+  closeTask(task){
+    console.log(task);
+  }
+
+  deleteProject(id){
+    console.log(id)
   }
 
   saveDept() {
@@ -1100,7 +1162,11 @@ export class EnterpriseProfileComponent {
       bus_email: this.userData.bus_email,
       id: this.user.uid,
       phoneNumber: this.user.phoneNumber,
-      photoURL: this.user.photoURL
+      photoURL: this.user.photoURL,
+      address: this.userData.address,
+      nationality: this.userData.nationality,
+      nationalId: this.userData.nationalId,
+      hierarchy: this.userData.hierarchy,
     };
 
     this.newPart = pUser;
@@ -1176,6 +1242,10 @@ export class EnterpriseProfileComponent {
       projectName: project.name,
       companyId: this.compId,
       companyName: this.company.name,
+      hierarchy: this.myCompProfile.hierarchy,
+      nationality: this.myCompProfile.nationality,
+      nationalId: this.myCompProfile.nationalId,
+      address: this.myCompProfile.address,
     };
 
     let projectsRef = this.afs.collection('Projects').doc(projectId);
@@ -1203,13 +1273,19 @@ export class EnterpriseProfileComponent {
         console.log(doc.get('phoneNumber'));
         console.log("Document data:", doc.data());
 
-        const id = doc.get('id');
-        const name = doc.get('name');
-        const email = doc.get('email');
-        const phoneNumber = doc.get('phoneNumber');
-        const by = doc.get('by');
-        const byId = doc.get('byId');
-        const createdOn = doc.get('createdOn');
+        let id = doc.get('id');
+        let name = doc.get('name');
+        let email = doc.get('email');
+        let phoneNumber = doc.get('phoneNumber');
+        let by = doc.get('by');
+        let byId = doc.get('byId');
+        let createdOn = doc.get('createdOn');
+
+        let address = doc.get('address');
+        let nationalId = doc.get('nationalId');
+        let nationality = doc.get('nationality');
+        let bus_email = doc.get('bus_email');
+        let hierarchy = doc.get('hierarchy');
 
         staffData.name = name;
         staffData.id = id;
@@ -1218,6 +1294,12 @@ export class EnterpriseProfileComponent {
         staffData.by = by;
         staffData.byId = byId;
         staffData.createdOn = createdOn;
+
+        staffData.address = address;
+        staffData.nationalId = nationalId;
+        staffData.nationality = nationality;
+        staffData.bus_email = bus_email;
+        staffData.hierarchy = hierarchy;
 
         // staffData = doc.data() as companyStaff
       } else {
@@ -1238,6 +1320,36 @@ export class EnterpriseProfileComponent {
 
   selectUser(x: companyStaff) {
 
+    if (x.address == "" || x.address == null || x.address == undefined) {
+      x.address = ""
+    } else {
+
+    }
+
+    if (x.bus_email == "" || x.bus_email == null || x.bus_email == undefined) {
+      x.bus_email = ""
+    } else {
+
+    }
+
+    if (x.nationalId == "" || x.nationalId == null || x.nationalId == undefined) {
+      x.nationalId = ""
+    } else {
+
+    }
+
+    if (x.nationality == "" || x.nationality == null || x.nationality == undefined) {
+      x.nationality = ""
+    } else {
+
+    }
+
+    if (x.hierarchy == "" || x.hierarchy == null || x.hierarchy == undefined) {
+      x.hierarchy = ""
+    } else {
+
+    }
+
     let staff = {
       name: x.name,
       email: x.email,
@@ -1249,17 +1361,125 @@ export class EnterpriseProfileComponent {
       photoURL: x.photoURL,
       department: "",
       departmentId: "",
-      createdOn: new Date().toISOString()
+      createdOn: new Date().toISOString(),
+      address: x.address,
+      nationalId: x.nationalId,
+      nationality: x.nationality,
+      hierarchy: x.hierarchy
     };
     console.log(x);
     console.log(staff);
     this.companystaff = staff;
     console.log(this.companystaff);
-    // this.saveNewStaff(this.companystaff)
+    this.toggleChamp(); this.toggleUsersTable();
+  }
+
+  selectColUser2(x: coloursUser) {
+
+    console.log(this.selectedColUser);
+    
+
+    
+    if (this.selectedColUser.phoneNumber == "" || this.selectedColUser.phoneNumber == null || this.selectedColUser.phoneNumber == undefined) {
+      this.selectedColUser.phoneNumber = ""
+    } else {
+
+    }
+
+    if (this.selectedColUser.address == "" || this.selectedColUser.address == null || this.selectedColUser.address == undefined) {
+      this.selectedColUser.address = ""
+    } else {
+
+    }
+
+    if (this.selectedColUser.bus_email == "" || this.selectedColUser.bus_email == null || this.selectedColUser.bus_email == undefined) {
+      this.selectedColUser.bus_email = ""
+    } else {
+
+    }
+
+    if (this.selectedColUser.nationalId == "" || this.selectedColUser.nationalId == null || this.selectedColUser.nationalId == undefined) {
+      this.selectedColUser.nationalId = ""
+    } else {
+
+    }
+
+    if (this.selectedColUser.nationality == "" || this.selectedColUser.nationality == null || this.selectedColUser.nationality == undefined) {
+      this.selectedColUser.nationality = ""
+    } else {
+
+    }
+
+    if (this.selectedColUser.hierarchy == "" || this.selectedColUser.hierarchy == null || this.selectedColUser.hierarchy == undefined) {
+      this.selectedColUser.hierarchy = ""
+    } else {
+
+    }
+
+
+    let staff = {
+      name: this.selectedColUser.name,
+      email: this.selectedColUser.email,
+      bus_email: this.selectedColUser.bus_email,
+      id: this.selectedColUser.id,
+      phoneNumber: this.selectedColUser.phoneNumber,
+      by: this.user.displayName,
+      byId: this.userId,
+      photoURL: this.selectedColUser.userImg,
+      department: "",
+      departmentId: "",
+      createdOn: new Date().toISOString(),
+      address: this.selectedColUser.address,
+      nationalId: this.selectedColUser.nationalId,
+      nationality: this.selectedColUser.nationality,
+      hierarchy: this.selectedColUser.hierarchy
+    };
+    console.log(this.selectedColUser);
+    console.log(staff);
+    this.newCompanystaff = staff;
+    console.log(this.newCompanystaff);
     this.toggleChamp(); this.toggleUsersTable();
   }
 
   selectColUser(x: coloursUser) {
+
+    
+    if (x.phoneNumber == "" || x.phoneNumber == null || x.phoneNumber == undefined) {
+      x.phoneNumber = ""
+    } else {
+
+    }
+
+    if (x.address == "" || x.address == null || x.address == undefined) {
+      x.address = ""
+    } else {
+
+    }
+
+    if (x.bus_email == "" || x.bus_email == null || x.bus_email == undefined) {
+      x.bus_email = ""
+    } else {
+
+    }
+
+    if (x.nationalId == "" || x.nationalId == null || x.nationalId == undefined) {
+      x.nationalId = ""
+    } else {
+
+    }
+
+    if (x.nationality == "" || x.nationality == null || x.nationality == undefined) {
+      x.nationality = ""
+    } else {
+
+    }
+
+    if (x.hierarchy == "" || x.hierarchy == null || x.hierarchy == undefined) {
+      x.hierarchy = ""
+    } else {
+
+    }
+
 
     let staff = {
       name: x.name,
@@ -1272,13 +1492,16 @@ export class EnterpriseProfileComponent {
       photoURL: x.userImg,
       department: "",
       departmentId: "",
-      createdOn: new Date().toISOString()
+      createdOn: new Date().toISOString(),
+      address: x.address,
+      nationalId: x.nationalId,
+      nationality: x.nationality,
+      hierarchy: x.hierarchy
     };
     console.log(x);
     console.log(staff);
     this.newCompanystaff = staff;
     console.log(this.newCompanystaff);
-    // this.saveNewStaff(this.newCompanystaff)
     this.toggleChamp(); this.toggleUsersTable();
   }
 
@@ -1292,10 +1515,12 @@ export class EnterpriseProfileComponent {
   }
 
   saveNewStaff() {
+    let userRef = this.afs.collection<Enterprise>('Users').doc(this.newCompanystaff.id).collection('myenterprises');
     let partRef = this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection('Participants');
     partRef.doc(this.newCompanystaff.id).set(this.newCompanystaff);
+    userRef.doc(this.compId).set(this.company);
     console.log(this.newCompanystaff);
-    this.newCompanystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
+    this.newCompanystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: "" };
     this.dataCall();
   }
 
@@ -1320,7 +1545,7 @@ export class EnterpriseProfileComponent {
       colUsers.doc(partId).update({ 'id': partId });
     });
     console.log(this.companystaff);
-    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
+    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: "" };
   }
 
   deleteStaff(x: companyStaff) {
@@ -1359,7 +1584,30 @@ export class EnterpriseProfileComponent {
 
   }
 
-  selectParticipant(x) {
+  selectParticipant(x:companyStaff) {
+    if (x.address == "" || x.address == null || x.address == undefined) {
+      x.address = ""
+    } else {
+
+    }
+
+    if (x.bus_email == "" || x.bus_email == null || x.bus_email == undefined) {
+      x.bus_email = ""
+    } else {
+
+    }
+
+    if (x.nationalId == "" || x.nationalId == null || x.nationalId == undefined) {
+      x.nationalId = ""
+    } else {
+
+    }
+
+    if (x.nationality == "" || x.nationality == null || x.nationality == undefined) {
+      x.nationality = ""
+    } else {
+
+    }
     this.selectedParticipant = x;
     this.selParticipantId = x.id;
     this.Champion = x;
@@ -1692,6 +1940,29 @@ export class EnterpriseProfileComponent {
 
   setDptHead() {
     console.log(this.companystaff);
+    if (this.companystaff.address == "" || this.companystaff.address == null || this.companystaff.address == undefined) {
+      this.companystaff.address = ""
+    } else {
+
+    }
+
+    if (this.companystaff.bus_email == "" || this.companystaff.bus_email == null || this.companystaff.bus_email == undefined) {
+      this.companystaff.bus_email = ""
+    } else {
+
+    }
+
+    if (this.companystaff.nationalId == "" || this.companystaff.nationalId == null || this.companystaff.nationalId == undefined) {
+      this.companystaff.nationalId = ""
+    } else {
+
+    }
+
+    if (this.companystaff.nationality == "" || this.companystaff.nationality == null || this.companystaff.nationality == undefined) {
+      this.companystaff.nationality = ""
+    } else {
+
+    }
     let staff = {
       name: this.companystaff.name,
       email: this.companystaff.email,
@@ -1700,7 +1971,11 @@ export class EnterpriseProfileComponent {
       phoneNumber: this.companystaff.phoneNumber,
       photoURL: this.user.photoURL,
       // byId: this.userId,
-      dateHeaded: new Date().toString()
+      dateHeaded: new Date().toString(),
+      address: this.myData.address,
+      nationalId: this.myData.nationalId,
+      nationality: this.myData.nationality,
+      
     };
     console.log('the departmentID-->' + " " + this.selectedDepartment.name);
     this.selectedDepartment.hod = staff;
@@ -1717,7 +1992,19 @@ export class EnterpriseProfileComponent {
   }
 
   showTasks(dpt) {
-    this.dptIntrayTasks = this.es.getDptTasks(this.compId, dpt.id);
+    // this.dptIntrayTasks = this.es.getDptTasks(this.compId, dpt.id);
+    let myTaskData: MomentTask;
+    let dptRef = this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection<Department>('departments');
+    this.dptIntrayTasks = dptRef.doc(dpt.id).collection<MomentTask>('tasks', ref => ref.where('departmentId', '==', dpt.id ) ).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as MomentTask;
+        const id = a.payload.doc.id;
+        myTaskData = data;
+        myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
+        myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
+        return { id, ...data };
+      }))
+    );
   }
 
   showDpTasks(dptId) {
@@ -1764,61 +2051,6 @@ export class EnterpriseProfileComponent {
     this.selectedDptTask = TAsk;
   }
 
-  // takeSIU(n){
-  //   console.log(n);
-  //   this.setSui = n;
-  //   console.log(this.setSui);
-
-  // }
-
-  newActionn(action) {
-    console.log(action);
-    let dptId = this.dp;
-    let champRef;
-    let champId = action.champion.id;
-    action.by = this.user.displayName;
-    action.byId = this.userId;
-    action.createdOn = new Date().toISOString();
-    action.taskId = this.selectedTask.id
-    action.unit = this.setSui.id;
-
-    let staffId = this.staffId;
-
-    console.log('department id-->' + " " + this.dp);
-    console.log('the task--->' + this.selectedTask.name + " " + this.selectedTask.id);
-    console.log('the department-->' + action.name + " " + action.id);
-
-    if (staffId == champId) {
-      champRef = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId).collection('tasks')
-        .doc(this.selectedTask.id).collection<workItem>('actionItems');
-    }
-
-    if (staffId != champId) {
-      champRef = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId).collection('tasks')
-        .doc(this.selectedTask.id).collection<workItem>('actionItems');
-    }
-
-    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId);
-    let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
-    let deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<Department>('departments').doc(dptId);
-    let actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
-    let EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
-    EntRef.add(action).then(function (Ref) {
-      let newActionId = Ref.id;
-      console.log(Ref);
-      EntRef.doc(newActionId).update({ 'id': newActionId });
-      actionRef.doc(newActionId).set(action);
-      actionRef.doc(newActionId).update({ 'id': newActionId });
-      userActionRef.doc(newActionId).set(action);
-      userActionRef.doc(newActionId).update({ 'id': newActionId });
-
-      if (staffId == champId) {
-        champRef.doc(newActionId).set(action);
-        champRef.doc(newActionId).update({ 'id': newActionId });
-      }
-    })
-  }
-
   deleteAction(action) {
     console.log(action);
     let actionId = action.id;
@@ -1834,6 +2066,8 @@ export class EnterpriseProfileComponent {
 
   newAction(action: workItem) {
     console.log(action);
+    let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: "", actualTime: "", Varience: "" };
+
     action.by = this.user.displayName;
     action.byId = this.userId;
     let dptId = this.deptId;
@@ -1846,6 +2080,8 @@ export class EnterpriseProfileComponent {
     action.companyName = this.selectedTask.companyName;
     action.classificationName = 'Work';
     action.classificationId = 'colourWorkId';
+    action.classification = newClassification;
+
     // action.startDate = moment(action.startDate).format('L');
     // action.endDate = moment(action.endDate).format('L');
     // action.startWeek = moment(action.startDate, 'MM-DD-YYYY').week().toString();
@@ -1885,7 +2121,7 @@ export class EnterpriseProfileComponent {
       userActionRef.doc(newActionId).update({ 'id': newActionId });
     })
     this.setSui = null;
-    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
+    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
   }
 
   newActionToday(action: workItem) {
@@ -1947,9 +2183,31 @@ export class EnterpriseProfileComponent {
   /* addToDepatment */
   add2Dpartment() {
     console.log(this.selectedDepartment.name);
+    console.log(this.selectedTask.department);
+    console.log(this.selectedTask.departmentId);
     console.log(this.selectedTask);
+    let oldDptId = this.selectedTask.departmentId;
+    // let oldDptName = this.selectedTask.department;
     this.ts.addToDepatment(this.selectedTask, this.selectedDepartment);
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
+    // this.afs.collection('Users').doc(this.selectedTask.champion.id).collection('tasks').doc(this.selectedTask.id).delete();
+
+    if (oldDptId !==  "") {
+      this.afs.collection('Enterprises').doc(this.compId)
+        .collection<Department>('departments').doc(this.selectedTask.departmentId)
+        .collection('tasks').doc(this.selectedTask.id).update({
+          'departmentId': this.selectedDepartment.id,
+          'department': this.selectedDepartment.name,
+          'transferDate': new Date().toISOString()
+        });
+    }
+
+    this.afs.collection('Enterprises').doc(this.compId).collection('tasks').doc(this.selectedTask.id).update({
+      'departmentId': this.selectedDepartment.id,
+      'department': this.selectedDepartment.name,
+      'champion': null
+    });
+    this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
   }
 
   addStaff2Dpartment() {
@@ -1957,12 +2215,12 @@ export class EnterpriseProfileComponent {
     console.log(this.selectedDepartment);
     // let man = this.companystaff;
     this.es.addStaffToDepatment(this.compId, this.selectedDepartment, this.companystaff);
-    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "" };
+    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: "" };
   }
 
   addActionParticipants() {
     console.log(this.setStaff);
-    const action = this.selectedAction;
+    let action = this.selectedAction;
     console.log(action);
   }
 
@@ -2095,6 +2353,29 @@ export class EnterpriseProfileComponent {
   }
 
   selectActionStaff(e, staff: ParticipantData) {
+    if (staff.address == "" || staff.address == null || staff.address == undefined) {
+      staff.address = ""
+    } else {
+
+    }
+
+    if (staff.bus_email == "" || staff.bus_email == null || staff.bus_email == undefined) {
+      staff.bus_email = ""
+    } else {
+
+    }
+
+    if (staff.nationalId == "" || staff.nationalId == null || staff.nationalId == undefined) {
+      staff.nationalId = ""
+    } else {
+
+    }
+
+    if (staff.nationality == "" || staff.nationality == null || staff.nationality == undefined) {
+      staff.nationality = ""
+    } else {
+
+    }
     let actionId = this.editedAction.id;
     let deptId = this.editedAction.departmentId;
     let compRef = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
@@ -2363,8 +2644,98 @@ export class EnterpriseProfileComponent {
 
     this.startDate = null;
     this.endDate = null;
-    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
   }
+
+  editActivity() {
+    let champId = this.selectedAction.champion.id;
+    // this.selectedAction.startWeek = moment(startDate, "YYYY-MM-DD").week().toString();
+    console.log('the actionItem-->' + this.selectedAction.name);
+
+    // Project update
+
+    if (this.selectedAction.projectId != "") {
+      let prjectCompWeeklyRef = this.afs.collection<Project>('Projects').doc(this.selectedAction.projectId).collection('enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
+      prjectCompWeeklyRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      prjectCompWeeklyRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      console.log('project updated');
+      
+    };
+    // Company update
+    if (this.selectedAction.companyId != "") {
+
+      let allMyActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<workItem>('actionItems');
+      let allWeekActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+      let myTaskActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<Task>('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
+      allMyActionsRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      allWeekActionsRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      myTaskActionsRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      console.log('company updated');
+
+      if (this.selectedAction.projectId != "") {
+        let weeklyRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection('projects').doc(this.selectedAction.projectId).collection<workItem>('WeeklyActions');
+        weeklyRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+        console.log('company projects updated');
+
+      }
+    };
+    if (this.selectedAction.byId === this.selectedAction.champion.id) {
+
+      if (this.selectedAction.byId != "") {
+        let creatorRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+        creatorRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+
+        let weeklyRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('WeeklyActions');
+        let allMyActionsRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('actionItems');
+        weeklyRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+        allMyActionsRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+        console.log('by& champ by updated');
+
+      };
+    }
+
+    else if (this.selectedAction.byId !== this.selectedAction.champion.id) {
+
+      // creator update
+
+      if (this.selectedAction.byId !== "") {
+        let creatorRef2 = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('WeeklyActions');
+        creatorRef2.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+        let creatorRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+        creatorRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+
+
+        let weeklyRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('WeeklyActions');
+        let allMyActionsRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('actionItems');
+        weeklyRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+        allMyActionsRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+
+        console.log('by by updated');
+
+      };
+
+      // champion update
+
+      if (champId != "") {
+
+        console.log('champ by updated');
+
+        let championRef2 = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection<workItem>('WeeklyTasks');
+        championRef2.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+        let championRef = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+        championRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+
+
+        let weeklyRef = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection<workItem>('WeeklyActions');
+        let allMyActionsRef = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection<workItem>('actionItems');
+        weeklyRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+        allMyActionsRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      };
+    }
+
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
+  }
+
 
   compActions() {
 
@@ -2388,6 +2759,80 @@ export class EnterpriseProfileComponent {
 
     let arraySize = this.companyActions.length;
     console.log(arraySize);
+
+
+
+    // this.showActions = false;
+    // this.hideActions = false;
+
+    // let currentDate = moment(new Date()).format('L');;
+    let today = moment(new Date(), "YYYY-MM-DD");
+
+    // console.log(currentDate);
+
+
+    let userDocRef = this.myDocument;
+    this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
+      // .limit(4)
+      // .where("startDate", '==', currentDate)
+      // .orderBy('start', 'asc')
+
+      // .limit(4)
+    ).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as workItem;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    this.viewActions.subscribe((actions) => {
+      console.log(actions);
+
+      this.diaryActionItems = [];
+
+      actions.forEach(element => {
+        if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
+          this.diaryActionItems.push(element);
+        }
+      });
+
+      console.log(actions.length);
+      console.log(actions);
+      this.actionNo2 = actions.length;
+      // if (this.actionNo == 0) {
+      //   this.showActions = false;
+      //   this.hideActions = true;
+      // } else {
+      //   this.hideActions = false;
+      //   this.showActions = true;
+      // }
+    });
+
+    this.showProjs = false;
+    this.hideProjs = false;
+    this.projs = [];
+    this.myProjects = this.ps.getProjects(this.userId);
+    this.myProjects.subscribe(projs => {
+      this.projs = projs;
+      let projects = projs;
+      console.log('Pojs N0' + ' ' + projs.length);
+      let noProjects = projs.length;
+      this.projsNo = projects.length;
+      if (this.projsNo == 0) {
+
+        this.showProjs = false;
+        this.hideProjs = true;
+
+      } else {
+
+
+        this.showProjs = true;
+        this.hideProjs = false;
+      }
+
+    })
+
 
   }
 
@@ -2429,8 +2874,13 @@ export class EnterpriseProfileComponent {
     this.myTasks = this.es.getMyCompanyTasks(this.compId, this.userId);
     this.tasksImChamp = this.es.getTasksImChamp(this.compId, this.userId);
     this.departments = this.es.getCompanyDepts(this.compId);
-    this.departsList = this.es.getCompanyDepts(this.compId);;
+    this.departments1 = this.es.getCompanyDepts(this.compId);
+    this.departments2 = this.es.getCompanyDepts(this.compId);
+    this.departments3 = this.es.getCompanyDepts(this.compId);
+    this.departments4 = this.es.getCompanyDepts(this.compId);
+    this.departsList = this.es.getCompanyDepts(this.compId);
     this.companyDpts = this.es.getCompanyDepts(this.compId);
+    this.companyDpts1 = this.es.getCompanyDepts(this.compId);
     this.companyDptsArray = this.es.getCompanyDepts(this.compId);
     this.staff = this.es.getStaff(this.compId);
     this.allStaff = this.es.getStaff(this.compId);
@@ -2444,6 +2894,25 @@ export class EnterpriseProfileComponent {
     this.subsidiaries = this.es.getCompanySubsidiaries(this.compId);
     this.compServices = [null];
 
+    let usersRef = this.afs.collection('Enterprises').doc(this.compId).collection('Participants').snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+            const data = a.payload.doc.data() as companyStaff;
+            const id = a.payload.doc.id;
+
+            return { id, ...data };
+        }))
+    );
+
+    usersRef.subscribe(ref => {
+      const index = ref.findIndex(myCompProfile => myCompProfile.id === this.userId);
+      if (index > -1) {
+        let value = ref[index];
+        this.myCompProfile = value;
+        console.log(this.myCompProfile);
+        // this.workdemo = false;
+      } else {
+      }
+    })
 
     this.afs.collection<Project>('Enterprises').doc(this.compId).collection('projects').snapshotChanges().pipe(
       map(b => b.map(a => {
@@ -2469,48 +2938,52 @@ export class EnterpriseProfileComponent {
         this.myTaskData = data;
         this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
         this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
-        // this.categorizedTasks.push(this.myTaskData);
-        let today = moment(new Date(), "YYYY-MM-DD");
-        this.OutstandingTasks = [];
-        this.UpcomingTAsks = [];
-        this.ShortTermTAsks = [];
-        this.MediumTermTAsks = [];
-        this.LongTermTAsks = [];
-        if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
-
-          this.CurrentTAsks.push(data);
-        };
-        // outstanding tasks
-        if (moment(data.finish).isBefore(today)) {
-          this.OutstandingTasks.push(this.myTaskData);
-        };
-        // Upcoming tasks
-        if (moment(data.start).isAfter(today)) {
-          this.UpcomingTAsks.push(data);
-          if (moment(data.start).isBefore(today.add(3, "month"))) {
-            this.ShortTermTAsks.push(data);
-          }
-          if (moment(data.start).isAfter(today.add(6, "month"))) {
-            this.MediumTermTAsks.push(data);
-          }
-          if (moment(data.start).isAfter(today.add(12, "month"))) {
-            this.LongTermTAsks.push(data)
-          }
-
-        };
-
-        this.CompanyTasks.push(this.myTaskData);
-        // this.checkTask(this.CompanyTasks);
         return { id, ...data };
       }))
     );
 
-    this.tasks.subscribe(ttask => {
-      console.log(ttask);
-    })
-    // console.log(this.es.currentCompanyId);
-    // console.log(this.currentCompanyId);
+    this.tasks.subscribe((tasks) => {
+      console.log(tasks);
+      this.OutstandingTasks = [];
+      this.CurrentTAsks = [];
+      this.UpcomingTAsks = [];
+      this.ShortTermTAsks = [];
+      this.MediumTermTAsks = [];
+      this.LongTermTAsks = [];
+      tasks.forEach(data => {
+        let today = moment(new Date(), "YYYY-MM-DD");
+        // if (data.champion !== null || data.champion.id !== "" || data.champion.id !== undefined || data.champion.id !== null ){
+          // if (data.champion.id === this.userId) {
+            if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
+              // currentWorkItems
+              this.CurrentTAsks.push(data);
+            };
+            // outstanding tasks
+            if (moment(data.finish).isBefore(today)) {
+              this.OutstandingTasks.push(data);
+            };
+            // Upcoming tasks
 
+            if (moment(data.start).isAfter(today)) {
+              this.UpcomingTAsks.push(data);
+              if (moment(data.start).isSameOrBefore(today.add(3, "month"))) {
+                this.ShortTermTAsks.push(data);
+              }
+
+              else if (moment(data.start).isSameOrBefore(today.add(12, "month"))) {
+                this.MediumTermTAsks.push(data);
+              }
+              else if (moment(data.start).isBefore(today.add(12, "month"))) {
+                this.LongTermTAsks.push(data)
+                console.log('long term Tasks' + ' ' + this.LongTermTAsks);
+              }
+              console.log(this.OutstandingTasks);
+            };
+          // }
+        //  }
+      });
+      this.allEnterpriseTasks = tasks;
+    });
 
     this.coloursUsers = this.pns.getColoursUsers();
     this.coloursUsersList = this.pns.getColoursUsers();
@@ -2533,19 +3006,128 @@ export class EnterpriseProfileComponent {
       }))
     );
 
-    return
+    // return
   }
 
-  deleteTask(task) {
+  // compReport(){
+  //   this.rp.compParams(this.company);
+  // }
+
+  viewStaff(x:companyStaff){
+    console.log(x);
+    this.setCompStaff = x;    
+  }
+
+  setDptData(staffDepartment){
+    console.log(staffDepartment);
+    
+    this.staffDepartment = staffDepartment;
+  }
+
+  saveStaffData(updatedStaff: companyStaff) {
+    console.log(this.setCompStaff);
+    console.log(updatedStaff);
+
+    // if (this.staffDepartment.name !== "" || this.staffDepartment.name !== null) {
+    //   this.setCompStaff.department = this.staffDepartment.name;  // checked
+    //   this.setCompStaff.departmentId = this.staffDepartment.id;  // checked
+    // } else {
+    //   this.setCompStaff.department = this.setCompStaff.department;  // checked
+    //   this.setCompStaff.departmentId = this.setCompStaff.departmentId;  // checked
+    // }
+    
+    this.setCompStaff.address = updatedStaff.address;    // checked
+    this.setCompStaff.nationality = updatedStaff.nationality;  // checked
+    this.setCompStaff.nationalId = updatedStaff.nationalId;   // checked
+    this.setCompStaff.phoneNumber = updatedStaff.phoneNumber;  // checked
+    this.setCompStaff.bus_email = updatedStaff.bus_email;  // checked
+    this.setCompStaff.name = updatedStaff.name;  // checked
+    console.log(this.setCompStaff);
+
+
+    this.pageBack();
+    
+    this.afs.collection('Enterprises').doc(this.compId).collection<employeeData>('Participants').doc(this.setCompStaff.id).update(this.setCompStaff);
+    // this.afs.collection('Users').doc(this.userId).update({ 
+    this.afs.collection('Users').doc(this.setCompStaff.id).update({ 
+      'name': updatedStaff.name,
+      'address': updatedStaff.address,
+      'phoneNumber': updatedStaff.phoneNumber,
+      'nationality': updatedStaff.nationality,
+      'nationalId': updatedStaff.nationalId
+    })
+  }
+
+  pageNext(){
+    this.pgOne = false;
+    this.pgTwo = true;
+  }
+
+  pageBack() {
+    this.pgOne = true;
+    this.pgTwo = false;
+  }
+
+  pagePreview(){
+    this.pgThree = true;
+    this.pgTwo = false;
+  }
+
+  setDel(tss: Task){
+    this.tss = tss;
+  }
+
+  deleteTask() {
+    let task = this.tss;
     console.log(task.name + " " + "Removed");
 
     let taskId = task.id;
-    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks').doc(taskId);;
-    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks').doc(taskId);;
-    let entRef = this.afs.collection('Enterprises').doc(this.compId).collection('tasks').doc(taskId);;
-    userRef.delete();
-    champRef.delete();
-    entRef.delete();
+    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks').doc(taskId);
+    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks').doc(taskId);
+    let entRef = this.afs.collection('Enterprises').doc(this.compId).collection('tasks').doc(taskId);
+    // let userEntDeptRef = this.afs.collection('Enterprises').doc(this.compId).collection('departments').doc(task.departmentId).collection('tasks').doc(taskId);
+    userRef.delete().catch(error => { console.log(error) });
+    champRef.delete().catch(error => { console.log(error) });
+    entRef.delete().catch(error => { console.log(error) });
+    // entDeptRef.delete();
+    // userEntDeptRef.delete();
+
+
+    if (task.departmentId != "") {
+      let entDeptRef = this.afs.collection('Enterprises').doc(this.compId).collection('departments').doc(task.departmentId).collection('tasks').doc(taskId);
+      let userEntDeptRef = this.afs.collection('Enterprises').doc(this.compId).collection('departments').doc(task.departmentId).collection<employeeData>('Participants')
+        .doc(task.champion.id).collection('tasks').doc(taskId);
+      userEntDeptRef.delete();
+      entDeptRef.delete();
+
+      console.log('deleted from Department succesfully' );
+
+      if (task.projectId != "") {
+
+        let entProjRef = this.afs.collection('Enterprises').doc(this.compId).collection('projects').doc(task.projectId).collection('tasks');
+        let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
+        let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(this.compId).collection('tasks');
+
+        let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
+        let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+
+        entProjRef.doc(taskId).delete().catch(error => { console.log(error) });
+        projectsRef.doc(taskId).delete().catch(error => { console.log(error) });
+        projectCompanyRef.doc(taskId).delete().catch(error => { console.log(error) });
+        userProjRef.doc(taskId).delete().catch(error => { console.log(error) });
+        champProjRef.doc(taskId).delete().catch(error => { console.log(error) });
+        console.log('deleted from Project successfully');
+      } else {
+        console.log('No Project selected');
+        // what happens if projectID is personal
+      }
+    }
+    
+    else {
+      console.log('No Department selected');
+      // what happens if projectID is personal
+    }
+    this.tss = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
   }
 
   deleteDept(x) {
@@ -2570,11 +3152,94 @@ export class EnterpriseProfileComponent {
     return
   }
 
+  Update() {
+    let usersRef = this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection<employeeData>('Participants').snapshotChanges().pipe(
+      map(b => b.map(a => {
+        const data = a.payload.doc.data() as employeeData;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    usersRef.subscribe(allusers => {
+      allusers.forEach(element => {
+        // totalLialibility$ = + element.amount;
+        if (element.hierarchy == "" || element.hierarchy == null || element.hierarchy == undefined) {
+          element.hierarchy = "";
+          this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection<employeeData>('Participants').doc(element.id).update({ 'hierarchy': "" });
+          console.log(element.name + ' hierarchy updated');
+
+        } else {
+
+        }
+
+        if (element.address == "" || element.address == null || element.address == undefined) {
+          element.address = "";
+          this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection<employeeData>('Participants').doc(element.id).update({ 'address': "" });
+          console.log(element.name + ' address updated');
+
+        } else {
+
+        }
+
+        if (element.phoneNumber == "" || element.phoneNumber == null || element.phoneNumber == undefined) {
+          element.phoneNumber = "";
+          this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection<employeeData>('Participants').doc(element.id).update({ 'phoneNumber': "" });
+          console.log(element.name + ' phoneNumber updated');
+      
+        } else {
+
+        }
+
+        if (element.bus_email == "" || element.bus_email == null || element.bus_email == undefined) {
+          element.bus_email = "";
+          this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection<employeeData>('Participants').doc(element.id).update({ 'bus_email': "" });
+          console.log(element.name + ' bus_email updated');          
+
+        } else {
+
+        }
+
+        if (element.nationalId == "" || element.nationalId == null || element.nationalId == undefined) {
+          element.nationalId = "";
+          this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection<employeeData>('Participants').doc(element.id).update({ 'nationalId': "" });
+          console.log(element.name + ' nationalId updated');                  
+
+        } else {
+
+        }
+
+        if (element.nationality == "" || element.nationality == null || element.nationality == undefined) {
+          element.nationality = "";
+          this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection<employeeData>('Participants').doc(element.id).update({ 'nationality': "" });
+          console.log(element.name + ' nationality updated');      
+
+        } else {
+
+        }
+      });
+    })
+
+    // let deptRef = this.afs.collection<Enterprise>('Enterprises').doc(this.compId).collection('departments').snapshotChanges().pipe(
+    //   map(b => b.map(a => {
+    //     const data = a.payload.doc.data() as Department;
+    //     const id = a.payload.doc.id;
+    //     return { id, ...data };
+    //   }))
+    // );
+
+    // deptRef.forEach(element => {
+      
+    // });
+
+
+  }
+
   dataCall(): Observable<Enterprise> {
 
-    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+    this.myDocument = this.afs.collection('Users').doc(this.user.uid);
 
-    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+    this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
@@ -2588,10 +3253,45 @@ export class EnterpriseProfileComponent {
         bus_email: userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationality: userData.nationality,
+        nationalId: userData.nationalId,
       }
+
+      if (userData.address == "" || userData.address == null || userData.address == undefined) {
+        userData.address = ""
+      } else {
+
+      }
+
+      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ""
+      } else {
+
+      }
+
+      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ""
+      } else {
+
+      }
+
+      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ""
+      } else {
+
+      }
+
+      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ""
+      } else {
+
+      }
+
       this.myData = myData;
       this.userData = userData;
+      
     });
 
     this.comp = this.as.paramMap.pipe(
@@ -2600,10 +3300,10 @@ export class EnterpriseProfileComponent {
         this.compId = id;
         this.es.compParams(id);
         console.log(id);
-        const Ref = this.afs.collection<Enterprise>('Enterprises').doc(id);
+        let Ref = this.afs.collection<compProfile>('Enterprises').doc(id);
         this.newCompany = Ref.snapshotChanges().pipe(
           map(doc => {
-            const data = doc.payload.data() as Enterprise;
+            const data = doc.payload.data() as compProfile;
             const cname = doc.payload.get('name');
             this.companyName = cname;
             console.log(this.companyName);
@@ -2620,6 +3320,19 @@ export class EnterpriseProfileComponent {
     )
     return this.comp;
   }
+
+  doParams(){
+    this.comp = this.as.paramMap.pipe(
+      switchMap(params => {
+        const id = params.get('id');
+        this.compId = id;
+        // this.es.compParams(id);
+        
+        return this.newCompany;
+      }))
+  }
+
+
 
   newTask() {
     console.log(this.task);
@@ -2652,42 +3365,440 @@ export class EnterpriseProfileComponent {
     console.log(this.task.start);
     console.log(this.task.startDay);
 
-    this.task.companyName = this.company.name;
-    this.task.companyId = this.compId;
-    this.task.projectId = "NAN";
-    this.task.projectName = "NAN";
-    this.task.projectType = "NAN";
-    this.task.champion = this.myData;
+    // this.task.champion = this.myData;
 
-    if (this.selectedProject.type === 'Enterprise') {
-      this.task.projectId = this.proj_ID;
-      this.task.projectName = this.selectedProject.name;
-      this.task.projectType = this.selectedProject.type;
-      this.task.champion = this.userChampion;
+    // if (this.selectedProject.type === 'Enterprise') {
+    //   this.task.projectId = this.proj_ID;
+    //   this.task.projectName = this.selectedProject.name;
+    //   this.task.projectType = this.selectedProject.type;
 
-      if (this.selectedDepartment.id != "") {
-        this.task.department = this.selectedDepartment.name;
-        this.task.departmentId = this.selectedDepartment.id;
-      }
-    }
+    //   if (this.selectedDepartment.id != "") {
+    //     this.task.department = this.selectedDepartment.name;
+    //     this.task.departmentId = this.selectedDepartment.id;
+    //   }
+    // }
 
-    else {
-      // what happens if projectID is personal
-    }
+    // else {
+    //   // what happens if projectID is personal
+    // }
 
     console.log('Task' + ' ' + this.task.name);
     console.log('Company' + ' ' + this.company.name);
     console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
 
-    this.ts.addTask(
-      this.task,
-      this.company,
-      this.selectedDepartment);
+    this.ts.addTask(this.task, this.company, this.selectedDepartment);
 
     this.selectedCompany = this.is.getSelectedCompany();
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "" };
-    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: ""  };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+  }
+
+  newProjectTask() {
+    console.log(this.task);
+
+    let pr: Project;
+    console.log(this.selectedCompany)
+    console.log(this.selectedDepartment);
+    this.task.by = this.user.displayName;
+    this.task.byId = this.userId;
+    console.log(this.start);
+    console.log(this.finish);
+    // setting dates
+    this.task.createdOn = new Date().toISOString();
+    // this.task.start = this.start.toISOString()
+    this.task.start = this.start, "YYYY-MM-DD";
+    this.task.finish = this.finish, "YYYY-MM-DD";/* .format('LLLL') */
+    this.task.startDay = String(moment(this.start, "YYYY-MM-DD").dayOfYear());
+    this.task.startWeek = String(moment(this.start, "YYYY-MM-DD").week());
+    this.task.startMonth = String(moment(this.start, "YYYY-MM-DD").month());
+    this.task.startQuarter = String(moment(this.start, "YYYY-MM-DD").quarter());
+    this.task.startYear = String(moment(this.start, "YYYY-MM-DD").year());
+    this.task.finishDay = String(moment(this.finish, "YYYY-MM-DD").subtract(2, 'd').dayOfYear());
+    this.task.finishWeek = String(moment(this.finish, "YYYY-MM-DD").week());
+    this.task.finishMonth = String(moment(this.finish, "YYYY-MM-DD").month());
+    this.task.finishQuarter = String(moment(this.finish, "YYYY-MM-DD").quarter());
+    this.task.finishYear = String(moment(this.finish, "YYYY-MM-DD").year());
+    this.task.complete = false;
+
+    console.log(this.task);
+    console.log(this.task.start);
+    console.log(this.task.startDay);
+
+    console.log('Task' + ' ' + this.task.name);
+    console.log('Company' + ' ' + this.company.name);
+    console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+
+    this.ts.addTask(this.task, this.company, this.selectedDepartment);
+
+    this.selectedCompany = this.is.getSelectedCompany();
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: ""  };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+  }
+
+  newCompTask() {
+    console.log(this.task);
+
+    let pr: Project;
+    console.log(this.selectedCompany)
+    console.log(this.selectedDepartment);
+    this.task.by = this.user.displayName;
+    this.task.byId = this.userId;
+    console.log(this.start);
+    console.log(this.finish);
+    // setting dates
+    this.task.createdOn = new Date().toISOString();
+    // this.task.start = this.start.toISOString()
+    this.task.start = this.start, "YYYY-MM-DD";
+    this.task.finish = this.finish, "YYYY-MM-DD";/* .format('LLLL') */
+    this.task.startDay = String(moment(this.start, "YYYY-MM-DD").dayOfYear());
+    this.task.startWeek = String(moment(this.start, "YYYY-MM-DD").week());
+    this.task.startMonth = String(moment(this.start, "YYYY-MM-DD").month());
+    this.task.startQuarter = String(moment(this.start, "YYYY-MM-DD").quarter());
+    this.task.startYear = String(moment(this.start, "YYYY-MM-DD").year());
+    this.task.finishDay = String(moment(this.finish, "YYYY-MM-DD").dayOfYear());
+    this.task.finishWeek = String(moment(this.finish, "YYYY-MM-DD").week());
+    this.task.finishMonth = String(moment(this.finish, "YYYY-MM-DD").month());
+    this.task.finishQuarter = String(moment(this.finish, "YYYY-MM-DD").quarter());
+    this.task.finishYear = String(moment(this.finish, "YYYY-MM-DD").year());
+    this.task.complete = false;
+
+    console.log(this.task);
+    console.log(this.task.start);
+    console.log(this.task.startDay);
+    console.log('Task' + ' ' + this.task.name);
+    console.log('Company' + ' ' + this.company.name);
+    console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+
+    this.ts.addplainCompTask(this.task, this.company, this.selectedDepartment);
+
+    this.selectedCompany = this.is.getSelectedCompany();
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+  }
+
+  updateCompTask() {
+    console.log(this.task);
+
+    let pr: Project;
+    console.log(this.selectedDepartment);
+    this.task.by = this.user.displayName;
+    this.task.byId = this.userId;
+    console.log(this.start);
+    console.log(this.finish);
+    // setting dates
+    this.task.createdOn = new Date().toISOString();
+    // this.task.start = this.start.toISOString()
+    this.task.start = this.start, "YYYY-MM-DD";
+    this.task.finish = this.finish, "YYYY-MM-DD";/* .format('LLLL') */
+    this.task.startDay = String(moment(this.start, "YYYY-MM-DD").dayOfYear());
+    this.task.startWeek = String(moment(this.start, "YYYY-MM-DD").week());
+    this.task.startMonth = String(moment(this.start, "YYYY-MM-DD").month());
+    this.task.startQuarter = String(moment(this.start, "YYYY-MM-DD").quarter());
+    this.task.startYear = String(moment(this.start, "YYYY-MM-DD").year());
+    this.task.finishDay = String(moment(this.finish, "YYYY-MM-DD").dayOfYear());
+    this.task.finishWeek = String(moment(this.finish, "YYYY-MM-DD").week());
+    this.task.finishMonth = String(moment(this.finish, "YYYY-MM-DD").month());
+    this.task.finishQuarter = String(moment(this.finish, "YYYY-MM-DD").quarter());
+    this.task.finishYear = String(moment(this.finish, "YYYY-MM-DD").year());
+    this.task.complete = false;
+
+    console.log(this.task);
+    console.log(this.task.start);
+    console.log(this.task.startDay);
+    console.log('Task' + ' ' + this.task.name);
+    console.log('Company' + ' ' + this.company.name);
+    console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+
+    this.ts.updateCompTask(this.task, this.company, this.selectedDepartment);
+
+    this.selectedCompany = this.is.getSelectedCompany();
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+    this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
+
+  }
+
+  updateCompTask2() {
+    console.log(this.task);
+
+    let pr: Project;
+    console.log(this.selectedDepartment);
+    this.task.by = this.user.displayName;
+    this.task.byId = this.userId;
+    console.log(this.start);
+    console.log(this.finish);
+    // setting dates
+    this.task.createdOn = new Date().toISOString();
+    // this.task.start = this.start.toISOString()
+    this.task.start = this.start, "YYYY-MM-DD";
+    this.task.finish = this.finish, "YYYY-MM-DD";/* .format('LLLL') */
+    this.task.startDay = String(moment(this.start, "YYYY-MM-DD").dayOfYear());
+    this.task.startWeek = String(moment(this.start, "YYYY-MM-DD").week());
+    this.task.startMonth = String(moment(this.start, "YYYY-MM-DD").month());
+    this.task.startQuarter = String(moment(this.start, "YYYY-MM-DD").quarter());
+    this.task.startYear = String(moment(this.start, "YYYY-MM-DD").year());
+    this.task.finishDay = String(moment(this.finish, "YYYY-MM-DD").dayOfYear());
+    this.task.finishWeek = String(moment(this.finish, "YYYY-MM-DD").week());
+    this.task.finishMonth = String(moment(this.finish, "YYYY-MM-DD").month());
+    this.task.finishQuarter = String(moment(this.finish, "YYYY-MM-DD").quarter());
+    this.task.finishYear = String(moment(this.finish, "YYYY-MM-DD").year());
+    this.task.complete = false;
+
+    console.log(this.task);
+    console.log(this.task.start);
+    console.log(this.task.startDay);
+    console.log('Task' + ' ' + this.task.name);
+    console.log('Company' + ' ' + this.company.name);
+    console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+
+    this.ts.update2plainCompTask(this.task);
+
+    this.selectedCompany = this.is.getSelectedCompany();
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+    this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
+
+  }
+
+  testNewTask() {
+    console.log(this.task);
+    console.log(this.selectedProject);
+
+
+    let newClassification = { name: "Work", createdOn: new Date().toISOString(), id: "colourWorkId", plannedTime: "", actualTime: "", Varience: "" };
+    console.log(newClassification);
+    
+    this.task.classification = newClassification;
+
+    console.log(this.task.classification);
+    
+    
+    this.task.companyName = this.company.name;
+    this.task.companyId = this.compId;
+    this.task.projectId = "";
+    this.task.projectName = "";
+    this.task.projectType = "";
+    this.task.champion = this.myData;
+
+    if (this.selectedDepartment.id != "") {
+      this.task.department = this.selectedDepartment.name;
+      this.task.departmentId = this.selectedDepartment.id;
+
+      console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+
+      if (this.userChampion.id != "") {
+        this.task.champion = this.userChampion; 
+        console.log('Champion' + ' ' + this.userChampion.name);
+
+        if (this.selectedProject.id != "") {
+          
+          this.task.projectId = this.proj_ID;
+          this.task.projectName = this.selectedProject.name;
+          this.task.projectType = this.selectedProject.type;
+          console.log('Project selected' + ' ' + this.selectedProject.name);
+          //create company Task without any Project selected
+          this.newProjectTask();
+        } 
+
+        else {
+          console.log('No project selected');
+          //create company Task without any Project selected
+          this.newCompTask();
+
+        }
+
+      }
+      else {
+        console.log('No Champion selected');
+        this.task.champion = this.myData;
+      }
+    }
+    else {
+        console.log('No Department selected');
+      // what happens if projectID is personal
+    }
+
+    console.log('Task' + ' ' + this.task.name);
+    console.log('Company' + ' ' + this.company.name);
+    // console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+    // console.log('Project selected' + ' ' + this.selectedProject.name);
+  
+  }
+
+  testUpdateTask() {
+    console.log(this.tss);
+    // console.log(this.selectedProject);
+
+
+    // let newClassification = { name: "Work", createdOn: new Date().toISOString(), id: "colourWorkId", plannedTime: "", actualTime: "", Varience: "" };
+    console.log(this.tss.classification);
+
+    this.tss.classification
+    console.log(this.tss.classification);
+
+
+    this.tss.companyName = this.company.name;
+    this.tss.companyId = this.compId;
+    // this.tss.projectId = "";
+    // this.tss.projectName = "";
+    // this.tss.projectType = "";
+    // this.tss.champion = this.myData;
+
+    if (this.selectedDepartment.id != "") {
+      this.tss.department = this.selectedDepartment.name;
+      this.tss.departmentId = this.selectedDepartment.id;
+
+      console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+
+      if (this.userChampion.id != "") {
+        this.tss.champion = this.userChampion;
+        console.log('Champion' + ' ' + this.userChampion.name);
+
+        if (this.selectedProject.id != "") {
+
+          this.tss.projectId = this.proj_ID;
+          this.tss.projectName = this.selectedProject.name;
+          this.tss.projectType = this.selectedProject.type;
+          console.log('Project selected' + ' ' + this.selectedProject.name);
+          //create company Task without any Project selected
+          this.updateProjectTask();
+        }
+
+        else {
+          console.log('No project selected');
+          //create company Task without any Project selected
+          this.updateCompTask();
+
+        }
+
+      }
+      else {
+        console.log('No Champion selected');
+        this.tss.champion = this.myData;
+      }
+    } else if (this.tss.department != "") {
+
+      if (this.tss.projectId != "") {
+
+        console.log('Project selected' + ' ' + this.selectedProject.name);
+        //create company Task without any Project selected
+        this.updateProjectTask2();
+      }
+
+      else {
+        console.log('No project selected');
+        //create company Task without any Project selected
+        this.updateCompTask2();
+
+      }
+      console.log('No reselected Department');
+
+    }
+
+    else {
+      console.log('No Department selected');
+      // what happens if projectID is personal
+    }
+
+    console.log('Task' + ' ' + this.tss.name);
+    console.log('Company' + ' ' + this.company.name);
+    // console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+    // console.log('Project selected' + ' ' + this.selectedProject.name);
+
+  }
+  
+  updateProjectTask() {
+    console.log(this.task);
+
+    let pr: Project;
+    console.log(this.selectedCompany)
+    console.log(this.selectedDepartment);
+    this.task.by = this.user.displayName;
+    this.task.byId = this.userId;
+    console.log(this.start);
+    console.log(this.finish);
+    // setting dates
+    this.task.createdOn = new Date().toISOString();
+    // this.task.start = this.start.toISOString()
+    this.task.start = this.start, "YYYY-MM-DD";
+    this.task.finish = this.finish, "YYYY-MM-DD";/* .format('LLLL') */
+    this.task.startDay = String(moment(this.start, "YYYY-MM-DD").dayOfYear());
+    this.task.startWeek = String(moment(this.start, "YYYY-MM-DD").week());
+    this.task.startMonth = String(moment(this.start, "YYYY-MM-DD").month());
+    this.task.startQuarter = String(moment(this.start, "YYYY-MM-DD").quarter());
+    this.task.startYear = String(moment(this.start, "YYYY-MM-DD").year());
+    this.task.finishDay = String(moment(this.finish, "YYYY-MM-DD").subtract(2, 'd').dayOfYear());
+    this.task.finishWeek = String(moment(this.finish, "YYYY-MM-DD").week());
+    this.task.finishMonth = String(moment(this.finish, "YYYY-MM-DD").month());
+    this.task.finishQuarter = String(moment(this.finish, "YYYY-MM-DD").quarter());
+    this.task.finishYear = String(moment(this.finish, "YYYY-MM-DD").year());
+    this.task.complete = false;
+
+    console.log(this.task);
+    console.log(this.task.start);
+    console.log(this.task.startDay);
+
+    console.log('Task' + ' ' + this.task.name);
+    console.log('Company' + ' ' + this.company.name);
+    console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+
+    this.ts.updateTask(this.task, this.company, this.selectedDepartment);
+
+    this.selectedCompany = this.is.getSelectedCompany();
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+    this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
+  }
+
+  updateProjectTask2() {
+    console.log(this.task);
+
+    let pr: Project;
+    console.log(this.selectedCompany)
+    console.log(this.selectedDepartment);
+    this.task.by = this.user.displayName;
+    this.task.byId = this.userId;
+    console.log(this.start);
+    console.log(this.finish);
+    // setting dates
+    this.task.createdOn = new Date().toISOString();
+    // this.task.start = this.start.toISOString()
+    this.task.start = this.start, "YYYY-MM-DD";
+    this.task.finish = this.finish, "YYYY-MM-DD";/* .format('LLLL') */
+    this.task.startDay = String(moment(this.start, "YYYY-MM-DD").dayOfYear());
+    this.task.startWeek = String(moment(this.start, "YYYY-MM-DD").week());
+    this.task.startMonth = String(moment(this.start, "YYYY-MM-DD").month());
+    this.task.startQuarter = String(moment(this.start, "YYYY-MM-DD").quarter());
+    this.task.startYear = String(moment(this.start, "YYYY-MM-DD").year());
+    this.task.finishDay = String(moment(this.finish, "YYYY-MM-DD").subtract(2, 'd').dayOfYear());
+    this.task.finishWeek = String(moment(this.finish, "YYYY-MM-DD").week());
+    this.task.finishMonth = String(moment(this.finish, "YYYY-MM-DD").month());
+    this.task.finishQuarter = String(moment(this.finish, "YYYY-MM-DD").quarter());
+    this.task.finishYear = String(moment(this.finish, "YYYY-MM-DD").year());
+    this.task.complete = false;
+
+    console.log(this.task);
+    console.log(this.task.start);
+    console.log(this.task.startDay);
+
+    console.log('Task' + ' ' + this.task.name);
+    console.log('Company' + ' ' + this.company.name);
+    console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+
+    this.ts.updateTask2(this.task);
+
+    this.selectedCompany = this.is.getSelectedCompany();
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: "" };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+    this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
+
   }
 
   //00000000000000000000000000000000000000000000000000000000000000000
@@ -2777,10 +3888,40 @@ export class EnterpriseProfileComponent {
   }
 
   selectColoursUser(x) {
+    if (x.address == "" || x.address == null || x.address == undefined) {
+      x.address = ""
+    } else {
+
+    }
+
+    if (x.bus_email == "" || x.bus_email == null || x.bus_email == undefined) {
+      x.bus_email = ""
+    } else {
+
+    }
+
+    if (x.nationalId == "" || x.nationalId == null || x.nationalId == undefined) {
+      x.nationalId = ""
+    } else {
+
+    }
+
+    if (x.nationality == "" || x.nationality == null || x.nationality == undefined) {
+      x.nationality = ""
+    } else {
+
+    }
+
+    if (x.hierarchy == "" || x.hierarchy == null || x.hierarchy == undefined) {
+      x.hierarchy = ""
+    } else {
+
+    }
+
     let cUser = {
       name: x.name, email: x.email, bus_email: x.bus_email, id: x.id, phoneNumber: x.phoneNumber, nationalId: x.nationalId,
       photoURL: x.photoURL,
-      nationality: x.nationality, address: x.address, department: x.department, departmentId: x.departmentId
+      nationality: x.nationality, address: x.address, department: x.department, departmentId: x.departmentId, hierarchy: x.hierarchy
     };
     this.userChampion = cUser;
     console.log(x);
@@ -2789,9 +3930,38 @@ export class EnterpriseProfileComponent {
   }
 
   selectCompanyUser(x) {
+    if (x.address == "" || x.address == null || x.address == undefined) {
+      x.address = ""
+    } else {
+
+    }
+
+    if (x.bus_email == "" || x.bus_email == null || x.bus_email == undefined) {
+      x.bus_email = ""
+    } else {
+
+    }
+
+    if (x.nationalId == "" || x.nationalId == null || x.nationalId == undefined) {
+      x.nationalId = ""
+    } else {
+
+    }
+
+    if (x.nationality == "" || x.nationality == null || x.nationality == undefined) {
+      x.nationality = ""
+    } else {
+
+    }
+
+    if (x.hierarchy == "" || x.hierarchy == null || x.hierarchy == undefined) {
+      x.hierarchy = ""
+    } else {
+
+    }
     let cUser = {
       name: x.name, email: x.email, id: x.id, bus_email: x.bus_email, phoneNumber: x.phoneNumber, nationalId: x.nationalId, photoURL: x.photoURL,
-      nationality: x.nationality, address: x.address, department: x.department, departmentId: x.departmentId
+      nationality: x.nationality, address: x.address, department: x.department, departmentId: x.departmentId, hierarchy: x.hierarchy
     };
     this.userChampion = cUser;
     console.log(x);
@@ -2814,7 +3984,7 @@ export class EnterpriseProfileComponent {
     this.toggleDpt(); this.toggleDeptTable();
   }
 
-  selectDepartmentChamp(x) {
+  selectDepartmentChamp(x:companyStaff) {
     console.log(x);
     this.userChampion = x;
     this.toggleDeptChamp(); this.toggleDeptUsersTable();
@@ -2827,6 +3997,80 @@ export class EnterpriseProfileComponent {
       this.btnChamp = "Hide";
     else
       this.btnChamp = "Show";
+  }
+
+  toggleDeptChampion() {
+    this.showDptChamp = !this.showDptChamp;
+
+    if (this.showDptChamp)
+      this.btnDptChamp = "Hide";
+    else
+      this.btnDptChamp = "Show";
+  }
+
+
+  toggleDpUsersTable() {
+    this.showDptUserTable = !this.showDptUserTable;
+    if (this.showUserTable) {
+      this.btnDptTable = "Hide";
+    }
+    else { this.btnDptTable = "Show"; }
+  }
+
+  depSelectUser(x: companyStaff) {
+
+    if (x.address == "" || x.address == null || x.address == undefined) {
+      x.address = ""
+    } else {
+
+    }
+
+    if (x.bus_email == "" || x.bus_email == null || x.bus_email == undefined) {
+      x.bus_email = ""
+    } else {
+
+    }
+
+    if (x.nationalId == "" || x.nationalId == null || x.nationalId == undefined) {
+      x.nationalId = ""
+    } else {
+
+    }
+
+    if (x.nationality == "" || x.nationality == null || x.nationality == undefined) {
+      x.nationality = ""
+    } else {
+
+    }
+
+    if (x.hierarchy == "" || x.hierarchy == null || x.hierarchy == undefined) {
+      x.hierarchy = ""
+    } else {
+
+    }
+
+    let staff = {
+      name: x.name,
+      email: x.email,
+      bus_email: x.bus_email,
+      id: x.id,
+      phoneNumber: x.phoneNumber,
+      by: this.user.displayName,
+      byId: this.userId,
+      photoURL: x.photoURL,
+      department: "",
+      departmentId: "",
+      createdOn: new Date().toISOString(),
+      address: x.address,
+      nationalId: x.nationalId,
+      nationality: x.nationality,
+      hierarchy: x.hierarchy
+    };
+    console.log(x);
+    console.log(staff);
+    this.companystaff = staff;
+    console.log(this.companystaff);
+    this.toggleDeptChampion(); this.toggleDpUsersTable();
   }
 
   toggleDeptChamp() {

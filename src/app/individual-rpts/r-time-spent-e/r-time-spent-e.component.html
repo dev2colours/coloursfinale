@@ -1,0 +1,31 @@
+<div style="text-align:left;margin-left: -40px">
+    <!-- <img alt="Southland Logo" width="300" height="200" src="./assets/img/Colourslogo2.png"> -->
+</div>
+
+<!-- <h2 id="org">Personal Reports</h2> -->
+<div class="card-header text-left" *ngIf="company !== '' || company === undefined">
+    <h2>{{ company }}'s Individual Total Time spent Report</h2>
+</div><br>
+
+<h2>Participant:
+    <span><select id="name-list" (click)="rService.getParticipantData()"></select></span>
+    <span> &nbsp;&nbsp; Hierarchy:</span><span id="hierarchy"></span></h2>
+
+<h3>Total Time spent on an Activity for the period from <span>
+        <!-- placeholder will not work, so stuck with dd----yyyyy -->
+        <input type="date" id="startdate" (click)="rService.getParticipantData()">
+    </span> to <span>
+        <input type="date" id="enddate" (click)="rService.getParticipantData()">
+        <button (click)="rService.rtimespent_e()">Generate report for selected period</button>
+    </span></h3>
+<!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
+<!-- button (click)="rService.clearTable()">Clear table</button> -->
+<!-- Table rows and headings only -->
+<table id="tableList">
+    <!-- headings -->
+    <tr>
+        <th align="left">Action Item</th>
+        <th align="left">Task Name</th>
+        <th>Hours Spent</th>
+    </tr>
+</table>

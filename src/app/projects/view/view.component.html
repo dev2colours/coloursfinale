@@ -5,7 +5,7 @@
         <div class="row">
           <div class="col-md-5">
             <div class="card-header">
-              <p class="card-category clrs-h1">
+              <p class="card-category clrs-h1-font">
                 Project : {{ (project)?.name }}
               </p>
             </div>
@@ -25,102 +25,124 @@
                 <div class="nav-tabs-wrapper">
                   <ul class="nav nav-tabs flex-column nav-stacked text-left" role="tablist">
                     <li class="nav-item">
-                      <a class="nav-link nav-colors active" (click)="minimizeSidebar()" href="#info" role="tab"
+                      <a class="nav-link nav-colors active" (click)="minimizeSidebar()" href="#info" role="tab" style="padding-left: 0px;"
                         data-toggle="tab">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link nav-colors" (click)="minimizeSidebar()" href="#standards" role="tab"
+                      <a class="nav-link nav-colors" (click)="minimizeSidebar()" href="#standards" role="tab" style="padding-left: 0px;"
                         data-toggle="tab">Standards</a>
                     </li>
                     <li class="nav-item">
-                      <!-- <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#proSetup" -->
-                      <a class="nav-link nav-colors" (click)="minimizeSidebar()" href="#proSetup"
+                      <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#proSetup" style="padding-left: 0px;"
                         role="tab" data-toggle="tab">Setup</a>
                     </li>
                     <li class="nav-item">
-                      <!-- <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#planning" -->
-                      <a class="nav-link nav-colors" (click)="minimizeSidebar()" href="#planning"
+                      <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#planning" style="padding-left: 0px;"
                         role="tab" data-toggle="tab">Planning</a>
                     </li>
                     <li class="nav-item">
-                      <!-- <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#implement" -->
-                      <a class="nav-link nav-colors" (click)="minimizeSidebar()" href="#implement"
+                      <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#implement" style="padding-left: 0px;"
                         role="tab" data-toggle="tab">Implementation</a>
                     </li>
+                    <!-- <li class="nav-item">
+                      <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#reports" style="padding-left: 0px;"
+                        role="tab" data-toggle="tab">Reporting</a>
+                    </li> -->
                     <li class="nav-item">
-                      <!-- <a class="nav-link nav-colors" (click)="callProjectTasks(); minimizeSidebar()" href="#reports" -->
-                      <a class="nav-link nav-colors" (click)="viewCompanyReport();minimizeSidebar()" href="#reports"
+                      <a class="nav-link nav-colors" (click)="viewCompanyReport();callProjectTasks(); minimizeSidebar()" href="#reports2" style="padding-left: 0px;"
                         role="tab" data-toggle="tab">Reporting</a>
                     </li>
                   </ul>
                 </div>
               </div>
             </div>
-            <!-- <div class="col-lg-10 col-md-9 col-sm-8 col-6"> -->
-            <div class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto" style="padding-right: 0px;padding-left: 0px;">
+            <div class="col-lg-10 col-md-9 col-sm-8 col-6">
               <!-- Tab panes -->
               <div class="tab-content">
                 <div class="tab-pane active" id="info">
                   <div class="row">
-                    <div class="col-lg-4 col-sm-6 dash-col-left">
-                      <div class="card">
-                        <div class="card-content btn-magnify">
-                          <div class="row col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
-                            <div class="clrs-h4 col-md-12" style="color:steelblue">
-                              <a><i class="nc-icon nc-palette"></i> Colours Personal</a>
-                            </div>
-                            <div class="text-left col-md-10 category" style="margin-left:1.0em; color: steelblue; ">
-                              <a>My Diary Today</a>
+                    <div class="col-xs-3 col-sm-4 dash-col-left">
+                      <div class="card card-category">
+                        <div class="btn-magnify">
+                          <div class="row col-md-12" style="margin-left:1em; padding-bottom: -1em ">
+                            <div class="pull-left card-category clrs-h1-font">
+                              <a>
+                                <i class="nc-icon nc-palette"></i> Colours Personal</a>
                             </div>
                           </div>
-                          <div class="spacer" style="height: 1em;"></div>
-                          <div class="row">
-                            <div class="content" style="margin-left:1.0em;">
-                              <ol>
-                                <li>
-                                  <div class="row">
-                                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em">
-                                      <a style="color:lightgrey" class="text-info">
-                                        Meeting<span class="label text-warning"> 1000 hrs</span>
+                          <div class="pull-left col-md-10" style="margin-left:1em;padding-top: -1em; color: steelblue ">
+                            <a>My Diary Today</a>
+                          </div>
+                          <div class="spacer" style="height: 2.4em;"></div>
+                          <div class="row" style="height: 100px">
+                            <div id="container">
+                              <!-- <div class="content container scroll-em" *ngIf="showActions"> -->
+                              <div class="content container scroll-em" *ngIf="diaryActionItems.length != 0">
+                                <ol>
+                                  <!-- <li style="color:lightgrey" class="mr-auto ml-auto" *ngFor="let event of theseTasks"><a>{{ event.name }}</a><br><small class="label text-success"> {{ event.when }}</small>
+                                                    </li> ->
+                                                    <!- <li class="" style="color:steelblue" *ngFor="let event of theseTasks"> ->
+                                                    <!- <li class="" style="color:steelblue" *ngFor="let event of viewActions | async"> -->
+                                  <li class="" style="color:steelblue" *ngFor="let event of diaryActionItems">
+                                    <!-- <div class="row"> -->
+                                    <!-- <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em">` -->
+                                    <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em"><!-- margin-left:1.0em; -->                                      
+                                      <a style="color:slategrey">
+                                        {{ event.name }}<span class="label text-warning"> {{ event.when }}</span>
                                       </a>
                                     </div>
+                                    <!-- </div> -->
+                                  </li>
+                                </ol>
+                              </div>
+                              <!-- <div class="content container scroll-em" *ngIf="hideActions"> -->
+                              <div class="content container scroll-em" *ngIf="diaryActionItems.length === 0">
+                                <div class="row">
+                                  <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
+                                    <ol>
+                                      <li>
+                                        <!-- <div class="row"> -->
+                                        <a style="color:lightgrey">
+                                          <span class="col-md-9 text-info">Meeting</span>
+                                          <span class="col-md-3 mr-auto number text-warning"> 1000 hrs</span>
+                                        </a>
+                                        <!-- </div> -->
+                                      </li>
+                                      <li>
+                                        <!-- <div class="row"> -->
+                                        <a style="color:lightgrey">
+                                          <span class="col-md-9 text-info">Email</span>
+                                          <span class="col-md-3 mr-auto ml-auto number text-success">1230 Hrs</span>
+                                        </a>
+                                        <!-- </div> -->
+                                      </li>
+                                      <li>
+                                        <!-- <div class="row"> -->
+                                        <a style="color:lightgrey">
+                                          <span class="col-md-9 text-info">Skype</span>
+                                          <span class="col-md-3 mr-auto ml-auto label text-success"> 1400 Hrs </span>
+                                        </a>
+                                        <!-- </div> -->
+                                      </li>
+                                      <li>
+                                        <!-- <div class="row "> -->
+                                        <a style="color:lightgrey">
+                                          <span class="col-md-9 text-info">Scheduling</span>
+                                          <span class="col-lg-3 mr-auto ml-auto label text-success"> 0800 Hrs </span>
+                                        </a>
+                                        <!-- </div> -->
+                                      </li>
+                                    </ol>
                                   </div>
-                                </li>
-                                <li>
-                                  <div class="row">
-                                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
-                                      <a style="color:lightgrey" class="text-info">
-                                        Email<span class="label text-success"> 1230 Hrs </span>
-                                      </a>
-                                    </div>
-                                  </div>
-                                </li>
-                                <li>
-                                  <div class="row">
-                                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
-                                      <a style="color:lightgrey; margin-bottom: 0px;" class="text-info">
-                                        Skype<span class="label text-success"> 1400 Hrs </span>
-                                      </a>
-                                    </div>
-                                  </div>
-                                </li>
-                                <li>
-                                  <div class="row">
-                                    <div class="col-sm-12" style="margin-left:1.0em; margin-right:-1em">
-                                      <a style="color:lightgrey; margin-bottom: 0px;" class="text-info">
-                                        Scheduling<span class="label text-success"> 0800 Hrs </span>
-                                      </a>
-                                    </div>
-                                  </div>
-                                </li>
-                              </ol>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                        <div class="card-body">
-                          <h6 class="big-title">total earnings in last ten quarters</h6>
-                          <canvas id="activeUsers" width="826" height="150"></canvas>
-                        </div>
+                        <!-- <div class="card-body">
+                                            <h6 class="big-title">total earnings in last ten quarters</h6>
+                                            <canvas id="activeUsers" width="auto" height="200"></canvas>
+                                          </div> -->
                         <div class="card-footer">
                           <hr>
                           <div class="row">
@@ -138,63 +160,74 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-4 col-sm-6 dash-col">
-                      <div class="card">
-                        <div class="card-content btn-magnify">
-                          <div class="row col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
-                            <div class="clrs-h4" style="color:steelblue">
-                              <a><i class="fa fa-tasks fa-fw"></i> Colours Projects</a>
-                            </div>
-                            <div class="text-left category" style="margin-left:1.0em; color: steelblue; ">
-                              <a>My Current Priority Projects</a>
+                    <div class="col-xs-3 col-sm-4 dash-col">
+                      <div class="card card-category">
+                        <div class="btn-magnify">
+                          <div class="row col-md-12" style="margin-left:1em; padding-bottom: -1em ">
+                            <div class="pull-left card-category clrs-h1-font">
+                              <a>
+                                <i class="fa fa-folder-o [&#xf114;]"></i> Colours Projects</a>
                             </div>
                           </div>
-                          <div class="spacer" style="height:1em;"></div>
-                          <div id="pTasklist">
-                            <ol>
-                              <li>
-                                <div class="row">
-                                  <div class="col-xs-10 " style="margin-left:2.0em">
-                                    <a class="text-info" style="color:lightgrey" href="#send_agenda" >
-                                      Joina City
-                                    </a>
-                                  </div>
+                          <!-- <hr class="line" style="padding-bottom:0em; padding-top: -1em"> -->
+                          <!-- <div class="pull-left col-md-12 card-category" style="margin-left:2em;padding-top: -1em; color: steelblue; "> -->
+                          <div class="pull-left col-md-12" style="margin-left:1em;padding-top: -1em; color: steelblue; ">
+                            <a>My Current Priority Projects</a>
+                          </div>
+                          <div class="spacer" style="height:2.4em;"></div>
+                          <div class="col-sm-10" id="pTasklist" style="height: 100px">
+                            <!--  style="margin-left: 2em" -->
+                            <div class="content container scroll-em" *ngIf="showProjs">
+                              <ol>
+                                <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let project of projs">
+                                <!-- <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let project of myProjects | async"> -->
+                                  <a [routerLink]="[ '/projects/', project.id ]" style="color:slategray"><span
+                                      class="text-info">{{ project.name }}</span></a>
+                                </li>
+                              </ol>
+                            </div>
+                            <div class="content container scroll-em" *ngIf="hideProjs">
+                              <div class="row">
+                                <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
+                                  <ol>
+                                    <li>
+                                      <!-- <div class="row"> -->
+                                      <a style="color:lightgrey">
+                                        <span class="col-md-12 text-info">Project 1</span>
+                                      </a>
+                                      <!-- </div> -->
+                                    </li>
+                                    <li>
+                                      <!-- <div class="row"> -->
+                                      <a style="color:lightgrey">
+                                        <span class="col-md-12 text-info">Project 2</span>
+                                      </a>
+                                      <!-- </div> -->
+                                    </li>
+                                    <li>
+                                      <!-- <div class="row"> -->
+                                      <a style="color:lightgrey">
+                                        <span class="col-md-12 text-info">Project 3</span>
+                                      </a>
+                                      <!-- </div> -->
+                                    </li>
+                                    <li>
+                                      <!-- <div class="row "> -->
+                                      <a style="color:lightgrey">
+                                        <span class="col-md-12 text-info">Project 4</span>
+                                      </a>
+                                      <!-- </div> -->
+                                    </li>
+                                  </ol>
                                 </div>
-                              </li>
-                              <li>
-                                <div class="row">
-                                  <div class="col-xs-10 " style="margin-left:2.0em">
-                                    <a class="text-info" style="color:lightgrey" href="#send_agenda">
-                                      Aripo Offices
-                                    </a>
-                                  </div>
-                                </div>
-                              </li>
-                              <li>
-                                <div class="row">
-                                  <div class="col-xs-10 " style="margin-left:2.0em">
-                                    <a class="text-info" style="color:lightgrey" href="#send_agenda">
-                                      Colours Software
-                                    </a>
-                                  </div>
-                                </div>
-                              </li>
-                              <li>
-                                <div class="row">
-                                  <div class="col-xs-10 " style="margin-left:2.0em">
-                                    <a class="text-info" style="color:lightgrey" href="#send_agenda">
-                                      Beitbridge
-                                    </a>
-                                  </div>
-                                </div>
-                              </li>
-                            </ol>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div class="card-body">
-                          <h6 class="big-title">total subscriptions in last 7 days</h6>
-                          <canvas id="emailsCampaignChart" width="826" height="150"></canvas>
-                        </div><!-- height="150" -->
+                        <!-- <div class="card-body">
+                                            <h6 class="big-title">total subscriptions in last 7 days</h6>
+                                            <canvas id="emailsCampaignChart" width="auto" height="200"></canvas>
+                                          </div> -->
                         <div class="card-footer">
                           <hr>
                           <div class="row">
@@ -212,15 +245,15 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-4 col-sm-6  dash-col-right">
-                      <div class="card">
+                    <div class="col-xs-3 col-sm-4 ml-auto mar-auto dash-col-right">
+                      <div class="card card-category">
                         <div class="card-content btn-magnify">
                           <div class="row col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
-                            <div class="clrs-h4" style="color:steelblue">
-                              <a><i class="fa fa-feed fa-flip-vertical fa-fw"></i> {{ (project)?.name }} News</a>
-                            </div>
-                            <div class="text-left category" style="margin-left:1.0em; color: steelblue;font-size: 2 ">
-                              <a>All your {{ (project)?.name }} News</a>
+                            <div class="clrs-h1-font">
+                              <a><i class="fa fa-feed  fa-flip-vertical fa-fw"></i> {{ (project)?.name }} News</a>
+                            </div><br>
+                            <div class="text-left" style="padding-top: -1em; color: steelblue;font-size: 2 ">
+                              <a>All {{ (project)?.name }} project News</a>
                             </div>
                           </div>
                           <div class="spacer" style="height: 1em;"></div>
@@ -270,10 +303,6 @@
                             </marquee>
                           </div>
                         </div>
-                        <!-- <div class="card-body">
-                          <h6 class="big-title">total downloads in last 6 years</h6>
-                          <canvas id="activeCountries" width="826" height="150"></canvas>
-                        </div> -->
                         <div class="card-footer">
                           <hr>
                           <div class="row">
@@ -292,13 +321,243 @@
                       </div>
                     </div>
                   </div>
+                  <!-- <div class="row">
+                    <div class="col-lg-4 col-sm-6 dash-col-left">
+                      <div class="card">
+                        <div class="card-content btn-magnify">
+                          <div class="row col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
+                            <div class="clrs-h1-font col-md-12">
+                              <a><i class="nc-icon nc-palette"></i> Colours Personal</a>
+                            </div><br>
+                            <div class="text-left col-md-10" style="padding-top: -1em; color: steelblue; ">
+                              <a>My Diary Today</a>
+                            </div>
+                          </div>
+                          <div class="spacer" style="height: 1em;"></div>
+                          <div class="row" style="height: 100px" >
+                            <div  id="container">
+                              <div class="content container scroll-em" *ngIf="showActions">
+                                <ol>
+                                  <li class="" style="color:steelblue" *ngFor="let event of diaryActionItems">
+                                      <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em">
+                                        <a style="color:slategrey">
+                                          {{ event.name }}
+                                        </a>
+                                      </div>
+                                  </li>
+                                </ol>
+                              </div>
+                              <div class="content container scroll-em" *ngIf="hideActions">
+                                <div class="row">
+                                  <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
+                                    <ol>
+                                      <li>
+                                          <a style="color:lightgrey">
+                                            <span class="col-md-9 text-info">Meeting</span>
+                                            <span class="col-md-3 mr-auto number text-warning"> 1000 hrs</span>
+                                          </a>
+                                      </li>
+                                      <li>
+                                            <a style="color:lightgrey">
+                                              <span class="col-md-9 text-info">Email</span>
+                                              <span class="col-md-3 mr-auto ml-auto number text-success">1230 Hrs</span>
+                                            </a>
+                                      </li>
+                                      <li>
+                                          <a style="color:lightgrey">
+                                            <span class="col-md-9 text-info">Skype</span>
+                                            <span class="col-md-3 mr-auto ml-auto label text-success"> 1400 Hrs </span>
+                                          </a>
+                                      </li>
+                                      <li>
+                                          <a style="color:lightgrey">
+                                            <span class="col-md-9 text-info">Scheduling</span>
+                                            <span class="col-lg-3 mr-auto ml-auto label text-success"> 0800 Hrs </span>
+                                          </a>
+                                      </li>
+                                    </ol>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                         </div>
+                        <div class="card-body">
+                          <h6 class="big-title">total earnings in last ten quarters</h6>
+                          <canvas id="activeUsers" width="826" height="150"></canvas>
+                        </div>
+                        <div class="card-footer">
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-7">
+                              <div class="footer-title">Financial Statistics</div>
+                            </div>
+                            <div class="col-sm-5">
+                              <div class="pull-right">
+                                <button class="btn btn-success btn-round btn-icon btn-sm">
+                                  <i class="nc-icon nc-simple-add"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-6 dash-col">
+                      <div class="card">
+                        <div class="card-content btn-magnify">
+                          <div class="row col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
+                            <div class="clrs-h1-font">
+                              <a><i class="fa fa-tasks fa-fw"></i> Colours Projects</a>
+                            </div><br>
+                            <div class="text-left" style="padding-top: -1em; color: steelblue; ">
+                              <a>My Current Priority Projects</a>
+                            </div>
+                          </div>
+                          <div class="spacer" style="height:1em;"></div>
+                          <div id="pTasklist">
+                            <ol>
+                              <li>
+                                <div class="row">
+                                  <div class="col-xs-10 " style="margin-left:2.0em">
+                                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                                      Joina City
+                                    </a>
+                                  </div>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="row">
+                                  <div class="col-xs-10 " style="margin-left:2.0em">
+                                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                                      Aripo Offices
+                                    </a>
+                                  </div>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="row">
+                                  <div class="col-xs-10 " style="margin-left:2.0em">
+                                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                                      Colours Software
+                                    </a>
+                                  </div>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="row">
+                                  <div class="col-xs-10 " style="margin-left:2.0em">
+                                    <a class="text-danger" style="color:lightgrey" href="#send_agenda">
+                                      Beitbridge
+                                    </a>
+                                  </div>
+                                </div>
+                              </li>
+                            </ol>
+                          </div>
+                        </div>
+                        <div class="card-body">
+                          <h6 class="big-title">total subscriptions in last 7 days</h6>
+                          <canvas id="emailsCampaignChart" width="826" height="150"></canvas>
+                        </div>
+                        <div class="card-footer">
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-7">
+                              <div class="footer-title">View all members</div>
+                            </div>
+                            <div class="col-sm-5">
+                              <div class="pull-right">
+                                <button class="btn btn-danger btn-round btn-icon btn-sm">
+                                  <i class="nc-icon nc-button-play"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-6  dash-col-right">
+                      <div class="card">
+                        <div class="card-content btn-magnify">
+                          <div class="row col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
+                            <div class="clrs-h1-font">
+                              <a><i class="fa fa-feed  fa-flip-vertical fa-fw"></i> {{ (project)?.name }} News</a>
+                            </div><br>
+                            <div class="text-left" style="padding-top: -1em; color: steelblue;font-size: 2 ">
+                              <a>All {{ (project)?.name }} project News</a>
+                            </div>
+                          </div>
+                          <div class="spacer" style="height: 1em;"></div>
+                          <div id="eTasklixt" class="row col-sm-12 ml-auto mr-auto">
+                            <marquee direction="up">
+                              <ol style="padding-left: 14px; padding-right: 14px;">
+                                <li>
+                                  <div class="row">
+                                    <div class="col-xs-10 " style="margin-left: 1em">
+                                      <a class="text-danger" href="#Respond_to_feed" style="color:lightgrey">
+                                        Increase your ﬁnancial networth by using Colours
+                                        to get the best results out of your efforts.
+                                      </a>
+                                    </div>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="row">
+                                    <div class="col-xs-10" style="margin-left:1em">
+                                      <a href="#Respond_to_mail" style="color:lightgrey">
+                                        Use Colours to TRACK your own daily performance metrics, review and improve on
+                                        the same.
+                                      </a>
+                                    </div>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="row">
+                                    <div class="col-xs-10" style="margin-left:1em">
+                                      <a href="#Contact_Supplier" style="color:lightgrey">
+                                        Colours will help you pay attention to the effective
+                                        use of yo time and your any other resources.
+                                      </a>
+                                    </div>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="row">
+                                    <div class="col-xs-10" style="margin-left:1em">
+                                      <a href="#Aripo" style="color:lightgrey">
+                                        Colours will help you squeeze the most out of your life
+                                      </a>
+                                    </div>
+                                  </div>
+                                </li>
+                              </ol>
+                            </marquee>
+                          </div>
+                        </div>
+                        <div class="card-footer">
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-7">
+                              <div class="footer-title">View more details</div>
+                            </div>
+                            <div class="col-sm-5">
+                              <div class="pull-right">
+                                <button class="btn btn-warning btn-round btn-icon btn-sm">
+                                  <i class="nc-icon nc-alert-circle-i"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div> -->
                 </div>
                 <div class="tab-pane" id="standards">
-                  <p>The first thing you notice when you hold the phone is how great it feels in your hand. The cover
-                    glass curves down around the sides to meet the anodized aluminum enclosure in a remarkable,
-                    simplified design. </p>
-                  <p>There are no distinct edges. No gaps. Just a smooth, seamless bond of metal and glass that feels
-                    like one continuous surface.</p>
+                  <div class="col-md-5 mr-auto ml-auto text-center">
+                    <p>Coming Soon.</p>
+                  </div>
                 </div>
                 <div class="tab-pane" id="proSetup">
                   <div *ngIf="!inviteCompany" class="col-md-12">
@@ -419,7 +678,7 @@
                                       <tbody *ngIf="showPlantReturns">
                                         <tr *ngFor="let item of ProjectPlantReturns | async">
                                           <td>{{ item.name }}</td>
-                                          <td>{{ item.number }}</td>
+                                          <td>{{ item.assetNumber }}</td>
                                           <td>{{ item.unit }}</td>
                                           <td class="text-right">{{ item.rate }}</td>
                                         </tr>
@@ -487,7 +746,7 @@
                                           role="tabpanel" aria-labelledby="heading2">
                                           <div class="card-body">
                                             <div class="row" style="margin-left: 2em">
-                                              <div class="col-md-3 text-left card-title na-p">Work Item</div>
+                                              <div class="col-md-3 text-left card-title na-p">Activity</div>
                                               <div class="col-md-2 card-title na-p">Units</div>
                                               <div class="col-md-2 card-title na-p">Quantity</div>
                                               <div class="col-md-2 card-title na-p">Rate</div>
@@ -508,8 +767,8 @@
                                             </ol>
                                           </div>
                                           <button class="btn-link btn-round primary" (click)="selectBill(bill)"
-                                            data-toggle="modal" data-target="#addWorkItem" title="add Work Item">
-                                            <small>Add work item</small>
+                                            data-toggle="modal" data-target="#addWorkItem" title="add Activity">
+                                            <small>Add activity</small>
                                           </button>
                                         </div>
                                       </div>
@@ -715,7 +974,7 @@
                       </div> -->
                     </div>
                     <div *ngIf="!showCompanies" class="card-body text-center" style="margin-left:4.0em;">
-                      <h2 class="text-center clrs-h1" style="vertical-align: middle; margin-bottom:0px">Search for
+                      <h2 class="text-center clrs-h1-font" style="vertical-align: middle; margin-bottom:0px">Search for
                         enterprises by location and or by its Industrial sector </h2>
                       <!-- <p class="text-left card-category" style="vertical-align: middle; margin-bottom:0px">list of companies</p>
                       <ul>
@@ -732,7 +991,7 @@
                       </ul> -->
                     </div>
                     <div *ngIf="showCompanies" class="card-body text-center" style="margin-left:4.0em;">
-                      <h2 class="text-left clrs-h1" style="vertical-align: middle; margin-bottom:0px">list of filtered
+                      <h2 class="text-left clrs-h1-font" style="vertical-align: middle; margin-bottom:0px">list of filtered
                         companies</h2>
                       <ol>
                         <li class="" style="margin-left:2.0em; padding-left:2.0em;"
@@ -1499,7 +1758,7 @@
                                     <a class="collapsed" (click)="setQuarter('quarter0')" title="click to view tasks"
                                       data-toggle="collapse" href="#planQuarter0" aria-expanded="false"
                                       aria-controls="planQuarter0">
-                                      {{ quarter0label.quarter() }} Quarter of year {{ quarter0label.year() }} <i
+                                      Quarter {{ quarter0label.quarter() }} of year {{ quarter0label.year() }} <i
                                         class="nc-icon nc-minimal-down"></i>
                                     </a>
                                   </div>
@@ -1550,7 +1809,7 @@
                                     <a class="collapsed" (click)="setQuarter('quarter1')" title="click to view tasks"
                                       data-toggle="collapse" href="#planQuarter1" aria-expanded="false"
                                       aria-controls="planQuarter1">
-                                      {{ quarter1label.quarter() }} Quarter of year {{ quarter1label.year() }} <i
+                                      Quarter {{ quarter1label.quarter() }} of year {{ quarter1label.year() }} <i
                                         class="nc-icon nc-minimal-down"></i>
                                     </a>
                                   </div>
@@ -1586,7 +1845,7 @@
                                     <a class="collapsed" (click)="setQuarter('quarter2')" title="click to view tasks"
                                       data-toggle="collapse" href="#planQuarter2" aria-expanded="false"
                                       aria-controls="planQuarter2">
-                                      {{ quarter2label.quarter() }} Quarter of year {{ quarter2label.year() }} <i
+                                      Quarter {{ quarter2label.quarter() }} of year {{ quarter2label.year() }} <i
                                         class="nc-icon nc-minimal-down"></i>
                                     </a>
                                   </div>
@@ -1622,7 +1881,7 @@
                                     <a class="collapsed" (click)="setQuarter('quarter3')" title="click to view tasks"
                                       data-toggle="collapse" href="#planQuarter3" aria-expanded="false"
                                       aria-controls="planQuarter3">
-                                      {{ quarter3label.quarter() }} Quarter of year {{ quarter3label.year() }} <i
+                                      Quarter {{ quarter3label.quarter() }} of year {{ quarter3label.year() }} <i
                                         class="nc-icon nc-minimal-down"></i>
                                     </a>
                                   </div>
@@ -1670,22 +1929,16 @@
                         <div class="nav-tabs-wrapper">
                           <ul id="tabs" class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
-                              <a class="nav-link nav-colors active" data-toggle="tab" href="#cIntray" role="tab"
-                                aria-expanded="true">In-tray For whole Project</a>
+                              <a class="nav-link nav-colors active" data-toggle="tab" href="#cIntray" role="tab" aria-expanded="true">In-tray For whole Project</a>
                             </li>
                             <li class="nav-item">
-                              <a class="nav-link nav-colors" data-toggle="tab" href="#dIntray" role="tab"
-                                aria-expanded="false" (click)="checkDataComp()">
-                                In-tray For {{ (project)?.companyName }}</a>
+                              <a class="nav-link nav-colors" data-toggle="tab" href="#dIntray" role="tab" aria-expanded="false" (click)="checkDataComp()"> In-tray For {{ (project)?.companyName }}</a>
                             </li>
                             <li class="nav-item">
-                              <a class="nav-link nav-colors" data-toggle="tab" href="#weekly" role="tab"
-                                aria-expanded="true">Weekly
-                                Calendar</a>
+                              <a class="nav-link nav-colors" data-toggle="tab" href="#weekly" role="tab" aria-expanded="true">Weekly Calendar</a>
                             </li>
                             <li class="nav-item">
-                              <a class="nav-link nav-colors" data-toggle="tab" (click)="initDiary()" href="#diary"
-                                role="tab" aria-expanded="false">Daily Diary</a>
+                              <a class="nav-link nav-colors" data-toggle="tab" (click)="initDiary()" href="#diary" role="tab" aria-expanded="false">Daily Diary</a>
                             </li>
                           </ul>
                         </div>
@@ -1693,12 +1946,11 @@
                       <div id="my-tab-content" class="tab-content text-center">
                         <div class="tab-pane active" id="cIntray" role="tabpanel" aria-expanded="true">
                           <div class="row">
-                            <div class="col-md-6 ml-auto mr-auto">
+                            <div class="col-md-10 ml-auto mr-auto">
                               <div class="card">
                                 <div class="card-body text-center" style="padding-top:0px">
                                   <div class="card-header text-left">
-                                    <p class="title na-an" style="color: steelblue"><i class="nc-icon nc-palette"></i>
-                                      Things To Do In Tray For Project</p>
+                                    <p class="title na-an" style="color: steelblue"><i class="nc-icon nc-palette"></i>Things To Do In Tray For Project</p>
                                     Task List
                                   </div>
                                   <div class="card-body">
@@ -1707,36 +1959,26 @@
                                       class="card-collapse">
                                       <div class="card card-plain">
                                         <div class="card-header text-left" role="tab" id="headingOne">
-                                          <a data-toggle="collapse" href="#Outstanding" aria-expanded="true"
-                                            aria-controls="Outstanding">
-                                            Outstanding Tasks
-                                            <i class="nc-icon nc-minimal-down"></i>
+                                          <a data-toggle="collapse" href="#Outstanding" aria-expanded="true"aria-controls="Outstanding">
+                                            Outstanding Tasks <i class="nc-icon nc-minimal-down"></i>
                                           </a>
                                         </div>
-                                        <div id="Outstanding" class="collapse show" role="tabpanel"
-                                          aria-labelledby="headingOne" data-parent="#accordionTsk">
+                                        <div id="Outstanding" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordionTsk">
                                           <div class="card-body">
-                                            <div class="content container scroll-em">
+                                            <div class="content container scroll-task">
                                               <ol style="padding-left:18px;">
-                                                <li class="" style="color:steelblue"
-                                                  *ngFor="let tss of OutstandingTasks">
-                                                  <div class="row">
+                                                <li class="" style="color:steelblue" *ngFor="let tss of OutstandingTasks">
+                                                  <!-- <div class="row"> -->
                                                     <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                                      <button class="dropdown-toggle btn-link" id="dropdownMenuButton"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false" style="color:slategrey">
-                                                        {{ tss.name }}<span class="label text-warning">
-                                                          {{ tss.when }}</span>
+                                                      <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false" style="color:slategrey">{{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                                       </button>
-                                                      <div class="dropdown-menu dropdown-menu-right"
-                                                        aria-labelledby="dropdownMenuButton">
-                                                        <button class="dropdown-item primary btn-link" rel="tooltip"
-                                                          title="make a comment" (click)="selectTask(tss)"
-                                                          data-toggle="modal" data-target="#commentModal">Comment the
-                                                          Task</button>
+                                                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                        <button class="dropdown-item primary btn-link" rel="tooltip"title="make a comment" (click)="selectTask(tss)"
+                                                          data-toggle="modal" data-target="#commentModal">Comment the Task</button>
                                                       </div>
                                                     </div>
-                                                  </div>
+                                                  <!-- </div> -->
                                                 </li>
                                               </ol>
                                             </div>
@@ -1754,26 +1996,20 @@
                                         <div id="currentTsk" class="collapse" aria-labelledby="headingTwo"
                                           data-parent="#accordionTsk">
                                           <div class="card-body">
-                                            <div class="content container scroll-em">
+                                            <div class="content container scroll-task">
                                               <ol>
                                                 <li class="" style="color:steelblue" *ngFor="let tss of CurrentTAsks">
-                                                  <div class="row">
+                                                  <!-- <div class="row"> -->
                                                     <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                                      <button class="dropdown-toggle btn-link" id="dropdownMenuButton"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false" style="color:slategrey">
-                                                        {{ tss.name }}<span class="label text-warning">
-                                                          {{ tss.when }}</span>
+                                                      <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false" style="color:slategrey">{{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                                       </button>
-                                                      <div class="dropdown-menu dropdown-menu-right"
-                                                        aria-labelledby="dropdownMenuButton">
-                                                        <button class="dropdown-item primary btn-link" rel="tooltip"
-                                                          title="make a comment" (click)="selectTask(tss)"
-                                                          data-toggle="modal" data-target="#commentModal">Comment the
-                                                          Task</button>
+                                                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                        <button class="dropdown-item primary btn-link" rel="tooltip" title="make a comment" (click)="selectTask(tss)"
+                                                          data-toggle="modal" data-target="#commentModal">Comment the Task</button>
                                                       </div>
                                                     </div>
-                                                  </div>
+                                                  <!-- </div> -->
                                                 </li>
                                               </ol>
                                             </div>
@@ -1791,45 +2027,63 @@
                                         <div id="upcoming" class="collapse" aria-labelledby="headingThree"
                                           data-parent="#accordionTsk">
                                           <div class="card-body">
-                                            <div class="content container scroll-em">
-                                              Short Term Tasks<br>
+                                            <div class="content container scroll-task">
+                                              <div class="card-header text-left"> Short Term Tasks</div><br>
                                               <ol>
-                                                <li class="" style="color:steelblue"
-                                                  *ngFor="let event of ShortTermTAsks">
-                                                  <div class="row">
+                                                <li class="" style="color:steelblue" *ngFor="let tss of ShortTermTAsks">
+                                                  <!-- <div class="row"> -->
+                                                    <div class="col-sm-12 text-left" style="margin-right:-.5em">
+                                                      <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false" style="color:slategrey">{{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
+                                                      </button>
+                                                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                        <button class="dropdown-item primary btn-link" rel="tooltip" title="make a comment" (click)="selectTask(tss)"
+                                                          data-toggle="modal" data-target="#commentModal">Comment the Task</button>
+                                                      </div>
+                                                    </div>
+                                                  <!-- </div> -->
+                                                </li>
+                                              </ol>
+                                              <div class="card-header text-left">Medium Term Tasks</div><br>
+                                              <ol>
+                                                <li class="" style="color:steelblue" *ngFor="let tss of MediumTermTAsks">
+                                                  <!-- <div class="row"> 
                                                     <div class="col-sm-12" style="margin-left:.5em; margin-right:-.5em">
                                                       <button class="btn-link" style="color:slategrey">
                                                         {{ event.name }}<span class="label text-warning">
                                                           {{ event.when }}</span>
                                                       </button>
                                                     </div>
+                                                  </div> -->
+                                                  <div class="col-sm-12 text-left" style="margin-right:-.5em">
+                                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                      aria-expanded="false" style="color:slategrey">{{ tss.name }}<span class="label text-warning">{{ tss.when }}</span>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <button class="dropdown-item primary btn-link" rel="tooltip" title="make a comment" (click)="selectTask(tss)"
+                                                        data-toggle="modal" data-target="#commentModal">Comment the Task</button>
+                                                    </div>
                                                   </div>
                                                 </li>
                                               </ol>
-                                              Medium Term Tasks<br>
+                                              <div class="card-header text-left">Long Term Tasks</div><br>
                                               <ol>
-                                                <li class="" style="color:steelblue"
-                                                  *ngFor="let event of MediumTermTAsks">
-                                                  <div class="row">
+                                                <li class="" style="color:steelblue" *ngFor="let tss of LongTermTAsks">
+                                                  <!-- <div class="row">
                                                     <div class="col-sm-12" style="margin-left:.5em; margin-right:-.5em">
                                                       <button class="btn-link" style="color:slategrey">
                                                         {{ event.name }}<span class="label text-warning">
                                                           {{ event.when }}</span>
                                                       </button>
                                                     </div>
-                                                  </div>
-                                                </li>
-                                              </ol>
-                                              Long Term Tasks<br>
-                                              <ol>
-                                                <li class="" style="color:steelblue"
-                                                  *ngFor="let event of LongTermTAsks">
-                                                  <div class="row">
-                                                    <div class="col-sm-12" style="margin-left:.5em; margin-right:-.5em">
-                                                      <button class="btn-link" style="color:slategrey">
-                                                        {{ event.name }}<span class="label text-warning">
-                                                          {{ event.when }}</span>
-                                                      </button>
+                                                  </div> -->
+                                                  <div class="col-sm-12 text-left" style="margin-right:-.5em">
+                                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                      aria-expanded="false" style="color:slategrey">{{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <button class="dropdown-item primary btn-link" rel="tooltip" title="make a comment" (click)="selectTask(tss)"
+                                                        data-toggle="modal" data-target="#commentModal">Comment the Task</button>
                                                     </div>
                                                   </div>
                                                 </li>
@@ -1855,50 +2109,38 @@
                               <div class="card">
                                 <div class="card-body text-center" style="padding-top:0px">
                                   <div class="card-header text-left">
-                                    <p class="title na-an" style="color: steelblue"><i class="ti-palette"></i> Things
-                                      To Do In Tray For {{ (project)?.companyName }} </p>
+                                    <p class="title na-an" style="color: steelblue"><i class="ti-palette"></i> Things To Do In Tray For {{ (project)?.companyName }} </p>
                                     <div class="card-body">
-                                      <div id="accordionCompTsk" role="tablist" aria-multiselectable="true"
-                                        class="card-collapse">
+                                      <div id="accordionCompTsk" role="tablist" aria-multiselectable="true" class="card-collapse">
                                         <div class="card card-plain">
                                           <div class="card-header text-left" role="tab" id="headingOne">
-                                            <a data-toggle="collapse" href="#compOutstanding" aria-expanded="true"
-                                              aria-controls="compOutstanding" (click)="checkDataComp()">
-                                              Outstanding Tasks
-                                              <i class="nc-icon nc-minimal-down"></i>
+                                            <a data-toggle="collapse" href="#compOutstanding" aria-expanded="true" aria-controls="compOutstanding" (click)="checkDataComp()">
+                                              Outstanding Tasks<i class="nc-icon nc-minimal-down"></i>
                                             </a>
                                           </div>
                                           <div id="compOutstanding" class="collapse show" role="tabpanel"
                                             aria-labelledby="headingOne" data-parent="#accordionCompTsk">
                                             <div class="card-body" style="padding-left: 0px;padding-right: 0px;">
-                                              <div class="content container scroll-em">
+                                              <div class="content container scroll-task">
                                                 <ol style="padding-left:5px;">
                                                   <!-- <li class="" style="color:steelblue" *ngFor="let tss of OutstandingTasks"> -->
                                                   <li class="" style="color:steelblue"
                                                     *ngFor="let tss of compOutstandingTasks">
-                                                    <div class="row">
+                                                    <!-- <div class="row"> -->
                                                       <div class="col-sm-12 text-left" style="margin-right:-.10em">
-                                                        <button class="dropdown-toggle btn-link text-left"
-                                                          id="dropdownMenuButton" data-toggle="dropdown"
-                                                          aria-haspopup="true" aria-expanded="false"
-                                                          style="color:slategrey">
-                                                          {{ tss.name }}<span class="label text-warning">
-                                                            {{ tss.when }}</span>
+                                                        <button class="dropdown-toggle btn-link text-left" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                                          style="color:slategrey">{{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                                         </button>
-                                                        <div class="dropdown-menu dropdown-menu-right"
-                                                          aria-labelledby="dropdownMenuButton">
-                                                          <button class="dropdown-item primary btn-link" rel="tooltip"
-                                                            title="make a comment" (click)="selectTask(tss)"
-                                                            data-toggle="modal" data-target="#commentModal">Commment
-                                                            task</button>
-                                                          <button class="dropdown-item btn-primary btn-link"
-                                                            rel="tooltip" (click)="selectTask(tss)" data-toggle="modal"
-                                                            data-target="#labourModal"
+                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                          <button class="dropdown-item primary btn-link" rel="tooltip" title="make a comment" (click)="selectTask(tss)" data-toggle="modal"
+                                                            data-target="#commentModal">Commment task
+                                                          </button>
+                                                          <button class="dropdown-item btn-primary btn-link" rel="tooltip" (click)="selectTask(tss)" data-toggle="modal" data-target="#labourModal"
                                                             title="Add {{ tss.name }} to a department">Reallocate to new staff
                                                           </button>
                                                         </div>
                                                       </div>
-                                                    </div>
+                                                    <!-- </div> -->
                                                   </li>
                                                 </ol>
                                               </div>
@@ -1913,35 +2155,27 @@
                                               <i class="nc-icon nc-minimal-down"></i>
                                             </a>
                                           </div>
-                                          <div id="compCurrentTsk" class="collapse" aria-labelledby="headingTwo"
-                                            data-parent="#accordionCompTsk">
-                                            <div class="card-body">
-                                              <div class="content container scroll-em">
-                                                <ol>
-                                                  <li class="" style="color:steelblue"
-                                                    *ngFor="let tss of compCurrentTAsks">
-                                                    <div class="row">
+                                          <div id="compCurrentTsk" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionCompTsk">
+                                            <!-- <div class="card-body"> -->
+                                            <div class="card-body" style="padding-left: 0px;padding-right: 0px;">
+                                              <div class="content container scroll-task">
+                                                <!-- <ol> -->
+                                                <ol style="padding-left:5px;">
+                                                  <li class="" style="color:steelblue" *ngFor="let tss of compCurrentTAsks">
+                                                    <!-- <div class="row"> -->
                                                       <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                                        <button class="dropdown-toggle btn-link" id="dropdownMenuButton"
-                                                          data-toggle="dropdown" aria-haspopup="true"
-                                                          aria-expanded="false" style="color:slategrey">
-                                                          {{ tss.name }}<span class="label text-warning">
-                                                            {{ tss.when }}</span>
+                                                        <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                                          style="color:slategrey">{{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                                         </button>
-                                                        <div class="dropdown-menu dropdown-menu-right"
-                                                          aria-labelledby="dropdownMenuButton">
-                                                          <button class="dropdown-item primary btn-link" rel="tooltip"
-                                                            title="make a comment" (click)="selectTask(tss)"
-                                                            data-toggle="modal" data-target="#commentModal">Commment
-                                                            task</button>
-                                                          <button class="dropdown-item primary btn-link" rel="tooltip"
-                                                            (click)="selectTask(tss)" data-toggle="modal"
-                                                            data-target="#labourModal"
+                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                          <button class="dropdown-item primary btn-link" rel="tooltip" title="make a comment" (click)="selectTask(tss)"
+                                                            data-toggle="modal" data-target="#commentModal">Commment task</button>
+                                                          <button class="dropdown-item primary btn-link" rel="tooltip"(click)="selectTask(tss)" data-toggle="modal" data-target="#labourModal"
                                                             title="Add {{ tss.name }} to a department">Allocate to staff
                                                           </button>
                                                         </div>
                                                       </div>
-                                                    </div>
+                                                    <!-- </div> -->
                                                   </li>
                                                 </ol>
                                               </div>
@@ -1958,51 +2192,70 @@
                                           </div>
                                           <div id="compUpcoming" class="collapse" aria-labelledby="headingThree"
                                             data-parent="#accordionCompTsk">
-                                            <div class="card-body">
-                                              <div class="content container scroll-em">
-                                                Short Term Tasks<br>
-                                                <ol>
-                                                  <li class="" style="color:steelblue"
-                                                    *ngFor="let event of compShortTermTAsks">
-                                                    <div class="row">
-                                                      <div class="col-sm-12"
-                                                        style="margin-left:.5em; margin-right:-.5em">
-                                                        <button class="btn-link" style="color:slategrey">
-                                                          {{ event.name }}<span class="label text-warning">
-                                                            {{ event.when }}</span>
+                                            <!-- <div class="card-body"> -->
+                                            <div class="card-body" style="padding-left: 0px;padding-right: 0px;">
+                                              <div class="content container scroll-task">
+                                                <!-- Short Term Tasks<br> -->
+                                              <div class="card-header text-left"> Short Term Tasks</div><br>
+                                                <!-- <ol> -->
+                                                <ol style="padding-left:5px;">
+                                                  <li class="" style="color:steelblue" *ngFor="let tss of compShortTermTAsks">
+                                                    <!-- <div class="row"> -->
+                                                      <div class="col-sm-12 text-left" style="margin-right:-.5em">
+                                                        <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                          aria-expanded="false" style="color:slategrey">{{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                                         </button>
+                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                          <button class="dropdown-item primary btn-link" rel="tooltip" title="make a comment" (click)="selectTask(tss)"
+                                                            data-toggle="modal" data-target="#commentModal">Commment task</button>
+                                                          <button class="dropdown-item primary btn-link" rel="tooltip" (click)="selectTask(tss)" data-toggle="modal"
+                                                            data-target="#labourModal" title="Add {{ tss.name }} to a department">Allocate to staff
+                                                          </button>
+                                                        </div>
                                                       </div>
-                                                    </div>
+                                                    <!-- </div> -->
                                                   </li>
                                                 </ol>
-                                                Medium Term Tasks<br>
-                                                <ol>
-                                                  <li class="" style="color:steelblue"
-                                                    *ngFor="let event of compMediumTermTAsks">
-                                                    <div class="row">
-                                                      <div class="col-sm-12"
-                                                        style="margin-left:.5em; margin-right:-.5em">
-                                                        <button class="btn-link" style="color:slategrey">
-                                                          {{ event.name }}<span class="label text-warning">
-                                                            {{ event.when }}</span>
+                                                <!-- Medium Term Tasks<br> -->
+                                              <div class="card-header text-left">Medium Term Tasks</div><br>
+                                                <!-- <ol> -->
+                                                <ol style="padding-left:5px;">
+                                                  <li class="" style="color:steelblue" *ngFor="let tss of compMediumTermTAsks">
+                                                    <!-- <div class="row"> -->
+                                                      <div class="col-sm-12 text-left" style="margin-right:-.5em">
+                                                        <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                          aria-expanded="false" style="color:slategrey">{{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                                         </button>
+                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                          <button class="dropdown-item primary btn-link" rel="tooltip" title="make a comment" (click)="selectTask(tss)"
+                                                            data-toggle="modal" data-target="#commentModal">Commment task</button>
+                                                          <button class="dropdown-item primary btn-link" rel="tooltip" (click)="selectTask(tss)" data-toggle="modal"
+                                                            data-target="#labourModal" title="Add {{ tss.name }} to a department">Allocate to staff
+                                                          </button>
+                                                        </div>
                                                       </div>
-                                                    </div>
+                                                    <!-- </div> -->
                                                   </li>
                                                 </ol>
-                                                Long Term Tasks<br>
-                                                <ol>
-                                                  <li class="" style="color:steelblue"
-                                                    *ngFor="let event of compLongTermTAsks">
-                                                    <div class="row">
-                                                      <div class="col-sm-12"
-                                                        style="margin-left:.5em; margin-right:-.5em">
-                                                        <button class="btn-link" style="color:slategrey">
-                                                          {{ event.name }}<span class="label text-warning">
-                                                            {{ event.when }}</span>
+                                                <!-- Long Term Tasks<br> -->
+                                              <div class="card-header text-left">Long Term Tasks</div><br>
+                                                <!-- <ol> -->
+                                                <ol style="padding-left:5px;">
+                                                  <li class="" style="color:steelblue" *ngFor="let tss of compLongTermTAsks">
+                                                    <!-- <div class="row"> -->
+                                                      <div class="col-sm-12 text-left" style="margin-right:-.5em">
+                                                        <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                          aria-expanded="false" style="color:slategrey">{{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                                         </button>
+                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                          <button class="dropdown-item primary btn-link" rel="tooltip" title="make a comment" (click)="selectTask(tss)"
+                                                            data-toggle="modal" data-target="#commentModal">Commment task</button>
+                                                          <button class="dropdown-item primary btn-link" rel="tooltip" (click)="selectTask(tss)" data-toggle="modal"
+                                                            data-target="#labourModal" title="Add {{ tss.name }} to a department">Allocate to staff
+                                                          </button>
+                                                        </div>
                                                       </div>
-                                                    </div>
+                                                    <!-- </div> -->
                                                   </li>
                                                 </ol>
                                               </div>
@@ -2026,8 +2279,7 @@
                                   <div class="card-body">
                                     <div class="row">
                                       <div class="col-md-10 ml-auto mr-auto" style="padding-left:3px">
-                                        <ng-select placeholder="Select staff" [(ngModel)]="staffId"
-                                          (change)="showUserTasks(staffId)">
+                                        <ng-select placeholder="Select staff" [(ngModel)]="staffId"    (change)="showUserTasks(staffId)">
                                           <ng-option class="category" *ngFor="let user of labourRef1" [value]="user.id">
                                             {{ user.name }}</ng-option>
                                         </ng-select>
@@ -2046,9 +2298,7 @@
                                                 *ngFor="let tss of staffTasks | async">
                                                 <div class="card card-plain">
                                                   <div class="card-header" role="tab" id="heading2">
-                                                    <a class="collapsed" data-toggle="collapse" href="#{{ tss.id }}"
-                                                      (click)="showTaskActions(tss)" aria-expanded="false"
-                                                      aria-current="false">
+                                                    <a class="collapsed" data-toggle="collapse" href="#{{ tss.id }}" (click)="showTaskActions(tss)" aria-expanded="false"  aria-current="false">
                                                       {{ tss.name }}<span class="label text-warning"></span>
                                                       <i class="nc-icon nc-minimal-down"></i> <!--  {{ tss.when }} -->
                                                     </a>
@@ -2066,19 +2316,19 @@
                                                                 (click)="selectAction(item)">
                                                                 {{ item.name }}<span class="label text-info">
                                                                   {{ item.targetQty }}</span><span>
-                                                                  {{ item.siu }}</span>
+                                                                  {{ item.unit }}</span>
                                                               </button>
                                                               <!-- <div class="dropdown-menu dropdown-menu-right"
                                                                 aria-labelledby="dropdownMenuButton">
                                                                 <button class="dropdown-item btn-info btn-link" rel="tooltip"
                                                                   data-toggle="modal" data-target="#tskModal" (click)="closeTask(project)"
-                                                                  title="Set task as completed">Action Complete</button>
+                                                                  title="Set task as completed">Activity Complete</button>
                                                                 <button class="dropdown-item primary btn-link" rel="tooltip"
                                                                   data-toggle="modal" data-target="#actionParticipants"
                                                                   (click)="selectAction(item)" title="Set task as completed">Add
                                                                   Participants</button>
                                                                 <button class="dropdown-item btn-info btn-link" rel="tooltip"
-                                                                  title="Assign action to Staff" (click)="showDpTasks(dp)"
+                                                                  title="Assign activity to Staff" (click)="showDpTasks(dp)"
                                                                   data-toggle="modal" data-target="#dptStaffList">Assign
                                                                   Champion</button>
                                                               </div> -->
@@ -2093,7 +2343,7 @@
                                                     </div>
                                                     <button class="btn-link btn-round primary" (click)="selectTask(tss)"
                                                       data-toggle="modal" data-target="#newAction">
-                                                      <small>Add action item</small></button>
+                                                      <small>Add activity</small></button>
                                                   </div>
                                                 </div>
                                               </li>
@@ -2102,7 +2352,7 @@
                                         </div>
                                       </div>
                                       <p class="na-an text-center" style="color: steelblue; margin-bottom: 0px;">
-                                        <i class="ti-palette"></i>list of this weeks selected action items</p><br><br>
+                                        <i class="ti-palette"></i>list of this week's selected activities</p><br><br>
                                       <div class="col-sm-10">
                                         <ol>
                                           <li *ngFor="let item of selectedActionItems" class="text-left">
@@ -2118,9 +2368,9 @@
                           </div>
                         </div>
                         <div class="tab-pane" id="weekly" role="tabpanel" aria-expanded="false">
-                          <div class="row card-category clrs-h4">
+                          <div class="row card-category clrs-h4-font">
                             <div class="col-xs-1"></div>
-                            <div class="col-md-3">Action Item</div>
+                            <div class="col-md-3">Activity</div>
                             <div class="col-md-3 text-left na-an">Start</div>
                             <div class="col-md-3 text-left ma-an">Finish</div>
                             <div class="col-md-3 text-left ma-an">Actions</div>
@@ -2137,7 +2387,7 @@
                                     <small>
                                       <button class="primary btn-link" data-toggle="modal"
                                         (click)="selectEditAction(item)" data-target="#editAction">
-                                        Add date
+                                        Period
                                       </button>
                                       <button class="primary btn-link" data-toggle="modal"
                                         (click)="selectEditAction(item);showActionParticipants()"
@@ -2154,28 +2404,27 @@
 
 
                         <div class="tab-pane" id="diary" role="tabpanel" aria-expanded="false">
-                          <div class="row card-category clrs-h4">
+                          <div class="row card-category clrs-h4-font">
                             <div class="col-sm-3">
-                              <a class="clrs-h1 text-left">Daily Diary</a>
+                              <a class="clrs-h1-font text-left">Daily Diary</a>
                             </div>
                             <div class="col-sm-2"></div>
                             <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol"
                                 (click)="changeDay('previous','startDate')">Previous</a></div>
-                            <div class="col-sm-3 clrs-h4 text-info">{{ workWeekDay }}, {{ workDay }}</div>
+                            <div class="col-sm-3 clrs-h4-font text-info">{{ workWeekDay }}, {{ workDay }}</div>
                             <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol"
                                 (click)="changeDay('next','startDate')">Next</a></div>
                           </div>
                           <div class="card-body" style="margin-top: -10px">
                             <div class="row">
-                              <div class="col-sm-3 card-header text-center">Action Item</div>
+                              <div class="col-sm-3 card-header text-center">Activity</div>
                               <div class="col-sm-3 card-header">Target Qty</div>
                               <div class="col-sm-2 card-header text-left">Start time</div>
                               <div class="col-sm-3 card-header text-left">Finish time</div>
                               <div class="col-sm-2 card-header text-left"></div>
                             </div>
                             <ol style="padding-left: 10px;">
-                              <!-- <li *ngFor="let item of viewActions | async"> -->
-                              <li *ngFor="let item of viewDayActions">
+                              <li *ngFor="let item of viewActions | async">
                                 <div class="row">
                                   <div class="col-sm-2">
                                     <a> {{ item.name }}</a>
@@ -2188,12 +2437,8 @@
                                           style=" padding-left: 10px; padding-right: 10px; height:2em"
                                           placeholder="1 200" /><!-- clrs-cell  -->
                                         <div class="input-group-postpend">
-                                          <span class="input-group-text"
-                                            style=" padding-left: 10px; padding-right: 10px; height:28px">
-                                            <small *ngIf="item.siu ; else showUnit">{{ item.siu }}</small>
-                                            <ng-template #showUnit>
+                                          <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
                                               <small>{{ item.unit }}</small>
-                                            </ng-template>
                                           </span>
                                         </div>
                                       </div>
@@ -2238,7 +2483,7 @@
                                 <div class="col-md-9"></div>
                                 <div class="col-md-3">
                                   <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday">
-                                    New Action
+                                    New Activity
                                   </button>
                                 </div>
                               </div>
@@ -2249,338 +2494,514 @@
                     </div>
                   </div>
                 </div>
-                <div class="tab-pane" id="reports">
-
-
-<div class="col-md-12">
-  <div class="card">
-    <div class="card-body" style="margin-top: -3em">
-      <div class="nav-tabs-navigation">
-        <div class="nav-tabs-wrapper">
-          <ul id="tabs" class="nav nav-tabs" role="tablist">
-
-            <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#internalCompProj" role="tab" aria-expanded="true">Internal to {{ project.companyName }}</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#projectOverview" role="tab" aria-expanded="false">Project Overview</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-        <div id="my-tab-content" class="tab-content text-center">
-
-          <div class="tab-pane active" id="internalCompProj" role="tabpanel" aria-expanded="true">
-            <div class="card-body">
-              
-              <div class="col-md-12">
-                <p class="text-left title clrs-h4" style="color: darkslategray">Company Details</p>
-                <div class="card-plain card-content">
-                  <div class="text-left na-p" style="margin-left:1em ">
-                    <span class="row col-md-12">
-                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Company Name </span>
-                      <span class="col-sm-9">: {{ (entReport)?.name }} </span>
-                    </span><br>
-                    <span class="row col-md-12">
-                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Sector </span>
-                      <span class="col-sm-9">: {{ (entReport)?.sector }} </span>
-                    </span><br>
-                    <span class="row col-md-12">
-                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Project Role </span>
-                      <span class="col-sm-9">
-                        <a *ngFor="let service of (entReport)?.roles">: {{ service.display }} <br></a>
-                      </span>
-                    </span><br>
-                    <span class="row col-md-12">
-                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Location </span>
-                      <span class="col-sm-9">: {{ (entReport)?.location }} </span>
-                    </span><br>
-                  </div>
-                </div>
-              </div>
-              <div class="row col-md-12 text-left">
-                <p class="pull-left clrs-h2"><span class="title card-category" style="color:darkslategray">
-                  Summarized Report for <b>{{ project.companyName }}</b> enterprise.</span><br>
-                </p>
-              </div>
-              <div class="row col-md-12 mr-auto ml-auto text-left">
-                Total Number of Tasks Complete : {{ ( allCompanyTasksComplete | async)?.length }}<br>
-                Total Number of outstanding Tasks : {{ setCompCurrentTAsks.length }}<br>
-                Total Number of Tasks allocated: {{ ( allCompanyTasks | async)?.length }}<br>
-              </div>
-              <div class="row">
-                <div class="card-body" style="margin-top: -10px">
-                  <div class="row">
-                    <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
-                    <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
-                    <div class="col-sm-2 card-header text-left">Start</div>
-                    <div class="col-sm-2 card-header text-left">Finish</div>
-                    <div class="col-sm-2 card-header text-left">Complete</div>
-                    <div class="col-sm-3 card-header text-left">Champion</div>
-                  </div>
-                  <ol style="padding-left: 10px;">
-                    <p *ngIf="(setCompOutstandingTasks.length != 0)" class="category text-warning">Outstanding Tasks.</p>
-                    <li *ngFor="let item of setCompOutstandingTasks">
-                      <div class="row">
-                        <div class="col-sm-3 col-md-3 text-left">
-                          <a>{{ item.name }}</a>
+                
+                <div class="tab-pane" id="reports2">
+                
+                
+                  <div class="col-md-12">
+                    <div class="card">
+                      <div class="card-body" style="margin-top: -3em">
+                        <div class="nav-tabs-navigation">
+                          <div class="nav-tabs-wrapper">
+                            <ul id="tabs" class="nav nav-tabs" role="tablist">
+                
+                              <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#internalCompProj" role="tab"
+                                  aria-expanded="true">Internal to {{ project.companyName }}</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#projectOverview" role="tab" aria-expanded="false">Project
+                                  Overview</a>
+                              </li>
+                            </ul>
+                          </div>
                         </div>
-                        <div class="col-sm-2">
-                          <a>{{ item.start }}</a>
-                        </div>
-                        <div class="col-sm-2">
-                          <a>{{ item.finish }}</a>
-                        </div>
-                        <div class="col-sm-2">
-                          <a>{{ item.complete }}</a>
-                        </div>
-                        <div class="col-md-3 card-category col-sm-3">
-                          <a>{{ item.champion.name }}</a>
+                        <div id="my-tab-content" class="tab-content text-center">
+                
+                          <div class="tab-pane active" id="internalCompProj" role="tabpanel" aria-expanded="true">
+                            <div class="card-body">
+                
+                              <div class="col-md-12">
+                                <p class="text-left title clrs-h4-font" style="color: darkslategray">Company Details</p>
+                                <div class="card-plain card-content">
+                                  <div class="text-left na-p" style="margin-left:1em ">
+                                    <span class="row col-md-12">
+                                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Company Name </span>
+                                      <span class="col-sm-9">: {{ (entReport)?.name }} </span>
+                                    </span><br>
+                                    <span class="row col-md-12">
+                                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Sector </span>
+                                      <span class="col-sm-9">: {{ (entReport)?.sector }} </span>
+                                    </span><br>
+                                    <span class="row col-md-12">
+                                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Project Role </span>
+                                      <span class="col-sm-9">
+                                        <a *ngFor="let service of (entReport)?.roles">: {{ service.display }} <br></a>
+                                        <!-- <a *ngFor="let role of (viewCompany)?.roles">: {{ role.display }} <br></a> -->
+                                      </span>
+                                    </span><br>
+                                    <span class="row col-md-12">
+                                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Location </span>
+                                      <span class="col-sm-9">: {{ (entReport)?.location }} </span>
+                                    </span><br>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-md-12">
+                                <p class="pull-left clrs-h2"><span class="title card-category" style="color:darkslategray">
+                                    Summarized Report for <b>{{ project.companyName }}</b> enterprise.</span><br>
+                                </p>
+                              </div>
+                              <div class="card-plain card-content">
+                                <div class="text-left na-p" style="margin-left:1em ">
+                                  <span class="row col-md-12">
+                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Total Number of Tasks Complete </span>
+                                    <span class="col-sm-9">: {{ ( allCompanyTasksComplete | async)?.length }} </span>
+                                  </span><br>
+                                  <span class="row col-md-12">
+                                    <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Sector </span>
+                                    <span class="col-sm-9">: {{ (entReport)?.sector }} </span>
+                                  </span><br>
+                                </div>
+                              </div>
+                              <div class="row col-md-11 mr-auto ml-auto text-left">
+                                Total Number of Tasks Complete : {{ ( allCompanyTasksComplete | async)?.length }}<br>
+                                Total Number of outstanding Tasks : {{ mcompCurrentTAsks.length }}<br>
+                                Total Number of Tasks allocated: {{ ( allCompanyTasks | async)?.length }}<br>
+                              </div>
+                              <div class="row">
+                                <div class="card-body" style="margin-top: -10px">
+                                  <div class="row">
+                                    <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
+                                    <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
+                                    <div class="col-sm-2 card-header text-left">Start</div>
+                                    <div class="col-sm-2 card-header text-left">Finish</div>
+                                    <div class="col-sm-2 card-header text-left">Complete</div>
+                                    <div class="col-sm-3 card-header text-left">Champion</div>
+                                  </div>
+                                  <ol style="padding-left: 10px;">
+                                    <p *ngIf="(mcompOutstandingTasks.length != 0)" class="category text-warning">Outstanding Tasks.
+                                    </p>
+                                    <li *ngFor="let item of mcompOutstandingTasks">
+                                      <div class="row">
+                                        <div class="col-sm-3 col-md-3 text-left">
+                                          <a>{{ item.name }}</a>
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <a>{{ item.start }}</a>
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <a>{{ item.finish }}</a>
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <a>{{ item.complete }}</a>
+                                        </div>
+                                        <div class="col-md-3 card-category col-sm-3">
+                                          <a>{{ item.champion.name }}</a>
+                                        </div>
+                                      </div>
+                                    </li>
+                                    <p *ngIf="(mcompCurrentTAsks.length != 0)" class="category text-success">Current Tasks.</p>
+                                    <li *ngFor="let item of mcompCurrentTAsks">
+                                      <div class="row">
+                                        <div class="col-sm-3 col-md-3 text-left">
+                                          <a> {{ item.name }}</a>
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <a> {{ item.start }}</a>
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <a> {{ item.finish }}</a>
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <a> {{ item.complete }}</a>
+                                        </div>
+                                        <div class="col-md-3 card-category col-sm-2">
+                                          <a> {{ item.champion.name }}</a>
+                                        </div>
+                                      </div>
+                                    </li>
+                                    <p *ngIf="(mcompUpcomingTAsks.length != 0)" class="category text-info">Upcoming Tasks.</p>
+                                    <li *ngFor="let item of mcompUpcomingTAsks">
+                                      <div class="row">
+                                        <div class="col-md-3 col-sm-3 text-left">
+                                          <a> {{ item.name }}</a>
+                                        </div>
+                                        <div class="col-md-2 col-sm-2">
+                                          <a> {{ item.start }}</a>
+                                        </div>
+                                        <div class="col-md-2 col-sm-2">
+                                          <a> {{ item.finish }}</a>
+                                        </div>
+                                        <div class="col-md-2 col-sm-2">
+                                          <a> {{ item.complete }}</a>
+                                        </div>
+                                        <div class="col-md-3 card-category  col-sm-3">
+                                          <a> {{ item.champion.name }}</a>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ol>
+                                </div>
+                              </div>
+                              <!-- <div class="row">
+                                <div class="col-md-12">
+                                  <p class="clrs-h4-font" style="margin-top:0em; color:darkslategray">Labour...</p>
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                              </div> -->
+                
+                              <div class="row col-md-12 text-left">
+                                <p class="pull-left clrs-h2"><span class="title card-category" style="color:darkslategray">
+                                    Labour...</span><br>
+                                </p>
+                              </div>
+                              <div *ngIf="displayCompanyReport" class="row">
+                                <div class="col-md-10">
+                                  <p class="pull-left clrs-h2"><span class="title card-category"
+                                      style="color:darkslategray">{{ compLabourer.name }}</span>`s report overview...</p><br>
+                                  <nav aria-label="Page navigation example">
+                                    <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-left" role="tablist">
+                                      <li class="nav-item">
+                                        <a class="pagination pagination-primary active" title="click to see the overview"
+                                          data-toggle="tab" href="#link7" role="tablist">
+                                          Overview
+                                        </a>
+                                      </li>
+                                      <span style="color:darkslategrey"> - </span>
+                                      <li class="nav-item">
+                                        <a class="pagination pagination-primary" title="click to see the timesheet" data-toggle="tab"
+                                          href="#link8" role="tablist">
+                                          Timesheet
+                                          <!-- <span style="color:darkslategrey"> - </span> -->
+                                        </a>
+                                      </li>
+                                      <span style="color:darkslategrey"> - </span>
+                                      <li class="nav-item">
+                                        <a class="pagination pagination-primary" title="click to see the other reports"
+                                          data-toggle="tab" href="#link9" role="tablist">
+                                          Other
+                                          <!-- <span style="color:darkslategrey"> - </span> -->
+                                        </a>
+                                      </li>
+                                    </ul>
+                                  </nav>
+                
+                                </div>
+                                <div class="col-md-2">
+                                  <button class="btn-link btn-magnify" (click)="displayEnt()">Back</button>
+                                </div>
+                              </div>
+                              <div *ngIf="!displayCompanyReport" class="row">
+                                <div class="col-sm-4">
+                
+                                  <ol class="card-category">
+                                    <li *ngFor="let person of labourRef1" class="text-left">
+                                      <a (click)="viewUserReport(person)" style="cursor:context-menu"
+                                        class="text-left">{{ person.name }}</a>
+                                    </li>
+                                  </ol>
+                
+                                </div>
+                                <div class="col-sm-8">
+                                  <div class="spacer" style="height:3em"></div>
+                                  <p class="text-info ">To see Individual's progress report, click a on the Individual's name.
+                                  </p>
+                                </div>
+                              </div>
+                              <div *ngIf="displayCompanyReport" class="row">
+                                <div class="tab-content tab-space tab-subcategories col-md-12">
+                                  <div class="tab-pane active" id="link7">
+                                    <div class="col-md-11 mr-auto ml-auto text-left">
+                                      Total Number of Tasks Complete : {{ (labourerCompletedTasks | async)?.length }}<br>
+                                      Total Number of outstanding Tasks : {{ labourerOutstandingTasks.length }}<br>
+                                      Total Number of Tasks allocated: {{ (compLabourerTasks | async)?.length }}<br>
+                                    </div>
+                                    <div class="col-md-12">
+                                      <!-- <div class="card-body" style="margin-top: -10px"> -->
+                                      <div class="row">
+                                        <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#
+                                        </div>
+                                        <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
+                                        <!-- <div class="col-sm-2 card-header">Target</div> -->
+                                        <div class="col-md-2 col-sm-2 card-header text-left">Start</div>
+                                        <div class="col-md-2 col-sm-2 card-header ">Finish</div>
+                                        <div class="col-md-2 col-sm-2 card-header ">Complete</div>
+                                        <div class="col-md-3 col-sm-3 card-header ">Champion</div>
+                                      </div>
+                                      <ol style="padding-left: 10px;">
+                                        <p *ngIf="(labourerOutstandingTasks.length != 0)" class="category text-warning">Outstanding Tasks.</p>
+                                        <!--  style="margin-top:-1em" -->
+                                        <li *ngFor="let item of labourerOutstandingTasks">
+                                          <div class="row">
+                                            <div class="col-md-3 col-sm-3 text-left">
+                                              <a>{{ item.name }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a>{{ item.start }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a>{{ item.finish }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a>{{ item.complete }}</a>
+                                            </div>
+                                            <div class="col-md-3 card-category col-sm-3">
+                                              <a>{{ item.champion.name }}</a>
+                                            </div>
+                                          </div>
+                                        </li>
+                                        <p *ngIf="(labourerCurrentTAsks.length != 0)" class="category text-success">Current Tasks.</p>
+                                        <li *ngFor="let item of labourerCurrentTAsks">
+                                          <div class="row">
+                                            <div class="col-md-3 col-sm-3">
+                                              <a> {{ item.name }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.start }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.finish }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.complete }}</a>
+                                            </div>
+                                            <div class="col-md-3 card-category  col-sm-3">
+                                              <a> {{ item.champion.name }}</a>
+                                            </div>
+                                          </div>
+                                        </li>
+                                        <p *ngIf="(labourerUpcomingTAsks.length != 0)" class="category text-info">Upcurrent Tasks.</p>
+                                        <li *ngFor="let item of labourerUpcomingTAsks">
+                                          <div class="row">
+                                            <div class="col-md-3 col-sm-3">
+                                              <a> {{ item.name }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.start }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.finish }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.complete }}</a>
+                                            </div>
+                                            <div class="col-md-3 card-category  col-sm-3">
+                                              <a> {{ item.champion.name }}</a>
+                                            </div>
+                                          </div>
+                                        </li>
+                                      </ol>
+                                      <!-- </div> -->
+                                    </div>
+                                  </div>
+                                  <div class="tab-pane" id="link8">
+                                    Efficiently Timesheet
+                                    <br>
+                                    <br>Dramatically maintain clicks-and-mortar solutions without functional solutions.
+                                  </div>
+                                  <div class="tab-pane" id="link9">
+                                    Other reports
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>                
+                          <div class="tab-pane" id="projectOverview" role="tabpanel" aria-expanded="false">
+                            <div class="card-body">
+                              <div class="col-md-10 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4-font" style="color: darkslategray">Project Details</p>
+                                <div class="card-plain card-content">
+                                  <div class="text-left na-p" style="margin-left:2em ">
+                                    <span class="row col-md-12">
+                                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Project Name
+                                      </span>
+                                      <span class="col-sm-9">: {{ (project)?.name }} </span>
+                                    </span><br>
+                                    <span class="row col-md-12">
+                                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Sector </span>
+                                      <span class="col-sm-9">: {{ (project)?.sector }} </span>
+                                    </span><br>
+                                    <span class="row col-md-12">
+                                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Location
+                                      </span>
+                                      <span class="col-sm-9">: {{ (project)?.location }} </span>
+                                    </span><br>
+                                  </div>
+                                </div>
+                                <div class="spacer" style="height: 2em"></div>
+                                <div *ngIf="!displayCompany" class="card-body">
+                                  <div class="row">
+                                    <p class="clrs-h2"><span class="title card-category" style="color:darkslategray">
+                                        List of Enterprise involved...</span>
+                                    </p>
+                                  </div>
+                                  <div class="row">
+                                    <ol class="card-category">
+                                      <li *ngFor="let company of allProjectCompanies | async" class="text-left">
+                                        <a (click)="viewSetCompanyReport(company)" style="cursor:context-menu" class="text-left">{{ company.name }}</a>
+                                      </li>
+                                    </ol>
+                                    <div class="pull-right col-md-7 ml-auto mr-auto">
+                                      <p class="text-info ">To see Enterprise progress report, click on the enterprise name.</p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div *ngIf="displayCompany" class="card-body">
+                                
+                                  <div class="row">
+                                    <!-- <div class="col-md-8"> -->
+                                      <p class="clrs-h2"><span class="title card-category" style="color:darkslategray">
+                                        <b>{{ setCompany.name }}</b> enterprise report.</span><br>
+                                        <!-- Summarized Report for <b>{{ setCompany.name }}</b> enterprise.</span><br> -->
+                                      </p>
+                                    <!-- </div>-->
+                                    <div class="pull-right col-md-4 ml-auto mr-auto">
+                                      <button *ngIf="displayCompany" class="btn-link btn-magnify" (click)="displayProject()" style="margin-bottom: 9px;">Back to Enterprise list</button>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <p class="clrs-h4-font"><span class="title card-category" style="color:darkslategray">
+                                      Labour Returns.</span><br>
+                                    </p>
+                                  </div>
+                                  <div class="card-body" style="margin-top: -10px">
+                                    <ol class="card-category">
+                                      <li *ngFor="let person of setCompanyLabour | async" class="text-left">
+                                        <a style="cursor:default" class="text-left">{{ person.name }}</a>
+                                      </li>
+                                    </ol>
+                                  </div>
+                                  <div class="row">
+                                    <p class="clrs-h4-font"><span class="title card-category" style="color:darkslategray">
+                                      Plant Returns.</span><br>
+                                    </p>
+                                  </div>
+                                  <div class="card-body" style="margin-top: -10px">
+                                    <ol class="card-category">
+                                      <li *ngFor="let asset of setCompanyPlants | async" class="text-left">
+                                        <a style="cursor:default" class="text-left">{{ asset.name }}</a>
+                                      </li>
+                                    </ol>
+                                  </div>
+                                  <div class="row">
+                                    <p class="clrs-h4-font"><span class="title card-category" style="color:darkslategray">
+                                      Progress Report.</span><br>
+                                    </p>
+                                  </div>
+                                  <div class="col-md-12 mr-auto ml-auto text-left">
+                                    Total Number of Tasks Complete : {{ (allsetCompanyTasksComplete | async)?.length }}<br>
+                                    Total Number of outstanding Tasks : {{ setCompOutstandingTasks.length }}<br>
+                                    Total Number of Tasks allocated: {{ (allsetCompanyTasks | async)?.length }}<br>
+                                  </div>
+                                  <div class="row">
+                                    <div class="card-body" style="margin-top: -10px">
+                                      <div class="row">
+                                        <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
+                                        <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task
+                                        </div>
+                                        <div class="col-sm-2 card-header text-left">Start</div>
+                                        <div class="col-sm-2 card-header text-left">Finish</div>
+                                        <div class="col-sm-2 card-header text-left" style="padding-right: 0px;padding-left: 0px;">Complete</div>
+                                        <div class="col-sm-3 card-header text-left">Champion</div>
+                                      </div>
+                                      <ol style="padding-left: 10px;">
+                                        <p *ngIf="(setCompOutstandingTasks.length != 0)" class="category text-warning">Outstanding Tasks.</p>
+                                        <li *ngFor="let item of setCompOutstandingTasks">
+                                          <div class="row">
+                                            <div class="col-sm-3">
+                                              <a>{{ item.name }}</a>
+                                            </div>
+                                            <div class="col-sm-2">
+                                              <a>{{ item.start }}</a>
+                                            </div>
+                                            <div class="col-sm-2">
+                                              <a>{{ item.finish }}</a>
+                                            </div>
+                                            <div class="col-sm-2">
+                                              <a>{{ item.complete }}</a>
+                                            </div>
+                                            <div class="col-md-3 card-category col-sm-3">
+                                              <a>{{ item.champion.name }}</a>
+                                            </div>
+                                          </div>
+                                        </li>
+                                        <p *ngIf="(setCompCurrentTAsks.length != 0)" class="category text-success">
+                                          Current Tasks.</p>
+                                        <li *ngFor="let item of setCompCurrentTAsks">
+                                          <div class="row">
+                                            <div class="col-md-3 col-sm-3">
+                                              <a> {{ item.name }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.start }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.finish }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.complete }}</a>
+                                            </div>
+                                            <div class="col-md-3 card-category  col-sm-3">
+                                              <a> {{ item.champion.name }}</a>
+                                            </div>
+                                          </div>
+                                        </li>
+                                        <p *ngIf="(setCompUpcomingTAsks.length != 0)" class="category text-info">
+                                          Upcoming Tasks.</p>
+                                        <li *ngFor="let item of setCompUpcomingTAsks">
+                                          <div class="row">
+                                            <div class="col-md-3 col-sm-3">
+                                              <a> {{ item.name }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.start }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.finish }}</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2">
+                                              <a> {{ item.complete }}</a>
+                                            </div>
+                                            <div class="col-md-3 card-category  col-sm-3">
+                                              <a> {{ item.champion.name }}</a>
+                                            </div>
+                                          </div>
+                                        </li>
+                                      </ol>
+                                    </div>
+                                  </div>
+                                
+
+                                
+
+                                  
+                                </div>
+                                <div *ngIf="!displayCompany" class="card-body">
+                                  <div class="row">
+                                    <p class="text-left clrs-h2"><span class="title card-category" style="color:darkslategray">
+                                        Overall Summary...</span>
+                                    </p>
+                                  </div>
+                                </div>  
+                                <div *ngIf="!displayCompany" class="card-body">
+                                  <div class="row">
+                                    <p class="text-left clrs-h2"><span class="title card-category" style="color:darkslategray">
+                                        Completion...: 46 %</span>
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </li>
-                    <p *ngIf="(setCompCurrentTAsks != 0)" class="category text-success">Current Tasks.</p>
-                    <li *ngFor="let item of setCompCurrentTAsks">
-                      <div class="row">
-                        <div class="col-sm-3 col-md-3 text-left">
-                          <a> {{ item.name }}</a>
-                        </div>
-                        <div class="col-sm-2">
-                          <a> {{ item.start }}</a>
-                        </div>
-                        <div class="col-sm-2">
-                          <a> {{ item.finish }}</a>
-                        </div>
-                        <div class="col-sm-2">
-                          <a> {{ item.complete }}</a>
-                        </div>
-                        <div class="col-md-3 card-category col-sm-2">
-                          <a> {{ item.champion.name }}</a>
-                        </div>
-                      </div>
-                    </li>
-                    <p *ngIf="(setCompUpcomingTAsks != 0)" class="category text-info">Upcoming Tasks.</p>
-                    <li *ngFor="let item of setCompUpcomingTAsks">
-                      <div class="row">
-                        <div class="col-md-3 col-sm-3 text-left">
-                          <a> {{ item.name }}</a>
-                        </div>
-                        <div class="col-md-2 col-sm-2">
-                          <a> {{ item.start }}</a>
-                        </div>
-                        <div class="col-md-2 col-sm-2">
-                          <a> {{ item.finish }}</a>
-                        </div>
-                        <div class="col-md-2 col-sm-2">
-                          <a> {{ item.complete }}</a>
-                        </div>
-                        <div class="col-md-3 card-category  col-sm-3">
-                          <a> {{ item.champion.name }}</a>
-                        </div>
-                      </div>
-                    </li>
-                  </ol>
-                </div>
-              </div>
-              <!-- <div class="row">
-                <div class="col-md-12">
-                  <p class="clrs-h4" style="margin-top:0em; color:darkslategray">Labour...</p>
-                </div>
-                <div class="col-md-2">
-                </div>
-              </div> -->
-
-              <div class="row col-md-12 text-left">
-                <p class="pull-left clrs-h2"><span class="title card-category" style="color:darkslategray">
-                  Labour...</span><br>
-                </p>
-              </div>
-              <div *ngIf="displayCompanyReport" class="row">
-                <div class="col-md-10">
-                  <p class="pull-left clrs-h2"><span class="title card-category" style="color:darkslategray">{{ compLabourer.name }}</span>`s report overview...</p><br>
-                  <nav aria-label="Page navigation example">
-                    <ul class="nav nav-pills nav-pills-primary nav-pills-icons justify-content-left" role="tablist">
-                      <li class="nav-item">
-                        <a class="pagination pagination-primary active" title="click to see the overview" data-toggle="tab" href="#link7" role="tablist">
-                          Overview 
-                        </a>
-                      </li>
-                      <span style="color:darkslategrey"> - </span>
-                      <li class="nav-item">
-                        <a class="pagination pagination-primary" title="click to see the timesheet" data-toggle="tab" href="#link8" role="tablist">
-                          Timesheet 
-                          <!-- <span style="color:darkslategrey"> - </span> -->
-                        </a>
-                      </li>
-                      <span style="color:darkslategrey"> - </span>
-                      <li class="nav-item">
-                        <a class="pagination pagination-primary" title="click to see the other reports" data-toggle="tab" href="#link9" role="tablist">
-                          Other
-                          <!-- <span style="color:darkslategrey"> - </span> -->
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
-
-                </div>
-                <div class="col-md-2">
-                  <button class="btn-link btn-magnify" (click)="displayEnt()">Back</button>
-                </div>
-              </div>
-              <div *ngIf="!displayCompanyReport" class="row">
-                <div class="col-sm-4">
-
-                  <ol class="card-category">
-                    <li *ngFor="let person of labourRef1" class="text-left">
-                      <a (click)="viewUserReport(person)" style="cursor:context-menu" class="text-left">{{ person.name }}</a>
-                    </li>
-                  </ol>
-
-                </div>
-                <div class="col-sm-8">
-                  <div class="spacer" style="height:3em"></div>
-                  <p class="text-info ">To see Individual's progress report, click a on the Individual's name.
-                  </p>
-                </div>
-              </div>
-              <div *ngIf="displayCompanyReport" class="row">
-                <div class="tab-content tab-space tab-subcategories col-md-12">
-                  <div class="tab-pane active" id="link7">
-                    <div class="col-md-11 mr-auto ml-auto text-left">
-                      Total Number of Tasks Complete : {{ (labourerCompletedTasks | async)?.length }}<br>
-                      Total Number of outstanding Tasks : {{ labourerOutstandingTasks.length }}<br>
-                      Total Number of Tasks allocated: {{ (compLabourerTasks | async)?.length }}<br>
                     </div>
-                    <div class="col-md-12">
-                      <!-- <div class="card-body" style="margin-top: -10px"> -->
-                        <div class="row">
-                          <div class="col-sm-1 card-header text-left" style="padding-right: 0px; padding-left: 12px;">#</div>
-                          <div class="col-sm-2 card-header text-left" style="padding-left: 0px;">Task</div>
-                          <!-- <div class="col-sm-2 card-header">Target</div> -->
-                          <div class="col-md-2 col-sm-2 card-header text-left">Start</div>
-                          <div class="col-md-2 col-sm-2 card-header ">Finish</div>
-                          <div class="col-md-2 col-sm-2 card-header ">Complete</div>
-                          <div class="col-md-3 col-sm-3 card-header ">Champion</div>
-                        </div>
-                        <ol style="padding-left: 10px;">
-                          <p *ngIf="(labourerOutstandingTasks.length != 0)" class="category text-warning">Outstanding Tasks.</p>
-                          <!--  style="margin-top:-1em" -->
-                          <li *ngFor="let item of labourerOutstandingTasks">
-                            <div class="row">
-                              <div class="col-md-3 col-sm-3 text-left">
-                                <a>{{ item.name }}</a>
-                              </div>
-                              <div class="col-md-2 col-sm-2">
-                                <a>{{ item.start }}</a>
-                              </div>
-                              <div class="col-md-2 col-sm-2">
-                                <a>{{ item.finish }}</a>
-                              </div>
-                              <div class="col-md-2 col-sm-2">
-                                <a>{{ item.complete }}</a>
-                              </div>
-                              <div class="col-md-3 card-category col-sm-3">
-                                <a>{{ item.champion.name }}</a>
-                              </div>
-                            </div>
-                          </li>
-                          <p *ngIf="(labourerCurrentTAsks != 0)" class="category text-success">Current Tasks.</p>
-                          <li *ngFor="let item of labourerCurrentTAsks">
-                            <!-- <li *ngFor="let item of setCompCurrentTAsks"> -->
-                            <div class="row">
-                              <div class="col-md-3 col-sm-3">
-                                <a> {{ item.name }}</a>
-                              </div>
-                              <!-- <div class="col-sm-2">
-                                            <a> {{ item.name }}</a>
-                                          </div> -->
-                              <div class="col-md-2 col-sm-2">
-                                <a> {{ item.start }}</a>
-                              </div>
-                              <div class="col-md-2 col-sm-2">
-                                <a> {{ item.finish }}</a>
-                              </div>
-                              <div class="col-md-2 col-sm-2">
-                                <a> {{ item.complete }}</a>
-                              </div>
-                              <div class="col-md-3 card-category  col-sm-3">
-                                <a> {{ item.champion.name }}</a>
-                              </div>
-                            </div>
-                          </li>
-                          <p *ngIf="(labourerUpcomingTAsks != 0)" class="category text-info">Upcurrent Tasks.</p>
-                          <li *ngFor="let item of labourerUpcomingTAsks">
-                            <!-- <li *ngFor="let item of setCompCurrentTAsks"> -->
-                            <div class="row">
-                              <div class="col-md-3 col-sm-3">
-                                <a> {{ item.name }}</a>
-                              </div>
-                              <!-- <div class="col-sm-2">
-                                            <a> {{ item.name }}</a>
-                                          </div> -->
-                              <div class="col-md-2 col-sm-2">
-                                <a> {{ item.start }}</a>
-                              </div>
-                              <div class="col-md-2 col-sm-2">
-                                <a> {{ item.finish }}</a>
-                              </div>
-                              <div class="col-md-2 col-sm-2">
-                                <a> {{ item.complete }}</a>
-                              </div>
-                              <div class="col-md-3 card-category  col-sm-3">
-                                <a> {{ item.champion.name }}</a>
-                              </div>
-                            </div>
-                          </li>
-                        </ol>
-                      <!-- </div> -->
-                    </div>
                   </div>
-                  <div class="tab-pane" id="link8">
-                    Efficiently Timesheet
-                    <br>
-                    <br>Dramatically maintain clicks-and-mortar solutions without functional solutions.
-                  </div>
-                  <div class="tab-pane" id="link9">
-                    Other reports
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>  
-      
-          <div class="tab-pane" id="projectOverview" role="tabpanel" aria-expanded="false">
-            <div class="card-body">
-              <div class="col-md-10 ml-auto mr-auto">
-                <p class="text-left title clrs-h4" style="color: darkslategray">Project Details</p>
-                <div class="card-plain card-content">
-                  <div class="text-left na-p" style="margin-left:2em ">
-                    <span class="row col-md-12">
-                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Project Name
-                      </span>
-                      <span class="col-sm-9">: {{ (project)?.name }} </span>
-                    </span><br>
-                    <span class="row col-md-12">
-                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Sector </span>
-                      <span class="col-sm-9">: {{ (project)?.sector }} </span>
-                    </span><br>
-                    <span class="row col-md-12">
-                      <span class="col-sm-3" style="padding-left: 0px; padding-right: 0px;">Location
-                      </span>
-                      <span class="col-sm-9">: {{ (project)?.location }} </span>
-                    </span><br>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-    </div>
-  </div>
-</div>
-
-
-
+                
+                
+                
                 </div>
               </div>
             </div>
@@ -2852,28 +3273,29 @@
         <div class="card-body ">
           <div class="card-header text-center">
             <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-              <font size=4>New Action Item for <br>{{ selectedTask.name }} task</font>
+              <font size=4>New Activity for <br>{{ selectedTask.name }} task</font>
             </p>
           </div>
           <hr>
           <!-- <a> Selected Unit: <span></span><small> {{ setSui.id }}</small></a><br> -->
           <form class="form-horizontal">
             <!-- <div class="row">
-            <label class="col-md-4 col-form-label">Action Name</label>
+            <label class="col-md-4 col-form-label">Activity Name</label>
             <div class="col-md-7">
               <div class="form-group">
-                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Action name">
+                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Activity name">
               </div>
             </div>
           </div> -->
             <div class="row">
-              <label class="col-md-4 col-form-label">Work Action</label>
+              <label class="col-md-4 col-form-label">Activity</label>
               <div class="col-md-7 col-lg-6 col-sm-5">
-                <ng-select [items]="billWorks | async" bindLabel="name" name="WorkAction" placeholder="Select Work Action" (click)="setAction(setItem)" [(ngModel)]="setItem">
+                <ng-select [items]="billWorks | async" bindLabel="name" name="WorkAction"
+                  placeholder="Select Activity" (click)="setAction(setItem)" [(ngModel)]="setItem">
                 </ng-select>
               </div>
             </div>
-            <!-- <ng-container *ngIf="hideDateBtn">
+            <ng-container *ngIf="hideDateBtn">
               <div class="row col-md-10 ml-auto mr-auto">
                 <button class="primary btn-link" (click)="showDatefield()">
                   <small>Add date</small>
@@ -2906,7 +3328,7 @@
                   </button>
                 </div>
               </div>
-            </ng-container> -->
+            </ng-container>
           </form>
 
           <div class="modal-footer" style="margin-bottom:0%">
@@ -2915,8 +3337,8 @@
             </div>
             <div class="divider"></div>
             <div class="right-side">
-              <button type="button" class="btn btn-success btn-link" (click)="newAction()"
-                data-dismiss="modal" title="save action">Enter</button>
+              <button type="button" class="btn btn-success btn-link" (click)="newAction(startDate,endDate)"
+                data-dismiss="modal" title="save activity">Enter</button>
             </div>
           </div>
         </div>
@@ -2931,7 +3353,7 @@
           <div class="card-header text-center">
             <p class="col-md-8 ml-auto mr-auto title na-am col-form-label info">
               Select Participants<br>
-              for Action item: <b>{{ selectedAction.name }}</b> </p><br>
+              for Activity item: <b>{{ selectedAction.name }}</b> </p><br>
           </div>
           <div class="col-md-10 ml-auto mr-auto">
             <br>
@@ -2977,7 +3399,7 @@
                 <div class="modal-profile ml-auto mr-auto">
                   <i class="fa fa-address-card"></i>
                 </div>
-                <p class="clrs-h1"> {{ (viewCompany)?.name }} </p>
+                <p class="clrs-h1-font"> {{ (viewCompany)?.name }} </p>
               </div>
               <div class="modal-body">
                 <!-- <form method=""> -->
@@ -3056,7 +3478,7 @@
         <div class="card-body ">
           <div class="card-header text-center">
             <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-              <font size=4>Edit Action item <br> "{{ selectedAction.name }}"</font>
+              <font size=4>Edit Activity item <br> "{{ selectedAction.name }}"</font>
             </p>
           </div>
           <hr>
@@ -3085,7 +3507,7 @@
             <div class="divider"></div>
             <div class="right-side">
               <button type="button" class="btn btn-success btn-link" (click)="editAction(startDate,endDate)"
-                data-dismiss="modal" title="save action">Enter</button>
+                data-dismiss="modal" title="save activity">Enter</button>
             </div>
           </div>
         </div>
@@ -3099,18 +3521,18 @@
         <div class="card-body ">
           <div class="card-header text-center">
             <p class="col-md-10 ml-auto mr-auto title na-an info" style="color:steelblue">
-              <font size=4>New Action Item for {{ selectedTask.name }} task</font>
+              <font size=4>New Activity for {{ selectedTask.name }} task</font>
             </p>
           </div>
           <hr>
           <!-- <a> Selected Unit: <span></span><small> {{ setSui.id }}</small></a><br> -->
           <form class="form-horizontal">
             <div class="row">
-              <label class="col-md-4 col-form-label">Action Name</label>
+              <label class="col-md-4 col-form-label">Activity Name</label>
               <div class="col-md-7">
                 <div class="form-group">
                   <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control"
-                    placeholder="Action name">
+                    placeholder="Activity name">
                 </div>
               </div>
             </div>
@@ -3177,7 +3599,7 @@
             <div class="divider"></div>
             <div class="right-side">
               <button type="button" class="btn btn-success btn-link" (click)="newActionToday(actionItem)"
-                data-dismiss="modal" title="save action">Enter</button>
+                data-dismiss="modal" title="save activity">Enter</button>
             </div>
           </div>
         </div>
@@ -3191,7 +3613,7 @@
           <button type="button" class="close" data-dismiss="modal" (click)="resetForm()" aria-label="Close">
             <i class="nc-icon nc-simple-remove"></i>
           </button>
-          <p class="title-up na-am">Add Work Item to <b>{{ (selectedBill)?.name }}</b><br>
+          <p class="title-up na-am">Add Activity to <b>{{ (selectedBill)?.name }}</b><br>
         </div>
         <div class="modal-body">
           <ng-container>
@@ -3431,7 +3853,7 @@
                     <img src="{{ (labourer)?.photoURL }}" width="50px">
                   </div> -->
                 </div>
-                <p class="clrs-h1"> {{ (labourer)?.name }} </p>
+                <p class="clrs-h1-font"> {{ (labourer)?.name }} </p>
               </div>
               <div class="modal-body">
                 <div class="form-group">

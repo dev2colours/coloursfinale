@@ -48,3 +48,22 @@
     padding-left: 1px;
     padding-right: 0px;
 }
+
+.clrs-h1-font {
+    /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+    font-family: ABeeZee;
+    /* color: steelblue; */
+    color: #333366;
+    /* font-size: 18px; */
+    font-size: 23px;
+
+}
+
+.clrs-h4-font {
+    /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+    font-family: ABeeZee;
+    /* color: steelblue; */
+    color: #333366;
+    font-size: 18px;
+    
+}

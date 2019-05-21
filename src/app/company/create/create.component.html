@@ -6,11 +6,17 @@
                     <div class="nav-tabs-navigation" style="margin-bottom: 0px;">
                         <div class="nav-tabs-wrapper">
                             <ul id="tabs" class="nav nav-tabs" role="tablist">
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="nav-link" data-toggle="tab" href="#project" role="tab" aria-expanded="false">Projects</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link active" data-toggle="tab" href="#company" role="tab" aria-expanded="true">Enterprise</a>
+                                </li> -->
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" routerLink="/projects/p-create" role="tab" aria-expanded="true">Projects</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" routerLink="/enterprises/create" role="tab" aria-expanded="false">Enterprise</a>
                                 </li>
                             </ul>
                         </div>
@@ -263,11 +269,11 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <label class="col-md-3 col-form-label">Your Contact</label>
+                                                <label class="col-md-3 col-form-label">Mobile</label>
                                                 <div class="col-md-9">
                                                     <div class="form-group">
-                                                        <input type="text" [(ngModel)]="phoneNumber" name="enterprise_location"
-                                                            class="form-control" placeholder="e.g. 0736343900">
+                                                        <input type="text" [(ngModel)]="compUser.phoneNumber" name="enterprise_location" class="form-control"
+                                                            placeholder="e.g. +263778880000">
                                                     </div>
                                                 </div>
                                             </div>
@@ -293,7 +299,7 @@
                                                 <label class="col-md-3 col-form-label">Country</label>
                                                 <div class="col-md-9">
                                                     <div class="form-group">
-                                                        <input type="text" [(ngModel)]="compUser.nation" name="enterprise_location"
+                                                        <input type="text" [(ngModel)]="compUser.nationality" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. Zimbabwe">
                                                     </div>
                                                 </div>
@@ -322,8 +328,8 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <button type="submit" name="nextBtn" (click)="bckPage()" class="btn-link text-info">Back</button>
-                                                    <button type="submit" (click)="saveEnterprise()" name="enterprise_sector"
-                                                        class="btn-link text-info">Save company</button>
+                                                    <!-- <button type="submit" (click)="saveEnterprise()" name="enterprise_sector" class="btn-link text-info">Save company</button> -->
+                                                    <button type="submit" (click)="testFileds()" name="enterprise_sector" class="btn-link text-info">Save company</button>
                                                 </div>
                                             </div>
                                         </div>

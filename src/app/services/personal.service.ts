@@ -110,6 +110,7 @@ export class PersonalService {
     ); 
     return this.classifications;
   }
+  
 
   async getTasks(myUserId) {
     console.log(myUserId)

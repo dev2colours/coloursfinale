@@ -35,7 +35,10 @@ import { TaskService } from './services/task.service';
 import { EnterpriseService } from './services/enterprise.service';
 import { InitialiseService } from './services/initialise.service';
 import { AuthService } from './services/auth.service';
-import { TimesheetComponent } from './calendar/timesheet/timesheet.component';
+
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
     imports:      [
@@ -58,6 +61,9 @@ import { TimesheetComponent } from './calendar/timesheet/timesheet.component';
         AngularFirestoreModule.enablePersistence(),
         AngularFireAuthModule,
         AngularFireMessagingModule,
+        BsDropdownModule.forRoot(),
+        TooltipModule.forRoot(),
+        ModalModule.forRoot()
 
     ],
     providers: [

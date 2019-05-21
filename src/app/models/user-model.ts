@@ -1,5 +1,5 @@
-import { Project } from "./project-model";
-import { Enterprise, Department, ParticipantData } from "./enterprise-model";
+import { Project, workItem } from "./project-model";
+import { Enterprise, Department, ParticipantData, projectRole, service } from "./enterprise-model";
 
 export interface coloursUser {
     name: string,
@@ -36,7 +36,9 @@ export interface coloursUser {
     focusFactor: number,
     referee: [ParticipantData],
     userImg:string,
-    LastTimeLogin: string
+    LastTimeLogin: string,
+    hierarchy: string,
+    updated: boolean
     // User's FOcus Factor  = (Total assets value - Total cost of liability)/ (No of companies + projects user is Involved in)
 }
 
@@ -77,7 +79,8 @@ export interface personalStandards {
     name: string;
     period: string; //  must be valid email format
     createdOn: string;
-    id: string
+    id: string,
+    unit: string,
 }   
 
 export interface selectedPeriod {
@@ -86,7 +89,7 @@ export interface selectedPeriod {
 }
 
 export interface Applicant {
-    company: Enterprise,
+    company: projectRole,
     department: Department,
     email: string,
     bus_email: string,
@@ -95,7 +98,11 @@ export interface Applicant {
     phoneNumber: string,
     project:Project,
     photoURL: string,
-    dataId: string
+    dataId: string,
+    address: string,
+    nationality: string,
+    nationalId: string,
+    // roles: [service]
 }
 
 export interface emailLogin {
@@ -110,14 +117,54 @@ export interface mail {
     HTMLBody: any,
 }
 
-// export interface myAsset {
-//     name: string,
-//     value: string,
-//     id: string
-// }
+export interface timeSheetDate {
+    name: string,
+    id: string
+    // value: string,
+    // id: string
+}
+
+export interface classWork extends classification  {
+    Hours: [work],
+    totalHours: number
+}
+
+export interface work{
+    WorkingTime: string,
+    name: string,
+    id: string,
+}
 
 // export interface myLiability {
 //     name: string,
 //     amount: string,
 //     id: string
 // }
+
+export interface workReport  {
+    name: string,
+    id: string,
+    action: string,
+    actionId: string,
+    time: string,
+    tHours: string,
+    tMinutes: string,
+    reason: string,
+    hours: number
+}
+
+export interface unRespondedWorkReport {
+    name: string,
+    id: string,
+    time: string,
+    reason: string,
+    tHours: string,
+    tMinutes: string,
+    hours: number
+}
+
+export interface rpt extends workItem {
+    wrkHours: string
+    startTime: string
+    endTime: string
+}

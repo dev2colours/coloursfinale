@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Enterprise, ParticipantData, companyChampion, Department, Subsidiary, employeeData, asset, client, companyStaff } from "../models/enterprise-model";
+import { Enterprise, ParticipantData, companyChampion, Department, Subsidiary, employeeData, asset, client, companyStaff, projectRole } from "../models/enterprise-model";
 import { Project, projectCompDetail, workItem, abridgedBill, Section } from "../models/project-model";
 import { Task, MomentTask, ActionItem } from "../models/task-model";
-import { classification } from 'app/models/user-model';
+import { classification, coloursUser } from 'app/models/user-model';
 import { PopupComponent } from 'app/calendar/popup/popup.component';
 
 @Injectable({
@@ -35,42 +35,47 @@ export class InitialiseService {
   selectedDepartment: Department;
   classification: classification;
   public popData: boolean;
+  initColUser: coloursUser;
 
+  companyWithProjectRoles: projectRole;
 
   constructor() {
 
     this.popData = false;
-    this.classification = { name: '', createdOn: '', plannedTime: '', actualTime: '', Varience: '', id: '' };
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
-    this.compChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
-    this.section = { id: "", no:  0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills:null }
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "" };
-    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: this.userChampion, createdOn: "", id: "", location: "", sector: "" };
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
-    this.compChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
+    this.companyWithProjectRoles = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", bus_email: "", sector: "", participants: null, champion: this.userChampion, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "", roles: null };
+    this.classification = { name: "", createdOn: "", plannedTime: "", actualTime: "", Varience: "", id: "" };
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
+    this.compChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
+    this.section = { id: "", no:  null, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills:null }
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", classification: null };
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: this.userChampion, createdOn: "", id: "", location: "", sector: "", completion:"" };
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
+    this.compChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
     this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", bus_email: "", sector: "", participants: null, champion: this.userChampion, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.newEnterprise = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", bus_email: "", sector: "", participants: null, champion: this.userChampion, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
-    this.selectedStaff = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
-    this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "" };
-    this.actionItem = { uid: "", id: "", name: "", unit: "", by: "", byId: "", workHours: null, type: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, champion: this.userChampion, classification: this.classification, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
-    this.selectedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", workHours: null, type: "", quantity: 0, targetQty: 0, rate: 0, amount: 0, champion: this.userChampion, classification: this.classification, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
+    this.selectedStaff = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
+    this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", classification: null };
+    this.actionItem = { uid: "", id: "", name: "", unit: "", by: "", byId: "", workHours: null, type: "", quantity: null, targetQty: null, rate: null, amount: null, champion: this.userChampion, classification: this.classification, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.section, actualStart: "", actualEnd: "", Hours: "" };
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", workHours: null, type: "", quantity: null, targetQty: null, rate: null, amount: null, champion: this.userChampion, classification: this.classification, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.section, actualStart: "", actualEnd: "", Hours: "" };
     this.projectCompDetail = { id: "", name: "" };
     this.dpt = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
     this.asset = { name: "", assetNumber: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", cost:"" };
     this.client = { name: "", id: "", contactPerson: null, champion: null, by: "", byId: "", joinedOn:"", createdOn: "", address: "", telephone: "", location: "", sector: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.subsidiary = { name: "", by: "", byId: "", createdOn: "", Holding_companyName: "", companyId: "", bus_email: "", id: "", location: "", sector: "", services: null, participants: null, champion: null, address: "", telephone: "", taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
-    this.contactPerson = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
-    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: ""  };
-    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: ""  };
+    this.contactPerson = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
+    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy:"" };
+    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: "" };
     this.department = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null }
     this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null }
-    this.employeeData = { name: "", phoneNumber: "", email: "", bus_email: "", id: "", address: "", nationalId: "", nationality: "", department: "", departmentId: "", photoURL: "" };
-    this.workItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.userChampion, classification: this.classification, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false };
-    this.abridgedBill = { section: this.section,id: "", name: "", No: 1, projectId: "", projectName: "", companyId: "", companyName: "", totalAmount: 0, createdOn: "", UpdatedOn: "" };
+    this.employeeData = { name: "", phoneNumber: "", email: "", bus_email: "", id: "", address: "", nationalId: "", nationality: "", department: "", departmentId: "", photoURL: "", hierarchy: "" };
+    this.workItem = { uid: "", id: "", name: "", unit: "", quantity: null, targetQty: null, rate: null, workHours: null, amount: null, by: "", byId: "", type: "", champion: this.userChampion, classification: this.classification, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.section, actualStart: "", actualEnd: "", Hours: "" };
+    this.abridgedBill = { section: this.section, id: "", name: "", No: 1, projectId: "", projectName: "", companyId: "", companyName: "", totalAmount: null, createdOn: "", UpdatedOn: "" };
+    this.initColUser = { name: "", gender: "", dob: "", age: 0, username: "", email: "", bus_email: "", phoneNumber: "", telephone: null, address: "", nationalId: "", nationality: "", zipCode: null, country: "", city: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", aboutMe: "", profession: null, qualifications: null, bodyWeight: 0, bodyHeight: 0, bodyMassIndex: 0, industrySector: "", personalAssets: null, personalLiabilities: null, reference: null, focusFactor: 0, userImg: "", LastTimeLogin: "", referee: [null], hierarchy: "", updated: false }; 
   }
 
   getSectionInit(){ return this.section }
-
+  initColUserData() { return this.initColUser }
+  initCompwithRoles() { return this.companyWithProjectRoles }
   getEmployeeDataInit(){ return this.employeeData }
   getSubsidiary() { return this.subsidiary}
   getTask() { return this.task }

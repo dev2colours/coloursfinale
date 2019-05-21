@@ -14,11 +14,11 @@
                       <div class="nav-tabs-wrapper">
                         <ul id="tabs" class="nav nav-tabs sma na-p" role="tablist">
                           <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#home" role="tab" aria-expanded="true">Search
+                            <a class="nav-link active" data-toggle="tab" href="#home" (click)="clearSearchData()" role="tab" aria-expanded="true">Search
                               by Location</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#profile" role="tab" aria-expanded="false">Sector</a>
+                            <a class="nav-link" data-toggle="tab" href="#profile" (click)="clearSearchData()" role="tab" aria-expanded="false">Sector</a>
                           </li>
                         </ul>
                       </div>
@@ -103,7 +103,6 @@
               <h6 class="card-category"> All Companies</h6>
             </div>
             <div class="row">
-              <!-- *ngIf="afAuth.user | async as user" -->
               <div class="col-lg-12">
                 <div class="card-body ">
                   <code hidden>All Companies</code>
@@ -113,28 +112,18 @@
                         <th class="text-left">Name</th>
                         <th class="text-left">Sector</th>
                         <th class="text-left">Location</th>
-                        <!-- <th class="text-left">Participants</th> -->
                         <th>Action</th>
                       </thead>
                       <tbody>
                         <tr *ngFor="let enterprise of enterprises | async ">
-                          <td class="text-left tab-cell">{{ enterprise.name }} </td> <!-- <br> {{enterprise.id}} -->
+                          <td class="text-left tab-cell">{{ enterprise.name }} </td>
                           <td class="text-left tab-cell">{{ enterprise.sector }}</td>
                           <td class="text-left tab-cell">{{ enterprise.location }}</td>
-                          <!-- <td  class="text-left tab-cell" ><span *ngFor="let participant of enterprise.participants" >{{ participant.name }} </span>
-                        </td> -->
                           <td class="text-center">
-                            <!-- {{ participant.name }} -->
                             <button class="success btn-link join" rel="tooltip" title="Connect to {{enterprise.name}}"
                               (click)="selectCompany(enterprise)" data-toggle="modal" data-target="#myModal">
                               <font size=2>connect </font>
                             </button>
-                            <!-- s.id==closed.staffID or enterprise.byId !== userId  || myArrayList.includes(object.id) || userId !== enterprise.participants.id-->
-                            <!-- <ng-template #showjoinbtn>
-                            <button class="success btn-link join" rel="tooltip" title="Connect to {{enterprise.name}}" (click)="selectCompany(enterprise)" data-toggle="modal" data-target="#myModal">
-                              <font size=2>connect </font>
-                            </button>
-                          </ng-template> -->
                         </tr>
                       </tbody>
                     </table>
@@ -159,7 +148,8 @@
                             </div>
                             <div class="divider"></div>
                             <div class="right-side">
-                              <button type="button" class="btn btn-link btn-link" (click)="connect2Enterprise(selectedCompany)"
+                              <!-- <button type="button" class="btn btn-link btn-link" (click)="connect2Enterprise(selectedCompany)" -->
+                              <button type="button" class="btn btn-link btn-link"
                                 data-dismiss="modal"> Confirm</button>
                             </div>
                           </div>
@@ -171,87 +161,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="myModal99" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header justify-content-center">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <i class="nc-icon nc-simple-remove"></i>
-        </button>
-        <p class="title-up">Select Company to Join {{ (projectToJoin)?.name }} project.<br>
-      </div>
-      <div class="modal-body">
-        <span *ngIf="showme" class="card-category"> 1.  Company joining the Project :<b> {{selectedCompany.name}} </b><button class="btn-link" (click)="showEnterpriseTable()">change</button></span><br>
-        <span *ngIf="showText" class="card-category"><button class="btn-link" (click)="hideText2()">2. Select Company Champion  for this Project</button></span>        
-        <span *ngIf="showCompUser" class="card-category"> 2.  Company Project Champion :<b> {{selectedStaff.name}} </b><button class="btn-link" (click)="showUsersTable()">change</button></span>
-        <span *ngIf="showRole" class="card-category">
-          <div class="row">
-            <label class="col-md-3 col-form-label">3. Roles</label>
-            <div class="col-lg-5 col-md-6 col-sm-3">
-              <select class="" data-size="7" data-style="btn btn-primary btn-round" title="Select Role">
-                <option disabled selected>Single Option</option>
-                <option value="2">Project Manager</option>
-                <option value="3">Civils</option>
-                <option value="4">Quantity Survey</option>
-                <option value="5">Plumbing</option>
-                <option value="6">Land Scapping</option>
-                <option value="7">Architecture</option>
-              </select>
-            </div>
-          </div>
-        </span>
-        <div class="table-responsive cont scrol-em" *ngIf="show">
-          <small>Select Company to Join the Project from the list</small>
-          <table class="table">
-            <thead class="card-category blue-clr">
-              <th class="text-left">Company</th>
-              <th class="text-center">Action</th>
-            </thead>
-            <tbody>
-              <tr *ngFor="let ent of enterprises | async ">
-                <td class="text-left">{{ ent.name }} </td>
-                <td class="text-center">
-                  <a class="warning btn-link select" style="cursor:pointer" (click)="toggleName(); selectCompany(ent)">
-                    <font size=2>Select</font>
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-    
-        <div class="table-responsive cont scrol-em" *ngIf="showCompWorkers">
-          <small>Select Company contact person from the company list of Employees</small>
-          <table class="table">
-            <thead class="card-category blue-clr">
-              <th class="text-left">Company</th>
-              <th class="text-center">Action</th>
-            </thead>
-            <tbody>
-              <tr *ngFor="let person of staff | async ">
-                <td class="text-left">{{ person.name }} </td>
-                <td class="text-center">
-                  <a class="warning btn-link select" style="cursor:pointer" (click)="showUser(); selectStaff(person)">
-                    <font size=2>Select</font>
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <div class="left-side">
-          <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Never mind</button>
-        </div>
-        <div class="divider"></div>
-        <div class="right-side">
-          <button type="button" class="btn btn-danger btn-link" (click)="sendRequest()" data-dismiss="modal">Confirm</button>
         </div>
       </div>
     </div>
@@ -269,24 +178,30 @@
       </div>
       <div class="card-body ">
         
-        <form class="form-horizontal">
+        <!-- <form class="form-horizontal"> -->
           <div class="row">
-            <label class="col-md-4 col-form-label text-left" style="margin-left: 2em;">Company</label>
-            <div class="col-md-7 col-lg-6 col-sm-5">
+            <label class="col-md-3 col-form-label text-left" style="margin-left: 2em;">Company</label>
+            <div class="col-md-9 col-lg-8 col-sm-7">
               <ng-select [items]="enterprises2nd | async" bindLabel="name" name="WorkAction" placeholder="Select company"
                 (change)="selectCompany(ent)" [(ngModel)]="ent">
               </ng-select>
             </div>
           </div>
           <div class="row">
-            <label class="col-md-4 col-form-label text-left" style="margin-left: 2em;">Champion</label>
-            <div class="col-md-7 col-lg-6 col-sm-5">
+            <label class="col-md-3 col-form-label text-left" style="margin-left: 2em;">Champion</label>
+            <div class="col-md-9 col-lg-8 col-sm-7">
               <ng-select [items]="staff | async" bindLabel="name" name="WorkAction" placeholder="Select champion"
                 (change)="selectStaff(person)" [(ngModel)]="person">
               </ng-select>
             </div>
           </div>
-        </form>
+          <div class="row">
+            <label class="col-md-3 col-form-label text-left" style="margin-left: 2em; margin-bottom: 0px; margin-top: 12px;">Roles</label>
+            <div class="col-md-9 col-lg-8 col-sm-7">
+              <tag-input [(ngModel)]='roles' theme='minimal'></tag-input>
+            </div>
+          </div>
+        <!-- </form> -->
       </div>
       <div class="modal-footer">
         <div class="left-side">

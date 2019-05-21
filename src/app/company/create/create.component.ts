@@ -14,6 +14,8 @@ import { ProjectService } from 'app/services/project.service';
 import { InitialiseService } from 'app/services/initialise.service';
 import { EnterpriseService } from 'app/services/enterprise.service';
 import { coloursUser } from 'app/models/user-model';
+import * as firebase from 'firebase';
+
 // export interface ProjectId extends Project { id: string; };
 // import { FileUploader, FileSelectDirective } from 'ng2-file-upload/ng2-file-upload';
 
@@ -29,12 +31,7 @@ export class CreateComponent implements OnInit {
   user: any;
   projectId: string;
   myUser: string;
-  compUser: {
-    bus_email: string,
-    nation: string,
-    nationalId: string
-  }
-  phoneNumber: string;
+
   project: Project;
   task: Task;
   enterpriseProjects: Observable<any[]>;
@@ -57,6 +54,16 @@ export class CreateComponent implements OnInit {
   typeSet: ({ id: string; name: string });
   setCompany: Enterprise;
   setChampion: ParticipantData;
+  compUser: {
+    bus_email: string,
+    nationality: string,
+    phoneNumber: string,
+    nationalId: string
+  }
+
+  userProfile: Observable<coloursUser>;
+  myDocument: AngularFirestoreDocument<{}>;
+  userData: coloursUser;
 
   public projectNameFieldStatus: boolean = false;
   public projectTypeFieldStatus: boolean = false;
@@ -67,6 +74,19 @@ export class CreateComponent implements OnInit {
   public showComp: boolean = false;
   public showNext: boolean = false;
   public firstPageBtn: boolean = false;
+
+  public entName: boolean = false;
+  public entSector: boolean = false;
+  public entServices: boolean = false;
+  public entLocation: boolean = false;
+
+  public telMsg: boolean = false;
+  public mobileMsg: boolean = false;
+  public addressMsg: boolean = false;
+  public emailMsg: boolean = false;
+  public countryMsg: boolean = false;
+  public nidMsg: boolean = false;
+
   public firstPage: boolean = true;
   public secondPage: boolean = false;
   public pfirstPageBtn: boolean = false;
@@ -81,11 +101,9 @@ export class CreateComponent implements OnInit {
   taxDocument: any;
   mdats: Promise<string>;
   comWorkers: Observable<ParticipantData[]>;
-
-
-  userProfile: Observable<coloursUser>;
-  myDocment: AngularFirestoreDocument<{}>;
-  userData: coloursUser;
+  userChampion: ParticipantData;
+  initArray: any[];
+  initService: service;
 
   // public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'photo' });
   // public uploader: FileUploader = new FileUploader({});
@@ -93,10 +111,17 @@ export class CreateComponent implements OnInit {
   constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private es: EnterpriseService, private authService: AuthService, private ps: ProjectService, private afs: AngularFirestore) {
     this.project = is.getSelectedProject();
     this.section = is.getSectionInit();
-    this.newEnterprise = is.getnewEnterprise();
+    this.initArray = [];
+    this.initService = { display: "", value: "" }
+    this.serviceTags = null;
+    // this.newEnterprise = is.getnewEnterprise();
+    this.newEnterprise = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", bus_email: "", sector: "", participants: null, champion: this.userChampion, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.taxDocument = null;
-    this.compUser = { bus_email: "", nation: "", nationalId: "" };
-    this.phoneNumber = null;
+    // this.newEnterprise.services = [null];
+    console.log('init newCompany services' + this.newEnterprise.services);
+
+    this.compUser = { bus_email: "", nationality: "", nationalId: "", phoneNumber: "" };
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: ""  };
 
     console.log(this.afAuth.user);
 
@@ -211,10 +236,110 @@ export class CreateComponent implements OnInit {
     // this.afs.upload.collection('try', event.target.files[0]);
   }
 
+  testFileds() {
+    if (this.newEnterprise.telephone != "") {
+      this.telMsg = false;
+      console.log('telephone available');
+
+      if (this.compUser.phoneNumber != "") {
+        this.mobileMsg = false;
+        console.log('mobile available')
+        if (this.newEnterprise.address != "") {
+          this.addressMsg = false;
+          console.log('bus_address available');
+
+          if (this.compUser.bus_email != "") {
+            this.emailMsg = false;
+            console.log('user_email available');
+
+            if (this.compUser.nationality != "") {
+              this.countryMsg = false;
+              console.log('userNaitionality available');
+
+              if (this.compUser.nationalId != "") {
+                console.log('userNationalId available');
+                this.nidMsg = false;
+
+                // this.mobileMsg = false;
+                // this.addressMsg = false;
+                // this.emailMsg = false;
+                // this.countryMsg = false;
+
+                this.saveEnterprise();
+
+              } else {
+
+                console.log('userNationalId available');
+                this.nidMsg = true;
+              }
+            } else {
+
+              this.countryMsg = true;
+              console.log('userNaitionality un-available');
+            }
+          } else {
+            this.emailMsg = true;
+            console.log('user_email un-available');
+          }
+        } else {
+          true
+
+          this.addressMsg = true;
+          console.log('bus_address un-available');
+        }
+      } else {
+
+        this.mobileMsg = true;
+        console.log('mobile un-available')
+      }
+    } else {
+      this.telMsg = true;
+      console.log('telephone un-available');
+    }
+  }
 
   nxtPage() {
-    this.firstPage = false;
-    this.secondPage = true;
+    console.log('Test fields');
+
+    // if (this.newEnterprise.name != "" || this.newEnterprise.location != "") {}
+
+    if (this.newEnterprise.name != "") {
+      this.entName = false;
+      console.log('Name available');
+      if (this.newEnterprise.location != "") {
+        this.entLocation = false;
+        console.log('Location available');
+        if (this.newEnterprise.sector != "") {
+          this.entSector = false;
+          console.log('Sector available');
+          // if (this.newEnterprise.services != null) {
+          if (this.serviceTags != null) {
+            console.log('Sevices available' + this.serviceTags);
+
+            // this.entName = false;
+            // this.entSector = false;
+            // this.entLocation = false;
+            this.entServices = false;
+            this.firstPage = false;
+            this.secondPage = true;
+
+          } else {
+            console.log('Services unavailable');
+            this.entServices = true;
+          }
+        } else {
+          console.log('Sector unavailable');
+          this.entSector = true;
+        }
+      } else {
+        console.log('location unavailable');
+        this.entLocation = true;
+      }
+    } else {
+      console.log('Name unavailable');
+
+      this.entName = true;
+    }
   }
 
   bckPage() {
@@ -257,7 +382,10 @@ export class CreateComponent implements OnInit {
       bus_email: this.userData.bus_email,
       id: this.user.uid,
       phoneNumber: this.user.phoneNumber,
-      photoURL: this.user.photoURL
+      photoURL: this.user.photoURL,
+      address: this.userData.address,
+      nationalId: this.userData.nationalId,
+      nationality: this.userData.nationality
     };
     console.log(this.project);
     //adding company details  
@@ -286,14 +414,14 @@ export class CreateComponent implements OnInit {
     console.log(this.setCompany);
     console.log(this.roles);
 
-    if (this.setCompany.id != '') {
+    if (this.setCompany.id != "") {
       company.roles = this.roles;
     }
 
 
     // this.ps.addProject(pUser, project, company);
     let championId = this.project.champion.id;
-    let projectId: string = '';
+    let projectId: string = "";
     let dref = this.afs.collection('Projects')
     let entRef = this.afs.collection('Enterprises').doc(company.id).collection('projects');
     let myProRef = this.afs.collection('/Users').doc(this.userId).collection('projects');
@@ -318,7 +446,7 @@ export class CreateComponent implements OnInit {
       }
       project.id = projectId;
     });
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
+    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.setProject(project);
     this.pNxtPage();
   }
@@ -353,16 +481,18 @@ export class CreateComponent implements OnInit {
     // this.savedProject = this.is.getSelectedProject();
     // this.project = this.is.getSelectedProject();
     this.typeSet = { id: "", name: "" };
-    this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
+    this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.setCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
-    this.setChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "" };
+    this.setChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: ""  };
   }
 
   clear() {
+    this.roles = null;
     this.typeSet = { id: "", name: "" };
-    this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "" };
+    this.setChampion = null;
+    this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.setCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
   }
 
@@ -497,6 +627,7 @@ export class CreateComponent implements OnInit {
     this.section = this.is.getSectionInit();
   }
 
+
   deleteProject(projectId) {
     this.afAuth.user.subscribe(user => {
       console.log(projectId)
@@ -525,25 +656,11 @@ export class CreateComponent implements OnInit {
       phoneNumber: this.user.phoneNumber,
       photoURL: this.user.photoURL,
       bus_email: this.compUser.bus_email,
-      nation: this.compUser.nation,
-      nationalId: this.compUser.nationalId
+      nationality: this.compUser.nationality,
+      nationalId: this.compUser.nationalId,
+      address: this.userData.address,
     };
 
-    if (this.user.phonNumber == "") {
-      pUser.phoneNumber = this.phoneNumber;
-    }
-    else {
-      if (this.user.phonNumber != this.phoneNumber) {
-        this.myDocment.update({ 'phoneNumber2': this.phoneNumber }).then(() => {
-          console.log('Update successful, new number stored');
-        }).catch((error) => {
-          console.log('Error updating user, document does not exists', error);
-        });
-      } else {
-        console.log('phoneNumber are the same');
-      }
-      console.log('phoneNumber field is non-empty');
-    }
     this.newEnterprise.by = this.user.displayName;
     this.newEnterprise.byId = this.user.uid
     this.newEnterprise.createdOn = new Date().toISOString();
@@ -557,6 +674,67 @@ export class CreateComponent implements OnInit {
     let comp = this.newEnterprise;
     mycompanyRef = this.afs.collection('Enterprises');
     let nrouter = this.router;
+
+    /* UserData updated collection('Users/userID).update */
+
+    if (this.userData.phoneNumber == "" || this.userData.phoneNumber == null) {
+      this.myDocument.update({ 'phoneNumber': this.compUser.phoneNumber }).then(() => {
+        console.log('update successful (document exists)');
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+
+    else if (this.userData.phoneNumber == this.compUser.phoneNumber) {
+      // this.myDocument.update({ 'phoneNumber2': this.compUser.phoneNumber });
+    } else {
+      this.myDocument.update({
+        phoneNumbersOther: firebase.firestore.FieldValue.arrayUnion(this.compUser.phoneNumber)
+      }).then(() => {
+        console.log('update successful (document exists)');
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+
+    if (this.userData.nationality == "" || this.userData.nationality == null) {
+      this.myDocument.update({ 'nationality': this.compUser.nationality }).then(() => {
+        console.log('update successful (document exists)');
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+
+    if (this.userData.nationalId == "" || this.userData.nationalId == null) {
+      this.myDocument.update({ 'nationalId': this.compUser.nationalId }).then(() => {
+        console.log('update successful (document exists)');
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+
+    if (this.userData.bus_email == "" || this.userData.bus_email == null) {
+      this.myDocument.update({ 'bus_email': this.compUser.bus_email }).then(() => {
+        console.log('update successful (document exists)');
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+
+    else if (this.userData.bus_email == this.compUser.bus_email) {
+      console.log('bus_email are same')
+    }
+    else {
+      this.myDocument.update({
+        bus_emailsOther: firebase.firestore.FieldValue.arrayUnion(this.compUser.bus_email)
+      }).then(() => {
+        console.log('email update successful (document exists)');
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+
+    /* closure "userData update end" */
 
     this.mdats = this.afs.collection('/Users').doc(this.user.uid).collection('myenterprises').add(comp).then(function (Ref) {
       console.log(Ref.id)
@@ -578,14 +756,13 @@ export class CreateComponent implements OnInit {
     this.showNotification('comp', 'top', 'right');
 
     this.newEnterprise = this.is.getnewEnterprise();
-    this.phoneNumber = null;
   }
 
   callData() {
 
-    this.myDocment = this.afs.collection('Users').doc(this.user.uid);
+    this.myDocument = this.afs.collection('Users').doc(this.user.uid);
 
-    this.userProfile = this.myDocment.snapshotChanges().pipe(map(a => {
+    this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
@@ -599,12 +776,55 @@ export class CreateComponent implements OnInit {
         bus_email: userData.bus_email,
         id: this.user.uid,
         phoneNumber: this.user.phoneNumber,
-        photoURL: this.user.photoURL
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationality: userData.nationality,
+        nationalId: userData.nationalId,
       }
+
+      if (userData.address == "" || userData.address == null || userData.address == undefined) {
+        userData.address = ""
+      } else {
+
+      }
+
+      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ""
+      } else {
+
+      }
+
+      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ""
+      } else {
+
+      }
+
+      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ""
+      } else {
+
+      }
+
+      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ""
+      } else {
+
+      }
+
       this.myData = myData;
       this.userData = userData;
-    });
 
+      if (userData.bus_email != "") {
+        this.compUser.bus_email = this.userData.bus_email;
+      } if (userData.nationality != "") {
+        this.compUser.nationality = this.userData.nationality;
+      } if (userData.phoneNumber != "") {
+        this.compUser.phoneNumber = this.userData.phoneNumber;
+      } if (userData.nationalId != "") {
+        this.compUser.nationalId = this.userData.nationalId;
+      }
+    })
 
     this.myEnterprises = this.es.getCompanies(this.userId);
 

@@ -8,7 +8,7 @@ import { Observable, Observer } from 'rxjs';
 import { map, timestamp } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
-import { Enterprise, ParticipantData, companyChampion, Department, asset, Subsidiary, employeeData, companyStaff } from "../models/enterprise-model";
+import { Enterprise, ParticipantData, companyChampion, Department, asset, Subsidiary, employeeData, companyStaff, client } from "../models/enterprise-model";
 import { Project, workItem } from "../models/project-model";
 import { Task, MomentTask } from "../models/task-model";
 
@@ -41,7 +41,7 @@ export class EnterpriseService {
   subsidiaries: Observable<any[]>;
   companyTasks: Observable<any[]>;
   companyStaff: Observable<employeeData[]>;
-  clients: Observable<any[]>;
+  clients: Observable<client[]>;
   currentCompanyId: any;
   deptTasks: Observable<MomentTask[]>;
   deptStaff: Observable<employeeData[]>;
@@ -213,29 +213,37 @@ export class EnterpriseService {
     console.log('the staff-->' + staff.name + " " + staff.id);
     console.log('the Task-->' + task.name + " " + task.id);
     let markedUserId = task.champion.id;
+    // if (markedUserId != "") {
 
-    let userRef = this.afs.collection('Users').doc(this.userId).collection('tasks').doc(task.id);
-    let userTaskRef = this.afs.collection('Users').doc(this.userId).collection('myenterprises').doc(companyId).collection('tasks').doc(task.id);
+      console.log('deleting old champ data');
+      
+      let markedStaffRef = this.afs.collection('Users').doc(markedUserId).collection('tasks').doc(task.id);
+      let cDPRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('departments').doc(dptId)
+        .collection('Participants').doc(markedUserId).collection('tasks').doc(task.id);
+      let markedStaffTaskRef = this.afs.collection('Users').doc(markedUserId).collection('myenterprises').doc(companyId).collection('tasks').doc(task.id);
+      let markedcompParticipant = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('Participants').doc(markedUserId).collection('tasks').doc(task.id)
+      this.afs.collection('Enterprises').doc(companyId).collection<Department>('departments').doc(dptId).collection('Participants').doc(staff.id).collection('tasks').doc(task.id).delete();  //  ex-champion
+      markedStaffRef.delete();  //  ex-champion
+      markedStaffTaskRef.delete();  //  ex-champion
+      markedcompParticipant.delete();
+      cDPRef.delete();
+    // }
+
     let staffRef = this.afs.collection('Users').doc(staff.id).collection('tasks').doc(task.id);
     let staffTaskRef = this.afs.collection('Users').doc(staff.id).collection('myenterprises').doc(companyId).collection('tasks').doc(task.id);
     let compParticipant = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('Participants').doc(staff.id).collection('tasks').doc(task.id)
     let deptDoc = this.afs.collection('Enterprises').doc(companyId).collection<Department>('departments').doc(dptId);
+    let newChampDPRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('departments').doc(dptId)
+      .collection('Participants').doc(staff.id).collection('tasks').doc(task.id);
 
     task.champion = staff;
-    if (markedUserId != "") {
-      let markedStaffRef = this.afs.collection('Users').doc(markedUserId).collection('tasks').doc(task.id);
-      let markedStaffTaskRef = this.afs.collection('Users').doc(markedUserId).collection('myenterprises').doc(companyId).collection('tasks').doc(task.id);
-      deptDoc.collection('Participants').doc(staff.id).collection('tasks').doc(task.id).delete();  //  ex-champion
-      markedStaffRef.delete();  //  ex-champion
-      markedStaffTaskRef.delete();  //  ex-champion
-    }
 
-    deptDoc.collection('Participants').doc(markedUserId).collection('tasks').doc(task.id).set(task);
-    userRef.set(task);
+    deptDoc.collection('tasks').doc(task.id).set(task);
+    deptDoc.collection('Participants').doc(staff.id).collection('tasks').doc(task.id).set(task);
     staffRef.set(task);
     compParticipant.set(task);
-    userTaskRef.set(task);
     staffTaskRef.set(task);
+    newChampDPRef.set(task);
   }
 
   getActionItems( staff ){
@@ -303,7 +311,7 @@ export class EnterpriseService {
   getClients(companyId) {
     this.clients = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('clients').snapshotChanges().pipe(
       map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as ParticipantData;
+        const data = a.payload.doc.data() as client;
         const id = a.payload.doc.id;
         return { id, ...data };
       }))
