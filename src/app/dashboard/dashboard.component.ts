@@ -68,6 +68,7 @@ export class DashboardComponent implements OnInit {
   marketProjects: any;
   projs2No: number;
   viewProjects: any;
+  maActivities: any;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore, private ps: ProjectService) {
     // this.afAuth.user.subscribe(user => {
@@ -212,7 +213,7 @@ export class DashboardComponent implements OnInit {
     this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
       // .limit(4)
       // .where("startDate", '==', currentDate)
-      // .orderBy('start', 'asc')
+      .orderBy('start', 'asc')
       
       // .limit(4)
       ).snapshotChanges().pipe(
@@ -229,10 +230,51 @@ export class DashboardComponent implements OnInit {
       this.myActionItems = [];
 
       actions.forEach(element => {
-        if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
-          this.myActionItems.push(element);
+        if (element.selectedWeekWork == true) {
+          if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
+            if (element.selectedWork === true) {
+
+              this.myActionItems.push(element);
+
+            }
+          }
         }
       });
+
+
+      let maActivities;
+      maActivities = [];
+
+      let arrT = this.myActionItems;
+      let timeB4;
+      let timeA4;
+      timeB4 = moment().subtract(2, 'h').format('HH:mm');
+      timeA4 = moment().add(2, 'h').format('HH:mm');
+
+      console.log('timeB4' + timeB4);
+      console.log('timeA4' + timeA4);
+
+      
+
+      this.myActionItems.forEach((function (element, index) {
+        console.log(index);
+        console.log(element);
+        
+        if (moment(element.start).isBetween(timeB4, timeA4)) {
+          // element.txtColours = "white";
+          element.txtColours = "red";
+          // element.txtColours = "333366";
+          maActivities.push(element);
+        }
+        else {
+          // element.txtColours = "yellow";
+          element.txtColours = "333366";
+          maActivities.push(element);
+        }
+
+      }));
+      
+      this.maActivities = maActivities;
 
       console.log(actions.length);
       console.log(actions);
@@ -251,7 +293,7 @@ export class DashboardComponent implements OnInit {
     this.thyProjects = 0;
     myProjects.subscribe((projects) => {
       console.log(projects);
-      // console.log(this.allMyProjects);
+      console.log(this.allMyProjects);
 
       this.thyProjects = projects;
 
@@ -293,7 +335,8 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-
+  // [ngClass]=" {whiteColor: isStyleRequired(log)}"
+  
   public ngOnInit() {
 
     this.chartColor = "#FFFFFF";
@@ -565,8 +608,32 @@ export class DashboardComponent implements OnInit {
     this.allColoursProjects.subscribe((projects) => {
       console.log(projects);
 
-      this.marketProjects = projects;
+      // projects.forEach(element => {
+      //   const index2 = projects.findIndex(workClass => workClass.name === 'Work');
+      //   let index = projects.findIndex(element);
+      //   let  proj = projects[index];
 
+      //   if (index % 2 === 0) {
+      //     proj.txtColours = "white";
+      //     this.marketProjects.push(proj);
+      //   } else {
+      //     projects[index].txtColours = "red";
+      //     this.marketProjects.push(proj);
+      //   }
+
+      //   this.projs2No = projects.length;
+      //   if (this.projs2No == 0) {
+
+      //     this.showMdata = false;
+      //     this.hideMdata = true;
+
+      //   } else {
+
+      //     this.showMdata = true;
+      //     this.hideMdata = false;
+
+      //   }
+      // });
       this.projs2No = projects.length;
       if (this.projs2No == 0) {
 
@@ -579,16 +646,42 @@ export class DashboardComponent implements OnInit {
         this.hideMdata = false;
 
       }
+      let marketProjects;
+      marketProjects = [];
+
+      projects.forEach(function (element, index) {
+        console.log(index);
+        console.log(element);
+        let  proj = projects[index];
+
+        if (index % 2 === 0) {
+          proj.txtColours = "white";
+          marketProjects.push(proj);
+        } else {
+          // projects[index].txtColours = "#333366";
+          proj.txtColours = "#333366";
+          marketProjects.push(proj);
+        }
+
+      });
+      // this.marketProjects = projects;
+      this.marketProjects = marketProjects;
+      
     });
 
-    const lists = document.getElementsByClassName('setLists')[0];
-    if (window.matchMedia(`(height: 100px)`).matches) {
-      // let ps = new PerfectScrollbar(elemMainPanel);
-      // ps = new PerfectScrollbar(elemSidebar);
-      lists.classList.add('perfect-scrollbar-on');
-    }
-    else {
-      lists.classList.add('perfect-scrollbar-off');
-    }
+
+    console.log(this.marketProjects);
+    
+    // const lists = document.getElementsByClassName('setLists')[0];
+    // if (window.matchMedia(`(height: 100px)`).matches) {
+    //   lists.classList.add('perfect-scrollbar-on');
+    // }
+    // else {
+    //   lists.classList.add('perfect-scrollbar-off');
+    // }
   } 
+
+  getTextColor(i: number): String {
+    return i % 2 === 0 ? 'blue' : '';
+  }
 }

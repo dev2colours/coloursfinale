@@ -136,6 +136,7 @@ export class CalendarComponent implements OnInit {
 
   public dailyTimeSheetDemo: boolean = true;
   mlapsdata: number;
+  maActivities: any;
 
 
   constructor(public auth: AuthService, private pns: PersonalService , public afAuth: AngularFireAuth, public es: EnterpriseService, private ps:ProjectService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute)  { 
@@ -153,7 +154,7 @@ export class CalendarComponent implements OnInit {
 
     this.SIunits = [
       { id: 'hours', name: 'Time(hrs)' },
-      { id: 'items', name: 'Items' },
+      { id: 'item(s)', name: 'Items' },
       { id: 'kg', name: 'Kilograms(Kg)' },
       { id: 'm2', name: 'Area(m2)' },
       { id: 'm3', name: 'Volume(m3)' },
@@ -834,9 +835,8 @@ export class CalendarComponent implements OnInit {
 
       let liabilityArr = userData.personalLiabilities;
       let totalLialibility$ = 0;
-      liabilityArr.forEach(element => {
-        totalLialibility$ = + element.amount;
-      });
+      // liabilityArr.forEach(element => {
+      (userData.personalLiabilities).forEach(element => totalLialibility$ = + element.amount);
 
       let assetArr = userData.personalAssets;
       let totalAsset$ = 0;
@@ -900,7 +900,7 @@ export class CalendarComponent implements OnInit {
     this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
     // .limit(4)
     // .where("startDate", '==', currentDate)
-      // .orderBy('start', 'asc')
+      .orderBy('start', 'asc')
 
       // .limit(4)
       ).snapshotChanges().pipe(
@@ -918,21 +918,61 @@ export class CalendarComponent implements OnInit {
 
       actions.forEach(element => {
         if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
-          this.myActionItems.push(element);
+          if (element.selectedWork === true) {
+
+            this.myActionItems.push(element);
+          
+          }
         }
       });
+
+      
 
       console.log(actions.length);
       console.log(actions);
       this.actionNo = actions.length;
-      if (this.actionNo == 0) {
-        this.showActions = false;
-        this.hideActions = true;
-      } else {
-        this.hideActions = false;
-        this.showActions = true;
+      // if (this.actionNo == 0) {
+      //   this.showActions = false;
+      //   this.hideActions = true;
+      // } else {
+      //   this.hideActions = false;
+      //   this.showActions = true;
+      // }
+
+
+      let maActivities;
+      maActivities = [];
+
+      let arrT = this.myActionItems;
+      let timeB4;
+      let timeA4;
+      timeB4 = moment().subtract(2, 'h').format('HH:mm');
+      timeA4 = moment().add(2, 'h').format('HH:mm');
+
+      console.log('timeB4' + timeB4);
+      console.log('timeA4' + timeA4);
+
+
+
+      arrT.forEach((function (element, index) {
+        console.log(index);
+        console.log(element);
+        if (element.selectedWeekWork == true) {
+          if (moment(element.start).isBetween(timeB4, timeA4)) {
+            element.txtColours = "red";
+            maActivities.push(element);
+          }
+          else {
+            element.txtColours = "333366";
+            maActivities.push(element);
+          }
       }
+
+      }));
+
+      this.maActivities = maActivities;
     })
+
 
     let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: "", actualTime: "", Varience: "" };
     let setClass = this.myDocument.collection('classifications').doc(newClassification.id);

@@ -19,7 +19,7 @@ import { ROsTasksComponent } from './r-os-tasks/r-os-tasks.component';
 export const CalendarRoutes: Routes = [{
     path: '',
     children: [{
-        path: 'calendar',
+        path: 'tasks-24/7',
         component: CalendarComponent
     },{
         path: 'map-task',

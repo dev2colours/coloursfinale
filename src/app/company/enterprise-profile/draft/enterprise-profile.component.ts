@@ -457,7 +457,7 @@
 
 //         this.SIunits = [
 //             { id: 'hours', name: 'Time(hrs)' },
-//             { id: 'items', name: 'Items' },
+//             { id: 'item(s)', name: 'Items' },
 //             { id: 'kg', name: 'Kilograms(Kg)' },
 //             { id: 'm2', name: 'Area(m2)' },
 //             { id: 'm3', name: 'Volume(m3)' },
@@ -898,7 +898,7 @@
 //                         this.setUserLongTermTAsks.push(data)
 //                         console.log('long term Tasks' + ' ' + this.setUserLongTermTAsks);
 //                     }
-//                     // console.log(this.OutstandingTasks);
+//                     console.log(this.OutstandingTasks);
 //                 };
 
 
@@ -975,7 +975,7 @@
 //                         this.setPojLongTermTAsks.push(data);
 //                         console.log('long term Tasks' + ' ' + this.LongTermTAsks);
 //                     }
-//                     // console.log(this.OutstandingTasks);
+//                     console.log(this.OutstandingTasks);
 //                 };
 
 
@@ -1765,7 +1765,7 @@
 //     }
 
 //     setDay(day) {
-//         // console.log(period);
+//         console.log(period);
 //         // this.period = this.currentWeek;
 
 //         let dayNo = moment(new Date(), 'DD-MM-YYYY').dayOfYear();
@@ -2477,7 +2477,7 @@
 //         this.company = this.testCompany;
 
 //         // let compServices = this.company.services;
-//         // console.log(compServices);
+//         console.log(compServices);
 //         this.workDay = moment().format('LL');
 //         this.workWeekDay = moment(this.aPeriod).format('dddd');
 //     }
@@ -3101,7 +3101,7 @@
 //                         this.companyName = cname;
 //                         console.log(this.companyName);
 //                         console.log('test if I get data on 781');
-//                         // console.log(data);
+//                         console.log(data);
 //                         this.testCompany = data;
 //                         this.company = data;
 //                         return { id, ...data };
@@ -3320,8 +3320,8 @@
 
 //         console.log('Task' + ' ' + this.task.name);
 //         console.log('Company' + ' ' + this.company.name);
-//         // console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
-//         // console.log('Project selected' + ' ' + this.selectedProject.name);
+//         console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
+//         console.log('Project selected' + ' ' + this.selectedProject.name);
 
 //     }
 

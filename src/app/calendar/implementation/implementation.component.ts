@@ -164,7 +164,7 @@ export class ImplementationComponent {
 
       this.SIunits = [
         { id: 'hours', name: 'Time(hrs)' },
-        { id: 'items', name: 'Items' },
+        { id: 'item(s)', name: 'Items' },
         { id: 'kg', name: 'Kilograms(Kg)' },
         { id: 'm2', name: 'Area(m2)' },
         { id: 'm3', name: 'Volume(m3)' },
@@ -190,7 +190,7 @@ export class ImplementationComponent {
       this.selectedProject = is.getSelectedProject();
       this.userChampion = is.getUserChampion();
       this.selectedCompany = is.getSelectedCompany();
-      this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", classification:this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "" };
+    this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", classification: this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", selectedWeekly: false };
       this.actionItem = is.getActionItem();
       this.selectedAction = is.getSelectedAction();
       this.actionSet = is.getSelectedAction();
@@ -254,7 +254,7 @@ export class ImplementationComponent {
     console.log(this.selectEditWorkItem.unit);
     this.afs.collection('Users').doc(this.userId).collection('myStandards').doc(this.selectEditWorkItem.id).set( this.selectEditWorkItem );
     console.log(this.selectEditWorkItem.name + ' ' + 'updated untits' + this.selectEditWorkItem.unit);
-    this.selectEditWorkItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
+    this.selectEditWorkItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false };
   }
   /* add to my weekly to do list */
 
@@ -262,8 +262,9 @@ export class ImplementationComponent {
     this.selectedTask = task;
     console.log(this.selectedTask.name);
     console.log(this.selectedTask.id);
+    this.myDocument.collection<Task>('tasks').doc(task.id).update({ 'selectedWeekly' : true });
     this.ts.add2WeekPlan(task, this.userId);
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
   }
 
   removeWeekTask(task){
@@ -308,10 +309,14 @@ export class ImplementationComponent {
   }
 
   selectAction(e: { target: { checked: any; }; }, action: workItem) {
-
+    action.selectedWeekly = true;
     if (e.target.checked) {
       
       this.selectedActionItems.push(action);
+      let myActionsRef = this.myDocument.collection<Task>('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let allMyActionsRef = this.myDocument.collection<workItem>('actionItems').doc(action.id);
+      myActionsRef.update({ 'selectedWeekly': true });
+      allMyActionsRef.update({ 'selectedWeekly': true });
       this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).set(action);
       console.log("action"+ " " + action + " " + " has been added");
       
@@ -319,6 +324,38 @@ export class ImplementationComponent {
     // } else {
     //   this.selectedActionItems.splice(this.selectedActionItems.indexOf(action), 1);
     //   this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).delete();
+    }
+  }
+
+  setWeekAction(e: { target: { checked: any; }; }, action: workItem) {
+
+    if (e.target.checked) {
+      console.log(action.name + '' + 'action checked');
+
+      let selectedWork = true;
+      this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).update({ 'selectedWeekWork': selectedWork });
+
+    } else {
+      console.log(action.name + '' + 'action checked');
+
+      let selectedWork = false;
+      this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).update({ 'selectedWeekWork': selectedWork });
+    }
+  }
+
+  setWeekStdAction(e: { target: { checked: any; }; }, action: workItem) {
+
+    if (e.target.checked) {
+      console.log(action.name + '' + 'action checked');
+
+      let selectedWork = true;
+      this.myDocument.collection<workItem>('myStandards').doc(action.id).update({ 'selectedWeekWork': selectedWork });
+
+    } else {
+      console.log(action.name + '' + 'action checked');
+
+      let selectedWork = false;
+      this.myDocument.collection<workItem>('myStandards').doc(action.id).update({ 'selectedWeekWork': selectedWork });
     }
   }
 
@@ -480,9 +517,11 @@ export class ImplementationComponent {
       this.selectedActions = actions;
       actions.forEach(element => {
         let data = element;
-        if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
-          this.viewDayActions.push(element);
-          console.log(this.viewDayActions);
+        if (element.selectedWeekWork == true) {
+          if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
+            this.viewDayActions.push(element);
+            console.log(this.viewDayActions);
+          }
         }
       });
       if (this.selectedActions.length > 0) {
@@ -608,7 +647,7 @@ export class ImplementationComponent {
       allMyActionsRef.doc(newActionId).update({ 'id': newActionId });
     }).then(refff =>{
       this.setSui = null;
-      this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
+      this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false };
     })
   }
 
@@ -675,8 +714,8 @@ export class ImplementationComponent {
       allChmpWeklyeActionsRef.doc(newActionId).update({ 'id': newActionId });
     }).then(refff => {
       this.setSui = null;
-    this.actionTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", classification: this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "" };
-      this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
+      this.actionTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", classification: this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", selectedWeekly: false };
+      this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false };
     })
 
   }
@@ -717,7 +756,7 @@ export class ImplementationComponent {
 
     this.startDate = null;
     this.endDate = null;
-    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false };
   }
 
   editClassAction(startDate, endDate) {
@@ -743,7 +782,7 @@ export class ImplementationComponent {
 
     this.startDate = null;
     this.endDate = null;
-    this.selectedClassAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
+    this.selectedClassAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false };
   }
   
   refreshData() {
@@ -902,7 +941,9 @@ export class ImplementationComponent {
     //   this.viewTodaystds = false;
     // }
     
-    this.myWeeklyActions = userdataRef.collection<workItem>('WeeklyActions',).snapshotChanges().pipe(
+    this.myWeeklyActions = userdataRef.collection<workItem>('WeeklyActions', ref => ref
+      .where("complete", '==', false)
+    ).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as workItem;
         const id = a.payload.doc.id;

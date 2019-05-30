@@ -77,18 +77,24 @@
                           <div class="row" style="height: 100px">
                             <div id="container">
                               <!-- <div class="content container scroll-em" *ngIf="showActions"> -->
-                              <div class="content container scroll-em" *ngIf="diaryActionItems.length != 0">
-                                <ol>
-                                  <!-- <li style="color:lightgrey" class="mr-auto ml-auto" *ngFor="let event of theseTasks"><a>{{ event.name }}</a><br><small class="label text-success"> {{ event.when }}</small>
-                                                    </li> ->
-                                                    <!- <li class="" style="color:steelblue" *ngFor="let event of theseTasks"> ->
-                                                    <!- <li class="" style="color:steelblue" *ngFor="let event of viewActions | async"> -->
-                                  <li class="" style="color:steelblue" *ngFor="let event of diaryActionItems">
-                                    <!-- <div class="row"> -->
-                                    <!-- <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em">` -->
-                                    <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em"><!-- margin-left:1.0em; -->                                      
+                              <!-- <div class="content container scroll-em" *ngIf="diaryActionItems.length != 0"> -->
+                              <div class="content container scroll-em" *ngIf="actionNo != 0">
+                                <!-- <ol>
+                                    <li class="" style="color:steelblue" *ngFor="let event of viewActions | async">
+                                    <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em">                                     
                                       <a style="color:slategrey">
                                         {{ event.name }}<span class="label text-warning"> {{ event.when }}</span>
+                                      </a>
+                                    </div>
+                                  </li>
+                                </ol> -->
+                                <ol style="list-style-type:none;padding-left: 12px;">
+                                  <li class="" style="color:steelblue" *ngFor="let event of maActivities">
+                                    <!-- <div class="row"> -->
+                                    <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em">
+                                      <!-- margin-left:1.0em; -->
+                                      <a style="color:slategrey" [ngStyle]="{color: event.txtColours}">
+                                        <span class="label text-warning"> {{ event.start }}</span> {{ event.name }}
                                       </a>
                                     </div>
                                     <!-- </div> -->
@@ -96,7 +102,7 @@
                                 </ol>
                               </div>
                               <!-- <div class="content container scroll-em" *ngIf="hideActions"> -->
-                              <div class="content container scroll-em" *ngIf="diaryActionItems.length === 0">
+                              <div class="content container scroll-em" *ngIf="actionNo === 0">
                                 <div class="row">
                                   <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
                                     <ol>
@@ -166,7 +172,7 @@
                           <div class="row col-md-12" style="margin-left:1em; padding-bottom: -1em ">
                             <div class="pull-left card-category clrs-h1-font">
                               <a>
-                                <i class="fa fa-folder-o [&#xf114;]"></i> Colours Projects</a>
+                                <i class="fa fa-folder-o [&#xf114;]"></i> Colours Project</a>
                             </div>
                           </div>
                           <!-- <hr class="line" style="padding-bottom:0em; padding-top: -1em"> -->
@@ -574,6 +580,9 @@
                                 aria-expanded="false">Project Description</a>
                             </li>
                             <li class="nav-item">
+                              <a class="nav-link nav-colors" data-toggle="tab" href="#costFrame" role="tab" aria-expanded="false">Cost Framework</a>
+                            </li>
+                            <li hidden class="nav-item">
                               <a class="nav-link nav-colors" data-toggle="tab" href="#abridged" role="tab"
                                 aria-expanded="false">Abridged BOQ</a>
                             </li>
@@ -768,7 +777,7 @@
                                           </div>
                                           <button class="btn-link btn-round primary" (click)="selectBill(bill)"
                                             data-toggle="modal" data-target="#addWorkItem" title="add Activity">
-                                            <small>Add activity</small>
+                                            <small>Add Task Activity</small>
                                           </button>
                                         </div>
                                       </div>
@@ -821,6 +830,118 @@
                                                   <input type="text" class="form-control" placeholder="Bill name..."
                                                     (focus)="focus=true" (blur)="focus=false"
                                                     [(ngModel)]="newBill.name">
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <button class="primary btn-link" (click)="saveBill()">save</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="costFrame" aria-expanded="true">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="card">
+                                <div class="card-header" style="margin-left: 2em">
+                                  <h4 class="card-title na-am">Project Cost Framework </h4>
+                                </div>
+                                <div id="accordionCostSections" role="tablist" aria-multiselectable="true" class="card-collapse">
+                                  <ol>
+                                    <li style="color:steelblue" *ngFor="let bill of projectDescription | async" class="col-md-12">
+                                      <div class="card card-plain">
+                                        <div class="card-header" role="tab" id="heading2">
+                                          <a class="collapsed col-md-12" data-toggle="collapse" href="#{{  bill.id  }}"
+                                            (click)="showWorkItems(bill.id)" title="Click to see work Items" aria-expanded="false"
+                                            aria-current="false"><span class="col-md-6">{{ bill.name }}</span>
+                                            <!-- <span class="col-md-4 ml-auto">Total Amount: $ {{ bill.totalAmount }}</span> -->
+                                              <i class="nc-icon nc-minimal-down"></i>
+                                          </a>
+                                        </div>
+                                        <div id="{{ bill.id }}" class="collapse" data-parent="#accordionCostSections" role="tabpanel"
+                                          aria-labelledby="heading2">
+                                          <div class="card-body">
+                                            <div class="row" style="margin-left: 2em">
+                                              <div class="col-md-3 text-left card-title na-p">Activity</div>
+                                              <div class="col-md-2 card-title na-p">Units</div>
+                                              <div class="col-md-2 card-title na-p">Quantity</div>
+                                              <div class="col-md-2 card-title na-p">Rate</div>
+                                              <div class="col-md-3 text-left card-title na-p">Amount</div>
+                                            </div>
+                                            <div class="spacer" style="height: 2em"></div>
+                                            <ol style="padding-left: 0px;">
+                                              <li *ngFor="let item of billWorkItems | async">
+                                                <div class="row" style="margin-left: 2em">
+                                                  <div class="col-md-3 text-left">{{ item.name }}</div>
+                                                  <div class="col-md-2">{{ item.unit }}</div>
+                                                  <div class="col-md-2">{{ item.quantity }}</div>
+                                                  <div class="col-md-2">$ {{ item.rate }} / {{ item.unit }}</div>
+                                                  <div class="col-md-3 text-left">$ {{ item.amount }}</div>
+                                                </div>
+                                                <hr>
+                                              </li>
+                                            </ol>
+                                          </div>
+                                          <button class="btn-link btn-round primary" (click)="selectBill(bill)" data-toggle="modal"
+                                            data-target="#addWorkItem" title="add Activity">
+                                            <small>Add Task Activity</small>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ol>
+                                </div>
+                                <div class="col-md-10 mr-auto ml-auto">
+                                  <div class="na-p">
+                                    <div id="accordion" role="tablist" aria-multiselectable="true" class="card-collapse">
+                                      <div class="card card-plain">
+                                        <div class="card-header" role="tab" id="headingOne">
+                                          <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#billAcollapse2"
+                                            aria-expanded="false" aria-controls="billAcollapse2">
+                                            Add new bill
+                                            <i class="nc-icon nc-minimal-down"></i>
+                                          </a>
+                                        </div>
+                                        <div id="billAcollapse2" class="collapse" role="tabpanel" aria-labelledby="heading2">
+                                          <div class="card-body">
+                        
+                                            <div class="row">
+                                              <!-- <label class="col-md-3 col-form-label">Section</label> -->
+                                              <div class="col-md-9 col-form-label">
+                                                <!-- <p *ngIf="projectCompanyFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Company Required</p> -->
+                                                <div class="form-group">
+                                                  <ng-select [items]="projectDescriptions | async" bindLabel="name" name="psection"
+                                                    placeholder="Select Section" (change)="selectSection(section)" [(ngModel)]="section">
+                                                  </ng-select>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div class="row">
+                                              <div class="col-md-3">
+                                                <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                                                  <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      <i class="fa fa-calculator"></i>
+                                                    </span>
+                                                  </div>
+                                                  <input type="number" class="form-control" placeholder="Bill no..." (focus)="focus=true"
+                                                    (blur)="focus=false" [(ngModel)]="newBill.No">
+                                                </div>
+                                              </div>
+                                              <div class="col-md-9">
+                                                <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                                                  <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      <i class="fa fa-folder-o"></i>
+                                                    </span>
+                                                  </div>
+                                                  <input type="text" class="form-control" placeholder="Bill name..." (focus)="focus=true"
+                                                    (blur)="focus=false" [(ngModel)]="newBill.name">
                                                 </div>
                                               </div>
                                             </div>
@@ -1025,12 +1146,12 @@
                       <div class="nav-tabs-navigation">
                         <div class="nav-tabs-wrapper">
                           <ul id="tabs" class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                              <a class="nav-link nav-colors  active" data-toggle="tab" href="#week" role="tab"
+                            <li class="nav-item" hidden>
+                              <a class="nav-link nav-colors" data-toggle="tab" href="#week" role="tab"
                                 aria-expanded="true">Week</a><!--  (click)="setPeriod('startWeek')" -->
                             </li>
                             <li class="nav-item">
-                              <a class="nav-link nav-colors" data-toggle="tab" href="#month" role="tab"
+                              <a class="nav-link nav-colors active" data-toggle="tab" href="#month" role="tab"
                                 aria-expanded="false">Month</a><!--  (click)="setPeriod('startMonth')" -->
                             </li>
                             <li class="nav-item">
@@ -1045,7 +1166,7 @@
                         </div>
                       </div>
                       <div id="my-tab-content" class="tab-content text-center">
-                        <div class="tab-pane" id="day" role="tabpanel" aria-expanded="true">
+                        <div class="tab-pane" id="day" role="tabpanel" aria-expanded="true" hidden>
                           <div class="card">
                             <div class="">
                               <div class="card-text">
@@ -1095,7 +1216,7 @@
                             </div>
                           </div>
                         </div>
-                        <div class="tab-pane active" id="week" role="tabpanel" aria-expanded="false">
+                        <div class="tab-pane" hidden id="week" role="tabpanel" aria-expanded="false">
                           <div class="card">
                             <div class="">
                               <div class="card-text">
@@ -1354,7 +1475,7 @@
                             </div>
                           </div>
                         </div>
-                        <div class="tab-pane" id="month" role="tabpanel" aria-expanded="false">
+                        <div class="tab-pane active" id="month" role="tabpanel" aria-expanded="false">
                           <div class="card">
                             <div class="">
                               <div class="card-text">
@@ -2322,7 +2443,7 @@
                                                                 aria-labelledby="dropdownMenuButton">
                                                                 <button class="dropdown-item btn-info btn-link" rel="tooltip"
                                                                   data-toggle="modal" data-target="#tskModal" (click)="closeTask(project)"
-                                                                  title="Set task as completed">Activity Complete</button>
+                                                                  title="Set task as completed">Task Activity Complete</button>
                                                                 <button class="dropdown-item primary btn-link" rel="tooltip"
                                                                   data-toggle="modal" data-target="#actionParticipants"
                                                                   (click)="selectAction(item)" title="Set task as completed">Add
@@ -2343,7 +2464,7 @@
                                                     </div>
                                                     <button class="btn-link btn-round primary" (click)="selectTask(tss)"
                                                       data-toggle="modal" data-target="#newAction">
-                                                      <small>Add activity</small></button>
+                                                      <small>Add Task Activity</small></button>
                                                   </div>
                                                 </div>
                                               </li>
@@ -2370,7 +2491,7 @@
                         <div class="tab-pane" id="weekly" role="tabpanel" aria-expanded="false">
                           <div class="row card-category clrs-h4-font">
                             <div class="col-xs-1"></div>
-                            <div class="col-md-3">Activity</div>
+                            <div class="col-md-3">Task Activity</div>
                             <div class="col-md-3 text-left na-an">Start</div>
                             <div class="col-md-3 text-left ma-an">Finish</div>
                             <div class="col-md-3 text-left ma-an">Actions</div>
@@ -2417,7 +2538,7 @@
                           </div>
                           <div class="card-body" style="margin-top: -10px">
                             <div class="row">
-                              <div class="col-sm-3 card-header text-center">Activity</div>
+                              <div class="col-sm-3 card-header text-center">Task Activity</div>
                               <div class="col-sm-3 card-header">Target Qty</div>
                               <div class="col-sm-2 card-header text-left">Start time</div>
                               <div class="col-sm-3 card-header text-left">Finish time</div>
@@ -2483,7 +2604,7 @@
                                 <div class="col-md-9"></div>
                                 <div class="col-md-3">
                                   <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday">
-                                    New Activity
+                                    New Task Activity
                                   </button>
                                 </div>
                               </div>
@@ -2520,7 +2641,15 @@
                 
                           <div class="tab-pane active" id="internalCompProj" role="tabpanel" aria-expanded="true">
                             <div class="card-body">
-                
+                              <div class="col-md-12 ml-auto mr-auto">
+                                <div class="row">
+                                  <div class="col-md-12">
+                                    <p class="text-left title card-category" style="color: darkslategray">
+                                      Many other Reports and Metrics are coming up covering all corners of a project, an enterprise and personal life
+                                    </p>
+                                  </div>
+                                </div>
+                              </div><br>
                               <div class="col-md-12">
                                 <p class="text-left title clrs-h4-font" style="color: darkslategray">Company Details</p>
                                 <div class="card-plain card-content">
@@ -2652,12 +2781,12 @@
                                 </div>
                               </div> -->
                 
-                              <div class="row col-md-12 text-left">
+                              <div hidden class="row col-md-12 text-left">
                                 <p class="pull-left clrs-h2"><span class="title card-category" style="color:darkslategray">
                                     Labour...</span><br>
                                 </p>
                               </div>
-                              <div *ngIf="displayCompanyReport" class="row">
+                              <div hidden *ngIf="displayCompanyReport" class="row">
                                 <div class="col-md-10">
                                   <p class="pull-left clrs-h2"><span class="title card-category"
                                       style="color:darkslategray">{{ compLabourer.name }}</span>`s report overview...</p><br>
@@ -2693,7 +2822,7 @@
                                   <button class="btn-link btn-magnify" (click)="displayEnt()">Back</button>
                                 </div>
                               </div>
-                              <div *ngIf="!displayCompanyReport" class="row">
+                              <div hidden *ngIf="!displayCompanyReport" class="row">
                                 <div class="col-sm-4">
                 
                                   <ol class="card-category">
@@ -2710,7 +2839,7 @@
                                   </p>
                                 </div>
                               </div>
-                              <div *ngIf="displayCompanyReport" class="row">
+                              <div hidden *ngIf="displayCompanyReport" class="row">
                                 <div class="tab-content tab-space tab-subcategories col-md-12">
                                   <div class="tab-pane active" id="link7">
                                     <div class="col-md-11 mr-auto ml-auto text-left">
@@ -3283,15 +3412,15 @@
             <label class="col-md-4 col-form-label">Activity Name</label>
             <div class="col-md-7">
               <div class="form-group">
-                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Activity name">
+                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Task Activity name">
               </div>
             </div>
           </div> -->
             <div class="row">
-              <label class="col-md-4 col-form-label">Activity</label>
+              <label class="col-md-4 col-form-label">Task Activity</label>
               <div class="col-md-7 col-lg-6 col-sm-5">
                 <ng-select [items]="billWorks | async" bindLabel="name" name="WorkAction"
-                  placeholder="Select Activity" (click)="setAction(setItem)" [(ngModel)]="setItem">
+                  placeholder="Select Task Activity" (click)="setAction(setItem)" [(ngModel)]="setItem">
                 </ng-select>
               </div>
             </div>
@@ -3353,7 +3482,7 @@
           <div class="card-header text-center">
             <p class="col-md-8 ml-auto mr-auto title na-am col-form-label info">
               Select Participants<br>
-              for Activity item: <b>{{ selectedAction.name }}</b> </p><br>
+              for Task Activity item: <b>{{ selectedAction.name }}</b> </p><br>
           </div>
           <div class="col-md-10 ml-auto mr-auto">
             <br>
@@ -3478,7 +3607,7 @@
         <div class="card-body ">
           <div class="card-header text-center">
             <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-              <font size=4>Edit Activity item <br> "{{ selectedAction.name }}"</font>
+              <font size=4>Edit Task Activity item <br> "{{ selectedAction.name }}"</font>
             </p>
           </div>
           <hr>
@@ -3521,7 +3650,7 @@
         <div class="card-body ">
           <div class="card-header text-center">
             <p class="col-md-10 ml-auto mr-auto title na-an info" style="color:steelblue">
-              <font size=4>New Activity for {{ selectedTask.name }} task</font>
+              <font size=4>New Task Activity for {{ selectedTask.name }} task</font>
             </p>
           </div>
           <hr>

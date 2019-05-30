@@ -317,6 +317,8 @@ export class ViewComponent implements OnInit {
   myProjects: Observable<Project[]>;
   projsNo: number;
   projs: Project[];
+  diaryActivities: any;
+  maActivities: any;
 
 /*   end */
 
@@ -383,7 +385,7 @@ export class ViewComponent implements OnInit {
     
     this.SIunits = [
       { id: 'hours', name: 'Time(hrs)' },
-      { id: 'items', name: 'Items' },
+      { id: 'item(s)', name: 'Items' },
       { id: 'kg', name: 'Kilograms(Kg)' },
       { id: 'm2', name: 'Area(m2)' },
       { id: 'm3', name: 'Volume(m3)' },
@@ -412,6 +414,9 @@ export class ViewComponent implements OnInit {
 
     let userDocRef = this.myDocument;
     this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
+      .orderBy('start', 'asc')
+      .where("complete", '==', false)
+
     ).snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as workItem;
@@ -424,24 +429,63 @@ export class ViewComponent implements OnInit {
       console.log(actions);
 
       this.diaryActionItems = [];
-
+      this.diaryActivities = [];
       actions.forEach(element => {
         if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
-          this.diaryActionItems.push(element);
+          if (element.selectedWork === true) {
+
+            this.diaryActionItems.push(element);
+            this.diaryActivities.push(element);
+
+          }
         }
       });
 
       console.log(actions.length);
       console.log(actions);
       this.actionNo = actions.length;
-      if (this.actionNo == 0) {
-        this.showActions = false;
-        this.hideActions = true;
-      } else {
-        this.hideActions = false;
-        this.showActions = true;
-      }
-    })
+      // if (this.actionNo == 0) {
+      // //   this.showActions = false;
+      // //   this.hideActions = true;
+      // // } else {
+      // //   this.hideActions = false;
+      // //   this.showActions = true;
+      // }
+
+
+      let maActivities;
+      maActivities = [];
+
+      let arrT = this.diaryActionItems;
+      let timeB4;
+      let timeA4;
+      timeB4 = moment().subtract(2, 'h').format('HH:mm');
+      timeA4 = moment().add(2, 'h').format('HH:mm');
+
+      console.log('timeB4' + timeB4);
+      console.log('timeA4' + timeA4);
+
+
+
+      arrT.forEach((function (element, index) {
+        console.log(index);
+        console.log(element);
+        if (element.selectedWeekWork == true) {
+
+          if (moment(element.start).isBetween(timeB4, timeA4)) {
+            element.txtColours = "red";
+            maActivities.push(element);
+          }
+          else {
+            element.txtColours = "333366";
+            maActivities.push(element);
+          }
+        }
+      }));
+
+      this.maActivities = maActivities;
+    });
+
     // console.log(this.diaryActionItems);
 
     this.showProjs = false;
@@ -449,11 +493,11 @@ export class ViewComponent implements OnInit {
     this.projs = [];
     this.myProjects = this.ps.getProjects(this.userId);
     this.myProjects.subscribe(projs => {
-      console.log(projs)
+      // console.log(projs)
 
       this.projs = projs;
       let projects = projs;
-      console.log('Pojs N0' + ' ' + projs.length);
+      // console.log('Pojs N0' + ' ' + projs.length);
       let noProjects = projs.length;
       this.projsNo = projects.length;
       if (this.projsNo == 0) {
@@ -1024,7 +1068,7 @@ export class ViewComponent implements OnInit {
     this.finish = "";
     this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "", bus_email: "", address: "", nationalId: "", nationality: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
   }
 
@@ -1076,7 +1120,7 @@ export class ViewComponent implements OnInit {
     this.finish = "";
     this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "", bus_email: "", address: "", nationalId: "", nationality: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
   }
 
@@ -1123,7 +1167,7 @@ export class ViewComponent implements OnInit {
     this.finish = "";
     this.selectedCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.userChampion = { name: "", id: "", email: "", phoneNumber: "", photoURL: "", bus_email: "", address: "", nationalId: "", nationality: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
   }
 
@@ -2011,7 +2055,7 @@ export class ViewComponent implements OnInit {
 
   compActions() {
 
-    console.log(this.projectCompId);
+    // console.log(this.projectCompId);
     
     let compID = this.projectCompId
     let proId = this.projectId
@@ -2043,7 +2087,8 @@ export class ViewComponent implements OnInit {
     
     // this.companyWeeklyActions = this.afs.collection('Enterprises').doc(this.projectCompId).collection<workItem>('WeeklyActions',
     // this.companyWeeklyActions = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(this.selectedTask.companyId).collection<workItem>('WeeklyActions',
-    this.companyWeeklyActions = this.afs.collection('Enterprises').doc(this.projectCompId).collection('projects').doc(this.projectId).collection<workItem>('WeeklyActions',
+    this.companyWeeklyActions = this.afs.collection('Enterprises').doc(this.projectCompId).collection('projects').doc(this.projectId).collection<workItem>('WeeklyActions', ref => ref
+      .where("complete", '==', false)
       // ref => ref.where('startWeek', '==', moment().week().toString())
     ).snapshotChanges().pipe(
       map(b => b.map(a => {
@@ -2057,12 +2102,12 @@ export class ViewComponent implements OnInit {
     );
     this.companyWeeklyActions.subscribe((actions) => {
       this.companyActions = actions;
-      console.log(this.companyActions);
-      console.log(this.companyActions.length);
+      // console.log(this.companyActions);
+      // console.log(this.companyActions.length);
     });
 
-    let arraySize = this.companyActions.length;
-    console.log(arraySize);
+    // let arraySize = this.companyActions.length;
+    // console.log(arraySize);
 
 
 
@@ -2545,15 +2590,15 @@ export class ViewComponent implements OnInit {
     let compId: string
 
     this.dataCall().subscribe(ref =>{
-      console.log(ref);
+      // console.log(ref);
       compId = ref.companyId;
       this.projectCompId = compId;
-      console.log(compId);
-      console.log(this.projectId);
+      // console.log(compId);
+      // console.log(this.projectId);
       // console.log(this.project.companyId);
-      console.log(this.projectCompId);
+      // console.log(this.projectCompId);
       this.compActions();
-      console.log(compId)
+      // console.log(compId)
 
       let tasksRef = this.afs.collection<Project>('Projects').doc(this.projectId);
       let compRef = this.afs.collection('Projects').doc(this.projectId).collection('enterprises').doc(compId);
@@ -2569,10 +2614,9 @@ export class ViewComponent implements OnInit {
         this.labourRef1 = ref;
       })
       this.companyprojectLabour = this.ps.getProCompanyLabour(this.projectId, compId)
-
+      this.viewCompanyReport();
     })
     console.log(pro);
-    this.viewCompanyReport();
   }
 
   viewSetCompanyReport(company) {
@@ -2715,7 +2759,6 @@ export class ViewComponent implements OnInit {
         // outstanding tasks
         if (moment(data.finish).isBefore(today)) {
           this.mcompOutstandingTasks.push(data);
-          console.log(this.compOutstandingTasks);
         };
         // Upcoming tasks
         if (moment(data.start).isAfter(today)) {
@@ -2767,7 +2810,7 @@ export class ViewComponent implements OnInit {
               this.projectCompId = compId;
             } 
             if (data.companyId != "") {
-              console.log(data.companyId);
+              // console.log(data.companyId);
               
             }
             else {

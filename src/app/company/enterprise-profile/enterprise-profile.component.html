@@ -81,28 +81,29 @@
                           <div class="row" style="height: 100px">
                             <div id="container">
                               <!-- <div class="content container scroll-em" *ngIf="showActions"> -->
-                              <div class="content container scroll-em" *ngIf="diaryActionItems.length != 0">
-                                <ol>
-                                  <!-- <li style="color:lightgrey" class="mr-auto ml-auto" *ngFor="let event of theseTasks"><a>{{ event.name }}</a><br><small class="label text-success"> {{ event.when }}</small>
-                                                    </li> ->
-                                                    <!- <li class="" style="color:steelblue" *ngFor="let event of theseTasks"> ->
-                                                    <!- <li class="" style="color:steelblue" *ngFor="let event of viewActions | async"> -->
-                                  <li class="" style="color:steelblue" *ngFor="let event of diaryActionItems">
-                                    <!-- <div class="row"> -->
-                                    <!-- <div class="col-sm-12" style="margin-left:1.0em; margin-right:-.5em"> -->
-                                    <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em"><!-- margin-left:1.0em; -->
+                              <div class="content container scroll-em" *ngIf="actionNo2 != 0">
+                                <!-- <ol>
+                                  <li class="" style="color:steelblue" *ngFor="let event of maActivities">
+                                    <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em">
 
                                       <a style="color:slategrey">
                                         {{ event.name }}
-                                        <!-- <span class="label text-warning"> {{ event.when }}</span> -->
                                       </a>
                                     </div>
-                                    <!-- </div> -->
+                                  </li>
+                                </ol> -->
+                                <ol style="list-style-type:none;padding-left: 12px;">
+                                  <li class="" style="color:steelblue" *ngFor="let event of maActivities">
+                                    <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em">
+                                      <a style="color:slategrey" [ngStyle]="{color: event.txtColours}">
+                                        <span class="label text-warning"> {{ event.start }}</span> {{ event.name }}
+                                      </a>
+                                    </div>
                                   </li>
                                 </ol>
+                                
                               </div>
-                              <!-- <div class="content container scroll-em" *ngIf="hideActions"> -->
-                              <div class="content container scroll-em" *ngIf="diaryActionItems.length === 0">
+                              <div class="content container scroll-em" *ngIf="actionNo2 === 0">
                                 <div class="row">
                                   <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
                                     <ol>
@@ -172,7 +173,7 @@
                           <div class="row col-md-12" style="margin-left:1em; padding-bottom: -1em ">
                             <div class="pull-left card-category clrs-h1-font">
                               <a>
-                                <i class="fa fa-folder-o [&#xf114;]"></i> Colours Projects</a>
+                                <i class="fa fa-folder-o [&#xf114;]"></i> Colours Project</a>
                             </div>
                           </div>
                           <!-- <hr class="line" style="padding-bottom:0em; padding-top: -1em"> -->
@@ -1059,12 +1060,12 @@
                       <div class="nav-tabs-navigation">
                         <div class="nav-tabs-wrapper">
                           <ul id="tabs" class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                              <a class="nav-link nav-colors  active" data-toggle="tab" href="#week" role="tab"
+                            <li class="nav-item" hidden >
+                              <a class="nav-link nav-colors" data-toggle="tab" href="#week" role="tab"
                                 aria-expanded="true">Week</a><!--  (click)="setPeriod('startWeek')" -->
                             </li>
                             <li class="nav-item">
-                              <a class="nav-link nav-colors" data-toggle="tab" href="#month" role="tab" aria-expanded="false">Month</a><!--  (click)="setPeriod('startMonth')" -->
+                              <a class="nav-link nav-colors active" data-toggle="tab" href="#month" role="tab" aria-expanded="false">Month</a><!--  (click)="setPeriod('startMonth')" -->
                             </li>
                             <li class="nav-item">
                               <a class="nav-link nav-colors" data-toggle="tab" href="#quarter" role="tab" aria-expanded="false">Quarter</a><!--  (click)="setPeriod('startQuarter')" -->
@@ -1076,7 +1077,7 @@
                         </div>
                       </div>
                       <div id="my-tab-content" class="tab-content text-center">
-                        <div class="tab-pane" id="day" role="tabpanel" aria-expanded="true">
+                        <div hidden class="tab-pane" id="day" role="tabpanel" aria-expanded="true">
                           <div class="card">
                             <div class="">
                               <div class="card-text">
@@ -1126,7 +1127,7 @@
                             </div>
                           </div>
                         </div>
-                        <div class="tab-pane active" id="week" role="tabpanel" aria-expanded="false">
+                        <div hidden class="tab-pane" id="week" role="tabpanel" aria-expanded="false">
                           <div class="card">
                             <div class="">
                               <div class="card-text">
@@ -1474,7 +1475,7 @@
                             </div>
                           </div>
                         </div>
-                        <div class="tab-pane" id="month" role="tabpanel" aria-expanded="false">
+                        <div class="tab-pane active" id="month" role="tabpanel" aria-expanded="false">
                           <div class="card">
                             <div class="">
                               <div class="card-text">
@@ -2070,7 +2071,8 @@
                                                   <div class="row">
                                                     <div class="col-sm-12 text-left" style="margin-right:-.5em">
                                                       <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                                        style="color:slategrey" title="Project: {{ tss.projectName }} Champion: {{ tss.champion.name }}">
+                                                        style="color:slategrey">
+                                                        <!-- style="color:slategrey" title="Project: {{ tss.projectName }} Champion: {{ tss.champion.name }}"> -->
                                                         {{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                                       </button>
                                                       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
@@ -2107,7 +2109,8 @@
                                                   <div class="row">
                                                     <div class="col-sm-12 text-left" style="margin-right:-.5em">
                                                       <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                                        style="color:slategrey" title="Project: {{ tss.projectName }} Champion: {{ tss.champion.name }}">
+                                                        style="color:slategrey">
+                                                        <!-- style="color:slategrey" title="Project: {{ tss.projectName }} Champion: {{ tss.champion.name }}"> -->
                                                         {{ tss.name }}<span class="label text-warning"> {{ tss.when }}</span>
                                                       </button>
                                                       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
@@ -2335,7 +2338,7 @@
                                                           <div class="row">
                                                             <div class="col-md-9">
                                                               <button class="warning btn-link" id="dropdownMenuButton"
-                                                                data-toggle="dropdown" aria-haspopup="true" data-toggle="modal" data-target="#editNewAction" title= "Edit Activity"
+                                                                data-toggle="dropdown" aria-haspopup="true" data-toggle="modal" data-target="#editNewAction" title= "Edit Task Activity"
                                                                 aria-expanded="false" style="color:slategrey" (click)="selectAction(item)">
                                                                 {{ item.name }}<span class="label text-info" hidden> {{ item.targetQty }} {{ item.unit }}</span>
                                                               </button>
@@ -2364,7 +2367,7 @@
                                                     </div>
                                                     <button class="btn-link btn-round primary" (click)="selectTask(tss)"
                                                       data-toggle="modal" data-target="#newAction">
-                                                      <small>Add activity</small></button>
+                                                      <small>Add Task Activity</small></button>
                                                   </div>
                                                 </div>
                                               </li>
@@ -2395,7 +2398,7 @@
                         <div class="tab-pane" id="weekly" role="tabpanel" aria-expanded="false">
                           <div class="row card-category clrs-h4-font">
                             <div class="col-xs-1"></div>
-                            <div class="col-md-3">Activity</div>
+                            <div class="col-md-3">Task Activity</div>
                             <div class="col-md-3 text-left na-an">Start</div>
                             <div class="col-md-3 text-left ma-an">Finish</div>
                             <div class="col-md-3 text-left ma-an">Actions</div>
@@ -2438,7 +2441,7 @@
                           <div class="card-body" style="margin-top: -10px">
                             <div class="row">
                               <!-- <div class="col-sm-1 card-header text-center"></div> -->
-                              <div class="col-sm-2 card-header text-center">Activity</div>
+                              <div class="col-sm-2 card-header text-center">Task Activity</div>
                               <div class="col-sm-3 card-header">Target Qty</div>
                               <div class="col-sm-2 card-header text-left">Start </div>
                               <div class="col-sm-2 card-header text-left">Finish </div>
@@ -2498,8 +2501,8 @@
                               <div class="row">
                                 <div class="col-md-9"></div>
                                 <div class="col-md-3">
-                                  <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday" rel="tooltip" title="Create new Activity">
-                                    New Activity
+                                  <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday" rel="tooltip" title="Create new Task Activity">
+                                    New Task Activity
                                   </button>
                                 </div>
                               </div>
@@ -2528,6 +2531,15 @@
                         </div>
                         <div id="my-tab-content" class="tab-content text-center">
                           <div class="tab-pane active" id="internalReport" role="tabpanel" aria-expanded="true">
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <p class="text-left title card-category" style="color: darkslategray">
+                                    Many other Reports and Metrics are coming up covering all corners of a project, an enterprise and personal life
+                                  </p>
+                                </div>
+                              </div>
+                            </div><br>
                             <div class="col-md-10 ml-auto mr-auto">
                               <p class="text-left title clrs-h4-font" style="color: darkslategray">Company Details</p>
                               <div class="card-plain card-content">
@@ -2573,7 +2585,7 @@
                                 <span> <a routerLink="../total-actions" style="color: darkslategray">Project Reports</a></span>
                               </p>
                             </div>
-                            <div class="col-md-10 ml-auto mr-auto">
+                            <div hidden class="col-md-10 ml-auto mr-auto">
                               <p class="text-left title clrs-h4-font" style="color: darkslategray"> Compliance</p>
                             
                               <div class="card-plain card-content">
@@ -2601,8 +2613,8 @@
                                 </div>
                               </div>
                             </div>
-                            <div class="spacer" style="height: 2em"></div>
-                            <div class="col-md-10 ml-auto mr-auto">
+                            <div hidden class="spacer" style="height: 2em"></div>
+                            <div hidden class="col-md-10 ml-auto mr-auto">
                               <p class="text-left title clrs-h4-font" style="color: darkslategray">Metrics</p>
                               <div class="card-plain card-content">
                                 <div class="text-left na-p">
@@ -2645,7 +2657,7 @@
                                 </div>
                               </div>
                             </div>
-                            <div class="col-md-10 ml-auto mr-auto">
+                            <div hidden class="col-md-10 ml-auto mr-auto">
                               <p class="text-left title clrs-h4-font" style="color: darkslategray">Departments</p>
                               <div class="card-plain card-content">
                               <div *ngIf="displayDeptReport" class="card-body">
@@ -2791,7 +2803,7 @@
                               </div>
                               </div>
                             </div>
-                            <div class="col-md-10 ml-auto mr-auto">
+                            <div hidden class="col-md-10 ml-auto mr-auto">
                               <p class="text-left title clrs-h4-font" style="color: darkslategray">Staff</p>
                               <div class="card-plain card-content">
                                 <div *ngIf="displayUserReport" class="card-body">
@@ -2938,7 +2950,7 @@
                                 </div>
                               </div>
                             </div>
-                            <div class="col-md-10 ml-auto mr-auto">
+                            <div hidden class="col-md-10 ml-auto mr-auto">
                               <p class="text-left title clrs-h4-font" style="color: darkslategray">Projects</p>
                               <div class="card-plain card-content">
                                 <div *ngIf="displayProjReport" class="card-body">
@@ -3085,7 +3097,7 @@
                                 </div>
                               </div>
                             </div>
-                            <div class="col-md-10 ml-auto mr-auto">
+                            <div hidden class="col-md-10 ml-auto mr-auto">
                               <p class="text-left title clrs-h4-font" style="color: darkslategray">Reference</p>
                               <div class="card-plain card-content">
                                 <div class="text-left na-p">
@@ -3243,7 +3255,7 @@
                                   </div>
                                   <button class="btn-link btn-round primary" (click)="selectTask(item)" data-toggle="modal"
                                     data-target="#newAction">
-                                    <small>Add activity</small></button>
+                                    <small>Add Task Activity</small></button>
                                 </div>
                               </div>
                             </li>
@@ -3701,7 +3713,7 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-8 ml-auto mr-auto title na-am col-form-label info">
-            Select Participants<br> for Activity: <b>{{ editedAction.name }}</b> </p><br>
+            Select Participants<br> for Task Activity: <b>{{ editedAction.name }}</b> </p><br>
 
         </div>
         <div class="col-md-10 ml-auto mr-auto">
@@ -3799,7 +3811,7 @@
             <label class="col-md-4 col-form-label">Activity Name</label>
             <div class="col-md-7">
               <div class="form-group">
-                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Activity name">
+                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Task Activity name">
               </div>
             </div>
           </div>
@@ -3852,13 +3864,13 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-            <font size=4>Edit Activity<br> "{{ selectedAction.name }}"</font>
+            <font size=4>Edit Task Activity<br> "{{ selectedAction.name }}"</font>
           </p>
         </div>
         <hr>
         <!-- <form class="form-horizontal"> -->
         <div class="row">
-          <label class="col-md-4 col-form-label">Activity</label>
+          <label class="col-md-4 col-form-label">Task Activity</label>
           <div class="col-md-7">
             <div class="form-group">
               <input type="text" [(ngModel)]="selectedAction.name" name="actName" class="form-control">
@@ -3887,7 +3899,7 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-10 ml-auto mr-auto title na-an info" style="color:steelblue">
-            <font size=4>New Activity for {{ selectedTask.name }} task</font>
+            <font size=4>New Task Activity for {{ selectedTask.name }} task</font>
           </p>
         </div>
         <hr>
@@ -4068,7 +4080,7 @@
       <div class="card-body ">
         <div class="card-header text-center">
           <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-            <font size=4>Edit Activity<br> "{{ selectedAction.name }}"</font>
+            <font size=4>Edit Task Activity<br> "{{ selectedAction.name }}"</font>
           </p>
         </div>
         <hr>

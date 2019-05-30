@@ -118,7 +118,7 @@ export class CreateComponent implements OnInit {
     this.newEnterprise = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", bus_email: "", sector: "", participants: null, champion: this.userChampion, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.taxDocument = null;
     // this.newEnterprise.services = [null];
-    console.log('init newCompany services' + this.newEnterprise.services);
+    // console.log('init newCompany services' + this.newEnterprise.services);
 
     this.compUser = { bus_email: "", nationality: "", nationalId: "", phoneNumber: "" };
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: ""  };

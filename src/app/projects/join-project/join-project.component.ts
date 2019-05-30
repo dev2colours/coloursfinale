@@ -143,7 +143,7 @@ export class JoinProjectComponent {
   }
 
   selectCompany(company: Enterprise) {
-    // console.log(company.id);
+    console.log(company.id);
     console.log(company);
     this.selectedCompany = company;
     console.log(this.selectedCompany);

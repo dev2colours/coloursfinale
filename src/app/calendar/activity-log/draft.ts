@@ -60,7 +60,7 @@
 //               );
 
 //               lapData.subscribe(ldata => {
-//                 // console.log(ldata);
+//                 console.log(ldata);
 
 //                 mlapsdata = (ldata.length);
 //                 this.mlapsdata = mlapsdata;

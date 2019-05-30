@@ -33,7 +33,7 @@ export interface workItem {
     taskId: string, companyName: string, companyId: string, champion: ParticipantData, participants: [ParticipantData],
     departmentName: string, departmentId: string, classification: classification, type: string, targetQty: number,
     classificationName: string, classificationId: string, selectedWork: boolean, workHours: [workHours], section: Section,
-    actualStart: string, actualEnd: string, Hours: string
+    actualStart: string, actualEnd: string, Hours: string, selectedWeekWork: boolean, selectedWeekly: boolean
  };
 
 export interface Section {

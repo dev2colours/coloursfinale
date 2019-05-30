@@ -20,11 +20,12 @@
             Click on the task to Enter the Actuals
           </p><br>
           <div id="accordionActionData" role="tablist" aria-multiselectable="true" class="card-collapse">
-            <ol style="padding-left: 0px;">
+            <ol style="list-style-type:none; padding-left: 0px;">
               <li class="" style="color:steelblue" *ngFor="let item of myDiaryItems">
                 <div class="card card-plain" *ngIf="item.champion.id == userId; else showNonChampField">
                   <div class="card-header" role="tab" id="heading2">
                     <a class="collapsed row col-md-12" data-toggle="collapse" href="#{{ item.id }}" (click)="selectAction(item)" aria-expanded="false" aria-current="false">
+                    <span class="label text-warning card-category col-md-3" style="width: 20em;">{{ item.start }}</span>                      
                       <span class="label text-info card-category" style="width: 20em;">{{ item.name }}
                         <span style="width: 10em;" class="pull-right"><small *ngIf="item.targetQty">Target
                             <span class="label text-warning">{{ item.targetQty }} {{ item.unit }}</span></small>
@@ -73,7 +74,7 @@
             </ol>
           </div>
           <div class="col-md-12 card-footer" style="padding-right: 0px; padding-left: 0px;">
-            <code> add new activity</code>
+            <code> add new Task Activity</code>
             <div class="form-group">
               <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
                 <input type="text" class="form-control panel-boader" [(ngModel)]="item.name" style=" padding-left: 10px; padding-right: 10px; height:2em"
@@ -111,7 +112,7 @@
         </div>
         <div class="col-md-10 ml-auto mr-auto" *ngIf="actNumber == 0">
           <form>
-            <code> add new activity</code>
+            <code> add new Task Activity</code>
             <div class="form-group">
               <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
                 <input type="text" class="form-control panel-boader" [(ngModel)]="item.name" name="unplannedWork" style=" padding-left: 10px; padding-right: 10px; height:2em"

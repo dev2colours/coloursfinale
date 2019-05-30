@@ -38,7 +38,7 @@ export const ROUTES: RouteInfo[] = [{
         type: 'link',
         icontype: 'fa fa-pied-piper-alt',
     },{
-        path: '/calendar',
+        path: '/tasks-24/7',
         title: 'Tasks 24/7',
         type: 'link',
         icontype: 'fa fa-codiepie',
@@ -57,6 +57,11 @@ export const ROUTES: RouteInfo[] = [{
         title: 'Reporting Assistant',
         type: 'link',
         icontype: 'fa fa-black-tie',
+    }, {
+        path: '/issues',
+        title: 'Issues',
+        type: 'link',
+        icontype: 'fa  fa-gears',
     },
     // {
     //     path: '/enterprises',

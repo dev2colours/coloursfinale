@@ -117,11 +117,11 @@ export class ActivityLogComponent implements OnInit {
             if (data.name !== 'Lapsed') {
 
               data.actualStart = String(moment(data.actualStart).format('MMMM Do YYYY, h:mm:ss a'));
-              // console.log('start,', data.actualStart);
+              console.log('start,', data.actualStart);
 
               data.actualEnd = String(moment(data.actualEnd).format('MMMM Do YYYY, h:mm:ss a'));
 
-              // console.log('end,', data.actualEnd);
+              console.log('end,', data.actualEnd);
               // myActs.doc(id).update({ 'actualStart': data.actualStart });
               // myActs.doc(id).update({ 'actualEnd': data.actualEnd });
               let tot = 0;
@@ -133,12 +133,12 @@ export class ActivityLogComponent implements OnInit {
 
               }
               // tot = data.workHours.length
-              // console.log(tot);
-              // console.log(moment(strtTym).add(tot, 'h'));
+              console.log(tot);
+              console.log(moment(strtTym).add(tot, 'h'));
 
               // data.Hours = String(moment(moment(data.actualStart).diff(moment(data.actualEnd))).format('hh'));
               data.Hours = String(moment(strtTym).add(tot, 'h').format('hh'));
-              // console.log(data.Hours);
+              console.log(data.Hours);
             }
 
             if (data.name === 'Lapsed') {
@@ -152,11 +152,11 @@ export class ActivityLogComponent implements OnInit {
               );
 
               lapData.subscribe(ldata => {
-                // console.log(ldata);
+                console.log(ldata);
 
                 mlapsdata = (ldata.length);
                 this.mlapsdata = mlapsdata;
-                // console.log(mlapsdata);
+                console.log(mlapsdata);
 
               })
               // data.wrkHours = String(mlapsdata)
@@ -196,7 +196,7 @@ export class ActivityLogComponent implements OnInit {
             }
             // }
 
-            // console.log(ActionArrayAll);
+            console.log(ActionArrayAll);
             
 
           })
@@ -204,8 +204,8 @@ export class ActivityLogComponent implements OnInit {
 
       });
       // this.ActionArrayAll = ActionArrayAll;/
-      // console.log(ActionArrayAll);
-      // console.log(this.ActionArrayAll);
+      console.log(ActionArrayAll);
+      console.log(this.ActionArrayAll);
       
     })
 

@@ -25,25 +25,25 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-button nav-link btn-magnify" (click)="openModal(template1)" title="Open My Diary">
+        <a class="nav-button nav-link btn-magnify" (click)="openModal(template1)" title="Click to Enter actual workdone quantities">
           <i class="nc-icon nc-paper"></i>
           <p>
             <span class="d-lg-none d-md-block">Diary</span>
           </p>
         </a>
       </li>
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-button nav-link btn-magnify" (click)="showNotification('dataNotify', 'top', 'right')" title="Show Notification">
           <i class="nc-icon nc-align-center"></i>
           <p>
             <span class="d-lg-none d-md-block">Notify</span>
           </p>
         </a>
-      </li>  
+      </li>   -->
       <li class="nav-item btn-rotate dropdown">
         <a class="nav-link dropdown-toggle card-category" style="cursor:pointer" id="navbarDropdownMenuLink"
           data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-          <i class="fa fa-folder-o [&#xf114;]"></i>Colours Projects
+          <i class="fa fa-folder-o [&#xf114;]"></i>Colours Project
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item btn-warning btn-link" style="color:rgb(209, 135, 16)" disabled>Enterprise Projects</a>
@@ -61,7 +61,7 @@
       <li class="nav-item btn-rotate dropdown">
         <a class="nav-link dropdown-toggle card-category" style="cursor:pointer" id="navbarDropdownMenuLink"
           data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-          <i class="nc-icon nc-globe-2"></i>Colours Enterprises
+          <i class="nc-icon nc-globe-2"></i>Colours Enterprise
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item btn-primary btn-link" *ngFor="let company of companies | async" (click)="setCompany(company)"
@@ -82,7 +82,7 @@
             (click)="setClassification(classification)">
             {{ classification.name }}
           </a><!-- [routerLink]="['/enterprises', company.id]" -->
-          <a class="dropdown-item btn-primary btn-link" routerLink="/calendar">Goto <span class="text-primary">Colours
+          <a class="dropdown-item btn-primary btn-link" routerLink="/tasks-24/7">Goto <span class="text-primary">Colours
               Personal</span> </a>
         </div>
       </li>
@@ -377,7 +377,7 @@
                 <ng-template #showNonChampField>
                   <div class="row">
                     <div class="col-md-9"><!-- text-info -->
-                      {{ action.name }}
+                      <span class="label text-warning"> {{ action.start }}</span> {{ action.name }}
                     </div>
                     <div class="col-md-3" style="padding-top: 5px;">
                       <input class="card-category col-form-label" type="checkbox" (change)="updateAction($event, action)">
@@ -389,15 +389,15 @@
           </div>
         <!-- </form> -->
         <!-- <form> -->
-          <code> add new activity</code>
+          <code> add new Task Activity</code>
           <div class="form-group">
             <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
               <input type="text" class="form-control panel-boader" [(ngModel)]="item.name" name="unplannedWork" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                placeholder="Enter current unplanned activity" />
+                placeholder="Enter current unplanned activity" (change)="pause()"/>
               <div class="input-group-postpend">
                 <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
                   <small>
-                    <button class="" (click)="unPlannedTAsk(item)" title="Add item" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;">
+                    <button class="" (click)="unPlannedTAskPopUp(item)" title="Add item" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;">
                       Add
                     </button>
                   </small>
@@ -414,7 +414,7 @@
       </div>
       <div class="col-md-10 ml-auto mr-auto" *ngIf="actiondsNo == 0">
         <form>
-          <code> add new activity</code>
+          <code> add new Task Activity</code>
           <div class="form-group">
             <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
               <input type="text" class="form-control panel-boader" [(ngModel)]="item.name" name="unplannedWork" style=" padding-left: 10px; padding-right: 10px; height:2em"
@@ -422,7 +422,7 @@
               <div class="input-group-postpend">
                 <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
                   <small>
-                    <button class="" (click)="unPlannedTAsk(item)" title="Add item" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;">
+                    <button class="" (click)="unPlannedTAskPopUp(item)" title="Add item" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;">
                       Add
                     </button>
                   </small>
@@ -437,140 +437,142 @@
 </ng-template>
 
 <ng-template #template1 let-modal>
-  <div class="modal-header">
-    <div class="row">
-      <div class="card col-md-12">
-        <div class="row">
-          <div class="col-md-4">
-            <p class="na-p">Your ToDo List Diary</p>
+  <div class="modal-lg">
+    <div class="modal-header">
+      <div class="row">
+        <div class="card col-md-12">
+          <div class="row">
+            <div class="col-md-4">
+              <p class="na-p">Your ToDo List Diary</p>
+            </div>
+            <div class="col-md-4 text-left">
+              <p class="clrs-h4-font text-center"><span id="thrs">{{ nHrs }} </span>: <span id="tmins">{{ nMin }} </span>:
+                <span>{{ nSecs }}</span>
+              </p>
+            </div>
+            <div class="col-md-4 text-right">Today`s Overview</div>
           </div>
-          <div class="col-md-4 text-left">
-            <p class="clrs-h4-font text-center"><span id="thrs">{{ nHrs }} </span>: <span id="tmins">{{ nMin }} </span>:
-              <span>{{ nSecs }}</span>
-            </p>
-          </div>
-          <div class="col-md-4 text-right">Today`s Overview</div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="modal-body" style="padding-bottom:0px">
-    <div class="row">
-      <p class="clrs-h4-font" style="padding-left: 25px;">This is your Diary Time Check</p>
-      <p class="category text-left text-info" style="margin-bottom:-1em; padding-left: 25px;">
-        <!-- Please click or enter to confirm your current engagement \ Task -->
-        Please click or enter new task for assistance in tracking and managing your Daily diary
-      </p><br>
-    </div>
-    <div class="row">
-      <div class="col-md-10 ml-auto mr-auto" *ngIf="actiondsNo != 0">
-        <div id="accordionActionDataPop" role="tablist" aria-multiselectable="true" class="card-collapse">
-          <ol style="padding-left: 0px;">
-            <li class="" style="color:steelblue" *ngFor="let item of myActionItems">
-              <div class="card card-plain" *ngIf="item.champion.id == userId; else showNonChampField">
-                <div class="card-header" role="tab" id="heading2">
-                  <a class="collapsed row col-md-12" data-toggle="collapse" href="#{{ item.id }}p" (click)="selectAction(item)"
-                    aria-expanded="false" aria-current="false">
-                    <span class="label card-category" style="width: 20em;">{{ item.name }}<!--  text-info -->
-                      <span style="width: 10em;" class="pull-right"><small *ngIf="item.targetQty">Target
-                          <span class="label text-warning">{{ item.targetQty }} {{ item.unit }}</span></small>
-                        <i class="nc-icon nc-minimal-down"></i>
+    <div class="modal-body" style="padding-bottom:0px">
+      <div class="row">
+        <p class="clrs-h4-font" style="padding-left: 25px;">This is your Diary Time Check</p>
+        <p class="category text-left text-info" style="margin-bottom:-1em; padding-left: 25px;">
+          <!-- Please click or enter to confirm your current engagement \ Task -->
+          Please click or enter new task for assistance in tracking and managing your Daily diary
+        </p><br>
+      </div>
+      <div class="row">
+        <div class="col-md-10 ml-auto mr-auto" *ngIf="actiondsNo != 0">
+          <div id="accordionActionDataPop" role="tablist" aria-multiselectable="true" class="card-collapse">
+            <ol style="list-style-type:none; padding-left: 0px;">
+              <li class="" style="color:steelblue" *ngFor="let item of myActionItems">
+                <div class="card card-plain" *ngIf="item.champion.id == userId; else showNonChampField">
+                  <div class="card-header" role="tab" id="heading2">
+                    <a class="collapsed row col-md-12" data-toggle="collapse" href="#{{ item.id }}p" (click)="selectAction(item)"
+                      aria-expanded="false" aria-current="false">
+                      <span class="label card-category" style="width: 20em;"><span class="label text-warning"> {{ item.start }}</span> {{ item.name }}<!--  text-info -->
+                        <span style="width: 10em;" class="pull-right">
+                          <small *ngIf="item.targetQty"> Target <span class="label text-warning"> {{ item.targetQty }} {{ item.unit }}</span></small>
+                          <i class="nc-icon nc-minimal-down"></i>
+                        </span>
                       </span>
-                    </span>
-                  </a>
-                </div>
-                <div id="{{ item.id }}p" class="collapse" data-parent="#accordionActionDataPop" role="tabpanel"
-                  aria-labelledby="heading2">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-sm-9">
-                        <p class="category text-left" style="margin-bottom: 0px;">Enter Actual Measurements </p>
-                        <div class="form-group">
-                          <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-                            <input type="number" class="form-control panel-boader" [(ngModel)]="dmData.qty" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                              placeholder="Enter Data" />
-                            <div class="input-group-postpend">
-                              <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
-                                <small>{{ item.unit }}</small>
-                              </span>
+                    </a>
+                  </div>
+                  <div id="{{ item.id }}p" class="collapse" data-parent="#accordionActionDataPop" role="tabpanel"
+                    aria-labelledby="heading2">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-sm-9">
+                          <p class="category text-left" style="margin-bottom: 0px;">Enter Actual Measurements </p>
+                          <div class="form-group">
+                            <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                              <input type="number" class="form-control panel-boader" [(ngModel)]="dmData.qty" style=" padding-left: 10px; padding-right: 10px; height:2em"
+                                placeholder="Enter Data" />
+                              <div class="input-group-postpend">
+                                <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+                                  <small>{{ item.unit }}</small>
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="col-sm-2 card-category">
-                        <button class="btn-link btn-round primary" (click)="saveActual(dmData)" style="margin-top: 11px"><!--  -->
-                          <small> Save </small>
-                        </button>
+                        <div class="col-sm-2 card-category">
+                          <button class="btn-link btn-round primary" (click)="saveActual(dmData)" style="margin-top: 11px"><!--  -->
+                            <small> Save </small>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <ng-template #showNonChampField>
-                <div class="row">
-                  <div class="col-md-9">
-                    {{ item.name }}
+                <ng-template #showNonChampField>
+                  <div class="row">
+                    <div class="col-md-9">
+                      {{ item.name }}
+                    </div>
+                    <div class="col-md-3" style="padding-top: 5px;">
+                      <input class="card-category col-form-label" type="checkbox" (change)="updateAction($event, item)">
+                    </div>
                   </div>
-                  <div class="col-md-3" style="padding-top: 5px;">
-                    <input class="card-category col-form-label" type="checkbox" (change)="updateAction($event, item)">
-                  </div>
+                </ng-template>
+              </li>
+            </ol>
+          </div>
+          <div class="col-md-12 footer" style="padding-right: 0px; padding-left: 0px;">
+            <code> add new Task Activity</code>
+            <div class="form-group">
+              <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                <input type="text" class="form-control panel-boader" [(ngModel)]="item.name" style=" padding-left: 10px; padding-right: 10px; height:2em"
+                  placeholder="Enter current unplanned activity" /><!-- clrs-cell  -->
+                <div class="input-group-postpend">
+                  <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+                    <small>
+                      <button class="" (click)="unPlannedTAsk(item)" title="Add item" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;">
+                        Add
+                      </button>
+                    </small>
+                  </span>
                 </div>
-              </ng-template>
-            </li>
-          </ol>
-        </div>
-        <div class="col-md-12 footer" style="padding-right: 0px; padding-left: 0px;">
-          <code> add new activity</code>
-          <div class="form-group">
-            <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-              <input type="text" class="form-control panel-boader" [(ngModel)]="item.name" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                placeholder="Enter current unplanned activity" /><!-- clrs-cell  -->
-              <div class="input-group-postpend">
-                <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
-                  <small>
-                    <button class="" (click)="unPlannedTAsk(item)" title="Add item" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;">
-                      Add
-                    </button>
-                  </small>
-                </span>
               </div>
-            </div>
-          </div><br>
-          <div class="row">
-            <div class="col-md-9"></div>
-            <div class="col-md-3 mr">
-              <button class="form-control panel-boader btn-link text-center close text-info" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
-                aria-label="Close" (click)="modalRef.hide()">
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-10 ml-auto mr-auto" *ngIf="actiondsNo == 0">
-        You have nothing in your Diary Today <br>
-        <p class="category">To add Goto the Implementation Page on either Colours Personal, your enterprise in Colours
-          Enterprises or existing Project Colours Projects dropdown</p>
-      </div>
-      <div class="col-md-10 ml-auto mr-auto" *ngIf="actiondsNo == 0">
-        <form>
-          <code> add new activity</code>
-          <div class="form-group">
-            <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-              <input type="text" class="form-control panel-boader" [(ngModel)]="item.name" name="unplannedWork" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                placeholder="Enter current unplanned activity" />
-              <div class="input-group-postpend">
-                <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
-                  <small>
-                    <button class="" (click)="unPlannedTAsk(item)" title="Add item" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;">
-                      Add
-                    </button>
-                  </small>
-                </span>
+            </div><br>
+            <div class="row">
+              <div class="col-md-9"></div>
+              <div class="col-md-3 mr">
+                <button class="form-control panel-boader btn-link text-center close text-info" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
+                  aria-label="Close" (click)="modalRef.hide()">
+                  Close
+                </button>
               </div>
             </div>
           </div>
-        </form>
+        </div>
+        <div class="col-md-10 ml-auto mr-auto" *ngIf="actiondsNo == 0">
+          You have nothing in your Diary Today <br>
+          <p class="category">To add Goto the Implementation Page on either Colours Personal, your enterprise in Colours
+            Enterprises or existing Project Colours Projects dropdown</p>
+        </div>
+        <div class="col-md-10 ml-auto mr-auto" *ngIf="actiondsNo == 0">
+          <form>
+            <code> add new Task Activity</code>
+            <div class="form-group">
+              <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                <input type="text" class="form-control panel-boader" [(ngModel)]="item.name" name="unplannedWork" style=" padding-left: 10px; padding-right: 10px; height:2em"
+                  placeholder="Enter current unplanned activity" />
+                <div class="input-group-postpend">
+                  <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
+                    <small>
+                      <button class="" (click)="unPlannedTAsk(item)" title="Add item" style="padding-top: 0px; padding-bottom: 0px; cursor: pointer;">
+                        Add
+                      </button>
+                    </small>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>

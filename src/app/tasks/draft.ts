@@ -105,7 +105,7 @@
 
 //   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private ts: TaskService, private afs: AngularFirestore) {
 
-//     // console.log(this.afAuth.user);
+//     console.log(this.afAuth.user);
 //     this.task = { name: "", champion: null, projectName: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", createdBy: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "" };
 //     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", location: "", sector: "" };
 //     this.userChampion = { name: "", id: "", email: "", phoneNumber: "" };
@@ -118,7 +118,7 @@
 //     this.currentWeek = moment(new Date().toISOString(), "YYYY-MM-DD").week().toString();
 //     this.todayDate = moment(new Date().toISOString(), "YYYY-MM-DD").day().toString();
 
-//     // console.log(this.todayDate)
+//     console.log(this.todayDate)
 
 //     this.afAuth.authState.subscribe(user => {
 //       console.log(user.uid)
@@ -395,7 +395,7 @@
 //     this.ts.addTask(this.task, this.selectedCompany);
 
 //     // let oop = this.selectedCompany.id;
-//     // console.log(this.task)
+//     console.log(this.task)
 //     // let createdTask = this.task;
 //     // let tasksRef = this.afs.collection('tasks');
 //     // let champRef = this.afs.collection('Users').doc(this.task.champion.id).collection('tasks');

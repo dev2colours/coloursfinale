@@ -53,7 +53,7 @@ export class CreateEnterpriseComponent {
     // let comp: Enterprise;
     let newRef = this.afs.collection('/Users').doc(this.userId).collection('myenterprises');
 
-    // console.log(this.userId);
+    console.log(this.userId);
 
     this.newEnterprise.by = this.user.displayName;
     this.newEnterprise.byId = this.user.uid
@@ -61,21 +61,21 @@ export class CreateEnterpriseComponent {
     this.newPart = this.loggedInUser;
     this.newEnterprise.participants = [this.newPart];
 
-    // console.log(this.newEnterprise);
+    console.log(this.newEnterprise);
     let partId = this.userId;
     let comp = this.newEnterprise;
     let pUser = this.newPart;
     mycompanyRef = this.afs.collection('Enterprises')
 
     this.afs.collection('/Users').doc(this.user.uid).collection('myenterprises').add(comp).then(function (Ref) {
-      // console.log(Ref.id)
+      console.log(Ref.id)
       console.log(pUser);
       compRef = Ref.id;
       newRef.doc(compRef).collection('Participants').doc(partId).set(pUser);// add to participants collection in myenterprise collection
-      // console.log(compRef)
+      console.log(compRef)
       mycompanyRef.doc(compRef).set(comp);
       mycompanyRef.doc(compRef).collection('Participants').doc(partId).set(pUser);// add to participants collection in Enterprise collection
-      // console.log('enterprise ');
+      console.log('enterprise ');
       newRef.doc(compRef).update({ 'id': compRef }); // updates the id attribute for the enterprise in myenterprise collection 
       mycompanyRef.doc(compRef).update({ 'id': compRef }); // updates the id attribute for the enterprise in Enterprise collection
     });
@@ -99,7 +99,7 @@ export class CreateEnterpriseComponent {
 
   ngOnInit() {
     this.afAuth.user.subscribe(user => {
-      // console.log(user);
+      console.log(user);
       this.userId = user.uid;
       this.user = user;
       let loggedInUser = {
@@ -111,8 +111,8 @@ export class CreateEnterpriseComponent {
 
       this.loggedInUser = loggedInUser
       this.coloursUsername = user.displayName;
-      // console.log(this.userId);
-      // console.log(this.user);
+      console.log(this.userId);
+      console.log(this.user);
       this.dataCall();
 
     })

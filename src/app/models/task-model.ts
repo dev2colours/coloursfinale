@@ -11,7 +11,7 @@ export interface Task {
     start: string, startDay: string, startWeek: string, startMonth: string, startQuarter: string, startYear: string,
     finish: string, finishDay: string, finishWeek: string, finishMonth: string, finishQuarter: string, finishYear: string,
     by: string, createdOn: string, projectName: string, projectId: string, projectType: string, byId: string,
-    trade: string, section: Section, complete :boolean, status: string,
+    trade: string, section: Section, complete: boolean, status: string, selectedWeekly: boolean
 }
 
 export interface MomentTask extends Task {

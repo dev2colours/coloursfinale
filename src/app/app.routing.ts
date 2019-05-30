@@ -41,6 +41,9 @@ export const AppRoutes: Routes = [{
             loadChildren: './tasks/tasks.module#TasksModule'
         },{
             path: '',
+            loadChildren: './issues/issues.module#IssuesModule'
+        },{
+            path: '',
             loadChildren: './notebook/notebook.module#NotebookModule'
         },{
             path: '',

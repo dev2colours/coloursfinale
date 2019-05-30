@@ -68,25 +68,33 @@
                           <div class="row" style="height: 100px" >
                             <div  id="container">
                               <!-- <div class="content container scroll-em" *ngIf="showActions"> -->
-                              <div class="content container scroll-em" *ngIf="myActionItems.length != 0">
-                                <ol>
-                                  <!-- <li style="color:lightgrey" class="mr-auto ml-auto" *ngFor="let event of theseTasks"><a>{{ event.name }}</a><br><small class="label text-success"> {{ event.when }}</small>
-                                  </li> ->
-                                  <!- <li class="" style="color:steelblue" *ngFor="let event of theseTasks"> ->
-                                  <!- <li class="" style="color:steelblue" *ngFor="let event of viewActions | async"> -->
+                              <!-- <div class="content container scroll-em" *ngIf="myActionItems.length != 0"> -->
+                              <div class="content container scroll-em" *ngIf="actionNo !== 0">
+                                <!-- <ol>
                                   <li class="" style="color:steelblue" *ngFor="let event of myActionItems">
-                                    <!-- <div class="row"> -->
-                                      <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em"><!-- margin-left:1.0em; -->
+                                      <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em">
                                         <a style="color:slategrey">
                                           {{ event.name }}<span class="label text-warning"> {{ event.when }}</span>
                                         </a>
                                       </div>
+                                  </li>
+                                </ol> -->
+                                <ol style="list-style-type:none;padding-left: 12px;">
+                                  <li class="" style="color:steelblue" *ngFor="let event of maActivities">
+                                    <!-- <div class="row"> -->
+                                    <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em">
+                                      <!-- margin-left:1.0em; -->
+                                      <a style="color:slategrey" [ngStyle]="{color: event.txtColours}">
+                                        <span class="label text-warning"> {{ event.start }}</span> {{ event.name }}
+                                      </a>
+                                    </div>
                                     <!-- </div> -->
                                   </li>
                                 </ol>
                               </div>
                               <!-- <div class="content container scroll-em" *ngIf="hideActions"> -->
-                              <div class="content container scroll-em" *ngIf="myActionItems.length === 0">
+                              <!-- <div class="content container scroll-em" *ngIf="myActionItems.length === 0"> -->
+                              <div class="content container scroll-em" *ngIf="actionNo == 0">
                                 <div class="row">
                                   <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
                                     <ol>
@@ -156,7 +164,7 @@
                           <div class="row col-md-12" style="margin-left:1em; padding-bottom: -1em ">
                             <div class="pull-left card-category clrs-h1-font">
                               <a>
-                                <i class="fa fa-folder-o [&#xf114;]"></i> Colours Projects</a>
+                                <i class="fa fa-folder-o [&#xf114;]"></i> Colours Project</a>
                             </div>
                           </div>
                           <!-- <hr class="line" style="padding-bottom:0em; padding-top: -1em"> -->
@@ -345,7 +353,7 @@
                       <div class="">
                         <p class="clrs-h1-font" style="margin-top:0em; color:darkslategray">Setup Your Personal Account...</p>
                         <p class="category" style="margin-top:-1em">Map out your main life activities.
-                          <br>These are task classifications under which you do most of your daily activities</p>
+                          <br>These are task classifications under which you do most of your life's daily activities</p>
                       </div>
                       <!-- <div class="spacer" style="margin-top:-3em"></div> -->
                       <div class="card-content table-responsive table-full-width">
@@ -360,13 +368,13 @@
                               <td class="table td-clrs">
                                 <!-- <a class="btn warning btn-link btn-icon btn-sm edit" rel="tooltip" title="Edit Classification"><i class="fa fa-edit"></i></a> -->
                                 <!-- <button class="info btn-link" rel="tooltip" (click)="selectClassification(classification)" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget"><i class="fa fa-calendar-plus-o"></i></button> -->
-                                <button class="info btn-link" rel="tooltip" title="Add / Edit Time Budget" data-toggle="modal" data-target="#timeBudget"><i class="fa fa-calendar-plus-o"></i></button>
+                                <button class="info btn-link" rel="tooltip" title="Click to enter your weekly time budget" data-toggle="modal" data-target="#timeBudget"><i class="fa fa-calendar-plus-o"></i></button>
                               </td>
                               <td class="table td-clrs">
-                                <button class="info btn-link" rel="tooltip" (click)="selectClassification(classification)" title="add Personal standards" data-toggle="modal" data-target="#personalStandard"><i class="fa fa-file-text"></i></button>
+                                <button class="info btn-link" rel="tooltip" (click)="selectClassification(classification)" title="Click to enter standards for this classification" data-toggle="modal" data-target="#personalStandard"><i class="fa fa-file-text"></i></button>
                               </td>
                               <td class="table td-clrs">
-                                <button class="danger btn-link remove" (click)="deleteClass(classification)"><i class="fa fa-times"></i></button>
+                                <button *ngIf="classification.name !== 'Work'" class="danger btn-link remove" (click)="deleteClass(classification)"><i class="fa fa-times"></i></button>
                               </td>
                             </tr>
                             <ng-container *ngIf="workdemo">
@@ -438,37 +446,24 @@
                         <div id="my-tab-content" class="tab-content text-center">
                           <!-- start Here -->
                           
-                          
-                          
                           <div class="tab-pane active" id="personal" role="tabpanel" aria-expanded="true">
+                            <!-- <code>personal</code> -->
+
                             <div class="col-md-12 ml-auto mr-auto">
                               <div class="row">
-                                <div class="col-md-6">
-                                  <p class="text-left title " style="color: darkslategray">
-                                    <span> <a routerLink="../total-actions">Personal Details</a></span>
+                                <div class="col-md-12">
+                                  <p class="text-left title card-category" style="color: darkslategray">
+                                    Many other Reports and Metrics are coming up covering all corners of a project, an enterprise and personal life
                                   </p>
                                 </div>
                               </div>
                             </div>
                           
-                          
-                          
                             <div class="col-md-12 ml-auto mr-auto">
                               <div class="row">
                                 <div class="col-md-6">
                                   <p class="text-left title " style="color: darkslategray">
-                                    <span> <a routerLink="../timeSpent-report">Total time spent on an activity in a period</a></span>
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          
-                          
-                            <div class="col-md-12 ml-auto mr-auto">
-                              <div class="row">
-                                <div class="col-md-6">
-                                  <p class="text-left title " style="color: darkslategray">
-                                    <span> <a routerLink="../activity-reportLog">Time sheet report in a period</a></span>
+                                    <span> <a routerLink="../../timeSpent-report">Total time spent on an activity in a period</a></span>
                                   </p>
                                 </div>
                               </div>
@@ -479,7 +474,7 @@
                               <div class="row">
                                 <div class="col-md-6">
                                   <p class="text-left title " style="color: darkslategray">
-                                    <span> <a routerLink="../total-actions">My Time Sheet for each day</a></span>
+                                    <span> <a routerLink="../../activity-reportLog">Time sheet report in a period</a></span>
                                   </p>
                                 </div>
                               </div>
@@ -490,7 +485,18 @@
                               <div class="row">
                                 <div class="col-md-6">
                                   <p class="text-left title " style="color: darkslategray">
-                                    <span> <a routerLink="../classification-log">Outstanding Action Items</a></span>
+                                    <span> <a routerLink="../../total-actions">My Time Sheet for each day</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          
+                          
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../classification-log">Outstanding Action Items</a></span>
                                   </p>
                                 </div>
                               </div>
@@ -574,46 +580,34 @@
                           </div>
 
 
-                          <div class="tab-pane active" id="public" role="tabpanel" aria-expanded="true">
+                          <div class="tab-pane" id="public" role="tabpanel" aria-expanded="true">
+
+                            <!-- <code>public</code> -->
                             <div class="col-md-12 ml-auto mr-auto">
                               <div class="row">
-                                <div class="col-md-6">
-                                  <p class="text-left title " style="color: darkslategray">
-                                    <span> <a routerLink="../total-actions">Personal Details</a></span>
+                                <div class="col-md-12">
+                                  <p class="text-left title card-category" style="color: darkslategray">
+                                    Many other Reports and Metrics are coming up covering all corners of a project, an enterprise and personal life
                                   </p>
                                 </div>
                               </div>
                             </div>
                           
-                          
-                          
-                            <div class="col-md-12 ml-auto mr-auto">
-                              <div class="row">
-                                <div class="col-md-6">
-                                  <p class="text-left title " style="color: darkslategray">
-                                    <span> <a routerLink="../timeSpent-report">Total time spent on an activity in a period</a></span>
-                                  </p>
-                                </div>
+                          <div class="col-md-12 ml-auto mr-auto">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p class="text-left title " style="color: darkslategray">
+                                  <span> <a routerLink="../../outstandingTask-report">Outstanding Action Items</a></span>
+                                </p>
                               </div>
                             </div>
-                          
-                          
-                            <div class="col-md-12 ml-auto mr-auto">
-                              <div class="row">
-                                <div class="col-md-6">
-                                  <p class="text-left title " style="color: darkslategray">
-                                    <span> <a routerLink="../activity-reportLog">Time sheet report in a period</a></span>
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          
+                          </div>
                           
                             <div class="col-md-12 ml-auto mr-auto">
                               <div class="row">
                                 <div class="col-md-6">
                                   <p class="text-left title " style="color: darkslategray">
-                                    <span> <a routerLink="../total-actions">My Time Sheet for each day</a></span>
+                                    <span> <a routerLink="../../timeSpent-report">Total time spent on an activity in a period</a></span>
                                   </p>
                                 </div>
                               </div>
@@ -624,11 +618,23 @@
                               <div class="row">
                                 <div class="col-md-6">
                                   <p class="text-left title " style="color: darkslategray">
-                                    <span> <a routerLink="../outstandingTask-report">Outstanding Action Items</a></span>
+                                    <span> <a routerLink="../../activity-reportLog">Time sheet report in a period</a></span>
                                   </p>
                                 </div>
                               </div>
                             </div>
+                          
+                          
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../total-actions">My Time Sheet for each day</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          
                           
                           
                             <div hidden>

@@ -128,7 +128,7 @@ export class LoginComponent implements OnInit{
                     firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password).then(ref => {
                         console.log("Check User collection for doc");
 
-                        // console.log(ref);
+                        console.log(ref);
                         this.coloursUserDetails = ref;
 
                         let coloursUser = ref.user;
@@ -276,7 +276,7 @@ export class LoginComponent implements OnInit{
                     // [END signout]
                 } else {
                     console.log('email' + credentials.email);
-                    // console.log('email' + email);
+                    console.log('email' + email);
                     if (credentials.email.length < 4) {
                         alert('Please enter an email address.');
                         return;
@@ -297,7 +297,7 @@ export class LoginComponent implements OnInit{
 
                         // userRef.sendEmailVerification();
                         // userRef.user.sendEmailVerification();
-                        // console.log(ref);
+                        console.log(ref);
                         this.coloursUserDetails = ref;
 
                         console.log(firebase.auth.EmailAuthProvider);
@@ -373,7 +373,7 @@ export class LoginComponent implements OnInit{
                         }
                         
 
-                        // console.log(ref.credential);
+                        console.log(ref.credential);
 
                         var user = ref.user;
                         // ...
@@ -479,7 +479,7 @@ export class LoginComponent implements OnInit{
             console.log(firebase.auth().currentUser.providerData[0].providerId);
 
 
-            // console.log(ref);
+            console.log(ref);
             this.coloursUserDetails = ref;
 
             let coloursUser = ref.user;
@@ -502,7 +502,7 @@ export class LoginComponent implements OnInit{
                 // this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
                 // this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
                 // this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                // console.log("userData is set");
+                console.log("userData is set");
 
             }
             else {
@@ -557,7 +557,7 @@ export class LoginComponent implements OnInit{
             console.log(firebase.auth().currentUser.providerData[0].providerId);
 
 
-        // console.log(ref);
+        console.log(ref);
         this.coloursUserDetails = ref;
 
         let coloursUser = ref.user;

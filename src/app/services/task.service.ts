@@ -36,6 +36,7 @@ export class TaskService {
   MediumTermTAsks = [];
   LongTermTAsks = [];
   myTaskData: MomentTask;
+  usersData: any[];
 
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
@@ -734,4 +735,19 @@ export class TaskService {
   getSelectedTask(ref) {
     console.log(ref);
   }
+
+  sortCompleteTasks() {
+    let userCol = this.afs.collection('Users').valueChanges();
+    userCol.subscribe(usersRef =>{
+      this.usersData = usersRef;
+    });
+    this.usersData.forEach(element => {
+      console.log(element);
+
+      this.afs.collection('Users').doc(element.id).collection('tasks').valueChanges();
+
+    });
+    
+  }
+
 }

@@ -1,0 +1,155 @@
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card-header">
+        <p class="card-category clrs-h1-font">
+          issues
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12" style="width:auto">
+      <div class="card-body nav-hor-tabs" style="padding-left: 0px; padding-right: 0px; margin-top: -6em;">
+        <div class="nav-tabs-navigation">
+          <div class="nav-tabs-wrapper">
+            <ul id="tabs" class="nav nav-tabs" role="tablist">
+              <li class="nav-item">
+                  <a class="nav-link active nav-colors" data-toggle="tab" href="#personalIssues" role="tab"  aria-expanded="false">Personal</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link nav-colors" data-toggle="tab" href="#enterpriseIssues" role="tab" aria-expanded="false">Enterprise</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link nav-colors" data-toggle="tab" href="#projectIssues" role="tab" aria-expanded="false">Project</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div id="my-tab-content" class="tab-content">
+          <div class="tab-pane active" role="tabpanel" id="personalIssues" aria-expanded="true">
+            <div class="row">
+              <div class="col-md-12 ml-auto mr-auto">
+                <div class="card">
+                  <div class="card-body text-center">
+                    <div class="card-plain">
+                      <p class="text-left clrs-h4-font" style="margin-left:.5em;">Personal Issues</p>                      
+                    </div>
+                  </div>
+                  <div class="card-body row" style="padding-top: 0px;">
+                    <div *ngIf="newReport; else newRprt" class="col-ms-9 card-plain">
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <font size = 3> Issues listed</font>
+                      </span>
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <button class="btn-link btn-magnify" (click)="initPage()"><font size=2>Report issue</font></button>                                                      
+                      </span>
+                      <div class="spacer" style="height: 2em"></div>
+                      <div class="row" style="width: inherit">
+                        <div class="col-md-12">
+                          <ol>
+                            <li *ngFor="let item of issues | async">
+                              <p>{{ item.name }}. <span class="card-category">Description {{ item.description }}</span></p>
+                            </li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                    <ng-template #newRprt>
+                      <div class="col-ms-9 card-plain">
+                        <span class="text-left clrs-h4-font" style="margin-left:1.5em;"><font size=3>Report issues</font>
+                        </span>
+                        <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                          <button class="btn-link btn-magnify" (click)="OninitPage()"><font size=2>Cancel</font></button>
+                        </span>
+                        <div class="spacer" style="height: 2em"></div>
+                        <div class="row" style="width: inherit">
+                          <div class="col-md-12">
+                            <div class="form-group" style="margin-left:2em;">
+                              <label>Topic</label>
+                              <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                                placeholder="Issue main topic" name="nationalId" [(ngModel)]="report.name">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row" style="width: inherit">
+                          <div class="col-md-12">
+                            <div class="form-group" style="margin-left:2em;">
+                              <label>Description</label>
+                              <textarea rows="auto" cols="80" class="form-control textarea" placeholder="Add full description to the last detail so that it easy to understand"
+                                [(ngModel)]="report.description">
+                              </textarea>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="spacer" style="height: 2em"></div>                        
+                        <div class="row">
+                          <div class="col-md-5" style="margin-left:2em;">
+                            <button class="btn-link btn-magnify" (click)="postIssue()"><font size=2>Post</font></button>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-template>
+                    
+                    <!-- <div class="vl"></div> -->
+                    <div class="vl2 col-md-3 ml-auto">
+                        <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                          <font size=3> Quick links</font>
+                        </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" role="tabpanel" id="enterpriseIssues" aria-expanded="false">
+            <div class="row">
+              <div class="col-md-12 ml-auto mr-auto">
+                <div class="card">
+                  <div class="card-body text-center">
+                    <p class="text-left clrs-h4-font" style="margin-left:.5em;">Enterprises Issues</p>
+            
+                  </div>
+                  <div class="card-body row" style="padding-top: 0px;">
+                    <div class="col-ms-8">
+                      <div class="card-header text-left">
+                        <h5 class="card-category" style="height: 28px; font-size: 8;">
+            
+            
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" role="tabpanel" id="projectIssues" aria-expanded="false">
+            <div class="row">
+              <div class="col-md-12 ml-auto mr-auto">
+                <div class="card">
+                  <div class="card-body text-center">
+                    <p class="text-left clrs-h4-font" style="margin-left:.5em;">Project Issues</p>
+            
+                  </div>
+                  <div class="card-body row" style="padding-top: 0px;">
+                    <div class="col-md-8">
+                      <div class="card-header text-left">
+                        <h5 class="card-category" style="height: 28px; font-size: 8;">
+            
+            
+                        </h5>
+                      </div>
+                    </div>
+                    <div class="col-md-4 ml-auto">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

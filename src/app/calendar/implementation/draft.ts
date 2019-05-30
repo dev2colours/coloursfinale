@@ -163,7 +163,7 @@
 
 //       this.SIunits = [
 //         { id: 'hours', name: 'Time(hrs)' },
-//         { id: 'items', name: 'Items' },
+//         { id: 'item(s)', name: 'Items' },
 //         { id: 'kg', name: 'Kilograms(Kg)' },
 //         { id: 'm2', name: 'Area(m2)' },
 //         { id: 'm3', name: 'Volume(m3)' },
@@ -286,7 +286,7 @@
 
 //   viewMyTaskActions(task) {
 //     // this.selectTask(task)
-//     // console.log(this.selectedTask);
+//     console.log(this.selectedTask);
 //     console.log(task);
     
 //     this.mytaskActions = this.es.getMyTasksActions(this.userId, task.id)
@@ -437,8 +437,8 @@
 //         }
 
 //       });
-//       // console.log(this.selectedActions);
-//       // console.log(this.selectedActions.length);
+//       console.log(this.selectedActions);
+//       console.log(this.selectedActions.length);
 //       if (this.selectedActions.length > 0) {
 //         this.viewTodayWork = true;
 //       } else {
@@ -453,7 +453,7 @@
 
 //   viewTodayActionQuery(testPeriod, checkPeriod) {
 //     let viewActionsRef = this.myDocument;
-//     // console.log(testPeriod + ' ' + checkPeriod);
+//     console.log(testPeriod + ' ' + checkPeriod);
 
 //     let today = moment(new Date(), "YYYY-MM-DD");
 //     let today2 = moment(new Date(), "MM-DD-YYYY").format('L');

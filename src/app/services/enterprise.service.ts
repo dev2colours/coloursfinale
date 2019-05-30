@@ -58,7 +58,7 @@ export class EnterpriseService {
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
 
     afAuth.authState.subscribe(user => {
-      console.log(user);
+      // console.log(user);
       this.user = user;
       this.userId = user.uid;
     })
