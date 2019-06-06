@@ -1,31 +1,31 @@
 
-<h2 id="org3">Personal Reports</h2>
+<h3 id="org00">Personal Reports</h3>
 <!-- <div class="card-header text-left" *ngIf="enterprise !== '' || enterprise === undefined">
     <h2>Enterprise: {{ enterprise }} Personal Reports</h2>
 </div><br> -->
 
-<h2>Participant: 
-<span><select id = "name-list3"></select></span>
-<span> &nbsp;&nbsp; Hierarchy:</span><span id = "hierarchy"></span></h2>
+<h3>Participant: 
+<span><select id = "name-list00" (click)="rService.getParticipantData('name-list00','')"></select></span>
+<span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
 
-<h3>Outstanding activities as at <span>
+<h4>Outstanding activities as at <span>
 		<!-- placeholder will not work, so stuck with dd----yyyyy -->
-		<input type="date" id="startdate3">
+		<input type="date" id="startdate00">
 	<!-- </span> to <span> -->
 		<!-- <input type="date" id="enddate" (click)="rService.getParticipantData()"> -->
-<button (click)="rService.rostasks_e()">Generate report for selected period</button>
-</span></h3>
+<button (click)="rService.rosactions_e()">Generate report for selected period</button>
+</span></h4>
 <!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
 <!-- button (click)="rService.clearTable()">Clear table</button> -->
 <!-- Table rows and headings only -->
-<table id="TbId3">
+<table id="TbId00">
     <!-- headings -->
     <tr>
-        <th align="left">Action Item</th>
-        <th align="left">Task Name</th>
+        <th>Action Item</th>
+        <th>Task Name</th>
         <th>Action Planned Start</th>
         <th>Days Lapsed</th>
         <th>Actual Start</th>
-        <th>Hours Logged</th>
+        <th style="text-align:center"> Logged</th>
     </tr>
 </table>

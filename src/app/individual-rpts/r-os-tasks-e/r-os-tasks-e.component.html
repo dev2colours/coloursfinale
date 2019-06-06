@@ -1,20 +1,20 @@
-<h2 id="org4">Personal Reports</h2>
+<h3 id="org0">Personal Reports</h3>
 
-<h2>Participant: 
-<span><select id = "name-list4"></select></span>
-<span> &nbsp;&nbsp; Hierarchy:</span><span id = "hierarchy"></span></h2>
+<h3>Participant: 
+<span><select id = "name-list0" (click)="rService.getParticipantData('name-list0','')"></select></span>
+<span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
 
-<h3>Schedule of Outstanding Tasks as at <span>
+<h4>Schedule of Outstanding Tasks as at <span>
 		<!-- placeholder will not work, so stuck with dd----yyyyy -->
-		<input type="date" id="startdate4">
+		<input type="date" id="startdate0">
 <button (click)="rService.rostasks_e()">View Oustanding Tasks for selected date</button>
-</span></h3>
+</span></h4>
 <!-- Table rows and headings only -->
-<table id="TbId4">
+<table id="TbId0">
     <!-- headings -->
     <tr>
-        <th align="left">Task</th>
-        <th align="left">Planned Finish Date</th>
-        <th align="left">Classification</th>
+        <th>Task</th>
+        <th>Planned Finish Date</th>
+        <th>Classification</th>
     </tr>
 </table>

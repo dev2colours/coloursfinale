@@ -14,7 +14,9 @@ import { RTimeSpentComponent } from './r-time-spent/r-time-spent.component';
 import { PersonalInfoReportComponent } from './personal-info-report/personal-info-report.component';
 import { DiaryComponent } from './diary/diary.component';
 import { ROsTasksComponent } from './r-os-tasks/r-os-tasks.component';
-
+// Added 04-June-19 by VJ Sibanda
+import { RWeeklyPlanComponent } from './r-weekly-plan/r-weekly-plan.component';
+import { RDailyPlanComponent } from './r-daily-plan/r-daily-plan.component';
 
 export const CalendarRoutes: Routes = [{
     path: '',
@@ -35,6 +37,14 @@ export const CalendarRoutes: Routes = [{
     {
         path: 'diary',
         component: DiaryComponent
+    },
+    {
+        path: 'PersonalWeeklyPlan-report',
+        component: RWeeklyPlanComponent
+    },
+    {
+        path: 'PersonalDailyPlan-report',
+        component: RDailyPlanComponent
     },
     {
         path: 'timesheet',
