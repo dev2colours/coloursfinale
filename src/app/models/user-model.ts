@@ -164,7 +164,10 @@ export interface unRespondedWorkReport {
 }
 
 export interface rpt extends workItem {
-    wrkHours: string
-    startTime: string
+    wrkHours: string,
+    startTime: string,
     endTime: string
 }
+
+export interface report { name: string, description: String, type: string, id: string, byId: string, by: string, createdOn: string, photoUrl: string, companyName: string, companyId: string, projectName: string, projectId: string, }
+export interface comment { name: string, id: string, byId: string, by: string, createdOn: string, photoUrl: string }

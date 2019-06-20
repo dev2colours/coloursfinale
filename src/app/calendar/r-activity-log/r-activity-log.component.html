@@ -13,7 +13,7 @@
             <input type="date" id="startdateP2">
         </span> to <span>
             <input type="date" id="enddateP2">
-            <button (click)="rService.ractivitylog()">Generate report for selected period</button>
+            <button id="btnP2" (click)="rService.ractivitylog()">Generate report for selected period</button>
         </span></h3>
     
     <!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
@@ -27,6 +27,7 @@
             <th>Start Date</th>
             <th>End Date</th>
             <th style="text-align:center">Hours Spent</th>
+            <th>Company Name</th>
         </tr>
     </table>
     

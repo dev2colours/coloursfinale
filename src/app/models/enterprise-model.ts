@@ -1,6 +1,6 @@
 export interface Enterprise {
     name: string, by: string, byId: string, createdOn: string, id: string, address: String, telephone: string, location: string, sector: string, services: [service], participants: [ParticipantData],
-    champion: ParticipantData, taxDocument: any, HnSDocument: string, IndustrialSectorDocument: string, bus_email: string
+    champion: ParticipantData, taxDocument: any, HnSDocument: string, IndustrialSectorDocument: string, bus_email: string, updatedStatus: boolean 
 }
 
 export interface Subsidiary extends Enterprise { Holding_companyName: string, companyId: string }

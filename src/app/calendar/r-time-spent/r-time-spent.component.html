@@ -13,7 +13,7 @@
         </span> to <span>
             <input type="date" id="enddateP1">
     <!-- <button (click)="rService.rtimespentshow()">Generate report for selected period</button> -->
-    <button (click)="rService.rtimespent()">Generate report for selected period</button>
+    <button id="btnP1" (click)="rService.rtimespent()">Generate report for selected period</button>
     </span></h4>
     <!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
     <!-- button (click)="rService.clearTable()">Clear table</button> -->
@@ -24,6 +24,7 @@
             <th>Sub Task</th>
             <th>Task Name</th>
             <th style="text-align:center">Hours Spent</th>
+            <th>Company Name</th>
         </tr>
     </table>
 </div>

@@ -966,7 +966,7 @@ export class CalendarComponent implements OnInit {
             element.txtColours = "333366";
             maActivities.push(element);
           }
-      }
+        }
 
       }));
 

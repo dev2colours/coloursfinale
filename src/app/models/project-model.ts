@@ -27,7 +27,7 @@ export interface abridgedBill {
 
 export interface workItem {
     id: string, uid: string, name: string, unit: string, quantity: number, rate: number, amount: number, billID: string,
-    billName: string, projectId: string, projectName: string, byId: string, by: string, createdOn: string,
+    billName: string, projectId: string, projectName: string, byId: string, by: string, createdOn: string, championName: string, championId: string,
     UpdatedOn: string, actualData: [actionActualData], workStatus: string, complete: boolean, start: string, end: string,
     startWeek: string, startDay: string, startDate: string, endDay: string, endDate: string, endWeek: string, taskName: string,
     taskId: string, companyName: string, companyId: string, champion: ParticipantData, participants: [ParticipantData],

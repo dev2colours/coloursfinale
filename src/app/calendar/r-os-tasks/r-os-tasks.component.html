@@ -8,7 +8,7 @@
     <h4>Schedule of Outstanding Tasks as at <span>
             <!-- placeholder will not work, so stuck with dd----yyyyy -->
             <input type="date" id="startdateP0">
-    <button (click)="rService.rostasks()">View Oustanding Tasks for selected date</button>
+    <button id="btnP0" (click)="rService.rostasks()">View Oustanding Tasks for selected date</button>
     </span></h4>
     <!-- Table rows and headings only -->
     <table id="TbIdP0">
@@ -17,6 +17,7 @@
             <th>Task</th>
             <th>Planned Finish Date</th>
             <th>Classification</th>
+            <th>Company Name</th>
         </tr>
     </table>
 </div>

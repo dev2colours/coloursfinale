@@ -94,6 +94,8 @@ export class EnterpriseService {
         const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
         myTaskData = data;
+
+
         myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
         myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
         return { id, ...data };
@@ -115,6 +117,8 @@ export class EnterpriseService {
         const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
         myTaskData = data;
+
+
         myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
         myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
         return { id, ...data };
@@ -261,7 +265,7 @@ export class EnterpriseService {
 
   getCompanies(myid): Observable<Enterprise[]> {
     // console.log(myid);
-    const myRef = this.afs.collection('Users').doc(myid).collection('myenterprises');
+    const myRef = this.afs.collection('Users').doc(myid).collection('myenterprises', ref => ref.orderBy('name', 'asc'));
     this.enterprises = myRef.snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Enterprise;
@@ -325,7 +329,7 @@ export class EnterpriseService {
   }
 
   getProjects(myUserId) {
-    this.projects = this.afs.collection<Project>('Users').doc(myUserId).collection('projects').snapshotChanges().pipe(
+    this.projects = this.afs.collection<Project>('Users').doc(myUserId).collection('projects', ref => ref.orderBy('name', "asc")).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Project;
         const id = a.payload.doc.id;
@@ -337,6 +341,7 @@ export class EnterpriseService {
   getPersonalProjects(myUserId) {
     this.myprojects = this.afs.collection<Project>('Users').doc(myUserId).collection('projects',
     ref => ref
+    .orderBy('name', "asc")
     .where('type','==', 'Personal')
     ).snapshotChanges().pipe(
       map(b => b.map(a => {

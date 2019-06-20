@@ -9,8 +9,9 @@ import { map, timestamp } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import { Enterprise, ParticipantData, companyChampion, Department } from "../models/enterprise-model";
-import { Project } from "../models/project-model";
-import { Task, MomentTask } from "../models/task-model";
+import { Project, workItem } from "../models/project-model";
+import { Task, MomentTask, completeTask } from "../models/task-model";
+import { workReport } from 'app/models/user-model';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,13 @@ export class TaskService {
   LongTermTAsks = [];
   myTaskData: MomentTask;
   usersData: any[];
+  userTaskCol: Observable<completeTask[]>;
+  userTaskRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+  userTaskActivitiesCol: Observable<workItem[]>;
+  act: workItem;
+  task: Task;
+  userTaskCollection: any;
+  userTaskColRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
 
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
@@ -44,7 +52,14 @@ export class TaskService {
       console.log(user);
       this.user = user;
       this.userId = user.uid;
-    })
+      console.log('OOh snap Tasks services');
+
+      this.userTaskCol = this.afs.collection('Users').doc(this.userId).collection<completeTask>('tasks').valueChanges()
+      this.userTaskRef = this.afs.collection('Users').doc(this.userId).collection('tasks');
+      this.ArcSortCompleteTasks();
+      // this.sortCompleteTasks();
+      
+    });
 
   }
 
@@ -582,7 +597,6 @@ export class TaskService {
     // });
   }
 
-
   getMyTasks(myUserId) {
     // this.myCompanyTasks = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref.where('byId', '==', myUserId) }).snapshotChanges().pipe(
     this.Tasks = this.afs.collection<Task>('tasks', ref => { return ref.where('byId', '==', myUserId ) }).snapshotChanges().pipe(
@@ -710,6 +724,7 @@ export class TaskService {
     );
     return this.LongTermTAsks
   }
+
   getPersonalTasks(myUserId) {
     this.myTasks = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => ref.orderBy('start') ).snapshotChanges().pipe(
     // this.Tasks = this.afs.collection<Task>('tasks', ref => { return ref.where('byId', '==', myUserId) }).snapshotChanges().pipe(
@@ -721,6 +736,7 @@ export class TaskService {
     );
     return this.myTasks;
   }
+
   getTasksImChamp(myUserId) {
     this.tasksImChampion = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref.where('champion.id', '==', myUserId) }).snapshotChanges().pipe(
       map(b => b.map(a => {
@@ -736,18 +752,235 @@ export class TaskService {
     console.log(ref);
   }
 
-  sortCompleteTasks() {
-    let userCol = this.afs.collection('Users').valueChanges();
-    userCol.subscribe(usersRef =>{
+  ArcSortCompleteTasks() {
+    // let userCol = this.afs.collection('Users').valueChanges();
+
+    this.userTaskCol.subscribe(usersRef => {
       this.usersData = usersRef;
-    });
-    this.usersData.forEach(element => {
-      console.log(element);
+      this.usersData.forEach(element => {
+        console.log(element.name);
+        this.userTaskCollection = this.afs.collection('Users').doc(element.id).collection<Task>('tasks').valueChanges();
+        this.userTaskColRef = this.afs.collection('Users').doc(element.id).collection('tasks');
+        // this.clipTasks(this.userTaskCollection, this.userTaskColRef);
+        this.userTaskCollection.subscribe(userstasks => {
+          userstasks.forEach(item => {
+            console.log(item.name);
 
-      this.afs.collection('Users').doc(element.id).collection('tasks').valueChanges();
+            if (item.name === "") {
+              console.log(item.id);
 
+              this.userTaskColRef.doc(item.id).delete();
+              console.log('Task id' + item.id + ' ' + "Has no name, wasn't properly created. It has been erased");
+               this.clipTasks(item);
+
+            } else {
+
+            }
+          })
+        })
+
+      });
     });
+
+  }
+
+  clipTasks(item){
+    console.log(item.id);
+    if (item.companyId !== "") {
+      this.afs.collection('Enterprises').doc(item.companyId).collection<Task>('tasks').doc(item.id).delete();
+      this.afs.collection('Enterprises').doc(item.companyId).collection('Participants').doc(item.champion.id).collection<Task>('tasks').doc(item.id).delete();
+      if (item.departmentId !== "") {
+        this.afs.collection('Enterprises').doc(item.companyId).collection('departments').doc(item.departmentId).collection<Task>('tasks').doc(item.id).delete();
+        this.afs.collection('Enterprises').doc(item.companyId).collection('departments').doc(item.departmentId).collection('Participants').doc(item.champion.id).collection<Task>('tasks').doc(item.id).delete();
+      } else {
+
+      }
+    } else {
+      
+    }
+
+    if (item.projectId !== "") {
+      this.afs.collection('Projects').doc(item.projectId).collection<Task>('tasks').doc(item.id).delete();
+      this.afs.collection('Projects').doc(item.projectId).collection('Participants').doc(item.champion.id).collection<Task>('tasks').doc(item.id).delete();
+      if (item.companyId !== "") {
+        this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId).collection<Task>('tasks').doc(item.id).delete();
+        this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId).collection('labour').doc(item.champion.id).collection<Task>('tasks').doc(item.id).delete();
+      } else {
+
+      }
+    } else {
+
+    }
     
   }
 
+  sortCompleteTasks() {
+
+    this.userTaskCol.subscribe(usersRef => {
+      this.usersData = usersRef;
+      this.usersData.forEach(element => {
+        console.log(element.name);
+        let userTaskCollection = this.afs.collection('Users').doc(element.id).collection<Task>('tasks').valueChanges();
+        let userTaskColRef = this.afs.collection('Users').doc(element.id).collection('tasks');
+        // this.clipTasks(this.userTaskCollection, this.userTaskColRef);
+        this.middleFcn(userTaskCollection)
+      });
+
+    })
+  
+  }
+      // this.usersData.forEach(function (element, index) {
+
+  middleFcn(userTaskCollection){
+    userTaskCollection.subscribe(userstasks => {
+      // userstasks.forEach(item => {
+      // let newItem;
+      userstasks.forEach(function (item, index) {
+        console.log(item.name);
+        // n  ewItem = item;
+        // this.userTaskColRef.doc(item.id).
+        console.log('Task id' + item.id + ' ' + "Has no name, wasn't properly created. It has been erased");
+        console.log('passed this function snd(------)');
+
+
+      }).then((newItem)=>{
+        this.snd(newItem);
+      })
+    })
+  }
+
+  snd(item) {
+  //  let userTaskActivitiesCol;
+    console.log('inside function snd(------)');
+
+    let userTaskActivitiesCol;
+
+    let noTAskActivities = 0;
+    let noTaskActivitiesComplete = 0;
+    console.log(item);
+    const task = item;
+    console.log(task.name + ' ' + ' complete ' + task.complete);
+    const userTaskDocRef = this.userTaskRef.doc(task.id);
+    this.task = task;
+    this.userTaskActivitiesCol = this.userTaskRef.doc(task.id).collection<workItem>('actionItems').valueChanges();
+    userTaskActivitiesCol = this.userTaskRef.doc(task.id).collection<workItem>('actionItems').valueChanges();
+    console.log('task Actions' + ' ' + userTaskActivitiesCol);
+    
+    // this.noTAskActivities = this.userTaskActivitiesCol.operator.call.length;
+    noTAskActivities = userTaskActivitiesCol.operator.call.length;
+    console.log(noTAskActivities);
+
+    userTaskDocRef.update({ 'noAllActions': noTAskActivities }).then(() => {
+      // this.userTaskActivitiesCol.subscribe(userActs => {
+      userTaskActivitiesCol.subscribe(userActs => {
+        userActs.forEach(act => {
+          console.log('Task' + ' ' + act.taskName + ' ' + 'Action' + ' ' + act.name + ' ' + 'complete' + ' ' + act.complete);
+          this.act = act;
+          //  this.snd3(act);
+          // this.snd3(this.act);
+          if (act.complete === true) {
+            noTaskActivitiesComplete = + 1;
+            console.log(noTaskActivitiesComplete);
+            console.log(noTAskActivities);
+
+          } else {
+
+          }
+          userTaskDocRef.update({ 'noCompleteActions': noTaskActivitiesComplete }).then(() => {
+          }).catch((error) => {
+            console.error(error);
+          });
+        })
+      });
+    }).catch((error) => {
+      console.error(error);
+    });
+     
+  }
+
+  correctStatus(){
+    let task = this.task;
+    let usrId =  this.userId;
+    let taskDoc = this.userTaskRef.doc(task.id);
+    let taskEntDoc, taskEntUserDoc, taskEntDptDoc, taskEntDptUserDoc, taskProjectDoc, taskProjectUserDoc, taskProjectCompDoc, taskProjectCompUserDoc;
+    if (task.companyId) {
+
+      taskEntDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('tasks').doc(task.id);
+      taskEntUserDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('Participants').doc(usrId).collection('tasks').doc(task.id);
+      taskEntDptDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('departments').doc(task.departmentId).collection('tasks').doc(task.id);
+      taskEntDptUserDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('departments').doc(task.departmentId).collection('Participants').doc(usrId).collection('tasks').doc(task.id);
+
+    } else {
+
+    }
+    if (task.projectId) {
+
+      taskProjectDoc = this.afs.collection('Projects').doc(task.projectId).collection('tasks').doc(task.id);
+      taskProjectUserDoc = this.afs.collection('Projects').doc(task.companyId).collection('Participants').doc(usrId).collection('tasks').doc(task.id);
+      taskProjectCompDoc = this.afs.collection('Projects').doc(task.companyId).collection('enterprise').doc(task.companyId).collection('tasks').doc(task.id);
+      taskProjectCompUserDoc = this.afs.collection('Projects').doc(task.companyId).collection('enterprise').doc(task.companyId).collection('Participants').doc(usrId).collection('tasks').doc(task.id);
+
+    } else {
+
+    }
+    let taskRootDoc = this.afs.collection('tasks').doc(task.id)
+
+      if (task.complete === false) {
+        taskDoc.update({ 'complete': true }).then(() => {
+        }).catch((error) => {
+          console.error(error);
+        });
+
+        if (task.companyId) {
+
+          taskEntDoc.update({ 'complete': true }).then(() => {
+          }).catch((error) => {
+            console.error(error);
+          });
+          taskEntUserDoc.update({ 'complete': true }).then(() => {
+          }).catch((error) => {
+            console.error(error);
+          });
+          taskEntDptDoc.update({ 'complete': true }).then(() => {
+          }).catch((error) => {
+            console.error(error);
+          });
+          taskEntDptUserDoc.update({ 'complete': true }).then(() => {
+          }).catch((error) => {
+            console.error(error);
+          });
+
+        }
+        if (task.projectId) {
+
+          taskProjectDoc.update({ 'complete': true }).then(() => {
+          }).catch((error) => {
+            console.error(error);
+          });
+          taskProjectUserDoc.update({ 'complete': true }).then(() => {
+          }).catch((error) => {
+            console.error(error);
+          });
+          taskProjectCompDoc.update({ 'complete': true }).then(() => {
+          }).catch((error) => {
+            console.error(error);
+          });
+          taskProjectCompUserDoc.update({ 'complete': true }).then(() => {
+          }).catch((error) => {
+            console.error(error);
+          });
+        }
+        taskRootDoc.update({ 'complete': true }).then(() => {
+        }).catch((error) => {
+          console.error(error);
+        });
+      } else {
+        console.log('Task complete')
+      }
+
+
+    // } else {
+
+    // } 
+  }
 }

@@ -813,7 +813,7 @@
                               <div class="card-plain card-content table-responsive table-full-width">
                                 <table class="table">
                                   <thead class="title clrs-h4 text-info">
-                                    <th class="text-left">Activity</th>
+                                    <th class="text-left">Sub-task</th>
                                     <th class="text-right">Hours <small>(Hrs)</small></th>
                                   </thead>
                                   <tbody>
@@ -875,7 +875,7 @@
                               <div class="card-plain card-content table-responsive table-full-width">
                                 <table class="table">
                                   <thead class="title clrs-h4 text-info">
-                                    <th class="text-left">Activity</th>
+                                    <th class="text-left">Sub-task</th>
                                     <th class="text-right" >Hours <small>(Hrs)</small></th>
                                     <th class="text-right" style="padding-right:2em">%</th>
                                   </thead>
@@ -921,7 +921,7 @@
                               <div class="card-plain card-content table-responsive table-full-width">
                                 <table class="table">
                                   <thead class="title clrs-h4 text-info">
-                                    <th class="text-left">Activity</th>
+                                    <th class="text-left">Sub-task</th>
                                     <th class="text-right">Hours <small>(Hrs)</small></th>
                                     <th>New Action</th>
                                   </thead>

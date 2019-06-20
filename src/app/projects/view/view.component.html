@@ -755,7 +755,7 @@
                                           role="tabpanel" aria-labelledby="heading2">
                                           <div class="card-body">
                                             <div class="row" style="margin-left: 2em">
-                                              <div class="col-md-3 text-left card-title na-p">Activity</div>
+                                              <div class="col-md-3 text-left card-title na-p">Sub-task</div>
                                               <div class="col-md-2 card-title na-p">Units</div>
                                               <div class="col-md-2 card-title na-p">Quantity</div>
                                               <div class="col-md-2 card-title na-p">Rate</div>
@@ -776,8 +776,8 @@
                                             </ol>
                                           </div>
                                           <button class="btn-link btn-round primary" (click)="selectBill(bill)"
-                                            data-toggle="modal" data-target="#addWorkItem" title="add Activity">
-                                            <small>Add Task Activity</small>
+                                            data-toggle="modal" data-target="#addWorkItem" title="add Sub-task">
+                                            <small>Add Sub-task</small>
                                           </button>
                                         </div>
                                       </div>
@@ -867,7 +867,7 @@
                                           aria-labelledby="heading2">
                                           <div class="card-body">
                                             <div class="row" style="margin-left: 2em">
-                                              <div class="col-md-3 text-left card-title na-p">Activity</div>
+                                              <div class="col-md-3 text-left card-title na-p">Sub-task</div>
                                               <div class="col-md-2 card-title na-p">Units</div>
                                               <div class="col-md-2 card-title na-p">Quantity</div>
                                               <div class="col-md-2 card-title na-p">Rate</div>
@@ -888,8 +888,8 @@
                                             </ol>
                                           </div>
                                           <button class="btn-link btn-round primary" (click)="selectBill(bill)" data-toggle="modal"
-                                            data-target="#addWorkItem" title="add Activity">
-                                            <small>Add Task Activity</small>
+                                            data-target="#addWorkItem" title="add Sub-task">
+                                            <small>Add Sub-task</small>
                                           </button>
                                         </div>
                                       </div>
@@ -2443,7 +2443,7 @@
                                                                 aria-labelledby="dropdownMenuButton">
                                                                 <button class="dropdown-item btn-info btn-link" rel="tooltip"
                                                                   data-toggle="modal" data-target="#tskModal" (click)="closeTask(project)"
-                                                                  title="Set task as completed">Task Activity Complete</button>
+                                                                  title="Set task as completed">Sub-task Complete</button>
                                                                 <button class="dropdown-item primary btn-link" rel="tooltip"
                                                                   data-toggle="modal" data-target="#actionParticipants"
                                                                   (click)="selectAction(item)" title="Set task as completed">Add
@@ -2464,7 +2464,7 @@
                                                     </div>
                                                     <button class="btn-link btn-round primary" (click)="selectTask(tss)"
                                                       data-toggle="modal" data-target="#newAction">
-                                                      <small>Add Task Activity</small></button>
+                                                      <small>Add Sub-task</small></button>
                                                   </div>
                                                 </div>
                                               </li>
@@ -2491,7 +2491,7 @@
                         <div class="tab-pane" id="weekly" role="tabpanel" aria-expanded="false">
                           <div class="row card-category clrs-h4-font">
                             <div class="col-xs-1"></div>
-                            <div class="col-md-3">Task Activity</div>
+                            <div class="col-md-3">Sub-task</div>
                             <div class="col-md-3 text-left na-an">Start</div>
                             <div class="col-md-3 text-left ma-an">Finish</div>
                             <div class="col-md-3 text-left ma-an">Actions</div>
@@ -2538,7 +2538,7 @@
                           </div>
                           <div class="card-body" style="margin-top: -10px">
                             <div class="row">
-                              <div class="col-sm-3 card-header text-center">Task Activity</div>
+                              <div class="col-sm-3 card-header text-center">Sub-task</div>
                               <div class="col-sm-3 card-header">Target Qty</div>
                               <div class="col-sm-2 card-header text-left">Start time</div>
                               <div class="col-sm-3 card-header text-left">Finish time</div>
@@ -2604,7 +2604,7 @@
                                 <div class="col-md-9"></div>
                                 <div class="col-md-3">
                                   <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday">
-                                    New Task Activity
+                                    New Sub-task
                                   </button>
                                 </div>
                               </div>
@@ -3402,25 +3402,25 @@
         <div class="card-body ">
           <div class="card-header text-center">
             <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-              <font size=4>New Activity for <br>{{ selectedTask.name }} task</font>
+              <font size=4>New Sub-task for <br>{{ selectedTask.name }} task</font>
             </p>
           </div>
           <hr>
           <!-- <a> Selected Unit: <span></span><small> {{ setSui.id }}</small></a><br> -->
           <form class="form-horizontal">
             <!-- <div class="row">
-            <label class="col-md-4 col-form-label">Activity Name</label>
+            <label class="col-md-4 col-form-label">Sub-task Name</label>
             <div class="col-md-7">
               <div class="form-group">
-                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Task Activity name">
+                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Sub-task name">
               </div>
             </div>
           </div> -->
             <div class="row">
-              <label class="col-md-4 col-form-label">Task Activity</label>
+              <label class="col-md-4 col-form-label">Sub-task</label>
               <div class="col-md-7 col-lg-6 col-sm-5">
                 <ng-select [items]="billWorks | async" bindLabel="name" name="WorkAction"
-                  placeholder="Select Task Activity" (click)="setAction(setItem)" [(ngModel)]="setItem">
+                  placeholder="Select Sub-task" (click)="setAction(setItem)" [(ngModel)]="setItem">
                 </ng-select>
               </div>
             </div>
@@ -3482,7 +3482,7 @@
           <div class="card-header text-center">
             <p class="col-md-8 ml-auto mr-auto title na-am col-form-label info">
               Select Participants<br>
-              for Task Activity item: <b>{{ selectedAction.name }}</b> </p><br>
+              for Sub-task item: <b>{{ selectedAction.name }}</b> </p><br>
           </div>
           <div class="col-md-10 ml-auto mr-auto">
             <br>
@@ -3607,7 +3607,7 @@
         <div class="card-body ">
           <div class="card-header text-center">
             <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-              <font size=4>Edit Task Activity item <br> "{{ selectedAction.name }}"</font>
+              <font size=4>Edit Sub-task item <br> "{{ selectedAction.name }}"</font>
             </p>
           </div>
           <hr>
@@ -3650,18 +3650,18 @@
         <div class="card-body ">
           <div class="card-header text-center">
             <p class="col-md-10 ml-auto mr-auto title na-an info" style="color:steelblue">
-              <font size=4>New Task Activity for {{ selectedTask.name }} task</font>
+              <font size=4>New Sub-task for {{ selectedTask.name }} task</font>
             </p>
           </div>
           <hr>
           <!-- <a> Selected Unit: <span></span><small> {{ setSui.id }}</small></a><br> -->
           <form class="form-horizontal">
             <div class="row">
-              <label class="col-md-4 col-form-label">Activity Name</label>
+              <label class="col-md-4 col-form-label">Sub-task Name</label>
               <div class="col-md-7">
                 <div class="form-group">
                   <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control"
-                    placeholder="Activity name">
+                    placeholder="Sub-task name">
                 </div>
               </div>
             </div>
@@ -3742,7 +3742,7 @@
           <button type="button" class="close" data-dismiss="modal" (click)="resetForm()" aria-label="Close">
             <i class="nc-icon nc-simple-remove"></i>
           </button>
-          <p class="title-up na-am">Add Activity to <b>{{ (selectedBill)?.name }}</b><br>
+          <p class="title-up na-am">Add Sub-task to <b>{{ (selectedBill)?.name }}</b><br>
         </div>
         <div class="modal-body">
           <ng-container>

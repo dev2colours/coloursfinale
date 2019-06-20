@@ -608,32 +608,6 @@ export class DashboardComponent implements OnInit {
     this.allColoursProjects.subscribe((projects) => {
       console.log(projects);
 
-      // projects.forEach(element => {
-      //   const index2 = projects.findIndex(workClass => workClass.name === 'Work');
-      //   let index = projects.findIndex(element);
-      //   let  proj = projects[index];
-
-      //   if (index % 2 === 0) {
-      //     proj.txtColours = "white";
-      //     this.marketProjects.push(proj);
-      //   } else {
-      //     projects[index].txtColours = "red";
-      //     this.marketProjects.push(proj);
-      //   }
-
-      //   this.projs2No = projects.length;
-      //   if (this.projs2No == 0) {
-
-      //     this.showMdata = false;
-      //     this.hideMdata = true;
-
-      //   } else {
-
-      //     this.showMdata = true;
-      //     this.hideMdata = false;
-
-      //   }
-      // });
       this.projs2No = projects.length;
       if (this.projs2No == 0) {
 
@@ -650,8 +624,8 @@ export class DashboardComponent implements OnInit {
       marketProjects = [];
 
       projects.forEach(function (element, index) {
-        console.log(index);
-        console.log(element);
+        // console.log(index);
+        // console.log(element);
         let  proj = projects[index];
 
         if (index % 2 === 0) {

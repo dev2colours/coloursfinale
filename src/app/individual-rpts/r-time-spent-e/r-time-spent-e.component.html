@@ -5,7 +5,7 @@
 </div><br> -->
 
 <h3>Participant:
-    <span><select id="name-list1" (click)="rService.getParticipantData('name-list1','')"></select></span>
+    <span><select id="name-list1" (click)="rService.PData('name-list1','')"></select></span>
     <span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
 
 <h4>Total Time spent on an Task Activity for the period from <span>
@@ -13,14 +13,13 @@
         <input type="date" id="startdate1">
     </span> to <span>
         <input type="date" id="enddate1">
-        <button (click)="rService.rtimespent_e()">Generate report for selected period</button>
+        <button id="btn1" (click)="rService.rtimespent_e()">Generate report for selected period</button>
     </span></h4>
-<!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
-<!-- button (click)="rService.clearTable()">Clear table</button> -->
-<!-- Table rows and headings only -->
+
+<!-- Table headings only -->
 <table id="TbId1">
-    <!-- headings -->
     <tr>
+         <!-- headings -->
         <th>Action Item</th>
         <th>Task Name</th>
         <th style="text-align:center">Hours Spent</th>

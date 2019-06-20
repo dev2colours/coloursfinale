@@ -434,7 +434,7 @@ export class NavbarComponent implements OnInit {
         };
         this.company = {
             name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null,
-            champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: ""
+            champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "", updatedStatus: false
         }
     }
 
@@ -1029,6 +1029,8 @@ export class NavbarComponent implements OnInit {
         let classWorkReps;
         let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: "", actualTime: "", Varience: "" };
             // classWorkReps.Hours = null;
+        classWorkReps = actionSet.classification;
+
 
 
         let work = {
@@ -1134,43 +1136,43 @@ export class NavbarComponent implements OnInit {
         } else {
 
 
-            if (workAction.classificationName !== "") {
-                if (workAction.classificationName === 'Work') {
-                    workAction.classification = newClassification;
+            // if (workAction.classificationName !== "") {
+            //     if (workAction.classificationName === 'Work') {
+            //         workAction.classification = newClassification;
 
-                    workAction.classificationName = 'Work';
-                    workAction.classificationId = newClassification.id;
+            //         workAction.classificationName = 'Work';
+            //         workAction.classificationId = newClassification.id;
 
-                    classWorkReps = newClassification;
-                    this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classification': newClassification });
-                    this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classification': newClassification });
-                } else if (workAction.classification !== null || workAction.classification !== undefined) {
+            //         classWorkReps = newClassification;
+            //         this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classification': newClassification });
+            //         this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classification': newClassification });
+            //     } else if (workAction.classification !== null || workAction.classification !== undefined) {
 
-                    if (workAction.classification.name === 'Work') {
-                        workAction.classificationName = 'Work';
-                        workAction.classificationId = newClassification.id;
+            //         if (workAction.classification.name === 'Work') {
+            //             workAction.classificationName = 'Work';
+            //             workAction.classificationId = newClassification.id;
 
-                        this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationName': newClassification.name });
-                        this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationName': newClassification.name });
+            //             this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationName': newClassification.name });
+            //             this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationName': newClassification.name });
 
-                        this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationId': newClassification.id });
-                        this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationId': newClassification.id });
-                    }
-                }
-            }
+            //             this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationId': newClassification.id });
+            //             this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationId': newClassification.id });
+            //         }
+            //     }
+            // }
 
-            if (workAction.classification.name === 'Work') {
+            // if (workAction.classification.name === 'Work') {
 
-                workAction.classificationName = 'Work';
-                workAction.classificationId = newClassification.id;
+            //     workAction.classificationName = 'Work';
+            //     workAction.classificationId = newClassification.id;
 
-                this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationName': newClassification.name });
-                this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationName': newClassification.name });
+            //     this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationName': newClassification.name });
+            //     this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationName': newClassification.name });
 
-                this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationId': newClassification.id });
-                this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationId': newClassification.id });
+            //     this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationId': newClassification.id });
+            //     this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationId': newClassification.id });
 
-            }
+            // }
 
             this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).set(timeData)
             let timesheetworktime = String(moment(new Date().getTime()));
@@ -1836,7 +1838,7 @@ export class NavbarComponent implements OnInit {
             UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "",
             startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", selectedWeekly: false,
             companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), selectedWeekWork: false,
-            actualStart: "", actualEnd: "", Hours: "" ,
+            actualStart: "", actualEnd: "", Hours: "", championName: "", championId: ""
         };
     }
 
@@ -2000,7 +2002,7 @@ export class NavbarComponent implements OnInit {
             UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "",
             startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", selectedWeekly: false,
             companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), selectedWeekWork: false,
-            actualStart: "", actualEnd: "", Hours: "",
+            actualStart: "", actualEnd: "", Hours: "", championName: "", championId: ""
         };
     }
 
@@ -2293,7 +2295,7 @@ export class NavbarComponent implements OnInit {
                 myClassWrkRpt.collection('woukHours').doc(fullTym).set(work)
             }
 
-        }, 60000);
+        }, 120000);
     }
 
     compReport(company) {
