@@ -109,7 +109,7 @@ export class ProjectsComponent {
             console.log(this.afAuth.user);
 
         this.tasks = this.afs.collection('tasks').valueChanges();
-        // console.log(this.tasks)
+        console.log(this.tasks)
 
         this.enterpriseProjects = this.afs.collection('Projects').snapshotChanges().pipe(
             map(actions => actions.map(a => {
@@ -137,7 +137,7 @@ export class ProjectsComponent {
             
         });
         
-        this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null  };
+        this.task = { name: "", champion: null, projectName: "", department: "", championName: "", championId: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
     
         this.afAuth.authState.subscribe(user => {
             console.log(user.uid)
@@ -435,7 +435,7 @@ export class ProjectsComponent {
                 this.afs.collection('Users').doc(user.uid).collection('tasks').add(createdTask);
 
             }
-            this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null };
+            this.task = { name: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
 
         })
     }
@@ -445,7 +445,7 @@ export class ProjectsComponent {
     login() {
         this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider()).then(ref => {
             console.log("Check User collection for doc");
-            // console.log(ref);
+            console.log(ref);
             this.coloursUserDetails = ref;
 
             let coloursUser = ref.user;

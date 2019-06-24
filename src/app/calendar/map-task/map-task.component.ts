@@ -186,7 +186,7 @@ export class MapTaskComponent {
     let ddref = moment().add(4, 'M');
     console.log(ddref.get('M'));
     console.log(moment(18 - 10 - 2018, "DD-MM-YYYY").dayOfYear().toString());
-    // console.log(moment(2018-1-1).month().toString());
+    console.log(moment(2018-1-1).month().toString());
     this.currentMonth = moment();
     console.log(this.currentMonth);
     this.currentYear = moment(new Date(), "DD-MM-YYYY").year().toString();
@@ -242,7 +242,7 @@ export class MapTaskComponent {
       { id: 'm2', name: 'Area' },
       { id: 'm3', name: 'Volume' },
       { id: 'units', name: 'Units' },
-      { id: 'items', name: 'Items' },
+      { id: 'item(s)', name: 'Items' },
       { id: 9, name: 'Pavilnys', disabled: true },
     ];
 
@@ -263,6 +263,7 @@ export class MapTaskComponent {
     
     this.afs.collection('Users').doc(this.userId).collection('tasks').doc(taskId).delete();
     this.afs.collection('Users').doc(this.task.champion.id).collection('tasks').doc(taskId).delete();
+    this.afs.collection('Users').doc(task.champion.id).collection('WeeklyTasks').doc(taskId).delete();
   }
 
    newTask(){
@@ -332,7 +333,7 @@ export class MapTaskComponent {
      });    
 
     //  this.task = this.is.getTask();
-     this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", classification: null };
+     this.task = { name: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
     //  this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
      this.myChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
   }

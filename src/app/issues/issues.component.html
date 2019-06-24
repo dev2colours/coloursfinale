@@ -1,0 +1,489 @@
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-12">
+      <div *ngIf="firstView" class="card-header">
+        <p class="card-category clrs-h1-font">
+          Issues
+        </p>
+        <!-- <p *ngIf="viewPsnRpt" class="card-category clrs-h4-font" name="personal">
+          Reported Issue:<span class="text-danger"> {{ setPersonalreport.name }}</span>
+        </p> -->
+        <!-- <p *ngIf="viewEntRpt" class="card-category clrs-h4-font" name="company">
+          Reported Issue:<span class="text-danger"> {{ setEntReport.name }}</span>
+        </p> -->
+        <!-- <p *ngIf="viewPrjRpt" class="card-category clrs-h4-font" name="project">
+          Reported Issue:<span class="text-danger"> {{ setProjReport.name }}</span>
+        </p> -->
+      </div>
+    </div>
+  </div>
+  <div *ngIf="firstView" class="row">
+    <div class="col-md-12" style="width:auto">
+      <div class="card-body nav-hor-tabs" style="padding-left: 0px; padding-right: 0px; margin-top: -6em;">
+        <div class="nav-tabs-navigation">
+          <div class="nav-tabs-wrapper">
+            <ul id="tabs" class="nav nav-tabs" role="tablist">
+              <li class="nav-item">
+                  <a class="nav-link active nav-colors" data-toggle="tab" href="#personalIssues" role="tab"  aria-expanded="false">Personal</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link nav-colors" data-toggle="tab" href="#enterpriseIssues" role="tab" aria-expanded="false">Enterprise</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link nav-colors" data-toggle="tab" href="#projectIssues" role="tab" aria-expanded="false">Project</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div id="my-tab-content" class="tab-content">
+          <div class="tab-pane active" role="tabpanel" id="personalIssues" aria-expanded="true">
+            <div class="row">
+              <div class="col-md-12 ml-auto mr-auto">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="card-plain">
+                      <p class="text-left clrs-h4-font" style="margin-left:.5em;">Personal Issues</p>                      
+                    </div>
+                  </div>
+                  <div class="card-body row" style="padding-top: 0px;">
+                    <div *ngIf="newReport; else newRprt" class="col-ms-9 col-md-9 card-plain">
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <font size = 3> Issues listed</font>
+                      </span>
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <button class="btn-link btn-magnify" (click)="initPage()"><font size=2>Report issue</font></button>                                                      
+                      </span><br>
+                      <ol>
+                        <li *ngFor="let item of issues | async">
+                          <!-- <p class="col-md-12" style="margin-bottom: 0px;">{{ item.name }}</p> -->
+                          <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;"><button class="btn-link btn-magnify text-info" (click)="viewPersonalRpt(item)">{{ item.name }}</button></p>
+                          <p class="category col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>Description," {{ item.description }} ".</p>
+                        </li>
+                      </ol>
+                    </div>
+                    <ng-template #newRprt>
+                      <div class="col-ms-9 col-md-9 card-plain">
+                        <span class="text-left clrs-h4-font" style="margin-left:1.5em;"><font size=3>Report issues</font>
+                        </span>
+                        <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                          <button class="btn-link btn-magnify" (click)="OninitPage()"><font size=2>Cancel</font></button>
+                        </span>
+                        <div class="spacer" style="height: 2em"></div>
+                        <div class="row" style="width: inherit">
+                          <div class="col-md-12">
+                            <!-- <p *ngIf="psnwarningName" class="category text-danger" style="margin-bottom: 0px; cursor: pointer;">Fill all fields, Topic is Required</p> -->
+                            <div class="form-group" style="margin-left:2em;">
+                              <label>Topic <span *ngIf="psnwarningName" class="text-danger" style="margin-bottom: 0px; cursor: pointer;"> is Required, fill all fields</span></label>
+                              <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                                placeholder="Issue main topic" name="Topic" [(ngModel)]="report.name">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row" style="width: inherit">
+                          <div class="col-md-12">
+                            <!-- <p *ngIf="psnwarningDscrpt" class="category text-danger" style="margin-bottom: 0px; cursor: pointer;">Fill all fields, Description is Required</p> -->
+                            <div class="form-group" style="margin-left:2em;">
+                              <label>Description <span *ngIf="psnwarningDscrpt" class="text-danger" style="margin-bottom: 0px; cursor: pointer;">is Required, fill all fields</span></label>
+                              <textarea rows="auto" cols="80" class="form-control textarea" placeholder="Add full description to the last detail so that it easy to understand"
+                                [(ngModel)]="report.description">
+                              </textarea>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="spacer" style="height: 2em"></div>                        
+                        <div class="row">
+                          <div class="col-md-5" style="margin-left:2em;">
+                            <button class="btn-link btn-magnify" (click)="postIssue()"><font size=2>Submit</font></button>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-template>
+                    
+                    <div class="vl2 col-md-3 ml-auto">
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <font size=3> Quick links</font>
+                      </span>
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <button class="btn-link btn-magnify" (click)="BackDesplay()">
+                          <font size=2>All issues</font>
+                        </button>
+                      </span><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" role="tabpanel" id="enterpriseIssues" aria-expanded="false">
+            <div class="row">
+              <div class="col-md-12 ml-auto mr-auto">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="card-plain">
+                      <p class="text-left clrs-h4-font" style="margin-left:.5em;">Enterprises Issues</p>
+                    </div>
+                  </div>
+                  <div class="card-body row" style="padding-top: 0px;">
+                    <div *ngIf="newEnReport; else newRprtE" class="col-ms-9 col-md-9 card-plain">
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <font size=3> Issues listed</font>
+                      </span>
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <button class="btn-link btn-magnify" (click)="initEntPage()">
+                          <font size=2>Report issue</font>
+                        </button>
+                      </span>
+                      <br>
+                      <ol>
+                        <li *ngFor="let item of entIssues | async">
+                          <!-- <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;">{{ item.name }}</p> -->
+                          <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;"><button class="btn-link btn-magnify text-info" (click)="viewCompanyRpt(item)">{{ item.name }}</button></p>
+                          <p class="category col-ms-12 col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>Description," {{ item.description }} ".</p>
+                        </li>
+                      </ol>
+                    </div>
+                    <ng-template #newRprtE>
+                      <div class="col-ms-9 col-md-9 card-plain">
+                        <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                          <font size=3>Report issues</font>
+                        </span>
+                        <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                          <button class="btn-link btn-magnify" (click)="OninitEntPage()">
+                            <font size=2>Cancel</font>
+                          </button>
+                        </span>
+                        <!-- <div class="spacer" style="height: 2em"></div> --><br>
+                        <div class="row" style="width: inherit">
+                          <div class="col-md-12">
+                            <div class="form-group" style="margin-left:2em;">
+                              <label>Topic <span *ngIf="entwarningName" class="text-danger" style="margin-bottom: 0px; cursor: pointer;"> is Required, fill all fields</span></label>
+                              <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                                placeholder="Issue main topic" name="Topic" [(ngModel)]="entReport.name">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row" style="width: inherit">
+                          <div class="col-md-12">
+                            <div class="form-group" style="margin-left:2em;">
+                              <label>Description <span *ngIf="entwarningDscrpt" class="text-danger" style="margin-bottom: 0px; cursor: pointer;">is Required, fill all fields</span></label>
+                              <textarea rows="auto" cols="80" class="form-control textarea"
+                                placeholder="Add full description to the last detail so that it easy to understand"
+                                [(ngModel)]="entReport.description">
+                              </textarea>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="spacer" style="height: 2em"></div>
+                        <div class="row">
+                          <div class="col-md-5" style="margin-left:2em;">
+                            <button class="btn-link btn-magnify" (click)="postEntIssue()">
+                              <font size=2>Submit</font>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-template>
+            
+                    <!-- <div class="vl"></div> -->
+                    <div class="vl2 col-md-3 ml-auto">
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <font size=3> Quick links</font>
+                      </span>
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <button class="btn-link btn-magnify" (click)="BackDesplay()">
+                          <font size=2>All issue</font>
+                        </button>
+                      </span><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" role="tabpanel" id="projectIssues" aria-expanded="false">
+            <div class="row">
+              <div class="col-md-12 ml-auto mr-auto">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="card-plain">
+                      <p class="text-left clrs-h4-font" style="margin-left:.5em;">Project Issues</p>
+                    </div>
+                  </div>
+                  <div class="card-body row" style="padding-top: 0px;">
+                    <div *ngIf="newPrReport; else newRprtP" class="col-ms-9 col-md-9 card-plain">
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <font size=3> Issues listed</font>
+                      </span>
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <button class="btn-link btn-magnify" (click)="initProjPage()">
+                          <font size=2>Report issue</font>
+                        </button>
+                      </span><br>
+                      <ol>
+                        <li *ngFor="let item of projIssues | async">
+                          <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;"><button class="btn-link btn-magnify text-info" (click)="viewProjectRpt(item)">{{ item.name }}</button></p>                          
+                          <p class="category col-ms-12 col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>Description," {{ item.description }} ".</p>
+                        </li>
+                      </ol>
+                    </div>
+                    <ng-template #newRprtP>
+                      <div class="col-ms-9 col-md-9 card-plain">
+                        <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                          <font size=3>Report issues</font>
+                        </span>
+                        <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                          <button class="btn-link btn-magnify" (click)="OninitProjPage()">
+                            <font size=2>Cancel</font>
+                          </button>
+                        </span>
+                        <div class="spacer" style="height: 2em"></div>
+                        <div class="row" style="width: inherit">
+                          <div class="col-md-12">
+                            <div class="form-group" style="margin-left:2em;">
+                              <label>Topic <span *ngIf="prjwarningName" class="text-danger" style="margin-bottom: 0px; cursor: pointer;"> is Required, fill all fields</span></label>
+                              <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                                placeholder="Issue main topic" name="Topic" [(ngModel)]="projReport.name">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row" style="width: inherit">
+                          <div class="col-md-12">
+                            <div class="form-group" style="margin-left:2em;">
+                              <label>Description <span *ngIf="prjwarningDscrpt" class="text-danger" style="margin-bottom: 0px; cursor: pointer;">is Required, fill all fields</span></label>
+                              <textarea rows="auto" cols="80" class="form-control textarea"
+                                placeholder="Add full description to the last detail so that it easy to understand"
+                                [(ngModel)]="projReport.description">
+                                                      </textarea>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="spacer" style="height: 2em"></div>
+                        <div class="row">
+                          <div class="col-md-5" style="margin-left:2em;">
+                            <button class="btn-link btn-magnify" (click)="postProjIssue()">
+                              <font size=2>Submit</font>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-template>
+            
+                    <!-- <div class="vl"></div> -->
+                    <div class="vl2 col-md-3 ml-auto">
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <font size=3> Quick links</font>
+                      </span>
+                      <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+                        <button class="btn-link btn-magnify" (click)="BackDesplay()">
+                          <font size=2>All issue</font>
+                        </button>
+                      </span><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>    
+  </div>
+  <div *ngIf="viewPsnRpt" class="row">
+    <div class="col-md-12 ml-auto mr-auto">
+      <div class="card">
+        <div class="card-body row" style="padding-top: 0px;">
+          <div *ngIf="newReport; else newRprt" class="col-ms-9 col-md-9 card-plain">
+            <!-- <code> {{ setPersonalreport.description }} </code> -->
+            <div class="card-body text-center">
+              <div class="card-plain">
+                <p class="text-left clrs-h4-font"><font size=3>Reported Issue:<span class="text-danger"> {{ setPersonalreport.name }}</span></font></p>
+              </div>
+            </div>
+            <p class="clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>
+              <font size=3>Description</font><br>
+              <font size=2>{{ setPersonalreport.description }}.</font><br><br><br>
+              <!-- <font size=2>Comments.</font> -->
+            </p>
+
+            <div *ngIf="newComment_Psn" class="col-md-12 mr-auto ml-auto">
+              <div class="form-group">
+                <label>Add Comment</label>
+                <textarea rows="auto" cols="80" class="form-control textarea" placeholder="Add Issues Comment" [(ngModel)]="newCommentPrs.name"></textarea>
+              </div>
+            </div>
+            <div *ngIf="newComment_Psn" class="row" style="margin-bottom: 50px;">
+              <div class="col-md-8 mr-auto ml-auto"></div>
+              <div class="col-md-3 ml-auto">
+                <span class="pull-right text-left clrs-h4-font" style="margin-left:1.5em;">
+                  <button class="btn-link btn-magnify" (click)="commentPrsn()">
+                    <font size=2>Submit</font>
+                  </button>
+                </span><br>
+              </div>
+            </div>
+            <div class="col-md-12 mr-auto ml-auto">
+              <p class="vl4 text-left clrs-h4-font" style="margin-top:-1.5em;margin-bottom: 5px;">
+                <font size=3>Comments</font>
+                <span class="pull-right text-left clrs-h4-font" style="margin-left:1.5em;">
+                  <button *ngIf="!newComment_Psn" class="btn-link btn-magnify" style="margin-left: 5px;" (click)="addPsnComment()">
+                    <font size=2 style="vertical-align: super;">Add comment</font>
+                  </button>
+                </span><br>
+              </p>
+              <div class="card-plain" *ngFor="let item of pIssuesComments | async">
+                <div class="vl3">
+                  <label>{{ item.by }}</label>
+                  <p class="clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"
+                    ><br>
+                    <font size=2>{{ item.name }}.</font><br>
+                  </p>
+                  <hr>
+                </div>            
+              </div>
+            </div>
+          </div>
+          <div class="vl2 col-md-3 ml-auto">
+            <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+              <font size=3> Quick links</font>
+            </span><span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+              <button class="btn-link btn-magnify" (click)="BackDesplay()">
+                <font size=2>All issue</font>
+              </button>
+            </span><br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="viewEntRpt" class="row">
+    <div class="col-md-12 ml-auto mr-auto">
+      <div class="card">
+        <div class="card-body row" style="padding-top: 0px;">
+          <div *ngIf="newReport; else newRprt" class="col-ms-9 col-md-9 card-plain">
+            <div class="card-body text-center">
+              <div class="card-plain">
+                <p class="text-left clrs-h4-font"><font size=3>Reported Issue:<span class="text-danger"> {{ setEntReport.name }}</span></font></p>
+              </div>
+            </div>
+            <p class="clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>
+              <font size=3>Description</font><br>
+              <font size=2>{{ setEntReport.description }}.</font><br><br><br>
+            </p>
+            <div *ngIf="newComment_Ent" class="col-md-12 mr-auto ml-auto">
+              <div class="form-group">
+                <label>Add Comment</label>
+                <textarea rows="auto" cols="80" class="form-control textarea"
+                  placeholder="Add Issues Comment"
+                  [(ngModel)]="newCommentEnt.name"></textarea>
+              </div>
+            </div>
+            <div *ngIf="newComment_Ent" class="row" style="margin-bottom: 50px;">
+              <div class="col-md-8 mr-auto ml-auto"></div>
+              <div class="col-md-3 ml-auto">
+                <span class="pull-right text-left clrs-h4-font" style="margin-left:1.5em;">
+                  <button class="btn-link btn-magnify" (click)="commentEnt()">
+                    <font size=2>Submit</font>
+                  </button>
+                </span><br>
+              </div>
+            </div>
+            <div class="col-md-12 mr-auto ml-auto">
+              <p class="vl4 text-left clrs-h4-font" style="margin-top:-1.5em;margin-bottom: 5px;">
+                <font size=3>Comments</font>
+                <span class="pull-right text-left clrs-h4-font" style="margin-left:1.5em;">
+                  <button *ngIf="!newComment_Ent" class="btn-link btn-magnify" style="margin-left: 5px;" (click)="addEntComment()">
+                    <font size=2 style="vertical-align: super;">Add comment</font>
+                  </button>
+                </span><br>
+              </p>
+              <div class="card-plain" *ngFor="let item of entIssuesComments | async">
+                <div class="vl3">
+                  <label>{{ item.by }}</label>
+                  <p class="clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>
+                    <font size=2>{{ item.name }}.</font><br>
+                  </p>
+                  <hr>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="vl2 col-md-3 ml-auto">
+            <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+              <font size=3> Quick links</font>
+            </span><span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+              <button class="btn-link btn-magnify" (click)="BackDesplay()">
+                <font size=2>All issue</font>
+              </button>
+            </span><br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="viewPrjRpt" class="row">
+    <div class="col-md-12 ml-auto mr-auto">
+      <div class="card">
+        <div class="card-body row" style="padding-top: 0px;">
+          <div *ngIf="newReport; else newRprt" class="col-ms-9 col-md-9 card-plain">
+            <div class="card-body text-center">
+              <div class="card-plain">
+                <p class="text-left clrs-h4-font"><font size=3>Reported Issue:<span class="text-danger"> {{ setProjReport.name }}</span></font></p>
+              </div>
+            </div>
+            <p class="clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>
+              <font size=3>Description</font><br>
+              <font size=2>{{ setProjReport.description }}.</font><br><br><br>
+            </p>
+            <div *ngIf="newComment_Prj" class="col-md-12 mr-auto ml-auto">
+              <div class="form-group">
+                <label>Add Comment</label>
+                <textarea rows="auto" cols="80" class="form-control textarea" placeholder="Add Issues Comment" [(ngModel)]="newCommentprj.name"></textarea>
+              </div>
+            </div>
+            <div *ngIf="newComment_Prj" class="row" style="margin-bottom: 50px;">
+              <div class="col-md-8 mr-auto ml-auto"></div>
+              <div class="col-md-3 ml-auto">
+                <span class="pull-right text-left clrs-h4-font" style="margin-left:1.5em;">
+                  <button class="btn-link btn-magnify" (click)="commentPrj()">
+                    <font size=2>Submit</font>
+                  </button>
+                </span><br>
+              </div>
+            </div>
+            <div class="col-md-12 mr-auto ml-auto">
+              <p class="vl4 text-left clrs-h4-font" style="margin-top:-1.5em;margin-bottom: 5px;">
+                <font size=3>Comments</font>
+                <span class="pull-right text-left clrs-h4-font" style="margin-left:1.5em;">
+                  <button *ngIf="!newComment_Prj" class="btn-link btn-magnify" style="margin-left: 5px;" (click)="addPrjComment()">
+                    <font size=2 style="vertical-align: super;">Add comment</font>
+                  </button>
+                </span><br>
+              </p>
+              <div class="card-plain" *ngFor="let item of prjIssuesComments | async">
+                <div class="vl3">
+                  <label>{{ item.by }}</label>
+                  <p class="clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"
+                    ><br>
+                    <!-- <font size=3>Comment</font> -->
+                    <font size=2>{{ item.name }}.</font><br>
+                    <!-- <font size=2>Comments.</font> -->
+                  </p>
+                  <hr>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="vl2 col-md-3 ml-auto">
+            <span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+              <font size=3> Quick links</font>
+            </span><span class="text-left clrs-h4-font" style="margin-left:1.5em;">
+              <button class="btn-link btn-magnify" (click)="BackDesplay()">
+                <font size=2>All issue</font>
+              </button>
+            </span><br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

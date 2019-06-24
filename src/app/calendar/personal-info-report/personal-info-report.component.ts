@@ -28,14 +28,14 @@ export class PersonalInfoReportComponent implements OnInit {
     }));
 
     docRef.subscribe(userData => {
-      console.log(userData);
+      // // console.log(userData);
 
       // userData.bodyMassIndex = Math.round(userData.bodyWeight / ((userData.bodyHeight * (1 / 100)) * ((userData.bodyHeight * (1 / 100)))));
       let bmi = (userData.bodyWeight / ((userData.bodyHeight * (1 / 100)) * ((userData.bodyHeight * (1 / 100)))));
-      console.log(bmi.toFixed(1));
+      // // console.log(bmi.toFixed(1));
 
       userData.bodyMassIndex = Number(bmi.toFixed(1));
-      console.log(userData.bodyMassIndex);
+      // // console.log(userData.bodyMassIndex);
       this.userData = userData;
 
     })
@@ -44,15 +44,15 @@ export class PersonalInfoReportComponent implements OnInit {
   
   ngOnInit() {
     this.afAuth.user.subscribe(user => {
-      console.log(user);
+      // // console.log(user);
       this.userId = user.uid;
       this.user = user;
-      console.log(this.userId);
-      console.log(this.user);
+      // // console.log(this.userId);
+      // // console.log(this.user);
 
       let mer = this.afs.doc(`Users/${this.userId}`);
 
-      console.log(mer.valueChanges());
+      // // console.log(mer.valueChanges());
       this.myDataCall();
 
       // this.userData.name = this.user.displayName;

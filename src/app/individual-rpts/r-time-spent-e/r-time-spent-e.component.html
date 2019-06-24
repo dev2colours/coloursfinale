@@ -1,28 +1,27 @@
 
-<h2 id="org1">Personal Reports</h2>
+<h3 id="org1">Personal Reports</h3>
 <!-- <div class="card-header text-left" *ngIf="company !== '' || company === undefined">
     <h2>{{ company }}'s Individual Total Time spent Report</h2>
 </div><br> -->
 
-<h2>Participant:
-    <span><select id="name-list1"></select></span>
-    <span> &nbsp;&nbsp; Hierarchy:</span><span id="hierarchy"></span></h2>
+<h3>Participant:
+    <span><select id="name-list1" (click)="rService.PData('name-list1','')"></select></span>
+    <span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
 
-<h3>Total Time spent on an Activity for the period from <span>
+<h4>Total Time spent on an Task Activity for the period from <span>
         <!-- placeholder will not work, so stuck with dd----yyyyy -->
         <input type="date" id="startdate1">
     </span> to <span>
         <input type="date" id="enddate1">
-        <button (click)="rService.rtimespent_e()">Generate report for selected period</button>
-    </span></h3>
-<!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
-<!-- button (click)="rService.clearTable()">Clear table</button> -->
-<!-- Table rows and headings only -->
+        <button id="btn1" (click)="rService.rtimespent_e()">Generate report for selected period</button>
+    </span></h4>
+
+<!-- Table headings only -->
 <table id="TbId1">
-    <!-- headings -->
     <tr>
-        <th align="left">Action Item</th>
-        <th align="left">Task Name</th>
-        <th>Hours Spent</th>
+         <!-- headings -->
+        <th>Action Item</th>
+        <th>Task Name</th>
+        <th style="text-align:center">Hours Spent</th>
     </tr>
 </table>

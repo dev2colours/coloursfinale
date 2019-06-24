@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore'
-import { AngularFireModule } from 'angularfire2'
-import * as firebase from 'firebase/firebase';
 import 'firebase/firestore'
 import { AngularFireAuth } from 'angularfire2/auth';
+import { invalid } from 'moment';
+import { nextTick } from 'q';
+import { dsv } from 'd3';
 
 @Injectable({
   providedIn: 'root'
@@ -16,111 +16,165 @@ import { AngularFireAuth } from 'angularfire2/auth';
 // variables you want availed to other components
 
 export class ReportsService {
-	public Users: Observable<any[]>;
-	public User: Observable<{}>;
-	public Selected_User: Observable<{}>;
-	WeeklyActions: Observable<any[]>;
-	public stdd; public endd;
-	// public Enterprise: string;
-	public Enterprise; public EnterpriseName;
-
-	public EnterpriseID: string;
-	public ActivityClass = "Work";
-	public Drop_User;
-	public User_Hky; public My_Hky;
-	public Participants;
-	public Time_Spent: Observable<any[]>;
-	public Activity_Log: Observable<any[]>;
-	public Tasks: Observable<any[]>;
-	public MyEnterprises: Observable<any[]>;
-
-	user: any;
-	userId: string;
-	currentCompany: any;
+	
+	EID;UID;PID;stdd;endd;
+	Enterprise;EnterpriseName;
+	My_Hky;User_Hky;Participants;
+	MyEnterprises;user;currentCompany;;waitTime = 7000;
 
 	// 05-May-2019: Use constructor for declaring services. Not a good idea to call functions here
 	// although that can be done inside {}. (see Heroes tutorial on injectable services)
 	constructor(public db: AngularFirestore, public afAuth: AngularFireAuth) {
-		// this.Enterprise = ''
 		afAuth.authState.subscribe(user => {
-			console.log(user);
 			this.user = user;
-			this.userId = user.uid;
+			this.UID = user.uid;
 		})
 	}
 
 	compParams(company) {
 		this.currentCompany = company;
 		this.EnterpriseName = company.name;
-		this.EnterpriseID = company.id;
-		console.log(this.EnterpriseName);
-		
-		console.log(this.currentCompany);
-	}
-
-	rtimespent() {
-		let tbId = "#TbIdP1";
-		this.getData();
-		this.clearTable('TbIdP1');
-		this.readDates('startdateP1', 'enddateP1');
-		this.timespent('', '', '', this.stdd, this.endd, this.WeeklyActions, tbId);
-	}
-
-	ractivitylog() {
-		let tbId = "#TbIdP2";
-		this.getData();
-		this.clearTable('TbIdP2');
-		this.readDates('startdateP2', 'enddateP2');
-		this.activitylog('', '', '', this.stdd, this.endd, this.WeeklyActions, tbId);
+		this.EID = company.id;
 	}
 
 	rostasks() {
-		let tbId = "#TbIdP";
-		this.getData();
-		this.clearTable('TbIdP');
-		this.readDate('startdateP');
-		this.OS_Tasks('', '', '', this.stdd, this.Tasks, tbId);
+		var Tasks;
+		Tasks = this.db.collection('Users').doc(this.UID).collection('tasks').ref.get();
+		let tbId = "#TbIdP0";
+		this.clearTable("TbIdP0","btnP0");
+		this.readDate("startdateP0");
+		this.OS_Tasks(Tasks,this.UID,"",this.stdd,tbId,"btnP1");
 	}
 
-	rostasks_e() {
-		let tbId = "#TbId4";
-		this.getParticipantData('name-list4');
-		this.clearTable("TbId4");
-		this.readDate('startdate4');
-		console.log(tbId);
+	rtimespent() {
+		var WActions;
+		WActions = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
+		ref.orderBy('startDate','asc').where('champion.id','==',this.UID).get();
+		let tbId = "#TbIdP1";
+		this.clearTable("TbIdP1","btnP1");
+		this.readDates("startdateP1", "enddateP1");
+		this.TimeSpent(WActions,this.UID,"",this.stdd,this.endd,tbId,"btnP1");
+	}
 
-		this.OS_Tasks(this.EnterpriseID, '', '', this.stdd, this.Tasks, tbId);
+	ractivitylog() {
+		var WActions;
+		WActions = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
+		ref.orderBy('startDate','asc').where('champion.id','==',this.UID).get();
+		let tbId = "#TbIdP2";
+		this.clearTable("TbIdP2","btnP2");
+		this.readDates("startdateP2", "enddateP2");
+		this.ActivityLog(WActions,this.UID,"",this.stdd,this.endd,tbId,"btnP2");
+	}
+
+	rdailyplan() {
+		var DPlan;
+		DPlan = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
+		ref.orderBy('start','asc').where('start','>','0').where('complete','==',false).
+		where('champion.id','==',this.UID).where('selectedWork','==',true).get();
+		let tbId = "#TbIdP3";
+		this.clearTable("TbIdP3","btnP3");
+		this.readDate("startdateP3");
+		this.Plan(DPlan,"d",this.UID,"",this.stdd,tbId,"btnP3");
+	}
+
+	rweeklyplan() {
+		var WPlan;
+		WPlan = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
+		ref.orderBy('startDate','asc').where('champion.id','==',this.UID).where('complete','==',false).
+		where('selectedWeekWork','==',true).get();
+		let tbId = "#TbIdP4";
+		this.clearTable("TbIdP4","btnP4");
+		this.readDate("startdateP4");
+		this.Plan(WPlan,"w",this.UID,"",this.stdd,tbId,"btnP4");
+	}  
+
+	rostasks_e() {
+		
+		var name:string;
+		var PID:string;
+		var Tasks;
+		name = this.optValue("name-list0");
+		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
+		ref.where('name', '==', name).get().then((ref) => {
+			PID = ref.docs[0].id;
+			this.User_Hky = ' ' + ref.docs[0].data().hierarchy;
+			Tasks = this.db.collection('Users').doc(PID).collection('tasks').ref.get();
+			let tbId = "#TbId0";
+			this.clearTable("TbId0","btn0");
+			this.readDate("startdate0");
+			this.OS_Tasks(Tasks,PID,this.EID,this.stdd,tbId,"btn0");
+		})
+		
 	}
 
 	rosactions_e() {
-		let tbId = "#TbId3";
-		this.getParticipantData('name-list3');
-		this.clearTable('TbId3');
-		this.readDates('startdate3', 'enddate3');
-		// alert(this.EnterpriseID);
-		console.log(tbId);
-
-		this.OS_Actions(this.EnterpriseID, '', '', this.stdd, this.endd, this.WeeklyActions, tbId);
+		// let tbId = "#TbId00";
+		// //this.PData("name-list00","");
+		// this.readDates("startdate00", "enddate00");
+		// this.OS_Actions(this.PID,this.EID, '', '', this.stdd, this.endd, this.WeeklyActions, tbId, "btn00");
 	}
 
 	rtimespent_e() {
-		let tbId = "#TbId1";
-		this.getParticipantData('name-list1');
-		this.clearTable("TbId1");
-		this.readDates('startdate1', 'enddate1');
-		console.log(tbId);
-		this.timespent(this.EnterpriseID, '', '', this.stdd, this.endd, this.WeeklyActions, tbId);
+
+		var name:string;
+		var PID:string;
+		var WActions;
+		name = this.optValue("name-list1");
+		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
+		ref.where('name', '==', name).get().then((ref) => {
+			PID = ref.docs[0].id;
+			this.User_Hky = ' ' + ref.docs[0].data().hierarchy;
+			WActions = this.db.collection('Users').doc(PID).collection('WeeklyActions').
+			ref.orderBy('startDate','asc').where('champion.id','==',PID).get();
+			let tbId = "#TbId1";
+			this.clearTable("TbId1","btn1");
+			this.readDates("startdate1","enddate1");
+			this.TimeSpent(WActions,PID,this.EID,this.stdd,this.endd,tbId,"btn1");
+		})
+
 	}
 
 	ractivitylog_e() {
-		let tbId = "#TbId2";
-		this.getParticipantData('name-list2');
-		this.clearTable('TbId2');
 
-		console.log(tbId);
-		this.activitylog(this.EnterpriseID, '', '', this.stdd, this.endd, this.WeeklyActions, tbId);
+		var name:string;
+		var PID:string;
+		var WActions;
+		name = this.optValue("name-list2");
+		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
+		ref.where('name', '==', name).get().then((ref) => {
+			PID = ref.docs[0].id;
+			this.User_Hky = ' ' + ref.docs[0].data().hierarchy;
+			WActions = this.db.collection('Users').doc(PID).collection('WeeklyActions').
+			ref.orderBy('startDate','asc').where('champion.id','==',PID).get();
+			let tbId = "#TbId2";
+			this.clearTable("TbId2","btn2");
+			this.readDates("startdate2","enddate2");
+			this.ActivityLog(WActions,PID,this.EID,this.stdd,this.endd,tbId,"btn2")
+		})
+
 	}
 
+	rdailyplan_e() {
+
+		var name:string;
+		var PID:string;
+		var DPlan;
+		name = this.optValue("name-list3");
+		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
+		ref.where('name', '==', name).get().then((ref) => {
+			PID = ref.docs[0].id;
+			this.User_Hky = ' ' + ref.docs[0].data().hierarchy;
+			DPlan = this.db.collection('Users').doc(PID).collection('WeeklyActions').
+			ref.orderBy('start','asc').where('start','>','0').where('complete','==',false).
+			where('champion.id','==',PID).where('selectedWork','==',true).get();
+			let tbId = "#TbId3";
+			this.clearTable("TbId3","btn3");
+			this.readDate("startdate3");
+			this.Plan(DPlan,"d",PID,this.EID,this.stdd,tbId,"btn3");
+		})
+
+	}
+	
 	readDate(date) {
 		//06-May-2019. <HTMLInputElement> casts the HTML type to Input to prevent a compile error
 		//which says property value does not exist on HTML element
@@ -134,111 +188,58 @@ export class ReportsService {
 		this.endd = (<HTMLInputElement>document.getElementById(eDate)).value;
 	}
 
-	getData() {
-		this.Users = this.db.collection('Users', ref => ref.orderBy('name', 'asc')).valueChanges();
-		this.User = this.db.collection('Users').doc(this.userId).valueChanges();
-		this.WeeklyActions = this.db.collection('Users').doc(this.userId).collection('WeeklyActions').valueChanges();
-		this.Tasks = this.db.collection('Users').doc(this.userId).collection('tasks').valueChanges();
-	}
-
 	getMyEnterprises() {
-		this.MyEnterprises = this.db.collection('Users').doc(this.userId).collection('myenterprises', ref => ref.
+		this.MyEnterprises = this.db.collection('Users').doc(this.UID).collection('myenterprises', ref => ref.
 			orderBy('name', 'asc')
 		).valueChanges();
 	}
 
-	// getEnterpriseID() {
-	// 	let entp = this.optValue("enterprise-list");
-	// 	this.EnterpriseName = entp;
-	// 	document.getElementById("Ent-reps").innerText = entp + " Reports";
-	// 	this.Enterprise = this.db.collection('Enterprises', ref => ref.
-	// 		where('name', '==', entp)).valueChanges();
-	// 	this.Enterprise.forEach(doc => {
-	// 		for (let i = 0; i < doc.length; i++) {
-	// 			this.EnterpriseID = doc[i].id;
-	// 			//alert(entp + ' ID = ' + this.EnterpriseID);
-	// 		}
-	// 	});
-	// }
-
-	getParticipantData(listName) {
-
-		/* "name-list" */
-		this.clearTable;
-		let selected_user = this.optValue(listName);
-		this.Users = this.db.collection('Enterprises').doc(this.EnterpriseID).collection('Participants', ref => ref.
-			where('name', '==', selected_user)
-		).valueChanges();
-		this.Users.forEach(doc => {
-			for (let i = 0; i < doc.length; i++) {
-				this.User_Hky = doc[i].hierarchy;
-				//14-May-2019. Show user's hierarchy
-				document.getElementById("hierarchy").innerHTML = this.User_Hky
-				this.WeeklyActions = this.db.collection('Users').doc(doc[i].id).collection('WeeklyActions').valueChanges();
-				this.Tasks = this.db.collection('Users').doc(doc[i].id).collection('tasks').valueChanges();
-			}
-		});
-	}
-
-	//17-May-2019. Function to get selected value form option list
+	//17-May-2019. Function to get selected value from option list
 	optValue(eid) {
 		var sel = (<HTMLSelectElement>document.getElementById(eid));
 		var selected_item = sel.options[sel.selectedIndex].text;
 		return selected_item;
 	}
 
-	//15-May-2019. get users from selected enterprise based on logged in hierarchy
+	//15-May-2019. Get users from selected enterprise based on logged in hierarchy
 	getParticipants(OrgID, Viewer_Hky) {
 		if (Viewer_Hky = "Executive") {
-			this.Participants = this.db.collection('Enterprises').doc(OrgID).collection('Participants', ref => ref.
-				orderBy('name', 'asc')
-			).valueChanges();
+			this.Participants = this.db.collection('Enterprises').doc(OrgID).collection('Participants')
+			.ref.orderBy('name', 'asc');
 		}
 		else if (Viewer_Hky = "Middle Management") {
 			// there is no !==in where query. > "Executive" works in this case because alphabetically
 			// Executive < Operations & Middle Management
-			this.Participants = this.db.collection('Enterprises').doc(OrgID).collection('Participants', ref => ref.
-				where('hierarchy', '>', 'Executive').orderBy('name', 'asc')
-			).valueChanges();
+			this.Participants = this.db.collection('Enterprises').doc(OrgID).collection('Participants')
+			.ref.where('hierarchy', '>', 'Executive').orderBy('name', 'asc');
 		}
 		else if (Viewer_Hky = "Operations") {
-			this.Participants = this.db.collection('Enterprises').doc(OrgID).collection('Participants', ref => ref.
-				where('hierarchy', '==', 'Operations').orderBy('name', 'asc')
-			).valueChanges();
+			this.Participants = this.db.collection('Enterprises').doc(OrgID).collection('Participants')
+			.ref.where('hierarchy', '==', 'Operations').orderBy('name', 'asc');
 		}
 	}
 
 	getMyHky(Me) {
-		this.Users = this.db.collection('Enterprises').doc(this.EnterpriseID).collection('Participants', ref => ref.
+		var Users;
+		Users = this.db.collection('Enterprises').doc(this.EID).collection('Participants', ref => ref.
 			where('name', '==', Me)
 		).valueChanges();
-		this.Users.forEach(doc => {
+		Users.forEach(doc => {
 			for (let i = 0; i < doc.length; i++) {
 				this.My_Hky = doc[i].hierarchy;
 			}
 		});
 	}
 
-	clearTable(TbId) {
+	clearTable(TbId,btnID) {
 		var table = (<HTMLTableElement>document.getElementById(TbId));
 		if (table.rows.length > 1) {
 			for (var i = table.rows.length - 1; i > 0; i--) {
 				table.deleteRow(i);
 			}
 		}
-	}
-
-	// this function declared outside individual report modules since it
-	// is required in other modules
-	numMonth(strM) {
-		var MonthNum = ''
-		if (strM == "Jan") { MonthNum = '01' }; if (strM == "Feb") { MonthNum = '02' };
-		if (strM == "Mar") { MonthNum = '03' }; if (strM == "Apr") { MonthNum = '04' };
-		if (strM == "May") { MonthNum = '05' }; if (strM == "Jun") { MonthNum = '06' };
-		if (strM == "Jul") { MonthNum = '07' }; if (strM == "Aug") { MonthNum = '08' };
-		if (strM == "Sep") { MonthNum = '08' }; if (strM == "Oct") { MonthNum = '10' };
-		if (strM == "Nov") { MonthNum = '11' }; if (strM == "Dec") { MonthNum = '12' };
-		return MonthNum;
+		var btn = (<HTMLButtonElement>document.getElementById(btnID));
+		btn.disabled = true;
 	}
 
 	// 13-May-2019. This one too
@@ -254,42 +255,131 @@ export class ReportsService {
 		}
 	}
 
-	timespent(EntID, actType, actCateg, start, end, Actions, TbId) {
-		console.log(TbId);
+	ISODate(jsDate,strDate){
+
+		// this function declared outside individual report modules since it is required in other modules
+		function numMonth(strM) {
+			var MonthNum = ''
+			if (strM == "Jan") { MonthNum = '01' }; if (strM == "Feb") { MonthNum = '02' };
+			if (strM == "Mar") { MonthNum = '03' }; if (strM == "Apr") { MonthNum = '04' };
+			if (strM == "May") { MonthNum = '05' }; if (strM == "Jun") { MonthNum = '06' };
+			if (strM == "Jul") { MonthNum = '07' }; if (strM == "Aug") { MonthNum = '08' };
+			if (strM == "Sep") { MonthNum = '08' }; if (strM == "Oct") { MonthNum = '10' };
+			if (strM == "Nov") { MonthNum = '11' }; if (strM == "Dec") { MonthNum = '12' };
+			return MonthNum;
+		}
+		function LZero(n){
+			if(n <= 9){
+			  return "0" + n;
+			}
+			return n;
+		}
+
+		//Thu Apr 25 2019 11:12:40 GMT+0200 broken down using substring
+		if (jsDate !== ''){
+			let strM = jsDate.substring(4, 7);
+			let tt = jsDate.substring(16, 24);
+			var date = String(jsDate.substring(11, 15)) +
+				'-' + String(numMonth(strM)) +
+				'-' + String(jsDate.substring(8, 10)) +
+				' ' + tt
+		}else
+		{
+			var s = new Date(strDate);
+			var date = s.getFullYear() + "-" + LZero(1+s.getMonth()) + "-" +  LZero(s.getDate());
+		}
+		return date;
+	}
+	
+	//14-Jun-2019. Get data for currently logged in user
+	UData(FN,P,SD,ED,TBID,BTN) {
 		
-		var arrayall = Array();
+		//17-June-2019. Data stored as local variables in this function. Previously the data was stored
+		//in global variables and reports were loading wrong data retrieved by other reports
+		//opened before if new data took too long to fetch
+		var Users;var User;var DPlan;var WPlan;var WActions;var Tasks;
+		
+		Users = this.db.collection('Users', ref => ref.orderBy('name', 'asc'));
+		
+		User = this.db.collection('Users').doc(this.UID);
+		//07-June-2018 Order by time for daily and by date for weekly
+		
+		DPlan = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
+		ref.orderBy('start','asc').where('start','>','0').where('complete','==',false).
+		where('champion.id','==',this.UID).where('selectedWork','==',true).get();
+		
+		WPlan = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
+		ref.orderBy('startDate','asc').where('champion.id','==',this.UID).where('complete','==',false).where('selectedWeekWork','==',true).get();
+		
+		WActions = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
+		ref.orderBy('startDate','asc').where('champion.id','==',this.UID).get();
+		
+		Tasks = this.db.collection('Users').doc(this.UID).collection('tasks').ref.get();
+		
+	}
+
+	rweeklyplan_e() {
+
+		var name:string;
+		var PID:string;var User_Hky;
+		//05-June-2019. Give option of passing direct name for ngOnINit use
+		//if (LIST == ''){name = VALUE;} else {name = this.optValue(LIST);}
+		//17-June-2019. Data stored as local variables in this function. Previously the data was stored
+		//in global variables and reports were loading wrong data retrieved by other reports
+		//opened before if new data took too long to fetch
+		var WPlan;
+		name = this.optValue("name-list4");
+		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
+		ref.where('name', '==', name).get().then((ref) => {
+			PID = ref.docs[0].id;
+			User_Hky = ' ' + ref.docs[0].data().hierarchy;
+			WPlan = this.db.collection('Users').doc(PID).collection('WeeklyActions').
+			ref.orderBy('startDate','asc').where('champion.id','==',PID).where('complete','==',false).
+			where('selectedWeekWork','==',true).get();
+			let tbId = "#TbId4";
+			this.clearTable("TbId4","btn4");
+			this.readDate("startdate4");
+			this.Plan(WPlan,"w",PID,this.EID,this.stdd,tbId,"btn4");
+		})
+
+	}
+
+	TimeSpent(Actions,StaffID,EntID,start,end,TbId,btnID) {
+		
 		let tableList = document.querySelector(TbId);
 		var rowCnt = 1;
+		var isd = this.ISODate;
+		var DB = this.db;
 
 		// create element and render table
-		function addrow(doc, sd, ed, numMonth) {
+		function addrow(doc,rowPos,sd,ed,task,company) {
 
-			var prev_action = ''; var d1 = ''; var d2 = ''; var rem = 0;
+			var rem = 0;
 			var sum = 0; var ix1 = -1; var ix2 = -1;
 			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
-			var td2: HTMLTableDataCellElement; var tr: HTMLTableRowElement;
+			var td2: HTMLTableDataCellElement; var td3: HTMLTableDataCellElement; 
+			var row: HTMLTableRowElement;
 
-			//tr = table row, which must be contained in a table
-			tr = document.createElement("tr");
-			//td = table data cell, which must be contained in a table row
-			td0 = document.createElement("td");//action item
-			td1 = document.createElement("td");//task name
-			td2 = document.createElement("td");//time spent
+			// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
+			row = tableList.insertRow(rowPos);
+			// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+			td0 = row.insertCell(0);//Sub Task
+			td1 = row.insertCell(1);//Task Name
+			td2 = row.insertCell(2);//Time Spent
+			//07-June-2019. Add company column for personal reports for clarity
+			//12-June-2019. Import company from calling function
+			if (EntID == ''){td3 = row.insertCell(3);td3.innerText = company}
+
 			// put text inside the data cell
 			td0.innerText = doc.name;
-
-			// 06-May-2019. Task name added
-			if (doc.taskName == '') { td1.innerText = 'Unplanned' } else { td1.innerText = doc.taskName };
+			//06-May-2019. Task name added. 12-June-2019 imported form calling sub
+			td1.innerText = task;
 
 			var actionarray = doc.workHours;
 			if (actionarray !== null) {
 				actionarray.forEach(function (current_value, index) {
 					let respTime = current_value.time;
-					let strM = respTime.substring(4, 7); let tt = respTime.substring(16, 24);
-					let date = String(respTime.substring(11, 15)) +
-						'-' + String(numMonth(strM)) +
-						'-' + String(respTime.substring(8, 10)) +
-						' ' + tt;
+					let date = isd(respTime,'')
 					if (sd <= date && ed >= date) {
 						sum = sum + current_value.hours;
 						if (ix1 < 0) { ix1 = index };
@@ -300,77 +390,114 @@ export class ReportsService {
 
 			td2.innerText = String(sum); td2.align = "center"
 
-			// Append data cell containing text to table row
-			tr.appendChild(td0);
-			tr.appendChild(td1);
-			tr.appendChild(td2);
-
 			// determine odd numbered rows
 			rowCnt = rowCnt + 1; rem = rowCnt % 2;
-			if (rem == 1) { tr.bgColor = 'gainsboro' };
-			// Append table row to table
-			tableList.appendChild(tr);
+			if (rem == 1) { row.bgColor = 'gainsboro' };
 
 		}
 
-		Actions.forEach(doc => {
-			for (let i = 0; i < doc.length; i++) {
-				console.log('Task Name:' + doc[i].name);
-				//console.log('Start Date:' + doc[i].startDate);
-				//console.log('End Date:' + doc[i].startDate);
-				//console.log('Classification:' + doc[i].classification.name);
-				//console.log('Type:' + doc[i].type);
-				//console.log('Enterprise:' + doc[i].companyName);
-				//console.log('complete:' + doc[i].complete);
-				// Creat arrayall by pushing all elements from all action items into it
-				// that fall within specified dateAngularFirestoreDocument
-				if (EntID == '' && actType == '' && actCateg == '') {
-					addrow(doc[i], start, end + " 23:00:00", this.numMonth);
+		//04-June-2019. Instead of Actions.ref.get(), use Actions.get() because the ref is exposed
+		// when orderBy was applied in getData or getParticipantData.
+		//13-June-2019. get() dropped as it is now called in getData and getParticpantData
+		Actions.then((ref) => {
+	
+			var tskN;
+
+			ref.forEach(subtask => {
+				//07-June-2019. Read task ID so we can look up Company Name. Actions do not inherit company 
+				let tID = subtask.data().taskId;
+				let tNm = subtask.data().taskName;
+				let cID = subtask.data().companyId;//this seems to be always blank, so we will get company from parent in 2nd if below
+				var isd = this.ISODate;
+				//12-June-2019. Variables localize the deeper you nest them. So declare at first level
+				// of a function or if statement and then pass down to sub nests
+				var dbl = this.db;
+
+				if (tID !== '') {
+					dbl.collection('Users').doc(StaffID).collection('tasks').doc(tID).ref.
+					get().then(function(Task) {
+						if (Task.exists) {
+							if (tNm == ''){tskN = Task.data().name;}else{tskN = tNm;};
+							chooseActions(subtask.data(),Task.data(),isd,tskN);
+						}else{
+							// this loop fires for personal only
+							if (tNm == ''){tskN = 'Unplanned'}else{tskN = tNm;};
+							chooseActions(subtask.data(),'',isd,tskN);
+						}
+					})
 				}
-				else if (EntID == doc[i].companyId && actType == '' && actCateg == '') {
-					addrow(doc[i], start, end + " 23:00:00", this.numMonth);
+				else {
+					// this loop fires for personal only
+					if (tNm == ''){tskN = "Unplanned"}else{tskN = tNm;};
+					chooseActions(subtask.data(),'',isd,tskN);
+				}			
+
+			}) //For each closing bracket
+
+			function chooseActions(cData,pData,ISODate,TaskName){
+				//12-June-2019. Get company name from Parent Task as sub tasks do not seem to inherit
+				//the company from their parent. This is the name of the company to be displayed in personal tasks
+				//or to be used in showing the sub tasks under particular company
+				var cNm;var TCID;
+				if (pData !== ''){cNm = pData.companyName;TCID = pData.companyId;}
+				let rowNum=1;
+				//17-June-2019. First check if EntID is given
+				if (EntID !== '') {
+					if (EntID == TCID){
+					addrow(cData,rowNum,start,end + " 23:00:00",TaskName,cNm);
+					rowNum = rowNum+1;
+					}
 				}
-				else if (EntID == doc[i].companyId && actType == doc[i].type && actCateg == '') {
-					addrow(doc[i], start, end + " 23:00:00", this.numMonth);
+				else {
+					addrow(cData,rowNum,start,end + " 23:00:00",TaskName,cNm);
+					rowNum = rowNum+1;
 				}
-				else if (EntID == doc[i].companyId && actType == '' && actCateg == doc[i].classification.name) {
-					addrow(doc[i], start, end + " 23:00:00", this.numMonth);
-				}
-				else if (EntID == doc[i].companyId && actType == doc[i].type && actCateg == doc[i].classification.name) {
-					addrow(doc[i], start, end + " 23:00:00", this.numMonth);
-				}
+
+			} // choose actions
+
+		});//Actions get
+
+		//07-June-2019. Alert user after 2 seconds if no data was found. Delay allows code to finish.
+		setTimeout(Wait, this.waitTime);
+		function Wait(){
+			if (rowCnt == 1){
+				var User = DB.collection('Users').doc(StaffID);
+				User.ref.get().then(function(doc) {
+					alert("No time spent data found for " + doc.data().name);
+				})
 			}
-		});
-	}//rtimespent closing bracket
+			var btn = (<HTMLButtonElement>document.getElementById(btnID));
+			btn.disabled = false;
+		}
 
-	activitylog(EntID, actType, actCateg, start, end, Actions, TbId) {
+	} //rtimespent closing bracket
 
-		var Arr_All = Array();
+	ActivityLog(Actions,StaffID,EntID,start,end,TbId,btnID) {
+
 		var arrayall = Array();
 		let tableList = document.querySelector(TbId);
+		var isd = this.ISODate;
+		var wTime=this.waitTime;
+		var DB = this.db;
+		var DS = this.dynamicSort;
 
-		function push_elements(doc, sd, ed, numMonth) {
+		function push_elements(doc,sd,ed,task,company) {
 			var wrkHrs = doc.workHours
 			if (wrkHrs !== null) {
 				wrkHrs.forEach(function (current_value, index, initial_array) {
 					//06-May-2019. This is the way to insert a new value to array, and not by pushing
-					current_value["taskName"] = doc.taskName;
-					//console.log(current_value);
-					let respTime = current_value.time
-					//Thu Apr 25 2019 11:12:40 GMT+0200 broken down using substring
-					let strM = respTime.substring(4, 7)
-					let tt = respTime.substring(16, 24)
-					//console.log(numMonth(strM))
-					let date = String(respTime.substring(11, 15)) +
-						'-' + String(numMonth(strM)) +
-						'-' + String(respTime.substring(8, 10)) +
-						' ' + tt
-
-					if (sd <= date && ed >= date) {
-						// only push the elements that meet the date criteria
-						// replace Date string in var wrkHrs by yyyy-mm-dd hh:mm:ss to allow sorting
-						current_value.time = date;
-						arrayall.push(current_value);
+					current_value["taskName"] = task;
+					//12-June-2019. Also add company name read from Parent TID
+					current_value["companyName"] = company;
+					let respTime = current_value.time;
+					if (respTime !== ''){
+						let date = isd(respTime,'')
+						if (sd <= date && ed >= date) {
+							// only push the elements that meet the date criteria
+							// replace Date string in var wrkHrs by yyyy-mm-dd hh:mm:ss to allow sorting
+							current_value.time = date;
+							arrayall.push(current_value);
+						}
 					}
 
 				}) // close forEach loop
@@ -385,7 +512,8 @@ export class ReportsService {
 			var sum = 0; var rowCnt = 1; var ix1 = -1; var ix2 = -1;
 			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
 			var td2: HTMLTableDataCellElement; var td3: HTMLTableDataCellElement;
-			var td4: HTMLTableDataCellElement; var tr: HTMLTableRowElement;
+			var td4: HTMLTableDataCellElement; var td5: HTMLTableDataCellElement; 
+			var row: HTMLTableRowElement;
 
 			if (arrayall !== null) {
 
@@ -397,15 +525,15 @@ export class ReportsService {
 						ix1 = index;
 						ix2 = index;
 						prev_action = current_value.action;
-						//td = table data cell, which must be contained in a table row
-						// 29-Apr-2019. Had to drop let statement for the whole fuction to work
-						// creating the elements adds a row of data, hence done here when action item changes
-						//tr = table row, which must be contained in a table
-						td0 = document.createElement("td");//action
-						td1 = document.createElement("td");//task name
-						td2 = document.createElement("td");//start
-						td3 = document.createElement("td");//end
-						td4 = document.createElement("td");//hours
+						// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
+						row = tableList.insertRow(rowCnt);
+						// Insert new cells (<td> elements) at the 1st, 2nd, etc position of the "new" <tr> element:
+						td0 = row.insertCell(0);//Sub Task
+						td1 = row.insertCell(1);//Task name
+						td2 = row.insertCell(2);//Start
+						td3 = row.insertCell(3);//End
+						td4 = row.insertCell(4);//Hours
+						if (EntID == ''){td5 = row.insertCell(5)};//compnay Name
 						// determine odd numbered rows
 						rowCnt = rowCnt + 1; rem = rowCnt % 2;
 					}
@@ -414,74 +542,135 @@ export class ReportsService {
 						ix2 = index;
 					};
 
-					tr = document.createElement("tr");
-					if (rem == 1) { tr.bgColor = 'gainsboro' };
+					if (rem == 1) { row.bgColor = 'gainsboro' };
 					// Append data cell containing text to table row
-					tr.appendChild(td0); td0.innerText = action;
-					tr.appendChild(td1)// 06-May-2019. Task name added
-					if (current_value.taskName == '') { td1.innerText = 'Unplanned' } else { td1.innerText = current_value.taskName };
-					tr.appendChild(td2); if (sum !== 0) { d1 = arrayall[ix1].time }; td2.innerText = d1;
-					tr.appendChild(td3); if (sum !== 0) { d2 = arrayall[ix2].time }; td3.innerText = d2;
-					tr.appendChild(td4); td4.innerText = String(sum); td4.align = "center";
-					// Append table row to table
-					tableList.appendChild(tr);
-
+					td0.innerText = action;
+					if (current_value.taskName == '') { td1.innerText = 'Unplanned' } 
+					else { td1.innerText = current_value.taskName };
+					if (sum !== 0) { d1 = arrayall[ix1].time }; td2.innerText = d1;
+					if (sum !== 0) { d2 = arrayall[ix2].time }; td3.innerText = d2;
+					td4.innerText = String(sum); td4.align = "center";
+					//12-June-2019. Show company name on personal reports
+					if (EntID == ''){td5.innerText = current_value.companyName}
 				})
+			}	
+
+			//07-June-2019. Alert user after a few seconds if no data was found. Delay allows code to finish.
+			setTimeout(Wait, wTime);
+			function Wait(){
+				
+				if (rowCnt == 1){
+					var User = DB.collection('Users').doc(StaffID);
+					User.ref.get().then(function(doc) {
+						alert("No activity data found for " + doc.data().name);
+					})
+				}
+
+				var btn = (<HTMLButtonElement>document.getElementById(btnID));
+				btn.disabled = false;
 			}
 
 		}
 
-		Actions.forEach(doc => {
-			for (let i = 0; i < doc.length; i++) {
-				//console.log(doc[i].name);;
-				// Creat arrayall by pushing all elements from all action items into it
-				// that fall within specified dateAngularFirestoreDocument
-				// 06-May-2019, only end date must have 23:00 added
-				if (EntID == '' && actType == '' && actCateg == '') {
-					push_elements(doc[i], start, end + " 23:00:00", this.numMonth);
-				}
-				else if (EntID == doc[i].companyId && actType == '' && actCateg == '') {
-					push_elements(doc[i], start, end + " 23:00:00", this.numMonth);
-				}
-				else if (EntID == doc[i].companyId && actType == doc[i].type && actCateg == '') {
-					push_elements(doc[i], start, end + " 23:00:00", this.numMonth);
-				}
-				else if (EntID == doc[i].companyId && actType == '' && actCateg == doc[i].classification.name) {
-					push_elements(doc[i], start, end + " 23:00:00", this.numMonth);
-				}
-				else if (EntID == doc[i].companyId && actType == doc[i].type && actCateg == doc[i].classification.name) {
-					push_elements(doc[i], start, end + " 23:00:00", this.numMonth);;
+		//04-June-2019. Instead of Actions.ref.get(), use Actions.get() because the ref is exposed
+		// when orderBy was applied in getParticipantData.
+		//13-June-2019. get() dropped as it is now called in getData and getParticpantData
+		Actions.then((ref) => {
+
+			var tskN;
+
+			ref.forEach(subtask => {
+			//07-June-2019. Read task ID so we can look up Company Name. Actions do not inherit company 
+			let tID = subtask.data().taskId;
+			let tNm = subtask.data().taskName;
+			let cID = subtask.data().companyId;//this seems to be always blank, so we will get company from parent in 2nd if below
+
+			if (tID !== '') {
+				DB.collection('Users').doc(StaffID).collection('tasks').doc(tID).ref.
+				get().then(function(Task) {
+					if (Task.exists) {
+						if (tNm == ''){tskN = Task.data().name;}else{tskN = tNm;};
+						chooseActions(subtask.data(),Task.data(),isd,tskN);
+					}else{
+						// this loop fires for personal only
+						if (tNm == ''){tskN = 'Unplanned'}else{tskN = tNm;};
+						chooseActions(subtask.data(),'',isd,tskN);
+					}
+				})
+			}
+			else {
+				// this loop fires for personal only
+				if (tNm == ''){tskN = "Unplanned"}else{tskN = tNm;};
+				chooseActions(subtask.data(),'',isd,tskN);
+			}
+
+			})//For each closing bracket
+
+		});//Actions get
+
+		//17-June-2019. 2nd time out for filling table. 1st one positioned inside a loop, to access rowCount
+		//so it can not be used to fill table
+		setTimeout(Table, wTime);
+		function Table(){
+			
+			// wait to allow code to run before sorting and filling table
+			arrayall.sort(DS("time"));//console.log(arrayall);
+			fillTable();
+
+			var btn = (<HTMLButtonElement>document.getElementById(btnID));
+			btn.disabled = false;
+		}
+
+		function chooseActions(cData,pData,ISODate,TaskName){
+			//12-June-2019. Get company name from Parent Task as sub tasks do not seem to inherit
+			//the company from their parent. This is the name of the company to be displayed in personal tasks
+			//or to be used in showing the sub tasks under particular company
+			var cNm;var TCID;
+			if (pData !== ''){cNm = pData.companyName;TCID = pData.companyId;}else{cNm ='';TCID='';}
+			// Creat arrayall by pushing all elements from all action items into it
+			// that fall within specified date
+			// 06-May-2019, only end date must have 23:00 added
+			
+			//17-June-2019. First check if EntID is given
+			if (EntID !== '') {
+				if (EntID == TCID){
+				push_elements(cData,start,end + " 23:00:00",TaskName,cNm);
 				}
 			}
-			arrayall.sort(this.dynamicSort("time"));//console.log(arrayall);
-			fillTable();
-		});
+			else {
+				push_elements(cData,start,end + " 23:00:00",TaskName,cNm);
+			}
+
+		}//choose actions
 
 	} //ractivitylog closing bracket
 
-	OS_Actions(EntID, actType, actCateg, start, end, Actions, TbId) {
+	OS_Actions(Actions,StaffID,EntID,start,end,TbId,btnID) {
 
 		var arrayall = Array();
 		let tableList = document.querySelector(TbId);
 		var rowCnt = 1;
 
 		// create element and render table
-		function addrow(doc, sd, ed, numMonth) {
+		function addrow(doc, rowPos, sd, ed) {
 
 			var prev_action = ''; var d1 = ''; var d2 = ''; var rem = 0;
 			var sum = 0; var ix1 = -1; var ix2 = -1;
 			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
 			var td2: HTMLTableDataCellElement; var td3: HTMLTableDataCellElement;
 			var td4: HTMLTableDataCellElement; var td5: HTMLTableDataCellElement;
-			var tr: HTMLTableRowElement;
+			var row: HTMLTableRowElement;
 
-			tr = document.createElement("tr");
-			td0 = document.createElement("td");//Action item
-			td1 = document.createElement("td");//Task name
-			td2 = document.createElement("td");//Planned Start Date
-			td3 = document.createElement("td");//Days Lapsed
-			td4 = document.createElement("td");//Actual Start
-			td5 = document.createElement("td");//Hours Logged
+			// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
+			row = tableList.insertRow(rowPos);
+			// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+			td0 = row.insertCell(0);//Task Activity
+			td1 = row.insertCell(1);//Task name
+			td2 = row.insertCell(2);//Planned Start Date
+			td3 = row.insertCell(3);//Days Lapsed
+			td4 = row.insertCell(4);//Actual Start
+			td5 = row.insertCell(5);//Hours Logged
+
 			// put text inside the data cell
 			td0.innerText = doc.name;
 
@@ -496,12 +685,13 @@ export class ReportsService {
 			if (actionarray !== null) {
 				actionarray.forEach(function (current_value, index) {
 					let respTime = current_value.time;
-					let strM = respTime.substring(4, 7); let tt = respTime.substring(16, 24);
-					let date = String(respTime.substring(11, 15)) +
-						'-' + String(numMonth(strM)) +
-						'-' + String(respTime.substring(8, 10)) +
-						' ' + tt;
+					// let strM = respTime.substring(4, 7); let tt = respTime.substring(16, 24);
+					// let date = String(respTime.substring(11, 15)) +
+					// 	'-' + String(numMonth(strM)) +
+					// 	'-' + String(respTime.substring(8, 10)) +
+					// 	' ' + tt;
 					//console.log(date);
+					let date = this.ISODate(respTime,'')
 					if (sd <= date && ed >= date) {
 						sum = sum + current_value.hours;
 						if (ix1 < 0) { ix1 = index };
@@ -510,140 +700,369 @@ export class ReportsService {
 				})
 			}
 
-			//if(sum !== 0){d2=actionarray[ix2].time}//actual stop
 			td2.innerText = PlannedStart;
 			td3.innerText = String(DaysLapsed);
 			if (sum !== 0) { let ActualStart = actionarray[ix1].time; td4.innerText = ActualStart; }// actual start
 			td5.innerText = String(sum); td2.align = "center"
 
-			// place Start Date and Last Date
-			//td2.innerText=d1;
-			//td3.innerText=d2;
-
-			// Append data cell containing text to table row
-			tr.appendChild(td0); tr.appendChild(td1);
-			tr.appendChild(td2); tr.appendChild(td3);
-			tr.appendChild(td4);
-
 			// determine odd numbered rows
 			rowCnt = rowCnt + 1; rem = rowCnt % 2;
-			if (rem == 1) { tr.bgColor = 'gainsboro' };
-			// Append table row to table
-			tableList.appendChild(tr);
+			if (rem == 1) { row.bgColor = 'gainsboro' };
 
 		}
-
-		Actions.forEach(doc => {
-			for (let i = 0; i < doc.length; i++) {
-				//console.log('Task Name:' + doc[i].name);
-				//console.log('Classification:' + doc[i].classification.name);
-				//console.log('Type:' + doc[i].type);
-				//console.log('Enterprise:' + doc[i].companyName);
-				//console.log('complete:' + doc[i].complete);
+	
+		//04-June-2019. Instead of Actions.ref.get(), use Actions.get() because the ref is exposed
+		// when orderBy was applied in getParticipantData.
+		//13-June-2019. get() dropped as it was used in getData getParticpantData
+		Actions.then((ref) => {
+				ref.forEach(doc => {
+				//console.log(doc.id);
+				//console.log(doc.data().selectedWork);
+				let rowNum=1;
 				// Creat arrayall by pushing all elements from all action items into it
 				// that fall within specified dateAngularFirestoreDocument
-				if (doc[i].complete = 'false') {
-					if (EntID == '' && actType == '' && actCateg == '') {
-						addrow(doc[i], start, end + " 23:00:00", this.numMonth);
-					}
-					else if (EntID == doc[i].companyId && actType == '' && actCateg == '') {
-						addrow(doc[i], start, end + " 23:00:00", this.numMonth);
-					}
-					else if (EntID == doc[i].companyId && actType == doc[i].type && actCateg == '') {
-						addrow(doc[i], start, end + " 23:00:00", this.numMonth);
-					}
-					else if (EntID == doc[i].companyId && actType == '' && actCateg == doc[i].classification.name) {
-						addrow(doc[i], start, end + " 23:00:00", this.numMonth);
-					}
-					else if (EntID == doc[i].companyId && actType == doc[i].type && actCateg == doc[i].classification.name) {
-						addrow(doc[i], start, end + " 23:00:00", this.numMonth);
-					}
-				}
-			}
-		});
+				
+						if (EntID !== '') {
+							if (EntID = doc.data.companyId){
+								addrow(doc.data(), rowNum, start, end + " 23:00:00");
+							}
+						}
+						else {
+							addrow(doc.data(), rowNum, start, end + " 23:00:00");
+						}
 
-	}// rsosactions taken from rtimespent closing bracket
+				})
 
-	OS_Tasks(EntID, actType, actCateg, DateAsAt, Tasks, TbId) {
+		});//Actions get
 
-		var arrayall = Array();
+		//07-June-2019. Alert user after 2 seconds if no data was found. Delay allows code to finish.
+		setTimeout(cntRows, 3000);
+		function cntRows(){
+			if (rowCnt == 1){alert("No OS actions data found for selected staff");}
+			//Enable click button after 3 seconds from time it was clicked.
+			//This is to prevent users clicking too many times in succession
+			var btn = (<HTMLButtonElement>document.getElementById(btnID));
+			btn.disabled = false;
+		}
+
+	} //rsosactions closing bracket
+
+	OS_Tasks(Tasks,StaffID,EntID,DateAsAt,TbId,btnID) {
+
 		let tableList = document.querySelector(TbId);
-		var rowCnt = 1;
+		var rowCnt = 1;var DB = this.db;
 
 		// create element and render table
-		function addrow(doc, AsAt, numMonth) {
+		function addrow(doc,rowPos, AsAt) {
 
-			var prev_action = ''; var d1 = ''; var d2 = ''; var rem = 0;
-			var sum = 0; var ix1 = -1; var ix2 = -1;
+			var rem = 0;
 			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
-			var td2: HTMLTableDataCellElement; var tr: HTMLTableRowElement;
+			var td2: HTMLTableDataCellElement;var td3: HTMLTableDataCellElement; 
+			var row: HTMLTableRowElement;
 
-			tr = document.createElement("tr");
-			td0 = document.createElement("td");//Task
-			td1 = document.createElement("td");//Planned Finish Date
-			td2 = document.createElement("td");//Classification
+			// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
+			row = tableList.insertRow(rowPos);
+			// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+			td0 = row.insertCell(0);//Task Activity
+			td1 = row.insertCell(1);//Planned Finish
+			td2 = row.insertCell(2);//Classification
+			//07-June-2019. Add company column for personal reports for clarity 
+			if (EntID == ''){td3 = row.insertCell(3);td3.innerText = doc.companyName}
 
 			// 20-May-2019. Put Task name in first column
 			if (doc.name == '') { td0.innerText = 'Unplanned' } else { td0.innerText = doc.name };
-			let PlannedFinish = doc.start;
-			// 20-May-2019.Pick tasks whose finish date has passed Date As At
+			let PlannedFinish = doc.finish;
+			// 20-May-2019. Pick tasks whose finish date has passed Date As At
 			if (PlannedFinish <= AsAt) {
 
 				let Classification = doc.classification.name;
 				td1.innerText = PlannedFinish;
 				td2.innerText = Classification;
 
-				// Append data cell containing text to table row
-				tr.appendChild(td0); tr.appendChild(td1);
-				tr.appendChild(td2);
-
 				// determine odd numbered rows
 				rowCnt = rowCnt + 1; rem = rowCnt % 2;
-				if (rem == 1) { tr.bgColor = 'gainsboro' };
-				// Append table row to table
-				tableList.appendChild(tr);
+				if (rem == 1) { row.bgColor = 'gainsboro' };
 
 			}
-
 		}
 
-		Tasks.forEach(doc => {
-			for (let i = 0; i < doc.length; i++) {
-
-				//alert("Enterprise Chosen:" + EntID);
-				//alert('Company ID:' + doc[i].companyId);
-				//console.log('Classification:' + doc[i].classification.name);
-				//console.log('Type:' + doc[i].type);
-				//console.log('Enterprise:' + doc[i].companyName);
-				//console.log('complete:' + doc[i].complete);
-				// Creat arrayall by pushing all elements from all action items into it
-				// that fall within specified dateAngularFirestoreDocument
-				if (doc[i].complete = 'false') {
-					if (EntID == '' && actType == '' && actCateg == '') {
-						addrow(doc[i], DateAsAt, this.numMonth);
-						//alert('---');
-					}
-					else if (EntID == doc[i].companyId && actType == '' && actCateg == '') {
-						addrow(doc[i], DateAsAt, this.numMonth);
-						//alert('EntID Type- Classification-');
-					}
-					else if (EntID == doc[i].companyId && actType == doc[i].type && actCateg == '') {
-						addrow(doc[i], DateAsAt, this.numMonth);
-						//alert('EntID Type Classification- ');
-					}
-					else if (EntID == doc[i].companyId && actType == '' && actCateg == doc[i].classification.name) {
-						addrow(doc[i], DateAsAt, this.numMonth);
-						//alert('EntID Type- Classification');
-					}
-					else if (EntID == doc[i].companyId && actType == doc[i].type && actCateg == doc[i].classification.name) {
-						addrow(doc[i], DateAsAt, this.numMonth);
-						//alert('EntID Type Classification');
+		Tasks.then((ref) => {
+			ref.forEach(doc => {
+			let rowNum=1;
+				//17-June-2019. First check if EntID is given
+				if (EntID !== '') {
+					if (EntID == doc.data().companyId){
+					addrow(doc.data(), rowNum, DateAsAt);
+					rowNum = rowNum+1;
 					}
 				}
+				else {
+					addrow(doc.data(), rowNum, DateAsAt);
+					rowNum = rowNum+1;
+				}
+			})
+		}); //Tasks get
+
+		//05-June-2019. Alert user after a few seconds if no data was found. Delay allows code to finish.
+		setTimeout(Wait, this.waitTime);
+		function Wait(){
+		
+			if (rowCnt == 1){
+				var User = DB.collection('Users').doc(StaffID);
+				User.ref.get().then(function(doc) {
+					alert("No outstanding tasks found for " + doc.data().name);
+				})
 			}
-		});
+
+			var btn = (<HTMLButtonElement>document.getElementById(btnID));
+			btn.disabled = false;
+		}
 
 	}// rOS_Tasks closing bracket
 
-}// export class closing bracket
+	Plan(Actions,Period,StaffID,EntID,DateAsAt,TbId,btnID) {
+
+		let tableList = document.querySelector(TbId);
+		var rowCnt = 1;
+		const months = ["Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		var arrayall = new Array();
+		
+		function push_elements(doc,task,company) {
+			
+			var element = Array();
+			element['name'] = doc['name'];
+			element['task'] = task;
+			element['start'] = doc['start'];
+			element['end'] = doc['end'];
+			element['startDate'] = doc['startDate'];
+			element['endDate'] = doc['endDate'];
+			element['company'] = company;
+			arrayall.push(element);
+	
+		}
+
+		function fillTable(arr) {
+
+			var rem = 0;
+			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
+			var td2: HTMLTableDataCellElement; var td3: HTMLTableDataCellElement; 
+			var td4: HTMLTableDataCellElement; var row: HTMLTableRowElement;var PlanS: string;var PlanE: string;
+
+			if (arr !== null) {
+
+				arr.forEach(function (doc) {
+					
+					// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
+					row = tableList.insertRow(rowCnt);
+					// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+					td0 = row.insertCell(0);//Task Activity
+					td1 = row.insertCell(1);//Task Name
+					td2 = row.insertCell(2);//Planned Start Time
+					td3 = row.insertCell(3);//Planned Finish Time
+					//07-June-2019. Add company column for personal reports for clarity
+					//12-June-2019. Company name passed from calling sub
+					if (EntID == ''){td4 = row.insertCell(4);td4.innerText = doc.company}
+					// Add some text to the new cells:
+					//04-June-2019. Put Activity name in first column
+					td0.innerText = doc.name;
+					td1.innerText = doc.task;
+		
+					//04-June-2018. Choose start and end differently for daily and weekly plans
+					if (Period == "d"){
+						td2.innerText = doc.start;
+						td3.innerText = doc.end;
+					}
+					
+					else if(Period == "w") {
+						if (doc.startDate == undefined || doc.startDate == 'Invalid date' || doc.startDate == ''){
+							PlanS = '';
+							td2.innerText = PlanS;
+						}
+						else {
+							var s = new Date(doc.startDate);
+							PlanS = s.getDate() + "-" + months[s.getMonth()] + "-" + s.getFullYear();
+							// Pick task so long as it is ticked, hence do not compare planned dates
+							td2.innerText = PlanS;
+						}
+						if (doc.endDate == undefined || doc.endDate == 'Invalid date' || doc.endDate == ''){
+							PlanE = '';
+							td3.innerText = PlanE;
+					   }
+					   else {
+							var e = new Date(doc.endDate);
+							PlanE = e.getDate() + "-" + months[e.getMonth()] + "-" + e.getFullYear();
+							td3.innerText = PlanE;
+					   }
+					}
+
+					// determine odd numbered rows
+					rowCnt = rowCnt + 1; rem = rowCnt % 2;
+					if (rem == 1) { row.bgColor = 'gainsboro' };
+
+				}) // for each
+				
+			} // if arr is not null
+
+		} // filltable
+
+		//04-June-2019. Instead of Actions.ref.get(), use Actions.get() because the ref is exposed
+		//when orderBy was applied in getData or getParticipantData.
+		//13-June-2019. Now using Actions.then because get() applied when getting data so we could sort
+		var ISD = this.ISODate;
+		var DB = this.db;
+		var DS = this.dynamicSort;
+		//ISD,DB,DS
+		Actions.then((ref) => {
+
+			ref.forEach(subtask => {
+
+				//07-June-2019. Read task ID so we can look up Company Name. Actions do not inherit company 
+				var tID = subtask.data().taskId;
+				var tNm = subtask.data().taskName;
+				//this seems to be always blank, so we will get company from parent in 2nd if below
+				var cID = subtask.data().companyId;
+				var tskN;
+				var task = subtask.data().name;
+
+				if (tID !== '') {
+					DB.collection('Users').doc(StaffID).collection('tasks').doc(tID).ref.
+					get().then(function(Task) {
+						if (Task.exists) {
+							//console.log(task);
+							//console.log("Task found");
+							if (tNm == ''){tskN = Task.data().name;}else{tskN = tNm;};
+							chooseActions(subtask.data(),Task.data(),ISD,tskN);
+						}else{
+							// this loop fires for personal only
+							//console.log(task);
+							//console.log("Task with given ID not found, so cant determine company");
+							if (tNm == ''){tskN = 'Unplanned'}else{tskN = tNm;};
+							chooseActions(subtask.data(),'',ISD,tskN);
+						}
+					})
+				}
+				else {
+					// this loop fires for personal only
+					//console.log(task);
+					//console.log("Task ID not given, so cant determine company (default not given), make it personal");
+					if (tNm == ''){tskN = "Unplanned"}else{tskN = tNm;};
+					chooseActions(subtask.data(),'',ISD,tskN);
+				}
+
+			})//For each closing bracket
+
+		});//Actions then closing bracket
+
+		function chooseActions(cData,pData,ISODate,TaskName){
+			
+			//12-June-2019. Get company name from Parent Task as sub tasks do not seem to inherit
+			//the company from their parent. This is the name of the company to be displayed in personal tasks
+			//or to be used in showing the sub tasks under particular company
+			var cNm;var TCID;
+			if (pData !== ''){cNm = pData.companyName;TCID = pData.companyId;}else{cNm ='';TCID = ''};
+			//	if ((sd <= DateAsAt && ed >= DateAsAt) && cData.complete == false)
+			let sd = ISODate('',cData.startDate);let ed = ISODate('',cData.endDate);
+			//17-June-2019. First check if EntID was passed to the function, before comparing
+			if (EntID !== ''){
+				if (EntID == TCID) {
+					//14-June-2019 filling table directly abandoned as it was
+					//causing sorting problems, despite sortyBy applied in UData and PData. 
+					//So array used which is sorted first before filling table
+					push_elements(cData,TaskName,cNm);
+				}
+			}else {
+				push_elements(cData,TaskName,cNm);
+			}
+
+		}//choose actions
+
+		//05-June-2019. Alert user after a few seconds if no data was found. Delay allows code to finish.
+		setTimeout(Wait, this.waitTime);
+
+		function Wait(){
+			
+			//14-June-2019. Sorting and filling table done after waiting to allow code to populate arrayall
+			if (Period == "d")
+				{arrayall.sort(DS("start"));}
+			else
+				{arrayall.sort(DS("startDate"));
+			}
+			
+			fillTable(arrayall);
+
+			if (rowCnt == 1){
+				var User = DB.collection('Users').doc(StaffID);
+				User.ref.get().then(function(doc) {
+					if (Period == "d"){
+						alert("No daily plan found for " + doc.data().name);
+					}else {
+						alert("No weekly plan found for " + doc.data().name);
+					}	
+				})
+			}
+
+			var btn = (<HTMLButtonElement>document.getElementById(btnID));
+			btn.disabled = false;
+		} //Wait closing bracket
+
+	} //Plan closing bracket
+
+	//05-June-2019. The following functions initializes the various reports
+	rOnInit(Person,SD,ED){
+
+		//04-June-2019. Display User name even before user has chosen to generate report
+		var User = this.db.collection('Users').doc(this.UID);
+		User.ref.get().then(function(doc) {
+			//alert(doc.data().name);
+			document.getElementById(Person).innerHTML = doc.data().name;
+		})
+
+		let Tdy = this.ISODate(Date(),'').substring(0,10)
+		let Inp1 = (<HTMLInputElement>document.getElementById(SD));
+		Inp1.value = Tdy;
+
+		if (ED !== ''){
+		let Inp2 = (<HTMLInputElement>document.getElementById(ED));
+		Inp2.value = Tdy;
+		}
+	
+	}
+
+	rOnInit_e(Org,NameList,SD,ED){
+		
+		document.getElementById(Org).innerText = "Enterprise: " + this.EnterpriseName;
+   
+		// 15-May-2019. Create name drop down list based on hierarchy
+		this.getParticipants(this.EID, "Executive");
+		//populate users generated from above
+		var namelist = document.getElementById(NameList);
+		var opt: HTMLOptionElement;
+  
+		var i = 1;
+		this.Participants.get().then((ref) => {
+			ref.forEach(doc => {
+				//05-June-2019. Prepare data and show hierarchy of first person shown
+				if (i == 1){
+					this.User_Hky = ' ' + doc.data().hierarchy;
+				};
+			  	opt = document.createElement("option");
+			  	opt.value = String(i); 
+			  	opt.innerText = doc.data().name; 
+			  	namelist.appendChild(opt);
+			  	i = i+1;
+			});
+		});
+
+		let Tdy = this.ISODate(Date(),'').substring(0,10)
+		let Inp1 = (<HTMLInputElement>document.getElementById(SD));
+		Inp1.value = Tdy;
+
+		if (ED !== ''){
+		let Inp2 = (<HTMLInputElement>document.getElementById(ED));
+		Inp2.value = Tdy;
+		}
+
+	}
+
+}// export class ReportsService closing bracket
 

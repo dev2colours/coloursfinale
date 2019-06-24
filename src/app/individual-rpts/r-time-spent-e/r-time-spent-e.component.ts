@@ -19,46 +19,9 @@ export class RTimeSpentEComponent implements OnInit {
 
   ngOnInit() {
     
-    //14-May-2019. Show current company
-    // document.getElementById("org").innerText = this.rService.Enterprise + " Individual Total Time spent Report";
-    document.getElementById("org1").innerText = "Enterprise" + this.rService.EnterpriseName;
-    // this.company = this.rService.EnterpriseName;
-    // if (this.company === undefined || this.company === '') {
-    //   this.routerTo();
-    // } else {
-      // 15-May-2019. Create name drop down list based on hierarchy
-      // document.getElementById("org").innerText = this.rService.EnterpriseName + " Individual Report";
+    this.rService.rOnInit_e("org1","name-list1","startdate1","enddate1")
 
-      // 15-May-2019. Create name drop down list based on hierarchy
-      this.rService.getParticipants(this.rService.EnterpriseID, "Executive");
-      //populate users generated from above
-      var namelist = document.getElementById("name-list1");
-      var opt: HTMLOptionElement;
-      this.rService.Participants.forEach(doc => {
-        for (let i = 0; i < doc.length; i++) {
-          //console.log(doc[i].name);
-          opt = document.createElement("option");
-          opt.value = String(i); opt.innerText = doc[i].name; namelist.appendChild(opt);
-        }
-      });
-
-      let strM = Date().substring(4, 7);
-      let date = String(Date().substring(11, 15)) +
-        '-' + String(this.rService.numMonth(strM)) +
-        '-' + String(Date().substring(8, 10))
-
-      //06-05-2019. Had to use value instead of Value for this to work
-      // need to cast element type to prevent compile error
-      let Inp1 = (<HTMLInputElement>document.getElementById("startdate1"));
-      Inp1.value = date;
-      let Inp2 = (<HTMLInputElement>document.getElementById("enddate1"));
-      Inp2.value = date;
-
-    }
-
-    
-
-  // }
+  }
 
   routerTo() {
     this.router.navigate(['./dashboard']);

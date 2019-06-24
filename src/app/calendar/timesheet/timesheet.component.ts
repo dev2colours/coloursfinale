@@ -419,34 +419,181 @@ export class TimesheetComponent implements OnInit {
   }
 
   unPlannedTAsk(unplannedTask: workItem) {
+    // let champId = this.userId;
+    // let selectedWork = true;
+
+    // console.log(unplannedTask);
+    // unplannedTask.selectedWork = selectedWork;
+    // // unplannedTask.start = String(this.nHrs + this.nMin);
+    // unplannedTask.startDate = moment(new Date(), 'MM-DD-YYYY').format('L');
+    // unplannedTask.endDate = moment(new Date(), 'MM-DD-YYYY').format('L');
+    // unplannedTask.startDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
+    // unplannedTask.endDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();  
+    // unplannedTask.start = "";
+    // unplannedTask.end = "";
+    // unplannedTask.type = "unPlanned";
+    // unplannedTask.by = this.myData.name;
+    // unplannedTask.byId = champId;
+    // unplannedTask.champion = this.myData;
+    // unplannedTask.createdOn = new Date().toString();
+    // let weeklyRef = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions');
+    // let allMyActionsRef = this.afs.collection('Users').doc(champId).collection<workItem>('actionItems');
+    // weeklyRef.add(unplannedTask).then(function (Ref) {
+    //   let newActionId = Ref.id;
+    //   console.log(Ref);
+    //   weeklyRef.doc(newActionId).update({ 'id': newActionId });
+    //   allMyActionsRef.doc(newActionId).set(unplannedTask);
+    //   allMyActionsRef.doc(newActionId).update({ 'id': newActionId });
+    // })
+    // console.log(unplannedTask);
+
     let champId = this.userId;
     let selectedWork = true;
 
+    let tHours = (moment(new Date(), 'HH:mm').hours()).toLocaleString();
+    let tMinutes = (moment(new Date(), 'HH:mm').minutes()).toLocaleString()
+
+    // let fullTym = tHours + ':' + tMinutes;
+    // let actionSet = unplannedTask;
+    // let work = {
+    //     id: fullTym,
+    //     name: 'responded',
+    //     action: actionSet.name,
+    //     actionId: '',
+    //     tHours: tHours,
+    //     tMinutes: tMinutes,
+    //     time: moment().toString(),
+    //     hours: 0.5
+    // }
+
     console.log(unplannedTask);
     unplannedTask.selectedWork = selectedWork;
-    // unplannedTask.start = String(this.nHrs + this.nMin);
     unplannedTask.startDate = moment(new Date(), 'MM-DD-YYYY').format('L');
     unplannedTask.endDate = moment(new Date(), 'MM-DD-YYYY').format('L');
     unplannedTask.startDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
-    unplannedTask.endDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();  
-    unplannedTask.start = "";
+    unplannedTask.endDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
+    unplannedTask.start = moment().format('HH:mm');
     unplannedTask.end = "";
-    unplannedTask.type = "unPlanned";
-    unplannedTask.by = this.myData.name;
-    unplannedTask.byId = champId;
+    unplannedTask.type = 'unPlanned';
     unplannedTask.champion = this.myData;
     unplannedTask.createdOn = new Date().toString();
-    let weeklyRef = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions');
-    let allMyActionsRef = this.afs.collection('Users').doc(champId).collection<workItem>('actionItems');
+
+    unplannedTask.unit = "items";
+    unplannedTask.selectedWeekly = true;
+    unplannedTask.selectedWeekWork = true;
+
+    let weeklyRef = this.myDocument.collection('WeeklyActions');
+    let allMyActionsRef = this.myDocument.collection('actionItems');
+
+
+    // let championTimeSheetRef = this.myDocument.collection('actionTimeSheets').doc(item.id);
+    // let championTimeSheetRef2 = this.myDocument.collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
+
+    let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
+    let timeData = {
+      name: timesheetDocId,
+      id: timesheetDocId,
+    }
+
+    /* TimeSheet collection Report doc set */
+
+
+    this.myDocument.collection('TimeSheets').doc(timesheetDocId).set(timeData)
+    let timesheetworktime = String(moment(new Date().getTime()));
+
+    let championTimeSheetRef = this.myDocument.collection('actionTimeSheets');
+    let championTimeSheetRef2 = this.myDocument.collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems');
+
     weeklyRef.add(unplannedTask).then(function (Ref) {
       let newActionId = Ref.id;
-      console.log(Ref);
-      weeklyRef.doc(newActionId).update({ 'id': newActionId });
-      allMyActionsRef.doc(newActionId).set(unplannedTask);
-      allMyActionsRef.doc(newActionId).update({ 'id': newActionId });
-    })
+      unplannedTask.id = Ref.id;
+      // work.actionId = Ref.id;
+
+      // console.log(Ref);
+      weeklyRef.doc(newActionId).update({
+        'id': newActionId,
+        // workHours: firebase.firestore.FieldValue.arrayUnion(work),
+        'actualStart': unplannedTask.actualStart
+      }).then(() => {
+        console.log('WeeklyActions coll pdate successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating WeeklyActions coll, document does not exists', error);
+        // .set({ data });
+        weeklyRef.doc(newActionId).set(unplannedTask);
+        // weeklyRef.doc(newActionId).update({
+        //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
+        // })
+      });
+
+      allMyActionsRef.doc(newActionId).set(unplannedTask).then(function () {
+        allMyActionsRef.doc(newActionId).update({
+          // 'id': newActionId,
+          // workHours: firebase.firestore.FieldValue.arrayUnion(work),
+          'actualStart': unplannedTask.actualStart
+
+        }).then(() => {
+          console.log('actionItems coll update successful, document exists');
+          // update successful (document exists)
+        }).catch((error) => {
+          console.log('Error updating actionItems coll, document does not exists', error);
+          // .set({ data });
+          allMyActionsRef.doc(newActionId).set(unplannedTask).then(function () {
+            // allMyActionsRef.doc(newActionId).update({
+            //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
+            // })
+          })
+        })
+      });
+
+      /* TimeSheet collection Report doc set */
+
+      championTimeSheetRef.doc(newActionId).set(unplannedTask).then(() => {
+        console.log('Class Report updated successful, document exists');
+        // update successful (document exists)
+        // championTimeSheetRef.doc(newActionId).update({
+        //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
+        // });
+
+        // championTimeSheetRef.doc(newActionId).collection('workTime').doc(timesheetworktime).set(work);
+        // championTimeSheetRef.doc(newActionId).collection('actionActuals').doc(timesheetworktime).set(work);
+      }).catch((error) => {
+        console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
+        championTimeSheetRef.doc(newActionId).set(unplannedTask).then(() => {
+          console.log('Class Report updated successful, document exists');
+          // update successful (document exists)
+          // championTimeSheetRef.doc(newActionId).update({
+          //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
+          // })
+        })
+      });
+
+      championTimeSheetRef2.doc(newActionId).set(unplannedTask).then(() => {
+        console.log('Class Report updated successful, document exists');
+        // update successful (document exists)
+        // championTimeSheetRef2.doc(newActionId).update({
+        //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
+        // });
+
+        // championTimeSheetRef2.doc(newActionId).collection('workTime').doc(timesheetworktime).set(work);
+        // championTimeSheetRef2.doc(newActionId).collection('actionActuals').doc(timesheetworktime).set(work);
+      }).catch((error) => {
+        console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
+        championTimeSheetRef2.doc(newActionId).set(unplannedTask).then(() => {
+          console.log('Class Report updated successful, document exists');
+          // update successful (document exists)
+          // championTimeSheetRef2.doc(newActionId).update({
+          //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
+          // })
+        })
+      });
+
+
+      /* End  */
+    });
+
     console.log(unplannedTask);
-    this.item = { uid: "", id: "", name: "", unit: "", quantity: 0, selectedWork: false, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "" };
+    this.item = { uid: "", id: "", name: "", unit: "", quantity: 0, selectedWork: false, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
   }
 
   aclear(){
@@ -552,7 +699,7 @@ export class TimesheetComponent implements OnInit {
           if (element.selectedWork == true) {
             this.myActionItems.push(element);
             this.myDiaryItems.push(element);
-            console.log(this.myActionItems);
+            // console.log(this.myActionItems);
 
             this.chartdata = true;
             this.processData(this.myActionItems);

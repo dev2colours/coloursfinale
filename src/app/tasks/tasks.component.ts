@@ -104,7 +104,7 @@ export class TasksComponent {
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private authService: AuthService, private ts: TaskService, private afs: AngularFirestore) {
 
-    // console.log(this.afAuth.user);
+    console.log(this.afAuth.user);
     this.task = is.getTask();
     this.selectedProject = is.getSelectedProject();
     this.userChampion = is.getUserChampion();
@@ -117,7 +117,7 @@ export class TasksComponent {
     this.currentWeek = moment(new Date().toISOString(), "YYYY-MM-DD").week().toString();
     this.todayDate = moment(new Date().toISOString(), "YYYY-MM-DD").day().toString();
 
-    // console.log(this.todayDate)
+    console.log(this.todayDate)
 
     this.afAuth.authState.subscribe(user => {
       console.log(user.uid) 

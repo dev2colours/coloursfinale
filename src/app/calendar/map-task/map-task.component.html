@@ -3,11 +3,11 @@
     <div class="nav-tabs-navigation">
       <div class="nav-tabs-wrapper">
         <ul id="tabs" class="nav nav-tabs" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link nav-colors  active" title="click to view Week planning" data-toggle="tab" href="#week" role="tab" aria-expanded="true">Week</a>
+          <li class="nav-item"  hidden>
+            <a class="nav-link nav-colors" title="click to view Week planning" data-toggle="tab" href="#week" role="tab" aria-expanded="true">Week</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-colors" data-toggle="tab" title="click to view Monthly planning" href="#month" role="tab" aria-expanded="false">Month</a>
+            <a class="nav-link nav-colors active" data-toggle="tab" title="click to view Monthly planning" href="#month" role="tab" aria-expanded="false">Month</a>
           </li>
           <li class="nav-item">
             <a class="nav-link nav-colors" data-toggle="tab" title="click to view Quarterly planning" href="#quarter" role="tab" aria-expanded="false">Quarter</a>
@@ -56,9 +56,9 @@
           </div>
         </div>
       </div> -->
-      <div class="tab-pane active" id="week" role="tabpanel" aria-expanded="false">
+      <div hidden class="tab-pane" id="week" role="tabpanel" aria-expanded="false">
         <div class="card">
-          <div class="">
+          <div class=""><!-- title="Click to start planning your tasks" -->
             <div class="card-text">
               <p class="card-title"><!--  {{ currentWeek.subtract(1, 'W').week() }} -->
                 <button class="btn-link" title="goto the previous week" (click)="changePeriod('previous','startWeek')"><i class="nc-icon nc-minimal-left"
@@ -72,7 +72,7 @@
             <div aria-multiselectable="true" class="card-collapse" id="accordionDay" role="tablist">
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pDAY0">
-                  <a class="collapsed" (click)="setDay('day0')" title="click to view tasks" data-toggle="collapse" href="#planDay0" aria-expanded="false"
+                  <a class="collapsed" (click)="setDay('day0')" title="Click to start planning your tasks" data-toggle="collapse" href="#planDay0" aria-expanded="false"
                     aria-controls="planDay0">
                     {{ day0label }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -94,9 +94,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -106,7 +106,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pDAY0">
-                  <a class="collapsed" (click)="setDay('day1')" title="click to view tasks" data-toggle="collapse" href="#planDay1" aria-expanded="false"
+                  <a class="collapsed" (click)="setDay('day1')" title="Click to start planning your tasks" data-toggle="collapse" href="#planDay1" aria-expanded="false"
                     aria-controls="planDay1">
                     {{ day1label }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -128,9 +128,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -140,7 +140,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pDAY0">
-                  <a class="collapsed" (click)="setDay('day2')" title="click to view tasks" data-toggle="collapse" href="#planDay2" aria-expanded="false"
+                  <a class="collapsed" (click)="setDay('day2')" title="Click to start planning your tasks" data-toggle="collapse" href="#planDay2" aria-expanded="false"
                     aria-controls="planDay2">
                     {{ day2label }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -162,9 +162,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -174,7 +174,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pDAY0">
-                  <a class="collapsed" (click)="setDay('day3')" title="click to view tasks" data-toggle="collapse" href="#planDay3" aria-expanded="false"
+                  <a class="collapsed" (click)="setDay('day3')" title="Click to start planning your tasks" data-toggle="collapse" href="#planDay3" aria-expanded="false"
                     aria-controls="planDay3">
                     {{ day3label }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -196,9 +196,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -208,7 +208,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pDAY0">
-                  <a class="collapsed" (click)="setDay('day4')" title="click to view tasks" data-toggle="collapse" href="#planDay4" aria-expanded="false"
+                  <a class="collapsed" (click)="setDay('day4')" title="Click to start planning your tasks" data-toggle="collapse" href="#planDay4" aria-expanded="false"
                     aria-controls="planDay4">
                     {{ day4label }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -230,9 +230,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -242,7 +242,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pDAY0">
-                  <a class="collapsed" (click)="setDay('day5')" title="click to view tasks" data-toggle="collapse" href="#planDay5" aria-expanded="false"
+                  <a class="collapsed" (click)="setDay('day5')" title="Click to start planning your tasks" data-toggle="collapse" href="#planDay5" aria-expanded="false"
                     aria-controls="planDay5">
                     {{ day5label }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -264,9 +264,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -276,7 +276,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pDAY0">
-                  <a class="collapsed" (click)="setDay('day6')" title="click to view tasks" data-toggle="collapse" href="#planDay6" aria-expanded="false"
+                  <a class="collapsed" (click)="setDay('day6')" title="Click to start planning your tasks" data-toggle="collapse" href="#planDay6" aria-expanded="false"
                     aria-controls="planDay6">
                     {{ day6label }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -298,9 +298,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -312,7 +312,7 @@
           </div>
         </div>
       </div>
-      <div class="tab-pane" id="month" role="tabpanel" aria-expanded="false">
+      <div class="tab-pane active" id="month" role="tabpanel" aria-expanded="false">
         <div class="card">
           <div class="">
             <div class="card-text">
@@ -329,7 +329,7 @@
             <div aria-multiselectable="true" class="card-collapse" id="accordionWeek" role="tablist">
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pWeek">
-                  <a class="collapsed" (click)="setWeek('week0')"  title="click to view tasks" data-toggle="collapse" href="#planWeek0"
+                  <a class="collapsed" (click)="setWeek('week0')"  title="Click to start planning your tasks" data-toggle="collapse" href="#planWeek0"
                     aria-expanded="false" aria-controls="planWeek0">
                     Week {{ week0label.week() }} of year {{ week0label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -351,9 +351,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -363,7 +363,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pWeek">
-                  <a class="collapsed" (click)="setWeek('week1')" title="click to view tasks" data-toggle="collapse" href="#planWeek1"
+                  <a class="collapsed" (click)="setWeek('week1')" title="Click to start planning your tasks" data-toggle="collapse" href="#planWeek1"
                     aria-expanded="false" aria-controls="planWeek1">
                     Week {{ week1label.week() }} of year {{ week1label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -385,9 +385,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -397,7 +397,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pWeek">
-                  <a class="collapsed" (click)="setWeek('week2')" title="click to view tasks" data-toggle="collapse" href="#planWeek2"
+                  <a class="collapsed" (click)="setWeek('week2')" title="Click to start planning your tasks" data-toggle="collapse" href="#planWeek2"
                     aria-expanded="false" aria-controls="planWeek2">
                     Week {{ week2label.week() }}  of year {{ week2label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -419,9 +419,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -431,7 +431,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pWeek">
-                  <a class="collapsed" (click)="setWeek('week3')" title="click to view tasks" data-toggle="collapse" href="#planWeek3"
+                  <a class="collapsed" (click)="setWeek('week3')" title="Click to start planning your tasks" data-toggle="collapse" href="#planWeek3"
                     aria-expanded="false" aria-controls="planWeek3">
                     Week {{ week3label.week() }} of year {{ week3label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -453,9 +453,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -484,7 +484,7 @@
             <div aria-multiselectable="true" class="card-collapse" id="accordionMonth" role="tablist">
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pMonth">
-                  <a class="collapsed" (click)="setMonth('month1')" title="click to view tasks" data-toggle="collapse" href="#planMonth1"
+                  <a class="collapsed" (click)="setMonth('month1')" title="Click to start planning your tasks" data-toggle="collapse" href="#planMonth1"
                     aria-expanded="false" aria-controls="planMonth1">
                     {{ month1label.format('MMMM') }}, {{ month1label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -506,9 +506,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -518,7 +518,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pMonth">
-                  <a class="collapsed" (click)="setMonth('month2')" title="click to view tasks" data-toggle="collapse" href="#planMonth2"
+                  <a class="collapsed" (click)="setMonth('month2')" title="Click to start planning your tasks" data-toggle="collapse" href="#planMonth2"
                     aria-expanded="false" aria-controls="planMonth2">
                     {{ month2label.format('MMMM') }}, {{ month2label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -540,9 +540,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -552,7 +552,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pMonth">
-                  <a class="collapsed" (click)="setMonth('month3')" title="click to view tasks" data-toggle="collapse" href="#planMonth3"
+                  <a class="collapsed" (click)="setMonth('month3')" title="Click to start planning your tasks" data-toggle="collapse" href="#planMonth3"
                     aria-expanded="false" aria-controls="planMonth3">
                     {{ month3label.format('MMMM') }}, {{ month3label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -574,9 +574,9 @@
                             <td class="text-right td-clrs">{{ tss.start | date }}</td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -605,7 +605,7 @@
             <div aria-multiselectable="true" class="card-collapse" id="accordionQuarter" role="tablist">
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pQuarter">
-                  <a class="collapsed" (click)="setQuarter('quarter0')" title="click to view tasks" data-toggle="collapse" href="#planQuarter0"
+                  <a class="collapsed" (click)="setQuarter('quarter0')" title="Click to start planning your tasks" data-toggle="collapse" href="#planQuarter0"
                     aria-expanded="false" aria-controls="planQuarter0">
                     Quarter {{ quarter0label.quarter() }} of year {{ quarter0label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -645,7 +645,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pQuarter">
-                  <a class="collapsed" (click)="setQuarter('quarter1')" title="click to view tasks" data-toggle="collapse" href="#planQuarter1"
+                  <a class="collapsed" (click)="setQuarter('quarter1')" title="Click to start planning your tasks" data-toggle="collapse" href="#planQuarter1"
                     aria-expanded="false" aria-controls="planQuarter1">
                     Quarter {{ quarter1label.quarter() }} of year {{ quarter1label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -678,9 +678,9 @@
                             </td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task
+                            </button>
                           </tr>
                         </tbody>
                       </table>
@@ -690,7 +690,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pQuarter">
-                  <a class="collapsed" (click)="setQuarter('quarter2')" title="click to view tasks" data-toggle="collapse" href="#planQuarter2"
+                  <a class="collapsed" (click)="setQuarter('quarter2')" title="Click to start planning your tasks" data-toggle="collapse" href="#planQuarter2"
                     aria-expanded="false" aria-controls="planQuarter2">
                     Quarter {{ quarter2label.quarter() }} of year {{ quarter2label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>
@@ -723,9 +723,8 @@
                             </td>
                           </tr>
                           <tr class="text-left">
-                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal"
-                              data-target="#tskModal">New
-                              Task</button>
+                            <button rel="tooltip" title="click to create a task" class="btn-link" data-toggle="modal" data-target="#tskModal">
+                              New Task</button>
                           </tr>
                         </tbody>
                       </table>
@@ -735,7 +734,7 @@
               </div>
               <div class="card card-plain">
                 <div class="card-header" role="tab" id="pQuarter">
-                  <a class="collapsed" (click)="setQuarter('quarter3')" title="click to view tasks" data-toggle="collapse" href="#planQuarter3"
+                  <a class="collapsed" (click)="setQuarter('quarter3')" title="Click to start planning your tasks" data-toggle="collapse" href="#planQuarter3"
                     aria-expanded="false" aria-controls="planQuarter3">
                     Quarter {{ quarter3label.quarter() }} of year {{ quarter3label.year() }}
                     <i class="nc-icon nc-minimal-down"></i>

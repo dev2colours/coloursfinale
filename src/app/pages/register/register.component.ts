@@ -83,6 +83,8 @@ export class RegisterComponent implements OnInit{
     private message: string;
     private timedstamp: number;
     mytime: number;
+    nMin: any;
+    nHrs: any;
 
     constructor(private element: ElementRef, private router: Router, public afAuth: AngularFireAuth, private afs: AngularFirestore, private pns: PersonalService, private as: AuthService) {
         // pns.dataCall();
@@ -153,7 +155,7 @@ export class RegisterComponent implements OnInit{
                     firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password).then(ref => {
                         console.log("Check User collection for doc");
 
-                        // console.log(ref);
+                        console.log(ref);
                         this.coloursUserDetails = ref;
 
                         let coloursUser = ref.user;
@@ -301,7 +303,7 @@ export class RegisterComponent implements OnInit{
                     // [END signout]
                 } else {
                     console.log('email' + credentials.email);
-                    // console.log('email' + email);
+                    console.log('email' + email);
                     if (credentials.email.length < 4) {
                         alert('Please enter an email address.');
                         return;
@@ -322,7 +324,7 @@ export class RegisterComponent implements OnInit{
 
                         // userRef.sendEmailVerification();
                         // userRef.user.sendEmailVerification();
-                        // console.log(ref);
+                        console.log(ref);
                         this.coloursUserDetails = ref;
 
                         console.log(firebase.auth.EmailAuthProvider);
@@ -398,7 +400,7 @@ export class RegisterComponent implements OnInit{
                         }
 
 
-                        // console.log(ref.credential);
+                        console.log(ref.credential);
 
                         var user = ref.user;
                         // ...
@@ -505,7 +507,7 @@ export class RegisterComponent implements OnInit{
             console.log(firebase.auth().currentUser.providerData[0].providerId);
 
 
-            // console.log(ref);
+            console.log(ref);
             this.coloursUserDetails = ref;
 
             let coloursUser = ref.user;
@@ -528,7 +530,7 @@ export class RegisterComponent implements OnInit{
                 // this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
                 // this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
                 // this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                // console.log("userData is set");
+                console.log("userData is set");
 
             }
             else {
@@ -583,7 +585,7 @@ export class RegisterComponent implements OnInit{
                 console.log(firebase.auth().currentUser.providerData[0].providerId);
 
 
-                // console.log(ref);
+                console.log(ref);
                 this.coloursUserDetails = ref;
 
                 let coloursUser = ref.user;
@@ -811,9 +813,9 @@ export class RegisterComponent implements OnInit{
         t -= minutes * 60;
         seconds = t % 60;
         this.timedstamp += 1;
-        // console.log(this.timedstamp);
+        console.log(this.timedstamp);
         this.testKeyMatch();
-        // console.log(this.nHrs, ':', this.nMin);
+        console.log(this.nHrs, ':', this.nMin);
 
 
         return [

@@ -1,6 +1,7 @@
 <div class="main-content">
   <div class="row">
-    <div class="col-xs-3 col-sm-4 dash-col-left">
+    <div class="col-lg-4 col-sm-6">
+    <!-- <div class="col-xs-3 col-sm-4 dash-col-left"> -->
       <div class="card card-category">
         <div class="btn-magnify">
           <div class="row col-md-12" style="margin-left:1em; padding-bottom: -1em ">
@@ -17,13 +18,13 @@
             <div id="container">
               <!-- <div class="content container scroll-em" *ngIf="showActions"> -->
               <div class="content container scroll-em" *ngIf="actionNo !== 0">
-                <ol>
-                  <li class="" style="color:steelblue" *ngFor="let event of myActionItems">
+                <ol style="list-style-type:none;padding-left: 12px;">
+                  <li class="" style="color:steelblue" *ngFor="let event of maActivities">
                     <!-- <div class="row"> -->
                     <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em">
                       <!-- margin-left:1.0em; -->
-                      <a style="color:slategrey">
-                        {{ event.name }}<span class="label text-warning"> {{ event.when }}</span>
+                      <a style="color:slategrey"  [ngStyle]="{color: event.txtColours}">
+                      <span class="label text-warning"> {{ event.start }}</span> {{ event.name }}
                       </a>
                     </div>
                     <!-- </div> -->
@@ -183,11 +184,12 @@
       </div>
     </div> -->
     <div class="col-lg-4 col-sm-6">
+    <!-- <div class="col-xs-3 col-sm-4 dash-col"> -->
       <div class="card">
         <div class="card-content btn-magnify">
           <div class="col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
             <div class="clrs-h1-font">
-              <a><i class="fa fa-folder-o [&#xf114;]"></i> Colours Projects</a>
+              <a><i class="fa fa-folder-o [&#xf114;]"></i> Colours Project</a>
             </div><br>
             <div class="text-left" style="padding-top: -1em; color: steelblue; ">
               <a>My Current Priority Projects</a>
@@ -245,6 +247,7 @@
             </div>
           </div>
         </div>
+        <br>
         <div class="card-body">
           <h6 class="big-title">total subscriptions in last 7 days</h6>
           <canvas id="emailsCampaignChart" width="826" height="380"></canvas>
@@ -267,6 +270,7 @@
       </div>
     </div>
     <div class="col-lg-4 col-sm-6">
+    <!-- <div class="col-xs-3 col-sm-4 ml-auto mar-auto dash-col-right"> -->
       <div class="card">
         <!-- <div class="card-header">
           <div class="row">
@@ -335,6 +339,7 @@
             </ol>
           </div>
         </div>
+        <br>
         <div class="card-body">
           <!--  -->
           <h6 class="big-title">total downloads in last 6 years</h6>
@@ -385,8 +390,8 @@
         </div> -->
         <div class="card" data-background-color="blue" *ngIf="projs2No != 0">
           <marquee>
-            <a *ngFor="let project of marketProjects" style="color:rgb(35, 41, 49)" routerLink="#">
-              A project has been created, location: {{ project.location }}, Sector: {{ project.sector }}. . . . . . . <span class="spacer" style="widows: 10px;"></span></a> <!--  in {{project.sector}}  -->
+            <a *ngFor="let project of marketProjects" style="color:rgb(35, 41, 49)" routerLink="#" [ngStyle]="{color: project.txtColours}" >
+              A New Project Has Been Created. Location: {{ project.location }}. Sector: {{ project.sector }}. . . . . . . <span class="spacer" style="widows: 10px;"></span></a> <!--  in {{project.sector}}  -->
           </marquee>
         </div>
         <div class="card" data-background-color="blue" *ngIf="projs2No == 0">

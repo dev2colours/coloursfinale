@@ -6,17 +6,22 @@ import { classification } from "./user-model";
 
 export interface Task {
     id: string, name: string,
-    companyId: string, companyName: string, department: string, departmentId: string,
+    companyId: string, companyName: string, department: string, departmentId: string, championName: string, championId: string,
     champion: ParticipantData, participants: [ParticipantData], classification: classification, 
     start: string, startDay: string, startWeek: string, startMonth: string, startQuarter: string, startYear: string,
     finish: string, finishDay: string, finishWeek: string, finishMonth: string, finishQuarter: string, finishYear: string,
     by: string, createdOn: string, projectName: string, projectId: string, projectType: string, byId: string,
-    trade: string, section: Section, complete :boolean, status: string,
+    trade: string, section: Section, complete: boolean, status: string, selectedWeekly: boolean
 }
 
 export interface MomentTask extends Task {
     when: string,
     then: string
+}
+
+export interface completeTask extends MomentTask {
+    noAllActions: string,
+    noCompleteActions: string
 }
 
 export interface TaskData {

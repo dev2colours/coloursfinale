@@ -1,17 +1,17 @@
 
-<h2 id="org2">Personal Reports</h2>
+<h3 id="org2">Personal Reports</h3>
 
-<h2>Participant:
-    <span><select id="name-list2" (click)="rService.getParticipantData('name-list2')"></select></span>
-    <span> &nbsp;&nbsp; Hierarchy:</span><span id="hierarchy"></span></h2>
+<h3>Participant:
+    <span><select id="name-list2"></select></span>
+    <span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
 
-<h3>Time Sheet Report for the period from <span>
+<h4>Time Sheet Report for the period from <span>
         <!-- placeholder will not work, so stuck with dd----yyyyy -->
         <input type="date" id="startdate2">
     </span> to <span>
         <input type="date" id="enddate2">
-        <button (click)="rService.ractivitylog_e()">Generate report for selected period</button>
-    </span></h3>
+        <button id="btn2" (click)="rService.ractivitylog_e()">Generate report for selected period</button>
+    </span></h4>
 
 <!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
 <!-- button (click)="rService.clearTable()">Clear table</button> -->
@@ -19,10 +19,10 @@
 <table id="TbId2">
     <!-- headings -->
     <tr>
-        <th align="left">Action Item</th>
-        <th align="left">Task Name</th>
-        <th align="left">Start Date</th>
-        <th align="left">End Date</th>
-        <th>Hours Spent</th>
+        <th>Sub Task</th>
+        <th>Task Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th style="text-align:center">Hours Spent</th>
     </tr>
 </table>

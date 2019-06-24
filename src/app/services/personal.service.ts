@@ -56,7 +56,7 @@ export class PersonalService {
       }
 
       else {
-        console.log('wewtrtdtg')
+        // console.log('wewtrtdtg')
         this.user = user;
         this.userId = user.uid;
         // this.router.navigate(['/dashboard']);
