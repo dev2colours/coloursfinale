@@ -26,6 +26,9 @@ import { ROsTasksComponent } from './r-os-tasks/r-os-tasks.component';
 // Added 04-June-19 by VJ Sibanda
 import { RDailyPlanComponent } from './r-daily-plan/r-daily-plan.component';
 import { RWeeklyPlanComponent } from './r-weekly-plan/r-weekly-plan.component';
+// Added 19-June by VJ Sibanda
+import { PersonalRdashboardComponent } from './dashboard-personal-reports/dashboard-personal-reports.component';
+
 
 @NgModule({
     imports: [
@@ -34,7 +37,7 @@ import { RWeeklyPlanComponent } from './r-weekly-plan/r-weekly-plan.component';
         FormsModule, NgSelectModule, NgxChartsModule, TagInputModule,
     ],
     declarations: [CalendarComponent, MapTaskComponent, ImplementationComponent, DiaryComponent, TimesheetComponent, PopupComponent, TotalsActionItemsComponent,
-        ActivityLogComponent, ClassificationTimesheetComponent, RActivityLogComponent, RdashboardComponent, RTimeSpentComponent, PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent]
+        ActivityLogComponent, ClassificationTimesheetComponent, PersonalRdashboardComponent,RActivityLogComponent, RdashboardComponent, RTimeSpentComponent, PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent]
 })
 
 export class CalendarModule {}

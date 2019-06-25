@@ -1,8 +1,15 @@
+<div class="main-content">
+    <div class="card card-body">
+    <div style="text-align:left;margin-left: 0px">
+        <img alt="Colours Logo" width="100" src="../../assets/Colourslogo.png">
+    </div>
+
+    <div style="text-align: right">
+        <button class="btn-link btn-magnify" (click)="rService.printReport()">Print</button> 
+        <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
+    </div> 
 
 <h3 id="org1">Personal Reports</h3>
-<!-- <div class="card-header text-left" *ngIf="company !== '' || company === undefined">
-    <h2>{{ company }}'s Individual Total Time spent Report</h2>
-</div><br> -->
 
 <h3>Participant:
     <span><select id="name-list1" (click)="rService.PData('name-list1','')"></select></span>
@@ -25,3 +32,5 @@
         <th style="text-align:center">Hours Spent</th>
     </tr>
 </table>
+</div>
+</div>

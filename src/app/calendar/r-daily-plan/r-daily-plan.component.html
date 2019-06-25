@@ -1,7 +1,14 @@
 <div class="main-content">
+    <div class="card card-body">
+
     <div style="text-align:left;margin-left: 0px">
         <img alt="Colours Logo" width="100" src="../../assets/Colourslogo.png">
     </div>
+
+    <div style="text-align: right">
+        <button class="btn-link btn-magnify" (click)="rService.printReport()">Print</button> 
+        <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
+    </div> 
 
 <h2 id="UserP3">User</h2>
 
@@ -20,3 +27,5 @@
         <th>Company Name</th>
     </tr>
 </table>
+</div>
+</div>

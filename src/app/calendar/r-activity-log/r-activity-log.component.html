@@ -1,10 +1,16 @@
 <div class="main-content">
+    <div class="card card-body">
 
     <div style="text-align:left;margin-left: 0px">
-        <!-- <img alt="Southland Logo" src="/src/app/southland-logo.jpg"> -->
         <img alt="Colours Logo" width="100" src="../../assets/Colourslogo.PNG">
     </div>
     
+    
+    <div style="text-align: right">
+        <button class="btn-link btn-magnify" (click)="rService.printReport()">Print</button> 
+        <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
+    </div>  
+
     <!-- Table heading -->
     <h1 id="UserP2"></h1>
     
@@ -15,9 +21,6 @@
             <input type="date" id="enddateP2">
             <button id="btnP2" (click)="rService.ractivitylog()">Generate report for selected period</button>
         </span></h3>
-    
-    <!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
-    <!-- button (click)="rService.clearTable()">Clear table</button> -->
     <!-- Table rows and headings only -->
     <table id="TbIdP2">
         <!-- headings -->
@@ -30,5 +33,5 @@
             <th>Company Name</th>
         </tr>
     </table>
-    
+</div>  
 </div>
