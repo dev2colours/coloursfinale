@@ -1,8 +1,14 @@
 <div class="main-content">
-
+    <div class="card card-body">
+    
     <div style="text-align:left">
         <img alt="Southland Logo" src="../../../assets/img/Colourslogo.PNG">
     </div>
+
+    <div style="text-align: right">
+        <button class="btn-link btn-magnify" (click)="rService.printReport()">Print</button> 
+        <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
+    </div> 
     
     <!-- Table heading -->
     <h2 id="UserP1">User</h2>
@@ -27,4 +33,5 @@
             <th>Company Name</th>
         </tr>
     </table>
+</div>
 </div>

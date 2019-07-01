@@ -28,13 +28,38 @@ export class ReportsService {
 		afAuth.authState.subscribe(user => {
 			this.user = user;
 			this.UID = user.uid;
+			//19-June-2019. Save to local storage for use when refreshing
+			localStorage['UID'] = user.uid;
 		})
 	}
 
 	compParams(company) {
+		//19-June-2019. Use previoulsy saved storage values for use when refreshing
 		this.currentCompany = company;
 		this.EnterpriseName = company.name;
 		this.EID = company.id;
+		//19-June-2019. Save to local storage for use when refreshing
+		localStorage['company'] = company.name;
+		localStorage['EID'] = company.id;
+	}
+
+	//19-June-2019. Load previous session values on refresh
+	Previous(){
+		if (this.UID == undefined){
+			this.UID = localStorage['UID'];
+		}
+		if (this.EnterpriseName == undefined){
+			this.EnterpriseName= localStorage['company'];
+		}
+		if (this.EID == undefined){
+			this.EID = localStorage['EID'];
+		}
+		if (this.stdd == undefined){
+			this.stdd = localStorage['stdd'];
+		}
+		if (this.endd == undefined){
+			this.endd = localStorage['endd'];
+		}
 	}
 
 	rostasks() {
@@ -43,7 +68,7 @@ export class ReportsService {
 		let tbId = "#TbIdP0";
 		this.clearTable("TbIdP0","btnP0");
 		this.readDate("startdateP0");
-		this.OS_Tasks(Tasks,this.UID,"",this.stdd,tbId,"btnP1");
+		this.OS_Tasks(Tasks,this.UID,"",this.stdd,tbId,"btnP0");
 	}
 
 	rtimespent() {
@@ -54,6 +79,29 @@ export class ReportsService {
 		this.clearTable("TbIdP1","btnP1");
 		this.readDates("startdateP1", "enddateP1");
 		this.TimeSpent(WActions,this.UID,"",this.stdd,this.endd,tbId,"btnP1");
+	}
+
+	//Added 26-June-2019
+	rtimebudget() {
+		var TBudget;
+		TBudget = this.db.collection('Users').doc(this.UID).collection('classifications').
+		ref.orderBy('name','asc').get();
+		let tbId = "#TbIdP5";
+		this.clearTable("TbIdP5","btnP5");
+		this.TBudget(TBudget,this.UID,"",tbId,"btnP5");
+	}
+
+	//Added 28-June-2019
+	rtimeactual() {
+		var TBudget;var TActual;
+		TBudget = this.db.collection('Users').doc(this.UID).collection('classifications').
+		ref.orderBy('name','asc').get();
+		TActual = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
+		ref.orderBy('name','asc').get();
+		let tbId = "#TbIdP6";
+		this.clearTable("TbIdP6","btnP6");
+		this.readDates("startdateP6", "enddateP6");
+		this.TActual(TBudget,TActual,this.UID,"",this.stdd,this.endd,tbId,"btnP6");
 	}
 
 	ractivitylog() {
@@ -179,6 +227,8 @@ export class ReportsService {
 		//06-May-2019. <HTMLInputElement> casts the HTML type to Input to prevent a compile error
 		//which says property value does not exist on HTML element
 		this.stdd = (<HTMLInputElement>document.getElementById(date)).value;
+		//19-June-2019. Save to local storage for use when refreshing
+		localStorage['stdd'] = this.stdd;
 	}
 
 	readDates(sDate, eDate) {
@@ -186,6 +236,9 @@ export class ReportsService {
 		//which says property value does not exist on HTML element
 		this.stdd = (<HTMLInputElement>document.getElementById(sDate)).value;
 		this.endd = (<HTMLInputElement>document.getElementById(eDate)).value;
+		//19-June-2019. Save to local storage for use when refreshing
+		localStorage['stdd'] = this.stdd;
+		localStorage['endd'] = this.endd;
 	}
 
 	getMyEnterprises() {
@@ -198,6 +251,8 @@ export class ReportsService {
 	optValue(eid) {
 		var sel = (<HTMLSelectElement>document.getElementById(eid));
 		var selected_item = sel.options[sel.selectedIndex].text;
+		//19-June-2019. Save value to cache
+		localStorage['name'] = selected_item;
 		return selected_item;
 	}
 
@@ -242,15 +297,18 @@ export class ReportsService {
 		btn.disabled = true;
 	}
 
-	// 13-May-2019. This one too
-	dynamicSort(property) {
+	dynamicSort(property,order) {
 		var sortOrder = 1;
 		if (property[0] === "-") {
 			sortOrder = -1;
 			property = property.substr(1);
 		}
 		return function (a, b) {
-			var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+			if (order == "asc"){
+				var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;}
+			else{
+				var result = (b[property] < a[property]) ? -1 : (b[property] > a[property]) ? 1 : 0;
+			}
 			return result * sortOrder;
 		}
 	}
@@ -290,43 +348,14 @@ export class ReportsService {
 		}
 		return date;
 	}
-	
-	//14-Jun-2019. Get data for currently logged in user
-	UData(FN,P,SD,ED,TBID,BTN) {
-		
-		//17-June-2019. Data stored as local variables in this function. Previously the data was stored
-		//in global variables and reports were loading wrong data retrieved by other reports
-		//opened before if new data took too long to fetch
-		var Users;var User;var DPlan;var WPlan;var WActions;var Tasks;
-		
-		Users = this.db.collection('Users', ref => ref.orderBy('name', 'asc'));
-		
-		User = this.db.collection('Users').doc(this.UID);
-		//07-June-2018 Order by time for daily and by date for weekly
-		
-		DPlan = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
-		ref.orderBy('start','asc').where('start','>','0').where('complete','==',false).
-		where('champion.id','==',this.UID).where('selectedWork','==',true).get();
-		
-		WPlan = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
-		ref.orderBy('startDate','asc').where('champion.id','==',this.UID).where('complete','==',false).where('selectedWeekWork','==',true).get();
-		
-		WActions = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
-		ref.orderBy('startDate','asc').where('champion.id','==',this.UID).get();
-		
-		Tasks = this.db.collection('Users').doc(this.UID).collection('tasks').ref.get();
-		
-	}
 
 	rweeklyplan_e() {
 
 		var name:string;
 		var PID:string;var User_Hky;
-		//05-June-2019. Give option of passing direct name for ngOnINit use
-		//if (LIST == ''){name = VALUE;} else {name = this.optValue(LIST);}
 		//17-June-2019. Data stored as local variables in this function. Previously the data was stored
 		//in global variables and reports were loading wrong data retrieved by other reports
-		//opened before if new data took too long to fetch
+		//if new data took too long to fetch
 		var WPlan;
 		name = this.optValue("name-list4");
 		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
@@ -344,42 +373,232 @@ export class ReportsService {
 
 	}
 
+	TBudget(Budget,StaffID,EntID,TbId,btnID){
+
+		let tableList = document.querySelector(TbId);
+		var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
+		var row: HTMLTableRowElement;
+		var rowCnt = 1;var sum = 0;
+
+		Budget.then((ref) => {
+
+			ref.forEach(lifeclass => {
+				row = tableList.insertRow(rowCnt);
+				td0 = row.insertCell(0);//Description
+				td1 = row.insertCell(1);//Time Budget
+				td1.align = "center";
+				td0.innerText = lifeclass.data().name;
+				td1.innerText = lifeclass.data().plannedTime;
+				sum = sum + lifeclass.data().plannedTime;
+				rowCnt = rowCnt+1;
+			})
+
+			// Insert totals row
+			row = tableList.insertRow(rowCnt);
+			td0 = row.insertCell(0);//TOTAL heading
+			td1 = row.insertCell(1);//Total Time
+			td0.style.border = "1px solid #000";
+			td1.align = "center";
+			td1.style.border = "1px solid #000";
+			td0.innerText = "TOTAL TIME"
+			td1.innerText = String(sum);
+				
+		})
+
+		var DB = this.db;
+		setTimeout(Wait, this.waitTime);
+		function Wait(){
+
+			if (rowCnt == 1){
+				var User = DB.collection('Users').doc(StaffID);
+				User.ref.get().then(function(doc) {
+					alert("No Classification Time Budget data found for " + doc.data().name);
+				})
+			}
+
+			var btn = (<HTMLButtonElement>document.getElementById(btnID));
+			btn.disabled = false;
+		}
+
+	}
+
+	TActual(Budget,Actual,StaffID,EntID,start,end,TbId,btnID){
+
+		// ---------------------------------------------BUDGET---------------------------------
+		let tableList = document.querySelector(TbId);
+		var rowCnt = 1;
+		var arrayall = new Array();
+		var DB =this.db;
+
+		Budget.then((ref) => {
+
+			var asum = 0;
+
+			ref.forEach(lifeclass => {
+				
+				var element = Array();
+				element['classname'] = lifeclass.data().name;
+				element['plannedTime'] = lifeclass.data().plannedTime;
+					
+				// -------- FIND THE ACTUAL TOTALS -----------------
+				Actual.then((ref) => {
+					ref.forEach(doc => {
+						asum = asum + class_actual_time(doc.data(),start,end + " 23:00:00",lifeclass.data().name);
+					})
+					console.log(asum);
+					element['actualTime'] = asum;
+					element['variance'] = asum - lifeclass.data().plannedTime;
+					arrayall.push(element);
+				});
+				
+			})// for each life class
+
+			// // Insert totals row. COULD NOT FORMAT LAST ROW, SO NOW ADDED SEPARATELY IN FILLTABLE
+			// var totals = Array();
+			// //28-June-2019. Use same headings as above otherise table shows undefined 
+			// totals['classname'] = String("TOTAL TIME");
+			// totals['plannedTime'] = String(bsum);
+			// totals['actualTime'] = String(asum);
+			// arrayall.push(totals);
+		
+		})
+
+		var rowCnt = 1;
+		var isd = this.ISODate;
+		
+		function class_actual_time(doc,sd,ed,lclass) {
+			var sum = 0;
+			var ix1 = -1; var ix2 = -1;
+			var actionarray = doc.workHours;
+			if (actionarray !== null) {
+				actionarray.forEach(function (current_value, index) {
+					let respTime = current_value.time;
+					let date = isd(respTime,'');
+					if (sd <= date && ed >= date && doc.classification.name == lclass) {
+						sum = sum + current_value.hours;
+						
+						if (ix1 < 0) { ix1 = index };
+						if (ix2 < index) { ix2 = index };
+					}
+				})
+			}
+
+			return sum;
+
+		}
+
+		// create element and render table
+		function fillTable(arr) {
+
+			var rem = 0;
+			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
+			var td2: HTMLTableDataCellElement;var td3: HTMLTableDataCellElement;
+			var row: HTMLTableRowElement;
+			
+			if (arr !== null) {
+				arr.forEach(function (elm) {
+
+					// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
+					row = tableList.insertRow(rowCnt);
+					td0 = row.insertCell(0);//Classification description
+					td0.innerText = elm.classname;
+					
+					td1 = row.insertCell(1);//Budgetted Time
+					td1.innerText = elm.plannedTime;
+					bsum = bsum + elm.plannedTime;
+					td1.align = "center"
+					
+					td2 = row.insertCell(2);//Actual Time
+					td2.innerText = elm.actualTime;
+					asum = asum + elm.actualTime;
+					td2.align = "center"
+					
+					td3 = row.insertCell(3);//Actual Time
+					td3.innerText = elm.variance;
+					vsum = vsum + elm.variance;
+					td3.align = "center"
+					rowCnt = rowCnt + 1; rem = rowCnt % 2;
+					if (rem == 1) { row.bgColor = 'gainsboro' };
+				
+				}) // for each
+			}
+
+			
+
+		}
+
+		// retotal as you fill table. These totals could have been put into arrayall above
+		//but there will be no means of formatting the bottom row diffferently to others
+		var bsum = 0; var asum = 0; var vsum = 0;
+		//05-June-2019. Alert user after a few seconds if no data was found. Delay allows code to finish.
+		setTimeout(Wait, this.waitTime);
+
+		function Wait(){
+			
+			//14-June-2019. Sorting and filling table done after waiting to allow code to populate arrayall
+			//arrayall.sort(DS("start","asc"));
+			fillTable(arrayall);
+
+			if (rowCnt == 1){
+				var User = DB.collection('Users').doc(StaffID);
+				User.ref.get().then(function(doc) {
+					alert("No Classification Actuals found for " + doc.data().name);
+				})
+			}
+			else
+			{
+				//28-June-2019. Fill bottom row
+				var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
+				var td2: HTMLTableDataCellElement;var td3: HTMLTableDataCellElement;
+				var row: HTMLTableRowElement;
+				row = tableList.insertRow(rowCnt);
+				td0 = row.insertCell(0);//Classification description
+				td0.innerText = "TOTALS"
+				td0.style.border = "1px solid #000";
+				td1 = row.insertCell(1);//Budgetted Time
+				td1.innerText = String(bsum)
+				td1.align = "center"
+				td1.style.border = "1px solid #000";
+				td2 = row.insertCell(2);//Actual Time
+				td2.innerText = String(asum);
+				td2.align = "center"
+				td2.style.border = "1px solid #000";
+				td3 = row.insertCell(3);//Variance
+				td3.innerText = String(vsum);
+				td3.align = "center"
+				td3.style.border = "1px solid #000";
+
+			}
+
+			var btn = (<HTMLButtonElement>document.getElementById(btnID));
+			btn.disabled = false;
+		} //Wait closing bracket
+
+
+	}
+
 	TimeSpent(Actions,StaffID,EntID,start,end,TbId,btnID) {
 		
 		let tableList = document.querySelector(TbId);
 		var rowCnt = 1;
 		var isd = this.ISODate;
 		var DB = this.db;
+		var arrayall = new Array();
+		
+		function push_elements(doc,sd,ed,task,company) {
+			var sum = 0;
+			var ix1 = -1; var ix2 = -1;
+			var element = Array();
 
-		// create element and render table
-		function addrow(doc,rowPos,sd,ed,task,company) {
-
-			var rem = 0;
-			var sum = 0; var ix1 = -1; var ix2 = -1;
-			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
-			var td2: HTMLTableDataCellElement; var td3: HTMLTableDataCellElement; 
-			var row: HTMLTableRowElement;
-
-			// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
-			row = tableList.insertRow(rowPos);
-			// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-			td0 = row.insertCell(0);//Sub Task
-			td1 = row.insertCell(1);//Task Name
-			td2 = row.insertCell(2);//Time Spent
-			//07-June-2019. Add company column for personal reports for clarity
-			//12-June-2019. Import company from calling function
-			if (EntID == ''){td3 = row.insertCell(3);td3.innerText = company}
-
-			// put text inside the data cell
-			td0.innerText = doc.name;
-			//06-May-2019. Task name added. 12-June-2019 imported form calling sub
-			td1.innerText = task;
-
+			element['name'] = doc['name'];
+			element['task'] = task;
+			element['company'] = company;
 			var actionarray = doc.workHours;
 			if (actionarray !== null) {
 				actionarray.forEach(function (current_value, index) {
 					let respTime = current_value.time;
-					let date = isd(respTime,'')
+					let date = isd(respTime,'');
+					//console.log(date);
 					if (sd <= date && ed >= date) {
 						sum = sum + current_value.hours;
 						if (ix1 < 0) { ix1 = index };
@@ -388,11 +607,48 @@ export class ReportsService {
 				})
 			}
 
-			td2.innerText = String(sum); td2.align = "center"
+			element['sum'] = sum;
+			arrayall.push(element);
 
-			// determine odd numbered rows
-			rowCnt = rowCnt + 1; rem = rowCnt % 2;
-			if (rem == 1) { row.bgColor = 'gainsboro' };
+		}
+
+		function fillTable(arr) {
+
+			var rem = 0;
+			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
+			var td2: HTMLTableDataCellElement; var td3: HTMLTableDataCellElement; 
+			var row: HTMLTableRowElement;
+
+			if (arr !== null) {
+				arr.forEach(function (elm) {
+
+					//20-June-2019. Fill items with non-zero time spent
+					if (elm.sum !== 0) {
+						// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
+						row = tableList.insertRow(rowCnt);
+						// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+						td0 = row.insertCell(0);//Sub Task
+						td1 = row.insertCell(1);//Task Name
+						td2 = row.insertCell(2);//Time Spent
+						//07-June-2019. Add company column for personal reports for clarity
+						if (EntID == ''){td3 = row.insertCell(3);td3.innerText = elm.company}
+
+						// put text inside the data cell
+						td0.innerText = elm.name;
+						//06-May-2019. Task name added. 12-June-2019 imported form calling sub
+						td1.innerText = elm.task;
+						td2.innerText = elm.sum; td2.align = "center"
+						
+						//28-June-2019. Total variable added to fill bottom of table
+						totalHrs = totalHrs +elm.sum;
+
+						// determine odd numbered rows
+						rowCnt = rowCnt + 1; rem = rowCnt % 2;
+						if (rem == 1) { row.bgColor = 'gainsboro' };
+					}
+
+				}) // for each
+			}
 
 		}
 
@@ -439,33 +695,60 @@ export class ReportsService {
 				//the company from their parent. This is the name of the company to be displayed in personal tasks
 				//or to be used in showing the sub tasks under particular company
 				var cNm;var TCID;
-				if (pData !== ''){cNm = pData.companyName;TCID = pData.companyId;}
+				if (pData !== ''){cNm = pData.companyName;TCID = pData.companyId;}else{cNm = '';TCID = ''};
 				let rowNum=1;
 				//17-June-2019. First check if EntID is given
 				if (EntID !== '') {
 					if (EntID == TCID){
-					addrow(cData,rowNum,start,end + " 23:00:00",TaskName,cNm);
-					rowNum = rowNum+1;
+					push_elements(cData,start,end + " 23:00:00",TaskName,cNm);
 					}
 				}
 				else {
-					addrow(cData,rowNum,start,end + " 23:00:00",TaskName,cNm);
-					rowNum = rowNum+1;
+					push_elements(cData,start,end + " 23:00:00",TaskName,cNm);
 				}
 
 			} // choose actions
 
 		});//Actions get
 
-		//07-June-2019. Alert user after 2 seconds if no data was found. Delay allows code to finish.
+		// create element and render table
+		// 28-June-2019. Create time totals as you fill table
+		var totalHrs = 0;
+
+		var DS = this.dynamicSort;
 		setTimeout(Wait, this.waitTime);
 		function Wait(){
+
+			//20-June-2019. Sorting and filling table done after waiting to allow code to populate arrayall
+			arrayall.sort(DS("sum","desc"));
+			fillTable(arrayall);	
+
 			if (rowCnt == 1){
 				var User = DB.collection('Users').doc(StaffID);
 				User.ref.get().then(function(doc) {
 					alert("No time spent data found for " + doc.data().name);
 				})
+			}else
+				{
+
+				//28-June-2019. Fill bottom row
+				var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
+				var td2: HTMLTableDataCellElement;var td3: HTMLTableDataCellElement;
+				var row: HTMLTableRowElement;
+				row = tableList.insertRow(rowCnt);
+				td0 = row.insertCell(0);
+				td0.innerText = "TOTAL TIME SPENT"
+				td0.style.border = "1px solid #000";
+				
+				td1 = row.insertCell(1)
+
+				td2 = row.insertCell(2);
+				td2.innerText = String(totalHrs);
+				td2.align = "center"
+				td2.style.border = "1px solid #000";
+
 			}
+
 			var btn = (<HTMLButtonElement>document.getElementById(btnID));
 			btn.disabled = false;
 		}
@@ -505,7 +788,7 @@ export class ReportsService {
 			return arrayall
 		}
 
-		function fillTable() {
+		function fillTable(arr) {
 
 			//use combined array passed from push_elements function
 			var prev_action = ''; var d1 = ''; var d2 = ''; var rem = 0;
@@ -515,13 +798,15 @@ export class ReportsService {
 			var td4: HTMLTableDataCellElement; var td5: HTMLTableDataCellElement; 
 			var row: HTMLTableRowElement;
 
-			if (arrayall !== null) {
+			if (arr !== null) {
 
-				arrayall.forEach(function (current_value, index, initial_array) {
+				arr.forEach(function (current_value, index, initial_array) {
 					var action = current_value.action;
-					//console.log(action);
+					
 					if (action !== prev_action) {
 						sum = current_value.hours;
+						//28-June-2019. totalHrs adds like sum but initialized outside filltable to keep grand total
+						totalHrs = totalHrs + current_value.hours;
 						ix1 = index;
 						ix2 = index;
 						prev_action = current_value.action;
@@ -533,29 +818,38 @@ export class ReportsService {
 						td2 = row.insertCell(2);//Start
 						td3 = row.insertCell(3);//End
 						td4 = row.insertCell(4);//Hours
-						if (EntID == ''){td5 = row.insertCell(5)};//compnay Name
+						if (EntID == ''){td5 = row.insertCell(5)};//company Name
 						// determine odd numbered rows
 						rowCnt = rowCnt + 1; rem = rowCnt % 2;
+						
 					}
 					else {
 						sum = sum + current_value.hours;//console.log(sum);
+						//28-June-2019. totalHrs adds like sum but initialized outside filltable to keep grand total
+						totalHrs = totalHrs + current_value.hours;
 						ix2 = index;
 					};
 
 					if (rem == 1) { row.bgColor = 'gainsboro' };
+					
 					// Append data cell containing text to table row
 					td0.innerText = action;
 					if (current_value.taskName == '') { td1.innerText = 'Unplanned' } 
 					else { td1.innerText = current_value.taskName };
-					if (sum !== 0) { d1 = arrayall[ix1].time }; td2.innerText = d1;
-					if (sum !== 0) { d2 = arrayall[ix2].time }; td3.innerText = d2;
-					td4.innerText = String(sum); td4.align = "center";
+					if (sum !== 0) {
+						d1 = arrayall[ix1].time; 
+						td2.innerText = d1;
+						d2 = arrayall[ix2].time;
+						td3.innerText = d2; 
+						td4.innerText = String(sum); 
+						td4.align = "center";
+					}
 					//12-June-2019. Show company name on personal reports
 					if (EntID == ''){td5.innerText = current_value.companyName}
 				})
 			}	
 
-			//07-June-2019. Alert user after a few seconds if no data was found. Delay allows code to finish.
+			//07-June-2019. 1st time out. Alert user after a few seconds if no data was found. Delay allows code to finish.
 			setTimeout(Wait, wTime);
 			function Wait(){
 				
@@ -565,9 +859,6 @@ export class ReportsService {
 						alert("No activity data found for " + doc.data().name);
 					})
 				}
-
-				var btn = (<HTMLButtonElement>document.getElementById(btnID));
-				btn.disabled = false;
 			}
 
 		}
@@ -611,12 +902,36 @@ export class ReportsService {
 		//17-June-2019. 2nd time out for filling table. 1st one positioned inside a loop, to access rowCount
 		//so it can not be used to fill table
 		setTimeout(Table, wTime);
+		//28-June-2019. Variable to  show total hours at table bottom
+		var totalHrs = 0;
 		function Table(){
 			
 			// wait to allow code to run before sorting and filling table
-			arrayall.sort(DS("time"));//console.log(arrayall);
-			fillTable();
-
+			arrayall.sort(DS("time","asc"));//console.log(arrayall);
+			//28-June-2019. Array passed to filltable, instead of being a global variable
+			fillTable(arrayall);
+			
+			//28-June-2019. Fill bottom row
+			var td0: HTMLTableDataCellElement; 
+			var td1: HTMLTableDataCellElement; 
+			var td2: HTMLTableDataCellElement;
+			var td3: HTMLTableDataCellElement; 
+			var td4: HTMLTableDataCellElement;
+			
+			var row: HTMLTableRowElement;
+			let tr = document.createElement("tr");
+			row = tableList.appendChild(tr);
+			td0 = row.insertCell(0);
+			td0.innerText = "TOTAL HOURS"
+			td0.style.border = "1px solid #000";
+			td1 = row.insertCell(1);
+			td2 = row.insertCell(2);
+			td3 = row.insertCell(3);
+			td4 = row.insertCell(4);
+			td4.innerText = String(totalHrs);
+			td4.align = "center"
+			td4.style.border = "1px solid #000";
+				
 			var btn = (<HTMLButtonElement>document.getElementById(btnID));
 			btn.disabled = false;
 		}
@@ -735,9 +1050,9 @@ export class ReportsService {
 
 		});//Actions get
 
-		//07-June-2019. Alert user after 2 seconds if no data was found. Delay allows code to finish.
-		setTimeout(cntRows, 3000);
-		function cntRows(){
+		//07-June-2019. Alert user after given seconds if no data was found. Delay allows code to finish.
+		setTimeout(Wait, this.waitTime);
+		function Wait(){
 			if (rowCnt == 1){alert("No OS actions data found for selected staff");}
 			//Enable click button after 3 seconds from time it was clicked.
 			//This is to prevent users clicking too many times in succession
@@ -747,73 +1062,95 @@ export class ReportsService {
 
 	} //rsosactions closing bracket
 
-	OS_Tasks(Tasks,StaffID,EntID,DateAsAt,TbId,btnID) {
+	OS_Tasks(Tasks,StaffID,EntID,AsAt,TbId,btnID) {
 
 		let tableList = document.querySelector(TbId);
-		var rowCnt = 1;var DB = this.db;
+		var rowCnt = 1;
+		var arrayall = new Array();
+		
+		function push_elements(doc,company) {
+			
+			var element = Array();
+			element['name'] = doc['name'];
+			element['start'] = doc['start'];
+			//element['startDay'] = doc['startDay'];
+			element['finish'] = doc['finish'];
+			element['classification'] = doc.classification.name;
+			element['company'] = company;
+			arrayall.push(element);
+	
+		}
 
-		// create element and render table
-		function addrow(doc,rowPos, AsAt) {
+		function fillTable(arr) {
 
 			var rem = 0;
 			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
-			var td2: HTMLTableDataCellElement;var td3: HTMLTableDataCellElement; 
-			var row: HTMLTableRowElement;
+			var td2: HTMLTableDataCellElement; var td3: HTMLTableDataCellElement; 
+		 	var row: HTMLTableRowElement;
 
-			// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
-			row = tableList.insertRow(rowPos);
-			// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-			td0 = row.insertCell(0);//Task Activity
-			td1 = row.insertCell(1);//Planned Finish
-			td2 = row.insertCell(2);//Classification
-			//07-June-2019. Add company column for personal reports for clarity 
-			if (EntID == ''){td3 = row.insertCell(3);td3.innerText = doc.companyName}
+			//console.log(arr);
 
-			// 20-May-2019. Put Task name in first column
-			if (doc.name == '') { td0.innerText = 'Unplanned' } else { td0.innerText = doc.name };
-			let PlannedFinish = doc.finish;
-			// 20-May-2019. Pick tasks whose finish date has passed Date As At
-			if (PlannedFinish <= AsAt) {
+			if (arr !== null) {
 
-				let Classification = doc.classification.name;
-				td1.innerText = PlannedFinish;
-				td2.innerText = Classification;
+				arr.forEach(function (elm) {
+					
+					// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
+					row = tableList.insertRow(rowCnt);
+					// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+					td0 = row.insertCell(0);//Task
+					td1 = row.insertCell(1);//Planned Start
+					td2 = row.insertCell(2);//Classification
+			
+					if (EntID == ''){td3 = row.insertCell(3);td3.innerText = elm.company}
+		
+					// 20-May-2019. Put Task name in first column
+					td0.innerText = elm.name;
 
-				// determine odd numbered rows
-				rowCnt = rowCnt + 1; rem = rowCnt % 2;
-				if (rem == 1) { row.bgColor = 'gainsboro' };
+					td1.innerText = elm.finish;
+					td2.innerText = elm.classification;
 
-			}
-		}
+					// determine odd numbered rows
+					rowCnt = rowCnt + 1; rem = rowCnt % 2;
+					if (rem == 1) { row.bgColor = 'gainsboro' };
+
+				}) // for each
+				
+			} // if arr is not null
+
+		} // filltable
 
 		Tasks.then((ref) => {
 			ref.forEach(doc => {
-			let rowNum=1;
 				//17-June-2019. First check if EntID is given
 				if (EntID !== '') {
-					if (EntID == doc.data().companyId){
-					addrow(doc.data(), rowNum, DateAsAt);
-					rowNum = rowNum+1;
+					if (EntID == doc.data().companyId && doc.data().finish <= AsAt){
+					push_elements(doc.data(),doc.data().companyName);
 					}
 				}
-				else {
-					addrow(doc.data(), rowNum, DateAsAt);
-					rowNum = rowNum+1;
+				else if (doc.data().finish <= AsAt){
+					push_elements(doc.data(),doc.data().companyName);
 				}
 			})
 		}); //Tasks get
 
+		var DB = this.db;
+		var DS = this.dynamicSort;
+
 		//05-June-2019. Alert user after a few seconds if no data was found. Delay allows code to finish.
 		setTimeout(Wait, this.waitTime);
 		function Wait(){
-		
+			
+			//20-June-2019. Sorting and filling table done after waiting to allow code to populate arrayall
+			arrayall.sort(DS("finish","asc"));
+			fillTable(arrayall);
+
 			if (rowCnt == 1){
 				var User = DB.collection('Users').doc(StaffID);
 				User.ref.get().then(function(doc) {
 					alert("No outstanding tasks found for " + doc.data().name);
 				})
 			}
-
+			
 			var btn = (<HTMLButtonElement>document.getElementById(btnID));
 			btn.disabled = false;
 		}
@@ -850,7 +1187,7 @@ export class ReportsService {
 
 			if (arr !== null) {
 
-				arr.forEach(function (doc) {
+				arr.forEach(function (elm) {
 					
 					// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
 					row = tableList.insertRow(rowCnt);
@@ -861,35 +1198,35 @@ export class ReportsService {
 					td3 = row.insertCell(3);//Planned Finish Time
 					//07-June-2019. Add company column for personal reports for clarity
 					//12-June-2019. Company name passed from calling sub
-					if (EntID == ''){td4 = row.insertCell(4);td4.innerText = doc.company}
+					if (EntID == ''){td4 = row.insertCell(4);td4.innerText = elm.company}
 					// Add some text to the new cells:
 					//04-June-2019. Put Activity name in first column
-					td0.innerText = doc.name;
-					td1.innerText = doc.task;
+					td0.innerText = elm.name;
+					td1.innerText = elm.task;
 		
 					//04-June-2018. Choose start and end differently for daily and weekly plans
 					if (Period == "d"){
-						td2.innerText = doc.start;
-						td3.innerText = doc.end;
+						td2.innerText = elm.start;
+						td3.innerText = elm.end;
 					}
 					
 					else if(Period == "w") {
-						if (doc.startDate == undefined || doc.startDate == 'Invalid date' || doc.startDate == ''){
+						if (elm.startDate == undefined || elm.startDate == 'Invalid date' || elm.startDate == ''){
 							PlanS = '';
 							td2.innerText = PlanS;
 						}
 						else {
-							var s = new Date(doc.startDate);
+							var s = new Date(elm.startDate);
 							PlanS = s.getDate() + "-" + months[s.getMonth()] + "-" + s.getFullYear();
 							// Pick task so long as it is ticked, hence do not compare planned dates
 							td2.innerText = PlanS;
 						}
-						if (doc.endDate == undefined || doc.endDate == 'Invalid date' || doc.endDate == ''){
+						if (elm.endDate == undefined || elm.endDate == 'Invalid date' || elm.endDate == ''){
 							PlanE = '';
 							td3.innerText = PlanE;
 					   }
 					   else {
-							var e = new Date(doc.endDate);
+							var e = new Date(elm.endDate);
 							PlanE = e.getDate() + "-" + months[e.getMonth()] + "-" + e.getFullYear();
 							td3.innerText = PlanE;
 					   }
@@ -983,9 +1320,9 @@ export class ReportsService {
 			
 			//14-June-2019. Sorting and filling table done after waiting to allow code to populate arrayall
 			if (Period == "d")
-				{arrayall.sort(DS("start"));}
+				{arrayall.sort(DS("start","asc"));}
 			else
-				{arrayall.sort(DS("startDate"));
+				{arrayall.sort(DS("startDate","asc"));
 			}
 			
 			fillTable(arrayall);
@@ -1007,8 +1344,18 @@ export class ReportsService {
 
 	} //Plan closing bracket
 
+	printReport() {
+		window.print();
+	  }
+	  
+	Back() {
+		window.history.back();
+	}
+
 	//05-June-2019. The following functions initializes the various reports
 	rOnInit(Person,SD,ED){
+
+		this.Previous();
 
 		//04-June-2019. Display User name even before user has chosen to generate report
 		var User = this.db.collection('Users').doc(this.UID);
@@ -1017,9 +1364,12 @@ export class ReportsService {
 			document.getElementById(Person).innerHTML = doc.data().name;
 		})
 
+		// 26-June-2019. Provide for no date at all
 		let Tdy = this.ISODate(Date(),'').substring(0,10)
+		if (SD !== ''){
 		let Inp1 = (<HTMLInputElement>document.getElementById(SD));
 		Inp1.value = Tdy;
+		}
 
 		if (ED !== ''){
 		let Inp2 = (<HTMLInputElement>document.getElementById(ED));
@@ -1030,27 +1380,35 @@ export class ReportsService {
 
 	rOnInit_e(Org,NameList,SD,ED){
 		
+		this.Previous();
+
 		document.getElementById(Org).innerText = "Enterprise: " + this.EnterpriseName;
    
 		// 15-May-2019. Create name drop down list based on hierarchy
 		this.getParticipants(this.EID, "Executive");
 		//populate users generated from above
-		var namelist = document.getElementById(NameList);
+		var namelist = (<HTMLInputElement>document.getElementById(NameList));
 		var opt: HTMLOptionElement;
   
 		var i = 1;
 		this.Participants.get().then((ref) => {
 			ref.forEach(doc => {
 				//05-June-2019. Prepare data and show hierarchy of first person shown
+				opt = document.createElement("option");
+				opt.value = String(i); 
+				opt.innerText = doc.data().name; 
+				namelist.appendChild(opt);
+				//19-June-19. Select previous name if it's defined
+				if (localStorage['name'] == doc.data().name){
+					opt.selected=true;
+					this.User_Hky = ' ' + doc.data().hierarchy;
+				}else
 				if (i == 1){
 					this.User_Hky = ' ' + doc.data().hierarchy;
 				};
-			  	opt = document.createElement("option");
-			  	opt.value = String(i); 
-			  	opt.innerText = doc.data().name; 
-			  	namelist.appendChild(opt);
-			  	i = i+1;
+				i = i+1;
 			});
+			
 		});
 
 		let Tdy = this.ISODate(Date(),'').substring(0,10)
