@@ -26,9 +26,12 @@ import { ROsTasksComponent } from './r-os-tasks/r-os-tasks.component';
 // Added 04-June-19 by VJ Sibanda
 import { RDailyPlanComponent } from './r-daily-plan/r-daily-plan.component';
 import { RWeeklyPlanComponent } from './r-weekly-plan/r-weekly-plan.component';
-// Added 19-June by VJ Sibanda
+// Added 19-June-19 by VJ Sibanda
 import { PersonalRdashboardComponent } from './dashboard-personal-reports/dashboard-personal-reports.component';
-
+// Added 26-June-19 by VJ Sibanda
+import { RTimeBudgetComponent } from './r-time-budget/r-time-budget.component';
+// Added 28-June-19 by VJ Sibanda
+import { RTimeActualComponent } from './r-time-actual/r-time-actual.component';
 
 @NgModule({
     imports: [
@@ -36,8 +39,8 @@ import { PersonalRdashboardComponent } from './dashboard-personal-reports/dashbo
         RouterModule.forChild(CalendarRoutes),
         FormsModule, NgSelectModule, NgxChartsModule, TagInputModule,
     ],
-    declarations: [CalendarComponent, MapTaskComponent, ImplementationComponent, DiaryComponent, TimesheetComponent, PopupComponent, TotalsActionItemsComponent,
-        ActivityLogComponent, ClassificationTimesheetComponent, PersonalRdashboardComponent,RActivityLogComponent, RdashboardComponent, RTimeSpentComponent, PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent]
+    declarations: [CalendarComponent,MapTaskComponent,ImplementationComponent,DiaryComponent,TimesheetComponent, PopupComponent, TotalsActionItemsComponent,
+        ActivityLogComponent,RTimeBudgetComponent,RTimeActualComponent,ClassificationTimesheetComponent,PersonalRdashboardComponent, RActivityLogComponent, RdashboardComponent, RTimeSpentComponent, PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent]
 })
 
 export class CalendarModule {}
