@@ -75,7 +75,7 @@ export const AppRoutes: Routes = [{
             loadChildren: './pages/pages.module#PagesModule'
         },{
             path: '',
-            loadChildren: './individual-rpts/individual-rpts.module#IndividualRptsModule'
+            loadChildren: './enterprise-rpts/enterprise-rpts.module#IndividualRptsModule'
         },{
             path: '',
             loadChildren: './departmental-rpts/departmental-rpts.module#DepartmentalRptsModule'

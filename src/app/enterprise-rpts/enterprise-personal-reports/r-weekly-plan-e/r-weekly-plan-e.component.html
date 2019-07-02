@@ -1,0 +1,34 @@
+<div class="main-content">
+    <div class="card card-body">
+               
+    <div style="text-align:left;margin-left: 0px">
+        <img alt="Colours Logo" width="100" src="../../../assets/img/Colourslogo.PNG">
+    </div>
+
+    <div style="text-align: right">
+        <button class="btn-link btn-magnify" (click)="rService.printReport()">Print</button> 
+        <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
+    </div>  
+
+<h3 id="org4" style="margin-top:-0.5em">Personal Reports</h3>
+
+<h3 style="margin-top:-0.5em">Participant:
+    <span><select id="name-list4"></select></span>
+    <span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
+
+<h4 style="margin-top:-0.5em" >Weekly Plan As At <span>
+        <input type="date" id="startdate4">
+        <button id="btn4" (click)="rService.rweeklyplan_e()">Generate Weekly Plan</button>
+    </span></h4>
+
+<table id="TbId4">
+    <!-- headings -->
+    <tr>
+        <th>Sub Task</th>
+        <th>Task Name</th>
+        <th>Planned Start</th>
+        <th>Planned Finish</th>
+    </tr>
+</table>
+</div>
+</div>

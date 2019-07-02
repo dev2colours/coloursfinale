@@ -12,26 +12,25 @@ import { CalendarComponent } from './calendar.component';
 import { CalendarRoutes } from './calendar.routing';
 import { MapTaskComponent } from './map-task/map-task.component';
 import { ImplementationComponent } from './implementation/implementation.component';
-import { TimesheetComponent } from './timesheet/timesheet.component';
+import { TimesheetComponent } from './personal-reports/timesheet/timesheet.component';
 import { PopupComponent } from './popup/popup.component';
-import { TotalsActionItemsComponent } from './totals-action-items/totals-action-items.component';
-import { ActivityLogComponent } from './activity-log/activity-log.component';
+import { TotalsActionItemsComponent } from './personal-reports/totals-action-items/totals-action-items.component';
+import { ActivityLogComponent } from './personal-reports/activity-log/activity-log.component';
 import { ClassificationTimesheetComponent } from './classification-timesheet/classification-timesheet.component';
-import { RActivityLogComponent } from './r-activity-log/r-activity-log.component';
-import { RdashboardComponent } from './rdashboard/rdashboard.component';
-import { RTimeSpentComponent } from './r-time-spent/r-time-spent.component';
-import { PersonalInfoReportComponent } from './personal-info-report/personal-info-report.component';
+import { RActivityLogComponent } from './personal-reports/r-activity-log/r-activity-log.component';
+import { RTimeSpentComponent } from './personal-reports/r-time-spent/r-time-spent.component';
+import { PersonalInfoReportComponent } from './personal-reports/personal-info-report/personal-info-report.component';
 import { DiaryComponent } from './diary/diary.component';
-import { ROsTasksComponent } from './r-os-tasks/r-os-tasks.component';
+import { ROsTasksComponent } from './personal-reports/r-os-tasks/r-os-tasks.component';
 // Added 04-June-19 by VJ Sibanda
-import { RDailyPlanComponent } from './r-daily-plan/r-daily-plan.component';
-import { RWeeklyPlanComponent } from './r-weekly-plan/r-weekly-plan.component';
+import { RDailyPlanComponent } from './personal-reports/r-daily-plan/r-daily-plan.component';
+import { RWeeklyPlanComponent } from './personal-reports/r-weekly-plan/r-weekly-plan.component';
 // Added 19-June-19 by VJ Sibanda
-import { PersonalRdashboardComponent } from './dashboard-personal-reports/dashboard-personal-reports.component';
+import { PersonalRdashboardComponent } from './personal-reports/personal-reports.component';
 // Added 26-June-19 by VJ Sibanda
-import { RTimeBudgetComponent } from './r-time-budget/r-time-budget.component';
+import { RTimeBudgetComponent } from './personal-reports/r-time-budget/r-time-budget.component';
 // Added 28-June-19 by VJ Sibanda
-import { RTimeActualComponent } from './r-time-actual/r-time-actual.component';
+import { RTimeActualComponent } from './personal-reports/r-time-actual/r-time-actual.component';
 
 @NgModule({
     imports: [
@@ -40,7 +39,7 @@ import { RTimeActualComponent } from './r-time-actual/r-time-actual.component';
         FormsModule, NgSelectModule, NgxChartsModule, TagInputModule,
     ],
     declarations: [CalendarComponent,MapTaskComponent,ImplementationComponent,DiaryComponent,TimesheetComponent, PopupComponent, TotalsActionItemsComponent,
-        ActivityLogComponent,RTimeBudgetComponent,RTimeActualComponent,ClassificationTimesheetComponent,PersonalRdashboardComponent, RActivityLogComponent, RdashboardComponent, RTimeSpentComponent, PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent]
+        ActivityLogComponent,RTimeBudgetComponent,RTimeActualComponent,ClassificationTimesheetComponent,PersonalRdashboardComponent, RActivityLogComponent, RTimeSpentComponent, PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent]
 })
 
 export class CalendarModule {}
