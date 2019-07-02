@@ -1,0 +1,33 @@
+<div class="main-content">
+    <div class="card card-body">
+    
+    <div style="text-align:left">
+        <img alt="Southland Logo" src="../../../assets/img/Colourslogo.PNG">
+    </div>
+
+    <div style="text-align: right">
+        <button class="btn-link btn-magnify" (click)="rService.printReport()">Print</button> 
+        <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
+    </div> 
+    
+    <!-- Table heading -->
+    <h2 id="UserP6"style="margin-top:-0.5em" >User</h2>
+
+    <h4 style="margin-top:-0.5em">My Time Budget versus Actuals for the period from <span>
+        <input type="date" id="startdateP6">
+        </span> to <span>
+        <input type="date" id="enddateP6">
+    <button id="btnP6" (click)="rService.rtimeactual()">View Time Budget vs Actuals</button>
+    </span></h4>
+    <!-- Table rows and headings only -->
+    <table id="TbIdP6">
+        <!-- headings -->
+        <tr>
+            <th>Life Classification Description</th>
+            <th style="text-align:center">Time Budget (in hours)</th>
+            <th style="text-align:center">Actual Hours Spent</th>
+            <th style="text-align:center">Variance</th>
+        </tr>
+    </table>
+</div>
+</div>

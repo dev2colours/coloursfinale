@@ -1,0 +1,280 @@
+<div class="tab-pane" id="reports">
+
+<div style="text-align:left;margin-top:2em;margin-left:3em">
+    <img alt="Colours Logo" width="100" src="../../../assets/img/Colourslogo.PNG">
+</div>
+
+<p class="clrs-h1-font" style="margin-top:1.5em; margin-left:2em; color:darkslategray">{{rService.EnterpriseName}} Personal Reports...</p>
+
+<div class="col-md-12">
+<div class="card">
+
+<div class="card-body" style="margin-top:-5em;">
+
+  <div style="text-align: right">
+    <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
+  </div>
+  
+  <div class="nav-tabs-navigation">
+    <div class="nav-tabs-wrapper">
+      <ul id="tabs" class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" data-toggle="tab" href="#personal" role="tab" aria-expanded="true">Private</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#public" role="tab" aria-expanded="false">Public</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="my-tab-content" class="tab-content text-center">
+    <!-- start Here -->
+
+<!------------------------------------------ENTERPRISE PRIVATE---------------------------------------------->
+
+    <div class="tab-pane active" id="personal" role="tabpanel" aria-expanded="true">
+      <!-- <code>personal</code> -->
+
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-12">
+            <p class="text-left title card-category" style="color: darkslategray">
+              Many other Reports and Metrics are coming up covering all corners of a project, an enterprise and personal life
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">
+              <span> <a routerLink="/rweeklyplan-e">Weekly Plan</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">
+              <span> <a routerLink="/rdailyplan-e">My Daily Plan</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12 ml-auto mr-auto">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-left title " style="color: darkslategray">
+                <span> <a routerLink="/ractivitylog-e">Time Sheet Report in a period</a></span>
+              </p>
+            </div>
+          </div>
+      </div>
+
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">
+              <span> <a routerLink="/rtimespent-e">Total Time Spent on an Activity in a period</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    
+      <div class="col-md-12 ml-auto mr-auto">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-left title " style="color: darkslategray">
+                <span> <a routerLink="/rostasks-e">Outstanding Tasks</a></span>
+              </p>
+            </div>
+          </div>
+      </div>
+    
+    <div hidden>
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">My Work Time Sheet as @</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">My Cumulative Time Sheet for Period
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left title " style="color: darkslategray">My Weekly Time Budget</p>
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left title " style="color: darkslategray">Time Budget Actual vs
+          Planned</p>
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left title " style="color: darkslategray">Tasks</p>
+        <!-- <br> -->
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left title " style="color: darkslategray">Health Factor</p>
+        <!-- <br> -->
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left title " style="color: darkslategray">Work Factor</p>
+        <!-- <br> -->
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left" style="color: darkslategray"><span class="title ">Net Worth</span>
+          (<small>As to date</small>)</p>
+        <!-- <br> -->
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left title " style="color: darkslategray">Schedule of Outstanding Personal Tasks
+        </p>
+        <!-- <br> -->
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left title " style="color: darkslategray">Personal Project Reports
+        </p>
+        <!-- <br> -->
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left title " style="color: darkslategray">User`s Enterprise Internal Reports</p>
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left title " style="color: darkslategray">Personal Internal Perfomance reviews</p>
+        <!-- <br> -->
+      </div>
+      <div class="col-md-12 ml-auto mr-auto">
+        <p class="text-left title " style="color: darkslategray">Profile Summary</p>
+        <!-- <br> -->
+      </div>
+    </div>
+    
+      
+    </div>
+<!----------------------------------------ENTERPRISE PUBLIC---------------------------------------------->
+  
+<div class="tab-pane" id="public" role="tabpanel" aria-expanded="true">
+      
+<!-- <code>public</code> -->
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-12">
+            <p class="text-left title card-category" style="color: darkslategray">
+              Many other Reports and Metrics are coming up covering all corners of a project, an enterprise and personal life
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">
+              <span> <a routerLink="/rweeklyplan-e">Weekly Plan</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">
+              <span> <a routerLink="/rdailyplan-e">My Daily Plan</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-12 ml-auto mr-auto">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-left title " style="color: darkslategray">
+                <span> <a routerLink="/rostasks-e">Outstanding Tasks</a></span>
+              </p>
+            </div>
+          </div>
+        </div>
+    
+      <div hidden>
+        <div class="col-md-12 ml-auto mr-auto">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-left title " style="color: darkslategray">My Work Time Sheet as @</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-left title " style="color: darkslategray">My Cumulative Time Sheet for Period
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left title " style="color: darkslategray">My Weekly Time Budget</p>
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left title " style="color: darkslategray">Time Budget Actual vs
+            Planned</p>
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left title " style="color: darkslategray">Tasks</p>
+          <!-- <br> -->
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left title " style="color: darkslategray">Health Factor</p>
+          <!-- <br> -->
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left title " style="color: darkslategray">Work Factor</p>
+          <!-- <br> -->
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left" style="color: darkslategray"><span class="title ">Net Worth</span>
+            (<small>As to date</small>)</p>
+          <!-- <br> -->
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left title " style="color: darkslategray">Schedule of Outstanding Personal Tasks
+          </p>
+          <!-- <br> -->
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left title " style="color: darkslategray">Personal Project Reports
+          </p>
+          <!-- <br> -->
+        </div>Total time spent on an activity in a period
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left title " style="color: darkslategray">User`s Enterprise Internal Reports</p>
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left title " style="color: darkslategray">Personal Internal Perfomance reviews</p>
+          <!-- <br> -->
+        </div>
+        <div class="col-md-12 ml-auto mr-auto">
+          <p class="text-left title " style="color: darkslategray">Profile Summary</p>
+          <!-- <br> -->
+        </div>
+      </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    <!-- End Here -->
+  </div>
+</div>

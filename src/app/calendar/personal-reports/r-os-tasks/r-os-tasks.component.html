@@ -1,0 +1,31 @@
+<div class="main-content">
+    <div class="card card-body">
+
+        <div style="text-align:left;margin-left: 0px">
+            <img alt="Colours Logo" width="100" src="../../../assets/img/Colourslogo.PNG">
+        </div>
+
+        <div style="text-align: right">
+            <button class="btn-link btn-magnify" (click)="rService.printReport()">Print</button> 
+            <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
+        </div> 
+    
+        <h2 id="UserP0" style="margin-top:-0.5em">User</h2>
+    
+        <h4 style="margin-top:-0.5em">Schedule of Outstanding Tasks as at <span>
+                <!-- placeholder will not work, so stuck with dd----yyyyy -->
+                <input type="date" id="startdateP0">
+        <button id="btnP0" (click)="rService.rostasks()">View Oustanding Tasks for selected date</button>
+        </span></h4>
+        <!-- Table rows and headings only -->
+        <table id="TbIdP0">
+            <!-- headings -->
+            <tr>
+                <th>Task</th>
+                <th>Planned Finish Date</th>
+                <th>Classification</th>
+                <th>Company Name</th>
+            </tr>
+        </table>
+    </div>
+</div>

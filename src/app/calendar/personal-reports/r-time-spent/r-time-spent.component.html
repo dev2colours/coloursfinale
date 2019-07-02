@@ -1,0 +1,36 @@
+<div class="main-content">
+    <div class="card card-body">
+    
+    <div style="text-align:left">
+        <img alt="Southland Logo" src="../../../assets/img/Colourslogo.PNG">
+    </div>
+
+    <div style="text-align: right">
+        <button class="btn-link btn-magnify" (click)="rService.printReport()">Print</button> 
+        <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
+    </div> 
+    
+    <h2 id="UserP1" style="margin-top:-0.5em">User</h2>
+
+    <h4 style="margin-top:-0.6em">Total Time spent on an Activity for the period from <span>
+            <!-- placeholder will not work, so stuck with dd----yyyyy -->
+            <input type="date" id="startdateP1">
+        </span> to <span>
+            <input type="date" id="enddateP1">
+    <!-- <button (click)="rService.rtimespentshow()">Generate report for selected period</button> -->
+    <button id="btnP1" (click)="rService.rtimespent()">Generate report for selected period</button>
+    </span></h4>
+    <!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
+    <!-- button (click)="rService.clearTable()">Clear table</button> -->
+    <!-- Table rows and headings only -->
+    <table id="TbIdP1">
+        <!-- headings -->
+        <tr>
+            <th>Sub Task</th>
+            <th>Task Name</th>
+            <th style="text-align:center">Hours Spent</th>
+            <th>Company Name</th>
+        </tr>
+    </table>
+</div>
+</div>
