@@ -758,13 +758,13 @@ export class TaskService {
     this.userTaskCol.subscribe(usersRef => {
       this.usersData = usersRef;
       this.usersData.forEach(element => {
-        // console.log(element.name);
+        console.log(element.name);
         this.userTaskCollection = this.afs.collection('Users').doc(element.id).collection<Task>('tasks').valueChanges();
         this.userTaskColRef = this.afs.collection('Users').doc(element.id).collection('tasks');
         // this.clipTasks(this.userTaskCollection, this.userTaskColRef);
         this.userTaskCollection.subscribe(userstasks => {
           userstasks.forEach(item => {
-            // console.log(item.name);
+            console.log(item.name);
 
             if (item.name === "") {
               console.log(item.id);
@@ -830,6 +830,7 @@ export class TaskService {
   
   }
       // this.usersData.forEach(function (element, index) {
+
   middleFcn(userTaskCollection){
     userTaskCollection.subscribe(userstasks => {
       // userstasks.forEach(item => {
