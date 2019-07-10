@@ -19,6 +19,7 @@ export interface Project {
 }
 
 export interface projectCompDetail { id: string, name: string };
+
 export interface abridgedBill {
     section:Section,  id: string, name: string, No: number, projectId: string,
     projectName: string, companyId: string, companyName: string, totalAmount: number,
@@ -36,9 +37,17 @@ export interface workItem {
     actualStart: string, actualEnd: string, Hours: string, selectedWeekWork: boolean, selectedWeekly: boolean
  };
 
+// export interface sectWorkItem extends workItem { section: string, sectionNumber: number }
+
 export interface Section {
-    id: string, no: number, name: string, projectId: string, projectName: string, companyId: string, companyName: string, Bills: [abridgedBill],
+    id: string, no: number, name: string, projectId: string, projectName: string, companyId: string, companyName: string, Bills: [abridgedBill], type: string
 }
+
+export interface  subSection {
+    id: string, no: number, name: string, type: string, sectionNo: number, sectionName: string, sectionId: string, projectId: string, projectName: string, companyId: string, companyName: string, Bills: [abridgedBill] 
+}
+
+export interface superSections extends Section { subSections: [subSection] }
 
 export interface workHours {
     name: string; action: string; actionId: string; hours: number, time: string;

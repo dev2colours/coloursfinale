@@ -46,7 +46,7 @@ export class InitialiseService {
     this.classification = { name: "", createdOn: "", plannedTime: "", actualTime: "", Varience: "", id: "" };
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
     this.compChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
-    this.section = { id: "", no:  null, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills:null }
+    this.section = { id: "", no: null, name: "", type: 'superSection', projectId: "", projectName: "", companyId: "", companyName: "", Bills:null }
     this.task = { name: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: this.userChampion, createdOn: "", id: "", location: "", sector: "", completion:"" };
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };

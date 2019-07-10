@@ -12,7 +12,7 @@
               </h4>
             </div>
           </div>
-          <div class="col-md-2">
+          <div *ngIf="userId === (duflowKey + est)" class="col-md-2">
             <!-- <button class="btn-link btn-magnify" (click)="Update()">Update</button> -->
             <button class="btn-link btn-magnify" (click)="update2()">Update</button>
           </div>
@@ -50,7 +50,9 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto" style="padding-right: 0px;padding-left: 0px;"> <!--  dash-size  -->
+            <!-- <div class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto" style="padding-right: 0px;padding-left: 0px;"> -->
+            <div class="col-lg-10 col-md-9 col-sm-8 col-6">
+
               <div class="tab-content" style="padding-left:0px">
                 <div class="tab-pane active" id="dash">
                   <div class="row">

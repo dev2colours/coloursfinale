@@ -426,6 +426,8 @@ export class CreateComponent implements OnInit {
     let entRef = this.afs.collection('Enterprises').doc(company.id).collection('projects');
     let myProRef = this.afs.collection('/Users').doc(this.userId).collection('projects');
     let champProRef = this.afs.collection('/Users').doc(championId).collection('projects');
+    let nrouter = this.router;
+
     myProRef.add(project).then(function (pref) {
       ////Add this.project to users collection of projects
       console.log(pref.id);
@@ -445,10 +447,12 @@ export class CreateComponent implements OnInit {
         console.log('enterprise project');
       }
       project.id = projectId;
+    }).then(() => {
+      nrouter.navigate(['projects/', project.id]);
     });
     this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.setProject(project);
-    this.pNxtPage();
+    // this.pNxtPage();
   }
 
   setProject(project) {
@@ -557,7 +561,7 @@ export class CreateComponent implements OnInit {
       }
     });
 
-    this.section = { id: "", no: 0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills: null }
+    this.section = { id: "", type: "", no: 0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills: null }
     this.theSections = this.ps.getProjectSections(this.savedProject.id);
     this.newProjectSections = myProRef.valueChanges();
   }

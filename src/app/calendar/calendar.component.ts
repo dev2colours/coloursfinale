@@ -62,7 +62,7 @@ export class CalendarComponent implements OnInit {
   myTasksTry: Task[];
   myProjects: Observable<Project[]>;
   public selectedClassification: classification;
-
+  est: string = 'TNE1F77IjRzDZr2';
   public newStandard: personalStandards;
   stdPeriods: { id: string; name: string; }[];
   public selectedPeriod: selectedPeriod;
@@ -84,6 +84,7 @@ export class CalendarComponent implements OnInit {
   NoOfCompanyCompleteTasks: number;
   NoOfProCompleteTasks: number;
   compRatio: number;
+  duflowKey: string = 'srjSRMzLN0NXM';
   proRatio: number;
   allCompleteTasks = [];
   tasksEmChamp: any;
@@ -833,10 +834,13 @@ export class CalendarComponent implements OnInit {
       this.myData = myData;
       // this.userData = userData;
 
-      let liabilityArr = userData.personalLiabilities;
+      let liabilityArr = [];
+      liabilityArr = userData.personalLiabilities;
       let totalLialibility$ = 0;
       // liabilityArr.forEach(element => {
-      (userData.personalLiabilities).forEach(element => totalLialibility$ = + element.amount);
+      // (userData.personalLiabilities).forEach(element => totalLialibility$ = + element.amount);
+      
+      (liabilityArr).forEach(element => totalLialibility$ = + element.amount);
 
       let assetArr = userData.personalAssets;
       let totalAsset$ = 0;
@@ -1093,14 +1097,14 @@ export class CalendarComponent implements OnInit {
       if (a.complete == true) {
 
         this.allCompleteTasks.push(a);
-        console.log(this.companyCompleteTasks);
+        // console.log(this.companyCompleteTasks);
       }
     }))
 
     this.allMyTasks.forEach(element => element.map(a =>  {
       if (a.projectId) {
         this.projectsTasks.push(a);
-        console.log(this.projectsTasks);
+        // console.log(this.projectsTasks);
         if (a.complete == true) {
           this.projectsCompleteTasks.push(a);
           console.log(this.projectsCompleteTasks);
@@ -1114,11 +1118,11 @@ export class CalendarComponent implements OnInit {
     this.allMyTasks.forEach(element => element.map(a => {
         if (a.companyId) {
         this.companyTasks.push(a);
-        console.log(this.companyTasks);
+        // console.log(this.companyTasks);
         if (a.complete == true) {
 
           this.companyCompleteTasks.push(a);
-          console.log(this.companyCompleteTasks);
+          // console.log(this.companyCompleteTasks);
         }
 
         this.NoOfCompanyTasks = this.companyTasks.length;
@@ -1139,15 +1143,15 @@ export class CalendarComponent implements OnInit {
       this.classArray.forEach(element => {
         totalPlannedTime = totalPlannedTime + Number(element.plannedTime);
         this.totalPlannedTime = totalPlannedTime;
-        console.log('totalPlannedTime -->' + ' ' + totalPlannedTime);
+        // console.log('totalPlannedTime -->' + ' ' + totalPlannedTime);
 
         totalActualTime = totalActualTime + Number(element.actualTime);
         this.totalActualTime = totalActualTime;
-        console.log('totalActualTime -->' + ' ' + totalActualTime);
+        // console.log('totalActualTime -->' + ' ' + totalActualTime);
 
         totalVarience = + Number(element.Varience);
         this.totalVarience = totalVarience;
-        console.log('totalVarience -->' + ' ' + totalVarience);
+        // console.log('totalVarience -->' + ' ' + totalVarience);
       });
       this.classArray.length;
 

@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
 // import { EqualValidator } from './equal-validator.directive';
+// import { MatButtonModule, MatCheckboxModule } from '@angular/material';
+
 import { JWBootstrapSwitchModule } from 'jw-bootstrap-switch-ng2';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -21,6 +23,7 @@ import { CreateProjectComponent } from './p-create/p-create.component';
         CommonModule,
         RouterModule.forChild(ProjectsRoutes),
         FormsModule, NgSelectModule, JWBootstrapSwitchModule, NgbModule, TagInputModule
+        // FormsModule, NgSelectModule, JWBootstrapSwitchModule, NgbModule, TagInputModule, MatButtonModule, MatCheckboxModule
     ],
     declarations: [ProjectsComponent, ViewComponent, ProjectsCalendarComponent, JoinProjectComponent, CreateProjectComponent]
 })

@@ -162,14 +162,14 @@ export class NavbarComponent implements OnInit {
             bus_email: "", id: "", name: "", phoneNumber: "",
             project: is.getSelectedProject(), photoURL: "", address: "", nationalId: "", nationality: ""
         };
-        console.log('test hours n minutes');
+        // console.log('test hours n minutes');
         
         // let tHours = (moment().hours()).toLocaleString();
         // let tMinutes = (moment().hours().toLocaleString());
 
         // let fullTym = tHours + ':' + tMinutes;
-        console.log(" theTime is", (moment().hours()) + ':' + (moment().minutes()));
-        console.log("2. theTime is", (moment().format('HH:mm')) + ':' + (moment().format('HH:mm')));
+        // console.log(" theTime is", (moment().hours()) + ':' + (moment().minutes()));
+        // console.log("2. theTime is", (moment().format('HH:mm')) + ':' + (moment().format('HH:mm')));
         
         this.userProject = is.getSelectedProject();
         this.connectingProject = is.getSelectedProject();
@@ -189,14 +189,14 @@ export class NavbarComponent implements OnInit {
         this.timedstamp = 0;
 
         let timesheetworktime = String(moment(new Date().getTime()));
-        console.log(moment(timesheetworktime).week());
+        // console.log(moment(timesheetworktime).week());
         
         afAuth.user.subscribe(user => {
             this.userId = user.uid;
             this.user = user;
             this.coloursUsername = user.displayName;
-            console.log(this.userId);
-            console.log(this.user);
+            // console.log(this.userId);
+            // console.log(this.user);
             this.companies = es.getCompanies(user.uid);
             this.projects = es.getProjects(user.uid);
             this.myprojects = es.getPersonalProjects(user.uid);
@@ -210,7 +210,7 @@ export class NavbarComponent implements OnInit {
         this.myDocument = this.afs.collection('Users').doc(userId);
         let currentDate = moment(new Date()).format('L');
         let today = moment(new Date(), 'YYYY-MM-DD');
-        console.log(currentDate);
+        // console.log(currentDate);
         let userDocRef = this.myDocument;
         this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
             // .orderBy('start')
@@ -237,13 +237,13 @@ export class NavbarComponent implements OnInit {
                         // if (element.selectedWork === true) {
                     if (element.selectedWeekWork == true && element.selectedWork === true) {    
                             this.myActionItems.push(element);
-                            console.log(this.myActionItems);
+                            // console.log(this.myActionItems);
                             this.chartdata = true;
                             this.processData(this.myActionItems);
                         // }
                     }
                 }
-                console.log(this.myActionItems.length);
+                // console.log(this.myActionItems.length);
                 this.actiondsNo = this.myActionItems.length;
             })
             // this.myActionItems = actions;
@@ -1136,44 +1136,6 @@ export class NavbarComponent implements OnInit {
         } else {
 
 
-            // if (workAction.classificationName !== "") {
-            //     if (workAction.classificationName === 'Work') {
-            //         workAction.classification = newClassification;
-
-            //         workAction.classificationName = 'Work';
-            //         workAction.classificationId = newClassification.id;
-
-            //         classWorkReps = newClassification;
-            //         this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classification': newClassification });
-            //         this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classification': newClassification });
-            //     } else if (workAction.classification !== null || workAction.classification !== undefined) {
-
-            //         if (workAction.classification.name === 'Work') {
-            //             workAction.classificationName = 'Work';
-            //             workAction.classificationId = newClassification.id;
-
-            //             this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationName': newClassification.name });
-            //             this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationName': newClassification.name });
-
-            //             this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationId': newClassification.id });
-            //             this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationId': newClassification.id });
-            //         }
-            //     }
-            // }
-
-            // if (workAction.classification.name === 'Work') {
-
-            //     workAction.classificationName = 'Work';
-            //     workAction.classificationId = newClassification.id;
-
-            //     this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationName': newClassification.name });
-            //     this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationName': newClassification.name });
-
-            //     this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationId': newClassification.id });
-            //     this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationId': newClassification.id });
-
-            // }
-
             this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).set(timeData)
             let timesheetworktime = String(moment(new Date().getTime()));
 
@@ -1529,9 +1491,9 @@ export class NavbarComponent implements OnInit {
         if (e.target.checked) {
 
             console.log('ActionItem' + ' ' + workAction.name + ' ' + 'updated');
-            console.log(moment().toString());
-            console.log(moment().format('DDDD'));
-            console.log(moment().format('TTTT'));
+            // console.log(moment().toString());
+            // console.log(moment().format('DDDD'));
+            // console.log(moment().format('TTTT'));
             workAction.UpdatedOn = moment().toString();
 
             console.log(workAction);
@@ -1539,11 +1501,11 @@ export class NavbarComponent implements OnInit {
             let cleaningTime = this.aclear();
             let notify = this.showNotification('Task', 'top', 'right');
             let item = workAction;
-            console.log(item);
+            // console.log(item);
 
 
             let dataId = item.id + moment().format('dd');
-            console.log(dataId);
+            // console.log(dataId);
 
             let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
             let timesheetworktime = String(moment(new Date().getTime()));

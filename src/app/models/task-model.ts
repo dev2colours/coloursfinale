@@ -67,3 +67,15 @@ export interface actionActualData {
 export interface actualData {
     updateTime: string, qty: number
 }
+
+export interface rate {
+    name: string;
+    id: string;
+    unit: string;
+    rate: string;
+    by: string;
+    byId: string;
+    createdOn: string;
+    companyId: string;
+    companyName: string;
+}

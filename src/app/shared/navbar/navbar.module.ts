@@ -11,7 +11,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TagInputModule } from 'ngx-chips'
 // import { PopupComponent } from 'app/calendar/popup/popup.component';
-import { TimesheetComponent } from 'app/calendar/personal-reports/timesheet/timesheet.component';
+import { TimesheetComponent } from 'app/calendar/timesheet/timesheet.component';
 
 @NgModule({
     imports: [RouterModule, CommonModule, NgSelectModule, JWBootstrapSwitchModule, NgbModule, TagInputModule, NgxChartsModule, ],

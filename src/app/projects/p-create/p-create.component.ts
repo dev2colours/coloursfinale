@@ -426,6 +426,8 @@ export class CreateProjectComponent implements OnInit {
     let entRef = this.afs.collection('Enterprises').doc(company.id).collection('projects');
     let myProRef = this.afs.collection('/Users').doc(this.userId).collection('projects');
     let champProRef = this.afs.collection('/Users').doc(championId).collection('projects');
+    let nrouter = this.router;
+
     myProRef.add(project).then(function (pref) {
       ////Add this.project to users collection of projects
       console.log(pref.id);
@@ -445,10 +447,12 @@ export class CreateProjectComponent implements OnInit {
         console.log('enterprise project');
       }
       project.id = projectId;
+    }).then(() => {
+      nrouter.navigate(['projects/', project.id]);
     });
     this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.setProject(project);
-    this.pNxtPage();
+    // this.pNxtPage();
   }
 
   setProject(project) {
@@ -540,26 +544,33 @@ export class CreateProjectComponent implements OnInit {
     let projectId = this.savedProject.id;
     this.projectId = this.savedProject.id;
     let dref = this.afs.collection('Projects').doc(projectId).collection('sections');
+    let dref2 = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(project.companyId).collection('sections');
+
     let entRef = this.afs.collection('Enterprises').doc(project.companyId).collection('projects').doc(projectId).collection('sections');
     let myProRef = this.afs.collection('/Users').doc(this.myData.id).collection('projects').doc(projectId).collection<Section>('sections');
 
     myProRef.add(this.section).then(function (ref) {
       const sectionId = ref.id;
+      xsection.id = ref.id;
 
       if (project.type == 'Personal') {
         myProRef.doc(sectionId).update({ "id": sectionId });
       } else {
         dref.doc(sectionId).set(xsection);
+        dref2.doc(sectionId).set(xsection);
         entRef.doc(sectionId).set(xsection);
-        dref.doc(sectionId).update({ "id": sectionId });
-        entRef.doc(sectionId).update({ "id": sectionId });
+        // dref.doc(sectionId).update({ "id": sectionId });
+        // entRef.doc(sectionId).update({ "id": sectionId });
         myProRef.doc(sectionId).update({ "id": sectionId });
       }
+    }).then(() => {
+
+      this.section = { id: "", type: "", no: 0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills: null }
+      this.theSections = this.ps.getProjectSections(this.savedProject.id);
+      this.newProjectSections = myProRef.valueChanges();
+
     });
 
-    this.section = { id: "", no: 0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills: null }
-    this.theSections = this.ps.getProjectSections(this.savedProject.id);
-    this.newProjectSections = myProRef.valueChanges();
   }
 
   showNotification(data, from, align) {

@@ -401,3 +401,13 @@ div.scrollmenu {
   overflow: auto;
   white-space: nowrap;
 }
+
+.impl-flow {
+  overflow-y: auto;
+  max-height: 420px;
+}
+
+.impl-dpt-flow {
+  overflow-y: auto;
+  max-height: 10em;
+}

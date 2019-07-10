@@ -103,6 +103,7 @@ export class EnterpriseProfileComponent {
   public displayDept = false;
   public displayDeptReport: boolean = true;
 
+  public showSubtasks: boolean = false;
 
   setUserLongTermTAsks = [];
   setUserMediumTermTAsks = [];
@@ -161,6 +162,7 @@ export class EnterpriseProfileComponent {
   joinmyProject: Project;
   proj_ID: string;
   userChampion: employeeData;
+  userEmployee: employeeData;
 
   projects: Observable<Project[]>;
   projectsCollection: Observable<Project[]>;
@@ -213,6 +215,7 @@ export class EnterpriseProfileComponent {
   dpId: string;
   projId: string;
   Champion: ParticipantData;
+  duflowKey: string = 'srjSRMzLN0NXM';
   selParticipantId: any;
   selectedParticipant: ParticipantData;
   selectedStaff: companyStaff;
@@ -236,6 +239,7 @@ export class EnterpriseProfileComponent {
   companystaff2: companyStaff;
   contactPerson: ParticipantData;
   newPart: ParticipantData;
+  est: string = 'TNE1F77IjRzDZr2';
   day0label: string;
   day1label: string;
   day2label: string;
@@ -418,6 +422,8 @@ export class EnterpriseProfileComponent {
   projs: Project[];
   maActivities: any;
   taskArr: MomentTask[];
+  compStaff3: Observable<employeeData[]>;
+  staffTasks2: Observable<MomentTask[]>;
 
 
   /*   end */
@@ -442,6 +448,7 @@ export class EnterpriseProfileComponent {
     this.task = { name: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" }
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", nationalId: "", nationality: "", address: "", department: "", departmentId: "", hierarchy: "" };
+    // this.userEmployee = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", nationalId: "", nationality: "", address: "", department: "", departmentId: "", hierarchy: "" };
     this.contactPerson = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationality: "", nationalId: "" };
     this.selectedCompany = is.getSelectedCompany();
     this.setCompStaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: "" };
@@ -2043,9 +2050,22 @@ export class EnterpriseProfileComponent {
     this.staffTasks = this.es.getDptStaffTasks(this.compId, this.deptId, staffId);
   }
 
+  showUserDetailTasks(staff: employeeData) {
+    console.log(staff);
+    let staffId = staff.id, deptId = staff.departmentId;
+    this.showSubtasks = true;
+    this.staffTasks2 = this.es.getDptStaffTasks(this.compId, deptId, staffId);
+  }
+
+  seeAllTSubTasks(){
+    this.showSubtasks = false;
+  }
+
   showTaskActions(task) {
-    this.selectTask(task)
-    this.taskActions = this.es.getDptTasksActions(this.compId, this.deptId, task.id)
+    this.selectTask(task);
+    let deptId = this.userEmployee.departmentId;
+
+    this.taskActions = this.es.getDptTasksActions(this.compId, deptId, task.id)
   }
 
   viewMyTaskActions(task) {
@@ -2071,7 +2091,8 @@ export class EnterpriseProfileComponent {
   deleteAction(action) {
     console.log(action);
     let actionId = action.id;
-    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId);
+    // let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId);
+    let userProjectDoc = this.afs.collection('Users').doc(action.champion.id).collection('myenterprises').doc(this.selectedTask.companyId);
     let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
     let deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<Department>('departments').doc(action.departmentId);
     let actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
@@ -2081,10 +2102,127 @@ export class EnterpriseProfileComponent {
     userActionRef.doc(actionId).delete();
   }
 
+  setWeekAction(e: { target: { checked: any; }; }, action: workItem) {
+
+    if (e.target.checked) {
+      console.log(action.name + '' + 'action checked');
+
+      action.selectedWeekly = true;
+      action.selectedWeekWork = true;
+
+      this.selectedActionItems.push(action);
+      let participantRef = this.afs.collection('Enterprises').doc(this.compId).collection('Participants').doc(action.champion.id).collection('WeeklyActions');
+      participantRef.doc(action.id).set(action);
+      // let compRef = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions').doc(action.id).set(action);
+      console.log("action" + " " + action.name + " " + " has been added");
+
+      let myActionsRef = this.myDocument.collection<Task>('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let compRefI = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('actionItems').doc(action.id);
+
+
+      let deptDoc = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId);
+      let actionRef = deptDoc.collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let compRefII = this.afs.collection('Enterprises').doc(action.companyId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let deptActDoc = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId).collection<workItem>('actionItems').doc(action.id);
+      let allMyActionsRef = this.myDocument.collection<workItem>('actionItems').doc(action.id);
+      this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions').doc(action.id).set(action);
+      this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).set(action).then(() => {
+
+        // myActionsRef.update({ 'selectedWeekly': true });
+        this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        compRefII.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          compRefII.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // compRefII.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        deptActDoc.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          deptActDoc.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // deptActDoc.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        allMyActionsRef.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          allMyActionsRef.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // allMyActionsRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        myActionsRef.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          myActionsRef.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // myActionsRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        compRefI.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          compRefI.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // compRefI.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        actionRef.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          actionRef.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // actionRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        // this.selectAction(e, action);
+      });
+
+    } 
+    else {
+      console.log(action.name + '' + 'action checked');
+
+      let selectedWork = false;
+      this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).update({ 'selectedWeekWork': selectedWork });
+
+      this.selectedActionItems.splice(this.selectedActionItems.indexOf(action), 1);
+      let participantRef = this.afs.collection('Enterprises').doc(this.compId).collection('Participants').doc(action.champion.id).collection('WeeklyActions');
+      participantRef.doc(action.id).delete();
+      let compRef = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
+      compRef.doc(action.id).delete();
+    }
+  }
+
   newAction(action: workItem) {
     console.log(action);
     let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: "", actualTime: "", Varience: "" };
 
+    let userProjectDoc: AngularFirestoreDocument<Enterprise>,
+      userActionRef: AngularFirestoreCollection<workItem>,
+      EntRef: AngularFirestoreCollection<workItem>,
+      deptDoc: AngularFirestoreDocument<workItem>,
+      actionRef: AngularFirestoreCollection<workItem>,
+      EntPartRef: AngularFirestoreCollection<workItem>,
+      EntDeptPartRef: AngularFirestoreCollection<workItem>,
+      EntDeptPartTaskRef: AngularFirestoreCollection<workItem>,
+    task = this.selectedTask;
     action.by = this.user.displayName;
     action.byId = this.userId;
     let dptId = this.deptId;
@@ -2123,38 +2261,58 @@ export class EnterpriseProfileComponent {
     console.log(mooom);
 
     console.log('the task--->' + this.selectedTask.name + " " + this.selectedTask.id);
-    console.log('the department-->' + action.name);
+    console.log('the department-->' + action.departmentName);
     if (action.projectId !== "") {
-      let proJeRef1 = this.afs.collection('Projects').doc(action.projectId).collection<Task>('workItems').doc(action.id);
-      let proJeRef2 = this.afs.collection('Projects').doc(action.projectId).collection('Participants').doc(action.champion.id).collection<Task>('workItems').doc(action.id);
-      let proJeRef3 = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection<Task>('workItems').doc(action.id);
-      let proJeRef4 = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection('labour').doc(action.champion.id).collection<Task>('workItems').doc(action.id);
+      let proJeRef1 = this.afs.collection('Projects').doc(action.projectId).collection<Task>('workItems');
+      let proJeRef2 = this.afs.collection('Projects').doc(action.projectId).collection('Participants').doc(action.champion.id).collection<Task>('workItems');
+      let proJeRef3 = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection<Task>('workItems');
+      let proJeRef4 = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection('labour').doc(action.champion.id).collection<Task>('workItems');
     }
 
-    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId);
-    let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
-    let deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<Department>('departments').doc(dptId);
-    let actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
-    let EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+    if (task.companyId !== "") {
+
+      userProjectDoc = this.afs.collection('Users').doc(this.selectedTask.champion.id).collection('myenterprises').doc(this.selectedTask.companyId);
+      userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+      deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<Department>('departments').doc(dptId);
+      actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
+      EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+      EntPartRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('Participants').doc(this.selectedTask.champion.id).collection<workItem>('actionItems');
+      EntDeptPartRef = deptDoc.collection('Participants').doc(this.selectedTask.champion.id).collection<workItem>('actionItems');
+      EntDeptPartTaskRef = deptDoc.collection('Participants').doc(this.selectedTask.champion.id).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+    }
+
+    let myTaskActionsRef = this.afs.collection('Users').doc(this.userId).collection<Task>('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+    let allMyActionsRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('actionItems');
+
     EntRef.add(action).then(function (Ref) {
       let newActionId = Ref.id;
+      action.id = Ref.id;
       console.log(Ref);
-      EntRef.doc(newActionId).update({ 'id': newActionId });
-      actionRef.doc(newActionId).set(action);
-      actionRef.doc(newActionId).update({ 'id': newActionId });
-      userActionRef.doc(newActionId).set(action);
-      userActionRef.doc(newActionId).update({ 'id': newActionId });
+      
+      if (task.companyId !== "") {
+        EntRef.doc(newActionId).update({ 'id': newActionId });
+        actionRef.doc(newActionId).set(action);
+        actionRef.doc(newActionId).update({ 'id': newActionId });
+        userActionRef.doc(newActionId).set(action);
+        userActionRef.doc(newActionId).update({ 'id': newActionId });
+        EntPartRef.doc(newActionId).set(action);
+        EntDeptPartRef.doc(newActionId).set(action);
+        EntDeptPartTaskRef.doc(newActionId).set(action);
+      }
 
-      // proJeRef1.set(action);
-      // proJeRef2.set(action);
-      // proJeRef3.set(action);
-      // proJeRef4.set(action);
+      myTaskActionsRef.doc(newActionId).set(action);
+      allMyActionsRef.doc(newActionId).set(action);
+
+      // proJeRef1.doc(newActionId).set(action);
+      // proJeRef2.doc(newActionId).set(action);
+      // proJeRef3.doc(newActionId).set(action);
+      // proJeRef4.doc(newActionId).set(action);
 
 
-      // proJeRef1.update({ 'id': newActionId });
-      // proJeRef2.update({ 'id': newActionId });
-      // proJeRef3.update({ 'id': newActionId });
-      // proJeRef4.update({ 'id': newActionId });
+      // proJeRef1.doc(newActionId).update({ 'id': newActionId });
+      // proJeRef2.doc(newActionId).update({ 'id': newActionId });
+      // proJeRef3.doc(newActionId).update({ 'id': newActionId });
+      // proJeRef4.doc(newActionId).update({ 'id': newActionId });
       
     })
     this.setSui = null;
@@ -2346,15 +2504,17 @@ export class EnterpriseProfileComponent {
     console.log(checkPeriod);
 
     let viewActionsRef = this.afs.collection('Enterprises').doc(this.compId);
-    this.viewActions = viewActionsRef.collection<workItem>('WeeklyActions',
-      // , ref => ref
-      // .orderBy('start')
-      // .where(testPeriod, '==', checkPeriod)
+    this.viewActions = viewActionsRef.collection<workItem>('WeeklyActions',ref => ref
+      .orderBy('taskName', 'asc')
+      .where('complete', '==', false)
     ).snapshotChanges().pipe(
       map(actions => actions.map(a => {
         this.viewDayActions = [];
         let data = a.payload.doc.data() as workItem;
         const id = a.payload.doc.id;
+        // viewActionsRef.collection<Task>('tasks').doc(data.taskId).ref.get().then(function (tsk) {
+        //   data.taskName = tsk.data().name
+        // });
         data.championName = a.payload.doc.data().champion.name;
         data.championId = a.payload.doc.data().champion.id;
         return { id, ...data };
@@ -2362,28 +2522,44 @@ export class EnterpriseProfileComponent {
     );
 
     this.viewDayActions = [];
+    let viewDayActions = [];
 
     this.viewActions.subscribe((actions) => {
-      console.log(actions);
+      // console.log(actions);
       this.selectedActions = actions;
       actions.forEach(element => {
         let data = element;
         // this.viewDayActions = [];
+        viewActionsRef.collection<Task>('tasks').doc(data.taskId).ref.get().then(function (tsk) {
+          element.taskName = tsk.data().name;
 
-        // if (moment(element.startDate).isSameOrAfter(today) && element.complete == false) {
-        // if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
-        if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
-          this.viewDayActions.push(element);
-          console.log(this.viewDayActions);
+          // if (moment(element.startDate).isSameOrAfter(today) && element.complete == false) {
+          // if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
 
-        }
+          if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
+
+            // if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
+            // this.viewDayActions.push(element);
+            viewDayActions.push(element);
+            // console.log(this.viewDayActions);
+
+          }
+          if (element.startDate === "" && element.complete == false) {
+
+            let vieDayActions = [];
+            vieDayActions.push(element);
+            console.log(vieDayActions);
+            // this.viewDayActions.push(element);
+            viewDayActions.push(element);
+
+          }
+        }).catch(err => {
+          console.log(err);
+          element.taskName = "";
+        });
+        this.viewDayActions = viewDayActions;
 
       });
-      if (this.selectedActions.length > 0) {
-        this.viewTodayWork = true;
-      } else {
-        this.viewTodayWork = false;
-      }
     });
     return this.viewActions;
   }
@@ -2640,11 +2816,13 @@ export class EnterpriseProfileComponent {
     };
     // Company update
     if (this.selectedAction.companyId != "") {
-
+      let dptRef = this.afs.collection<Enterprise>('Enterprises').doc(this.selectedAction.companyId).collection<Department>('departments');
+      let taskActions = dptRef.doc(this.selectedAction.departmentId).collection('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
       let allMyActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<workItem>('actionItems');
       let allWeekActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
       let myTaskActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<Task>('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
       allMyActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
+      taskActions.doc(this.selectedAction.id).set(this.selectedAction);
       allWeekActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
       myTaskActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
 
@@ -2811,22 +2989,14 @@ export class EnterpriseProfileComponent {
     );
     this.companyWeeklyActions.subscribe((actions) => {
       this.companyActions = actions;
-      console.log(this.companyActions);
-      console.log(this.companyActions.length);
+      // console.log(this.companyActions);
+      // console.log(this.companyActions.length);
     });
 
     let arraySize = this.companyActions.length;
     console.log(arraySize);
 
-
-
-    // this.showActions = false;
-    // this.hideActions = false;
-
-    // let currentDate = moment(new Date()).format('L');;
     let today = moment(new Date(), "YYYY-MM-DD");
-
-
 
     let userDocRef = this.myDocument;
     this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
@@ -2861,13 +3031,6 @@ export class EnterpriseProfileComponent {
       console.log(actions.length);
       console.log(actions);
       this.actionNo2 = actions.length;
-      // if (this.actionNo == 0) {
-      //   this.showActions = false;
-      //   this.hideActions = true;
-      // } else {
-      //   this.hideActions = false;
-      //   this.showActions = true;
-      // }
 
       let maActivities;
       maActivities = [];
@@ -2926,6 +3089,7 @@ export class EnterpriseProfileComponent {
 
     })
 
+    this.initDiary();
 
   }
 
@@ -2980,6 +3144,7 @@ export class EnterpriseProfileComponent {
     this.staff3 = this.es.getStaff(this.compId);
     this.compStaffList = this.es.getStaff(this.compId);
     this.compStaff2 = this.es.getStaff(this.compId);
+    this.compStaff3 = this.es.getStaff(this.compId);
     this.companyStaff = this.es.getStaff(this.compId);
     this.companyProjects = this.es.getCompanyProjects(this.compId);
     this.assets = this.es.getCompanyAssets(this.compId);
@@ -3404,7 +3569,7 @@ export class EnterpriseProfileComponent {
             this.companyName = cname;
             console.log(this.companyName);
             console.log('test if I get data on 781');
-            console.log(data);
+            // console.log(data);
             this.testCompany = data;
             this.company = data;
             return { id, ...data };

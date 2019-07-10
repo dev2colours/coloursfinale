@@ -25,6 +25,7 @@ export class AdminLayoutComponent implements OnInit {
     }
 
     ngOnInit() {
+
       const elemMainPanel = <HTMLElement>document.querySelector('.main-panel');
       const elemSidebar = <HTMLElement>document.querySelector('.sidebar .sidebar-wrapper');
       this.location.subscribe((ev:PopStateEvent) => {
@@ -45,7 +46,7 @@ export class AdminLayoutComponent implements OnInit {
       });
       this._router = this.router.events.filter(event => event instanceof NavigationEnd).subscribe((event: NavigationEnd) => {
            elemMainPanel.scrollTop = 0;
-        //    elemSidebar.scrollTop = 0;
+           elemSidebar.scrollTop = 0;
       });
       const html = document.getElementsByTagName('html')[0];
       if (window.matchMedia(`(min-width: 960px)`).matches && !this.isMac()) {
@@ -60,6 +61,7 @@ export class AdminLayoutComponent implements OnInit {
         this.navbar.sidebarClose();
       });
     }
+
     public isMap(){
         // console.log(this.location.prepareExternalUrl(this.location.path()));
         if(this.location.prepareExternalUrl(this.location.path()) == '/maps/fullscreen'){
