@@ -31,6 +31,7 @@ import { PersonalRdashboardComponent } from './personal-reports/personal-reports
 import { RTimeBudgetComponent } from './personal-reports/r-time-budget/r-time-budget.component';
 // Added 28-June-19 by VJ Sibanda
 import { RTimeActualComponent } from './personal-reports/r-time-actual/r-time-actual.component';
+import { RUcTasksComponent } from './personal-reports/r-uc-tasks/r-uc-tasks.component';
 
 @NgModule({
     imports: [
@@ -39,7 +40,7 @@ import { RTimeActualComponent } from './personal-reports/r-time-actual/r-time-ac
         FormsModule, NgSelectModule, NgxChartsModule, TagInputModule,
     ],
     declarations: [CalendarComponent,MapTaskComponent,ImplementationComponent,DiaryComponent,TimesheetComponent, PopupComponent, TotalsActionItemsComponent,
-        ActivityLogComponent,RTimeBudgetComponent,RTimeActualComponent,ClassificationTimesheetComponent,PersonalRdashboardComponent, RActivityLogComponent, RTimeSpentComponent, PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent]
+        ActivityLogComponent,RTimeBudgetComponent,RTimeActualComponent,ClassificationTimesheetComponent,PersonalRdashboardComponent, RActivityLogComponent, RTimeSpentComponent, PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent, RUcTasksComponent]
 })
 
 export class CalendarModule {}

@@ -10,6 +10,7 @@ import { dsv } from 'd3';
   providedIn: 'root'
 })
 
+
 // 05-May-2019. This is a service, which simply provides functions to all other components.
 // Functions defined in other components cannot be used everywhere. You can create more than one
 // service component. This is the best place to place data gathering functions, and any other public
@@ -64,21 +65,33 @@ export class ReportsService {
 
 	rostasks() {
 		var Tasks;
-		Tasks = this.db.collection('Users').doc(this.UID).collection('tasks').ref.get();
-		let tbId = "#TbIdP0";
-		this.clearTable("TbIdP0","btnP0");
-		this.readDate("startdateP0");
-		this.OS_Tasks(Tasks,this.UID,"",this.stdd,tbId,"btnP0");
+		Tasks = this.db.collection('Users').doc(this.UID).collection('tasks').ref.
+		where('complete','==',false).get();
+		let tbId = "#TbId-ostp";
+		this.clearTable("TbId-ostp","btn-ostp");
+		this.readDate("startdate-ostp");
+		this.OS_Tasks(Tasks,this.UID,"",this.stdd,tbId,"btn-ostp");
+	}
+
+	//Added 03-July-2019
+	ructasks() {
+		var Tasks;
+		Tasks = this.db.collection('Users').doc(this.UID).collection('tasks').ref.
+		where('complete','==',false).get();
+		let tbId = "#TbId-uctp";
+		this.clearTable("TbId-uctp","btn-uctp");
+		var QU = this.readQU("qlist-uctp","ulist-uctp");
+		this.UC_Tasks(Tasks,this.UID,"",QU.qval,QU.uval,tbId,"btn-uctp");
 	}
 
 	rtimespent() {
 		var WActions;
 		WActions = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
 		ref.orderBy('startDate','asc').where('champion.id','==',this.UID).get();
-		let tbId = "#TbIdP1";
-		this.clearTable("TbIdP1","btnP1");
-		this.readDates("startdateP1", "enddateP1");
-		this.TimeSpent(WActions,this.UID,"",this.stdd,this.endd,tbId,"btnP1");
+		let tbId = "#TbId-tsp";
+		this.clearTable("TbId-tsp","btn-tsp");
+		this.readDates("startdate-tsp", "enddate-tsp");
+		this.TimeSpent(WActions,this.UID,"",this.stdd,this.endd,tbId,"btn-tsp");
 	}
 
 	//Added 26-June-2019
@@ -86,9 +99,9 @@ export class ReportsService {
 		var TBudget;
 		TBudget = this.db.collection('Users').doc(this.UID).collection('classifications').
 		ref.orderBy('name','asc').get();
-		let tbId = "#TbIdP5";
-		this.clearTable("TbIdP5","btnP5");
-		this.TBudget(TBudget,this.UID,"",tbId,"btnP5");
+		let tbId = "#TbId-tbp";
+		this.clearTable("TbId-tbp","btn-tbp");
+		this.TBudget(TBudget,this.UID,"",tbId,"btn-tbp");
 	}
 
 	//Added 28-June-2019
@@ -98,20 +111,20 @@ export class ReportsService {
 		ref.orderBy('name','asc').get();
 		TActual = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
 		ref.orderBy('name','asc').get();
-		let tbId = "#TbIdP6";
-		this.clearTable("TbIdP6","btnP6");
-		this.readDates("startdateP6", "enddateP6");
-		this.TActual(TBudget,TActual,this.UID,"",this.stdd,this.endd,tbId,"btnP6");
+		let tbId = "#TbId-tap";
+		this.clearTable("TbId-tap","btn-tap");
+		this.readDates("startdate-tap", "enddate-tap");
+		this.TActual(TBudget,TActual,this.UID,"",this.stdd,this.endd,tbId,"btn-tap");
 	}
 
 	ractivitylog() {
 		var WActions;
 		WActions = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
 		ref.orderBy('startDate','asc').where('champion.id','==',this.UID).get();
-		let tbId = "#TbIdP2";
-		this.clearTable("TbIdP2","btnP2");
-		this.readDates("startdateP2", "enddateP2");
-		this.ActivityLog(WActions,this.UID,"",this.stdd,this.endd,tbId,"btnP2");
+		let tbId = "#TbId-alp";
+		this.clearTable("TbId-alp","btn-alp");
+		this.readDates("startdate-alp", "enddate-alp");
+		this.ActivityLog(WActions,this.UID,"",this.stdd,this.endd,tbId,"btn-alp");
 	}
 
 	rdailyplan() {
@@ -119,10 +132,10 @@ export class ReportsService {
 		DPlan = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
 		ref.orderBy('start','asc').where('start','>','0').where('complete','==',false).
 		where('champion.id','==',this.UID).where('selectedWork','==',true).get();
-		let tbId = "#TbIdP3";
-		this.clearTable("TbIdP3","btnP3");
-		this.readDate("startdateP3");
-		this.Plan(DPlan,"d",this.UID,"",this.stdd,tbId,"btnP3");
+		let tbId = "#TbId-dpp";
+		this.clearTable("TbId-dpp","btn-dpp");
+		this.readDate("startdate-dpp");
+		this.Plan(DPlan,"d",this.UID,"",this.stdd,tbId,"btn-dpp");
 	}
 
 	rweeklyplan() {
@@ -130,27 +143,47 @@ export class ReportsService {
 		WPlan = this.db.collection('Users').doc(this.UID).collection('WeeklyActions').
 		ref.orderBy('startDate','asc').where('champion.id','==',this.UID).where('complete','==',false).
 		where('selectedWeekWork','==',true).get();
-		let tbId = "#TbIdP4";
-		this.clearTable("TbIdP4","btnP4");
-		this.readDate("startdateP4");
-		this.Plan(WPlan,"w",this.UID,"",this.stdd,tbId,"btnP4");
+		let tbId = "#TbId-wpp";
+		this.clearTable("TbIdP-wpp","btn-wpp");
+		this.readDate("startdate-wpp");
+		this.Plan(WPlan,"w",this.UID,"",this.stdd,tbId,"btn-wpp");
 	}  
 
 	rostasks_e() {
 		
-		var name:string;
-		var PID:string;
-		var Tasks;
-		name = this.optValue("name-list0");
+		var name:string;var PID:string;var Tasks;
+		name = this.optValue("name-list-oste");
 		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
 		ref.where('name', '==', name).get().then((ref) => {
 			PID = ref.docs[0].id;
 			this.User_Hky = ' ' + ref.docs[0].data().hierarchy;
-			Tasks = this.db.collection('Users').doc(PID).collection('tasks').ref.get();
-			let tbId = "#TbId0";
-			this.clearTable("TbId0","btn0");
-			this.readDate("startdate0");
-			this.OS_Tasks(Tasks,PID,this.EID,this.stdd,tbId,"btn0");
+			Tasks = this.db.collection('Users').doc(PID).collection('tasks').ref.
+			where('complete','==',false).get();
+			let tbId = "#TbId-oste";
+			this.clearTable("TbId-oste","btn-oste");
+			this.readDate("startdate-oste");
+			this.OS_Tasks(Tasks,PID,this.EID,this.stdd,tbId,"btn-oste");
+		})
+		
+	}
+
+	//Added 03-July-2019
+	ructasks_e() {
+		
+		var name:string;
+		var PID:string;
+		var Tasks;
+		name = this.optValue("name-list-ucte");
+		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
+		ref.where('name', '==', name).get().then((ref) => {
+			PID = ref.docs[0].id;
+			this.User_Hky = ' ' + ref.docs[0].data().hierarchy;
+			Tasks = this.db.collection('Users').doc(PID).collection('tasks').ref.
+			where('complete','==',false).get();
+			let tbId = "#TbId-ucte";
+			this.clearTable("TbId-ucte","btn-ucte");
+			var QU = this.readQU("qlist-ucte","ulist-ucte");
+			this.UC_Tasks(Tasks,PID,this.EID,QU.qval,QU.uval,tbId,"btn-ucte");
 		})
 		
 	}
@@ -167,47 +200,43 @@ export class ReportsService {
 		var name:string;
 		var PID:string;
 		var WActions;
-		name = this.optValue("name-list1");
+		name = this.optValue("name-list-tse");
 		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
 		ref.where('name', '==', name).get().then((ref) => {
 			PID = ref.docs[0].id;
 			this.User_Hky = ' ' + ref.docs[0].data().hierarchy;
 			WActions = this.db.collection('Users').doc(PID).collection('WeeklyActions').
 			ref.orderBy('startDate','asc').where('champion.id','==',PID).get();
-			let tbId = "#TbId1";
-			this.clearTable("TbId1","btn1");
-			this.readDates("startdate1","enddate1");
-			this.TimeSpent(WActions,PID,this.EID,this.stdd,this.endd,tbId,"btn1");
+			let tbId = "#TbId-tse";
+			this.clearTable("TbId-tse","btn-tse");
+			this.readDates("startdate-tse","enddate-tse");
+			this.TimeSpent(WActions,PID,this.EID,this.stdd,this.endd,tbId,"btn-tse");
 		})
 
 	}
 
 	ractivitylog_e() {
 
-		var name:string;
-		var PID:string;
-		var WActions;
-		name = this.optValue("name-list2");
+		var name:string;var PID:string;var WActions;
+		name = this.optValue("name-list-ale");
 		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
 		ref.where('name', '==', name).get().then((ref) => {
 			PID = ref.docs[0].id;
 			this.User_Hky = ' ' + ref.docs[0].data().hierarchy;
 			WActions = this.db.collection('Users').doc(PID).collection('WeeklyActions').
 			ref.orderBy('startDate','asc').where('champion.id','==',PID).get();
-			let tbId = "#TbId2";
-			this.clearTable("TbId2","btn2");
-			this.readDates("startdate2","enddate2");
-			this.ActivityLog(WActions,PID,this.EID,this.stdd,this.endd,tbId,"btn2")
+			let tbId = "#TbId-ale";
+			this.clearTable("TbId-ale","btn-ale");
+			this.readDates("startdate-ale","enddate-ale");
+			this.ActivityLog(WActions,PID,this.EID,this.stdd,this.endd,tbId,"btn-ale")
 		})
 
 	}
 
 	rdailyplan_e() {
 
-		var name:string;
-		var PID:string;
-		var DPlan;
-		name = this.optValue("name-list3");
+		var name:string;var PID:string;var DPlan;
+		name = this.optValue("name-list-dpe");
 		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
 		ref.where('name', '==', name).get().then((ref) => {
 			PID = ref.docs[0].id;
@@ -215,14 +244,36 @@ export class ReportsService {
 			DPlan = this.db.collection('Users').doc(PID).collection('WeeklyActions').
 			ref.orderBy('start','asc').where('start','>','0').where('complete','==',false).
 			where('champion.id','==',PID).where('selectedWork','==',true).get();
-			let tbId = "#TbId3";
-			this.clearTable("TbId3","btn3");
-			this.readDate("startdate3");
-			this.Plan(DPlan,"d",PID,this.EID,this.stdd,tbId,"btn3");
+			let tbId = "#TbId-dpe";
+			this.clearTable("TbId3","btn-dpe");
+			this.readDate("startdate-dpe");
+			this.Plan(DPlan,"d",PID,this.EID,this.stdd,tbId,"btn-dpe");
 		})
 
 	}
 	
+	rweeklyplan_e() {
+
+		var name:string;var PID:string;var WPlan;
+		//17-June-2019. Data stored as local variables in this function. Previously the data was stored
+		//in global variables and reports were loading wrong data retrieved by other reports
+		//if new data took too long to fetch
+		name = this.optValue("name-list-wpe");
+		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
+		ref.where('name', '==', name).get().then((ref) => {
+			PID = ref.docs[0].id;
+			this.User_Hky = ' ' + ref.docs[0].data().hierarchy;
+			WPlan = this.db.collection('Users').doc(PID).collection('WeeklyActions').
+			ref.orderBy('startDate','asc').where('champion.id','==',PID).where('complete','==',false).
+			where('selectedWeekWork','==',true).get();
+			let tbId = "#TbId-wpe";
+			this.clearTable("TbId-wpe","btn-wpe");
+			this.readDate("startdate-wpe");
+			this.Plan(WPlan,"w",PID,this.EID,this.stdd,tbId,"btn-wpe");
+		})
+
+	}
+
 	readDate(date) {
 		//06-May-2019. <HTMLInputElement> casts the HTML type to Input to prevent a compile error
 		//which says property value does not exist on HTML element
@@ -239,6 +290,13 @@ export class ReportsService {
 		//19-June-2019. Save to local storage for use when refreshing
 		localStorage['stdd'] = this.stdd;
 		localStorage['endd'] = this.endd;
+	}
+
+	readQU(Q, U) {
+		//03-July-2019. qval must be converted to a number to avoid concatenation as string
+		var qval = Number((<HTMLInputElement>document.getElementById(Q)).value);
+		var uval = (<HTMLInputElement>document.getElementById(U)).value;
+		return {qval,uval};
 	}
 
 	getMyEnterprises() {
@@ -349,28 +407,47 @@ export class ReportsService {
 		return date;
 	}
 
-	rweeklyplan_e() {
+	printReport() {
+		window.print();
+	}
+	  
+	Back() {
+		window.history.back();
+	}
 
-		var name:string;
-		var PID:string;var User_Hky;
-		//17-June-2019. Data stored as local variables in this function. Previously the data was stored
-		//in global variables and reports were loading wrong data retrieved by other reports
-		//if new data took too long to fetch
-		var WPlan;
-		name = this.optValue("name-list4");
-		this.db.collection('Enterprises').doc(this.EID).collection('Participants').
-		ref.where('name', '==', name).get().then((ref) => {
-			PID = ref.docs[0].id;
-			User_Hky = ' ' + ref.docs[0].data().hierarchy;
-			WPlan = this.db.collection('Users').doc(PID).collection('WeeklyActions').
-			ref.orderBy('startDate','asc').where('champion.id','==',PID).where('complete','==',false).
-			where('selectedWeekWork','==',true).get();
-			let tbId = "#TbId4";
-			this.clearTable("TbId4","btn4");
-			this.readDate("startdate4");
-			this.Plan(WPlan,"w",PID,this.EID,this.stdd,tbId,"btn4");
-		})
+	//03-July-2019. qlist shows the quantity to be picked, based on unit chosen
+	Qlist(qlist,unit){
+		var UL = (<HTMLInputElement>document.getElementById(qlist));
+		UL.innerHTML = "";
+		var opt: HTMLOptionElement;
+		if (unit == "Days"){var max = 14}else
+		if (unit == "Weeks"){var max = 4}else
+		if (unit == "Months"){var max = 6}else
+		if (unit == "Years"){var max = 3}
+		for (var i = 1; i <= max; i++) {
+			opt = document.createElement("option");
+			opt.value = String(i);opt.innerText = String(i);
+			UL.appendChild(opt);
+		}
+	}
 
+	//03-July-2019. ulist shows the unit to be picked e.g. Day, Week, Month, Year
+	Ulist(ulist){
+		var UL = (<HTMLInputElement>document.getElementById(ulist));
+		UL.innerHTML = "";
+		var opt: HTMLOptionElement;
+		opt = document.createElement("option");
+		opt.value = "Days";opt.innerText = "Days"; 
+		UL.appendChild(opt);
+		opt = document.createElement("option");
+		opt.value = "Weeks";opt.innerText = "Weeks"; 
+		UL.appendChild(opt);
+		opt = document.createElement("option");
+		opt.value = "Months";opt.innerText = "Months"; 
+		UL.appendChild(opt);
+		opt = document.createElement("option");
+		opt.value = "Years";opt.innerText = "Years"; 
+		UL.appendChild(opt);
 	}
 
 	TBudget(Budget,StaffID,EntID,TbId,btnID){
@@ -420,7 +497,7 @@ export class ReportsService {
 			btn.disabled = false;
 		}
 
-	}
+	} //TBudget closing bracket
 
 	TActual(Budget,Actual,StaffID,EntID,start,end,TbId,btnID){
 
@@ -432,34 +509,23 @@ export class ReportsService {
 
 		Budget.then((ref) => {
 
-			var asum = 0;
-
 			ref.forEach(lifeclass => {
 				
+				var asum = 0;
 				var element = Array();
 				element['classname'] = lifeclass.data().name;
 				element['plannedTime'] = lifeclass.data().plannedTime;
-					
-				// -------- FIND THE ACTUAL TOTALS -----------------
+				// Get actual totals for each classifciation
 				Actual.then((ref) => {
 					ref.forEach(doc => {
 						asum = asum + class_actual_time(doc.data(),start,end + " 23:00:00",lifeclass.data().name);
 					})
-					console.log(asum);
 					element['actualTime'] = asum;
 					element['variance'] = asum - lifeclass.data().plannedTime;
 					arrayall.push(element);
-				});
+				}); // for each actual class
 				
 			})// for each life class
-
-			// // Insert totals row. COULD NOT FORMAT LAST ROW, SO NOW ADDED SEPARATELY IN FILLTABLE
-			// var totals = Array();
-			// //28-June-2019. Use same headings as above otherise table shows undefined 
-			// totals['classname'] = String("TOTAL TIME");
-			// totals['plannedTime'] = String(bsum);
-			// totals['actualTime'] = String(asum);
-			// arrayall.push(totals);
 		
 		})
 
@@ -476,7 +542,6 @@ export class ReportsService {
 					let date = isd(respTime,'');
 					if (sd <= date && ed >= date && doc.classification.name == lclass) {
 						sum = sum + current_value.hours;
-						
 						if (ix1 < 0) { ix1 = index };
 						if (ix2 < index) { ix2 = index };
 					}
@@ -575,7 +640,7 @@ export class ReportsService {
 		} //Wait closing bracket
 
 
-	}
+	} //TActual closing bracket
 
 	TimeSpent(Actions,StaffID,EntID,start,end,TbId,btnID) {
 		
@@ -592,6 +657,8 @@ export class ReportsService {
 
 			element['name'] = doc['name'];
 			element['task'] = task;
+			//03-July-2019. Classification added
+			element['classification'] = doc.classification.name;
 			element['company'] = company;
 			var actionarray = doc.workHours;
 			if (actionarray !== null) {
@@ -617,7 +684,7 @@ export class ReportsService {
 			var rem = 0;
 			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
 			var td2: HTMLTableDataCellElement; var td3: HTMLTableDataCellElement; 
-			var row: HTMLTableRowElement;
+			var td4: HTMLTableDataCellElement; var row: HTMLTableRowElement;
 
 			if (arr !== null) {
 				arr.forEach(function (elm) {
@@ -629,15 +696,18 @@ export class ReportsService {
 						// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
 						td0 = row.insertCell(0);//Sub Task
 						td1 = row.insertCell(1);//Task Name
-						td2 = row.insertCell(2);//Time Spent
+						//03-July-2019. Classification added
+						td2 = row.insertCell(2);//Classification
+						td3 = row.insertCell(3);//Time Spent
 						//07-June-2019. Add company column for personal reports for clarity
-						if (EntID == ''){td3 = row.insertCell(3);td3.innerText = elm.company}
+						if (EntID == ''){td4 = row.insertCell(4);td4.innerText = elm.company}
 
 						// put text inside the data cell
 						td0.innerText = elm.name;
 						//06-May-2019. Task name added. 12-June-2019 imported form calling sub
 						td1.innerText = elm.task;
-						td2.innerText = elm.sum; td2.align = "center"
+						td2.innerText = elm.classification;
+						td3.innerText = elm.sum; td3.align = "center"
 						
 						//28-June-2019. Total variable added to fill bottom of table
 						totalHrs = totalHrs +elm.sum;
@@ -739,13 +809,12 @@ export class ReportsService {
 				td0 = row.insertCell(0);
 				td0.innerText = "TOTAL TIME SPENT"
 				td0.style.border = "1px solid #000";
-				
 				td1 = row.insertCell(1)
-
-				td2 = row.insertCell(2);
-				td2.innerText = String(totalHrs);
-				td2.align = "center"
-				td2.style.border = "1px solid #000";
+				td2 = row.insertCell(2)
+				td3 = row.insertCell(3);
+				td3.innerText = String(totalHrs);
+				td3.align = "center"
+				td3.style.border = "1px solid #000";
 
 			}
 
@@ -753,7 +822,7 @@ export class ReportsService {
 			btn.disabled = false;
 		}
 
-	} //rtimespent closing bracket
+	} //TimeSpent closing bracket
 
 	ActivityLog(Actions,StaffID,EntID,start,end,TbId,btnID) {
 
@@ -958,7 +1027,7 @@ export class ReportsService {
 
 		}//choose actions
 
-	} //ractivitylog closing bracket
+	} //ActivityLog closing bracket
 
 	OS_Actions(Actions,StaffID,EntID,start,end,TbId,btnID) {
 
@@ -1060,7 +1129,7 @@ export class ReportsService {
 			btn.disabled = false;
 		}
 
-	} //rsosactions closing bracket
+	} //OS-Actions closing bracket
 
 	OS_Tasks(Tasks,StaffID,EntID,AsAt,TbId,btnID) {
 
@@ -1155,7 +1224,120 @@ export class ReportsService {
 			btn.disabled = false;
 		}
 
-	}// rOS_Tasks closing bracket
+	} //OS_Tasks closing bracket
+
+	// Upcoming tasks added 03-July-2019
+	UC_Tasks(Tasks,StaffID,EntID,Qty,Unit,TbId,btnID) {
+
+		let tableList = document.querySelector(TbId);
+		var rowCnt = 1;
+		var arrayall = new Array();
+		
+		function push_elements(doc,company) {
+			
+			var element = Array();
+			element['name'] = doc['name'];
+			element['start'] = doc['start'];
+			element['finish'] = doc['finish'];
+			element['classification'] = doc.classification.name;
+			element['company'] = company;
+			arrayall.push(element);
+	
+		}
+
+		function fillTable(arr) {
+
+			var rem = 0;
+			var td0: HTMLTableDataCellElement; var td1: HTMLTableDataCellElement;
+			var td2: HTMLTableDataCellElement; var td3: HTMLTableDataCellElement; 
+			var td4: HTMLTableDataCellElement; var row: HTMLTableRowElement;
+
+			if (arr !== null) {
+
+				arr.forEach(function (elm) {
+					
+					// 04-June-19. Create an empty <tr> element and add it to the rowNum (0 = 1st after headings) position of the table:
+					row = tableList.insertRow(rowCnt);
+					// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+					td0 = row.insertCell(0);//Task
+					td1 = row.insertCell(1);//Planned Start
+					td2 = row.insertCell(2);//Planned Finish
+					td3 = row.insertCell(3);//Classification
+			
+					if (EntID == ''){td4 = row.insertCell(4);td4.innerText = elm.company}
+		
+					// 20-May-2019. Put Task name in first column
+					td0.innerText = elm.name;
+					td1.innerText = elm.start;
+					td2.innerText = elm.finish;
+					td3.innerText = elm.classification;
+
+					// determine odd numbered rows
+					rowCnt = rowCnt + 1; rem = rowCnt % 2;
+					if (rem == 1) { row.bgColor = 'gainsboro' };
+
+				}) // for each
+				
+			} // if arr is not null
+
+		} // filltable
+
+		var isd = this.ISODate;
+
+		Tasks.then((ref) => {
+			
+			var days;
+			if (Unit == "Days"){days = Qty}else
+			if (Unit == "Weeks"){days = 7 * Qty}else
+			if (Unit == "Months"){days = 30 * Qty}else
+			if (Unit == "Years"){days = 365 * Qty}
+			//current date
+			var sd1 = new Date();
+			var sd2 = new Date();
+			days = 	sd1.getDate() + days;
+			//03-July-2019. Takes sd2, and just replace the day part only, with ability to jump to new month
+			sd2.setDate(days);
+			//03-July-2019. Manipulated dates above have to be converted to strings for isd function to work
+			let sd = isd(String(sd1),'').substring(0,10);
+			var ed = isd(String(sd2),'').substring(0,10);
+			
+			ref.forEach(doc => {
+				//17-June-2019. First check if EntID is given
+				var start = doc.data().start;
+				if (EntID !== '') {
+					if (EntID == doc.data().companyId && start > sd && start <= ed){
+					push_elements(doc.data(),doc.data().companyName);
+					}
+				}
+				else if (start > sd && start <= ed){
+					push_elements(doc.data(),doc.data().companyName);
+				}
+			})
+		}); //Tasks get
+
+		var DB = this.db;
+		var DS = this.dynamicSort;
+
+		//05-June-2019. Alert user after a few seconds if no data was found. Delay allows code to finish.
+		setTimeout(Wait, this.waitTime);
+		function Wait(){
+			
+			//20-June-2019. Sorting and filling table done after waiting to allow code to populate arrayall
+			arrayall.sort(DS("start","asc"));
+			fillTable(arrayall);
+
+			if (rowCnt == 1){
+				var User = DB.collection('Users').doc(StaffID);
+				User.ref.get().then(function(doc) {
+					alert("No upcoming tasks found for " + doc.data().name);
+				})
+			}
+			
+			var btn = (<HTMLButtonElement>document.getElementById(btnID));
+			btn.disabled = false;
+		}
+
+	} //UC_Tasks closing bracket
 
 	Plan(Actions,Period,StaffID,EntID,DateAsAt,TbId,btnID) {
 
@@ -1344,14 +1526,6 @@ export class ReportsService {
 
 	} //Plan closing bracket
 
-	printReport() {
-		window.print();
-	  }
-	  
-	Back() {
-		window.history.back();
-	}
-
 	//05-June-2019. The following functions initializes the various reports
 	rOnInit(Person,SD,ED){
 
@@ -1411,9 +1585,12 @@ export class ReportsService {
 			
 		});
 
+		// 03-July-2019. Provide for no date at all
 		let Tdy = this.ISODate(Date(),'').substring(0,10)
+		if (SD !== ''){
 		let Inp1 = (<HTMLInputElement>document.getElementById(SD));
 		Inp1.value = Tdy;
+		}
 
 		if (ED !== ''){
 		let Inp2 = (<HTMLInputElement>document.getElementById(ED));

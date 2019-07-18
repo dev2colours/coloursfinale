@@ -11,17 +11,17 @@
         <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
     </div>  
 
-    <h1 id="UserP2" style="margin-top:-0.5em"></h1>
+    <h1 id="User-alp" style="margin-top:-0.5em"></h1>
     
     <h3 style="margin-top:-0.5em">Time Sheet Report for the period from <span>
             <!-- placeholder will not work, so stuck with dd----yyyyy -->
-            <input type="date" id="startdateP2">
+            <input type="date" id="startdate-alp">
         </span> to <span>
-            <input type="date" id="enddateP2">
-            <button id="btnP2" (click)="rService.ractivitylog()">Generate report for selected period</button>
+            <input type="date" id="enddate-alp">
+            <button id="btn-alp" (click)="rService.ractivitylog()">Generate report for selected period</button>
         </span></h3>
     <!-- Table rows and headings only -->
-    <table id="TbIdP2">
+    <table id="TbId-alp">
         <!-- headings -->
         <tr>
             <th>Sub Task</th>

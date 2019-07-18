@@ -9,26 +9,27 @@
         <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
     </div> 
 
-<h3 id="org1" style="margin-top:-0.5em">Personal Reports</h3>
+<h3 id="org-tse" style="margin-top:-0.5em">Personal Reports</h3>
 
 <h3 style="margin-top:-0.5em">Participant:
-    <span><select id="name-list1" (click)="rService.PData('name-list1','')"></select></span>
+    <span><select id="name-list-tse"></select></span>
     <span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
 
 <h4 style="margin-top:-0.5em">Total Time spent on an Task Activity for the period from <span>
         <!-- placeholder will not work, so stuck with dd----yyyyy -->
-        <input type="date" id="startdate1">
+        <input type="date" id="startdate-tse">
     </span> to <span>
-        <input type="date" id="enddate1">
-        <button id="btn1" (click)="rService.rtimespent_e()">Generate report for selected period</button>
+        <input type="date" id="enddate-tse">
+        <button id="btn-tse" (click)="rService.rtimespent_e()">Generate report for selected period</button>
     </span></h4>
 
 <!-- Table headings only -->
-<table id="TbId1">
+<table id="TbId-tse">
     <tr>
          <!-- headings -->
-        <th>Action Item</th>
+        <th>Sub Task</th>
         <th>Task Name</th>
+        <th>Classification</th>
         <th style="text-align:center">Hours Spent</th>
     </tr>
 </table>

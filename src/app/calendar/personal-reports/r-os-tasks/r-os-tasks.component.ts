@@ -13,8 +13,9 @@ export class ROsTasksComponent implements OnInit {
 	constructor(public rService: ReportsService){}
 
     ngOnInit() {
-    
-      this.rService.rOnInit("UserP0","startdateP0","")
+      
+      //03-July-2019. Meaningful suffixes added
+      this.rService.rOnInit("User-ostp","startdate-ostp","")
 
     }
 

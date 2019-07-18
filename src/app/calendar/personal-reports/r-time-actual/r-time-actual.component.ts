@@ -16,7 +16,26 @@ export class RTimeActualComponent implements OnInit {
 
   ngOnInit() {
     
-    this.rService.rOnInit("UserP6","startdateP6","enddateP6")
+    this.rService.Previous();
+
+		//04-June-2019. Display User name even before user has chosen to generate report
+		var User = this.rService.db.collection('Users').doc(this.rService.UID);
+		User.ref.get().then(function(doc) {
+			//alert(doc.data().name);
+			document.getElementById("User-tap").innerHTML = doc.data().name;
+		})
+
+    //03-July-2019. Fix the dates to span 5 working days
+		let Tdy = this.rService.ISODate(Date(),'').substring(0,10);
+    let Inp1 = (<HTMLInputElement>document.getElementById("startdate-tap"));
+    var dd=new Date();
+    //Go 7 working days before for start date
+    dd.setDate(dd.getDate()-7);
+		Inp1.value = this.rService.ISODate(String(dd),'').substring(0,10);
+		let Inp2 = (<HTMLInputElement>document.getElementById("enddate-tap"));
+		Inp2.value = Tdy;
+		
+    //this.rService.rOnInit("User-tap","startdate-tap","enddate-tap")
 
   }
 

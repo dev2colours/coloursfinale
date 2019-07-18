@@ -17,7 +17,8 @@ export class RTimeBudgetComponent implements OnInit {
 
   ngOnInit() {
     
-    this.rService.rOnInit("UserP5","","")
+    //03-July-2019. Meaningful suffixes added
+    this.rService.rOnInit("User-tbp","","")
 
   }
 

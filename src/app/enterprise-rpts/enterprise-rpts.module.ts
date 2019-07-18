@@ -11,6 +11,8 @@ import { RActivityLogEComponent } from './enterprise-personal-reports/r-activity
 import { ROsActionsEComponent } from './enterprise-personal-reports/r-os-actions-e/r-os-actions-e.component';
 import { ROsTasksEComponent } from './enterprise-personal-reports/r-os-tasks-e/r-os-tasks-e.component';
 import { EnterpriseRpersonalComponent } from './enterprise-personal-reports/enterprise-personal-reports.component';
+// Added 03-July-2019 by VJ Sibanda
+import { RUcTasksEComponent } from './enterprise-personal-reports/r-uc-tasks-e/r-uc-tasks-e.component';
 
 @NgModule({
     imports: [
@@ -24,8 +26,10 @@ import { EnterpriseRpersonalComponent } from './enterprise-personal-reports/ente
         RTimeSpentEComponent,
         RActivityLogEComponent,
         ROsActionsEComponent,
+        RUcTasksEComponent,
         EnterpriseRpersonalComponent,
-        ROsTasksEComponent]
+        ROsTasksEComponent,
+        RUcTasksEComponent]
 })
 
 export class IndividualRptsModule {}
