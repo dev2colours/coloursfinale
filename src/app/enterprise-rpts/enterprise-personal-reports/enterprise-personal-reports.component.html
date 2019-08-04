@@ -4,12 +4,12 @@
     <img alt="Colours Logo" width="100" src="../../../assets/img/Colourslogo.PNG">
 </div>
 
-<p class="clrs-h1-font" style="margin-top:1.5em; margin-left:2em; color:darkslategray">{{rService.EnterpriseName}} Personal Reports...</p>
+<p class="clrs-h1-font" style="margin-top:1.5em; margin-left:2em; color:darkslategray">{{rService.EnterpriseName}} Personal Reports</p>
 
 <div class="col-md-12">
 <div class="card">
 
-<div class="card-body" style="margin-top:-5em;">
+<div class="card-body" style="margin-top:-7em;">
 
   <div style="text-align: right">
     <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
@@ -49,7 +49,27 @@
         <div class="row">
           <div class="col-md-6">
             <p class="text-left title " style="color: darkslategray">
-              <span> <a routerLink="/rweeklyplan-e">Weekly Plan</a></span>
+              <span> <a routerLink="/r-ostasks-e">Outstanding Tasks</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">
+              <span> <a routerLink="/r-uctasks-e">Upcoming Tasks</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">
+              <span> <a routerLink="/r-weeklyplan-e">Weekly Plan</a></span>
             </p>
           </div>
         </div>
@@ -59,7 +79,7 @@
         <div class="row">
           <div class="col-md-6">
             <p class="text-left title " style="color: darkslategray">
-              <span> <a routerLink="/rdailyplan-e">My Daily Plan</a></span>
+              <span> <a routerLink="/r-dailyplan-e">My Daily Plan</a></span>
             </p>
           </div>
         </div>
@@ -69,7 +89,7 @@
           <div class="row">
             <div class="col-md-6">
               <p class="text-left title " style="color: darkslategray">
-                <span> <a routerLink="/ractivitylog-e">Time Sheet Report in a period</a></span>
+                <span> <a routerLink="/r-activitylog-e">Time Sheet Report in a period</a></span>
               </p>
             </div>
           </div>
@@ -79,20 +99,10 @@
         <div class="row">
           <div class="col-md-6">
             <p class="text-left title " style="color: darkslategray">
-              <span> <a routerLink="/rtimespent-e">Total Time Spent on an Activity in a period</a></span>
+              <span> <a routerLink="/r-timespent-e">Total Time Spent on an Activity in a period</a></span>
             </p>
           </div>
         </div>
-      </div>
-    
-      <div class="col-md-12 ml-auto mr-auto">
-          <div class="row">
-            <div class="col-md-6">
-              <p class="text-left title " style="color: darkslategray">
-                <span> <a routerLink="/rostasks-e">Outstanding Tasks</a></span>
-              </p>
-            </div>
-          </div>
       </div>
     
     <div hidden>
@@ -179,7 +189,17 @@
         <div class="row">
           <div class="col-md-6">
             <p class="text-left title " style="color: darkslategray">
-              <span> <a routerLink="/rweeklyplan-e">Weekly Plan</a></span>
+              <span> <a routerLink="/r-ostasks-e">Outstanding Tasks</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+        
+      <div class="col-md-12 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">
+              <span> <a routerLink="/r-uctasks-e">Upcoming Tasks</a></span>
             </p>
           </div>
         </div>
@@ -189,22 +209,22 @@
         <div class="row">
           <div class="col-md-6">
             <p class="text-left title " style="color: darkslategray">
-              <span> <a routerLink="/rdailyplan-e">My Daily Plan</a></span>
+              <span> <a routerLink="/r-weeklyplan-e">Weekly Plan</a></span>
             </p>
           </div>
         </div>
       </div>
       
       <div class="col-md-12 ml-auto mr-auto">
-          <div class="row">
-            <div class="col-md-6">
-              <p class="text-left title " style="color: darkslategray">
-                <span> <a routerLink="/rostasks-e">Outstanding Tasks</a></span>
-              </p>
-            </div>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">
+              <span> <a routerLink="/r-dailyplan-e">My Daily Plan</a></span>
+            </p>
           </div>
         </div>
-    
+      </div>
+
       <div hidden>
         <div class="col-md-12 ml-auto mr-auto">
           <div class="row">

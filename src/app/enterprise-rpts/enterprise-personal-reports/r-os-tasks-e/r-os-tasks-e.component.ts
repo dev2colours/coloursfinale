@@ -13,7 +13,7 @@ export class ROsTasksEComponent implements OnInit {
 
   ngOnInit() {
   
-    this.rService.rOnInit_e("org0","name-list0","startdate0","")
+    this.rService.rOnInit_e("org-oste","name-list-oste","startdate-oste","")
 
   }
 

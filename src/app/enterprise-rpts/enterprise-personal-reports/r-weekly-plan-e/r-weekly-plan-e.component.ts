@@ -16,8 +16,9 @@ export class RWeeklyPlanEComponent implements OnInit {
   }
 
   ngOnInit() {
-  
-    this.rService.rOnInit_e("org4","name-list4","startdate4","")
+    
+    //03-July-2019. Meaningful html suffixes added
+    this.rService.rOnInit_e("org-wpe","name-list-wpe","startdate-wpe","")
 
   }
 

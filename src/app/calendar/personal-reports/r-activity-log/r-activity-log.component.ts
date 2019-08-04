@@ -18,7 +18,7 @@ export class RActivityLogComponent implements OnInit {
 
   	ngOnInit() {
 		
-		this.rService.rOnInit("UserP2","startdateP2","enddateP2")
+		this.rService.rOnInit("User-alp","startdate-alp","enddate-alp")
 		
 	}
 

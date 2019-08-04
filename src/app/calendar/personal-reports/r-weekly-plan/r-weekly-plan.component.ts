@@ -13,7 +13,7 @@ export class RWeeklyPlanComponent implements OnInit {
   
   ngOnInit() {
     
-    this.rService.rOnInit("UserP4","startdateP4","")
+    this.rService.rOnInit("User-wpp","startdate-wpp","")
 
   }
 

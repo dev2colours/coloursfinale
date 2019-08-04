@@ -10,18 +10,18 @@
         <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
     </div>  
 
-<h3 id="org4" style="margin-top:-0.5em">Personal Reports</h3>
+<h3 id="org-wpe" style="margin-top:-0.5em">Personal Reports</h3>
 
 <h3 style="margin-top:-0.5em">Participant:
-    <span><select id="name-list4"></select></span>
+    <span><select id="name-list-wpe"></select></span>
     <span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
 
 <h4 style="margin-top:-0.5em" >Weekly Plan As At <span>
-        <input type="date" id="startdate4">
-        <button id="btn4" (click)="rService.rweeklyplan_e()">Generate Weekly Plan</button>
+        <input type="date" id="startdate-wpe">
+        <button id="btn-wpe" (click)="rService.rweeklyplan_e()">Generate Weekly Plan</button>
     </span></h4>
 
-<table id="TbId4">
+<table id="TbId-wpe">
     <!-- headings -->
     <tr>
         <th>Sub Task</th>

@@ -22,6 +22,7 @@ import { PersonalRdashboardComponent }   from './personal-reports/personal-repor
 import { RTimeBudgetComponent } from './personal-reports/r-time-budget/r-time-budget.component';
 // Added 28-June-19 by VJ Sibanda
 import { RTimeActualComponent } from './personal-reports/r-time-actual/r-time-actual.component';
+import { RUcTasksComponent } from './personal-reports/r-uc-tasks/r-uc-tasks.component';
 
 export const CalendarRoutes: Routes = [{
     path: '',
@@ -44,11 +45,11 @@ export const CalendarRoutes: Routes = [{
         component: DiaryComponent
     },
     {
-        path: 'PersonalWeeklyPlan-report',
+        path: 'r-weeklyplan',
         component: RWeeklyPlanComponent
     },
     {
-        path: 'PersonalDailyPlan-report',
+        path: 'r-dailyplan',
         component: RDailyPlanComponent
     },
     {
@@ -68,8 +69,12 @@ export const CalendarRoutes: Routes = [{
         component: ClassificationTimesheetComponent
     },
     {
-        path: 'activity-reportLog',
+        path: 'r-activitylog',
         component: RActivityLogComponent
+    },
+    {
+        path: 'r-uctasks',
+        component: RUcTasksComponent
     },
     {   path: 'tasks-24/7',
         component: CalendarComponent
@@ -87,10 +92,10 @@ export const CalendarRoutes: Routes = [{
     {
         path: 'diary',
         component: DiaryComponent},
-    {   path: 'PersonalWeeklyPlan-report',
+    {   path: 'r-weeklyplan',
         component: RWeeklyPlanComponent
     }, 
-    {   path: 'PersonalDailyPlan-report',
+    {   path: 'r-dailyplan',
         component: RDailyPlanComponent
     },
     {
@@ -108,11 +113,11 @@ export const CalendarRoutes: Routes = [{
         path: 'classification-log',
         component: ClassificationTimesheetComponent},
     {
-        path: 'activity-reportLog',
+        path: 'r-activitylog',
         component: RActivityLogComponent
     },
     {
-        path: 'timeSpent-report',
+        path: 'r-timespent',
         component: RTimeSpentComponent
     },
     // Added 26-June-2019 by VJ Sibanda
@@ -134,7 +139,7 @@ export const CalendarRoutes: Routes = [{
         component: PersonalRdashboardComponent 
     },
     {
-        path: 'outstandingTask-report',
+        path: 'r-ostasks',
         component: ROsTasksComponent
     }]
 }];

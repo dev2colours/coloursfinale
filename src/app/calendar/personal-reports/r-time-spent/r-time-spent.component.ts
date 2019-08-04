@@ -18,7 +18,7 @@ export class RTimeSpentComponent implements OnInit {
 
   ngOnInit() {
     
-    this.rService.rOnInit("UserP1","startdateP1","enddateP1")
+    this.rService.rOnInit("User-tsp","startdate-tsp","enddate-tsp")
 
   }
 

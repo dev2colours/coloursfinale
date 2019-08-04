@@ -14,7 +14,7 @@ export class RDailyPlanComponent implements OnInit {
 
   ngOnInit() {
   
-    this.rService.rOnInit("UserP3","startdateP3","")
+    this.rService.rOnInit("User-dpp","startdate-dpp","")
 
   }
 

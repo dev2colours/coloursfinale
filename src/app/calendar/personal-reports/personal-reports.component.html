@@ -4,7 +4,7 @@
 <div class="col-md-12">
 <div class="card">
 
-<div class="card-body" style="margin-top: 0em">
+<div class="card-body" style="margin-top: -4em">
 
   <div style="text-align: right">
     <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
@@ -44,6 +44,26 @@
           <div class="row">
             <div class="col-md-6">
               <p class="text-left title " style="color: darkslategray">
+                <span> <a routerLink="/r-ostasks">My Outstanding Tasks</a></span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 ml-auto mr-auto">
+          <div class="row">
+            <div class="col-md-6">
+            <p class="text-left title " style="color: darkslategray">
+              <span> <a routerLink="/r-uctasks">My Upcoming Tasks</a></span>
+            </p>
+           </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 ml-auto mr-auto">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-left title " style="color: darkslategray">
                 <span> <a routerLink="/r-timebudget">My Time Budget</a></span>
               </p>
             </div>
@@ -54,7 +74,7 @@
           <div class="row">
             <div class="col-md-6">
               <p class="text-left title " style="color: darkslategray">
-                <span> <a routerLink="/r-timeactual">My Time Actuals</a></span>
+                <span> <a routerLink="/r-timeactual">My Time Budget versus Actual</a></span>
               </p>
             </div>
           </div>
@@ -64,7 +84,7 @@
           <div class="row">
             <div class="col-md-6">
               <p class="text-left title " style="color: darkslategray">
-                <span> <a routerLink="/PersonalWeeklyPlan-report">My Weekly Plan</a></span>
+                <span> <a routerLink="/r-weeklyplan">My Weekly Plan</a></span>
               </p>
             </div>
           </div>
@@ -74,7 +94,7 @@
           <div class="row">
             <div class="col-md-6">
               <p class="text-left title " style="color: darkslategray">
-                <span> <a routerLink="/PersonalDailyPlan-report">My Daily Plan</a></span>
+                <span> <a routerLink="/r-dailyplan">My Daily Plan</a></span>
               </p>
             </div>
           </div>
@@ -84,7 +104,7 @@
             <div class="row">
               <div class="col-md-6">
                 <p class="text-left title " style="color: darkslategray">
-                  <span> <a routerLink="/activity-reportLog">My Time Sheet Report in a period</a></span>
+                  <span> <a routerLink="/r-activitylog">My Time Sheet Report in a period</a></span>
                 </p>
               </div>
             </div>
@@ -94,27 +114,7 @@
           <div class="row">
             <div class="col-md-6">
               <p class="text-left title " style="color: darkslategray">
-                <span> <a routerLink="/timeSpent-report">My Total Time Spent on an Activity in a period</a></span>
-              </p>
-            </div>
-          </div>
-        </div>
-      
-        <div class="col-md-12 ml-auto mr-auto">
-            <div class="row">
-              <div class="col-md-6">
-                <p class="text-left title " style="color: darkslategray">
-                  <span> <a routerLink="/outstandingTask-report">Outstanding Tasks</a></span>
-                </p>
-              </div>
-            </div>
-        </div>
-      
-        <div class="col-md-12 ml-auto mr-auto">
-          <div class="row">
-            <div class="col-md-6">
-              <p class="text-left title " style="color: darkslategray">
-                <span> <a routerLink="/total-actions">My Time Sheet for each day</a></span>
+                <span> <a routerLink="/r-timespent">My Total Time Spent on an Activity in a period</a></span>
               </p>
             </div>
           </div>
@@ -201,34 +201,44 @@
         </div>
         
         <div class="col-md-12 ml-auto mr-auto">
-          <div class="row">
-            <div class="col-md-6">
-              <p class="text-left title " style="color: darkslategray">
-                <span> <a routerLink="/PersonalWeeklyPlan-report">My Weekly Plan</a></span>
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-12 ml-auto mr-auto">
-          <div class="row">
-            <div class="col-md-6">
-              <p class="text-left title " style="color: darkslategray">
-                <span> <a routerLink="/PersonalDailyPlan-report">My Daily Plan</a></span>
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-12 ml-auto mr-auto">
             <div class="row">
               <div class="col-md-6">
                 <p class="text-left title " style="color: darkslategray">
-                  <span> <a routerLink="/outstandingTask-report">Outstanding Tasks</a></span>
+                  <span> <a routerLink="/r-ostasks">My Outstanding Tasks</a></span>
                 </p>
               </div>
             </div>
           </div>
+  
+          <div class="col-md-12 ml-auto mr-auto">
+            <div class="row">
+              <div class="col-md-6">
+              <p class="text-left title " style="color: darkslategray">
+                <span> <a routerLink="/r-uctasks">My Upcoming Tasks</a></span>
+              </p>
+             </div>
+            </div>
+          </div>
+
+        <div class="col-md-12 ml-auto mr-auto">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-left title " style="color: darkslategray">
+                <span> <a routerLink="/r-weeklyplan">My Weekly Plan</a></span>
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-12 ml-auto mr-auto">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-left title " style="color: darkslategray">
+                <span> <a routerLink="/r-dailyplan">My Daily Plan</a></span>
+              </p>
+            </div>
+          </div>
+        </div>
       
         <div hidden>
           <div class="col-md-12 ml-auto mr-auto">
