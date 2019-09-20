@@ -1,0 +1,20 @@
+<h3 id="org3">Personal Reports</h3>
+
+<h3>Participant:
+    <span><select id="name-list3"></select></span>
+    <span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
+
+<h4 margin-top:-150px>Daily Plan As At <span>
+        <input type="date" id="startdate3">
+        <button id="btn3" (click)="rService.rdailyplan_e()">Generate Daily Plan</button>
+    </span></h4>
+
+<table id="TbId3">
+    <!-- headings -->
+    <tr>
+        <th>Sub Task</th>
+        <th>Task Name</th>
+        <th>Planned Start</th>
+        <th>Planned Finish</th>
+    </tr>
+</table>

@@ -1,0 +1,578 @@
+<div class="main-content">
+  <div class="row"  *ngIf="afAuth.user | async as user">
+    <div class="col-md-5" id="profileDisplay">
+      <div class="card card-user">
+        <div class="image">
+          <img src="./assets/img/bg/damir-bosnjak.jpg" alt="...">
+        </div>
+        <div class="card-body">
+          <div class="author">
+              <!-- <img class="avatar border-gray" src="{{ user.photoURL }}" alt="..."> -->
+              <div class="photo">
+                <img class="justify-content-center avatar" src="{{ user.photoURL }}">
+              </div>
+              <!-- <h5 class="title card-category na-am">{{user.displayName}}</h5> -->
+              <h5 class="title card-category na-am">{{ userData.name }}</h5>
+            <!-- <p class="description">
+              @chetfaker
+            </p> -->
+          </div>
+          <p class="description text-center"><small>
+            "{{ userData.aboutMe }}"</small>
+            <br><br>
+            <!-- <button class="info btn-link" (click)="run1()">edit profile</button> -->
+            <button class="info btn-link" (click)="viewProfile()">View profile</button>
+          </p>
+        </div>
+        <div class="card-footer">
+          <hr>
+          <div class="button-container">
+            <div class="row">
+              <div class="col-lg-3 col-md-6 col-6 ml-auto">
+                <h5>12
+                  <br>
+                  <small>Files</small>
+                </h5>
+              </div>
+              <div class="col-lg-4 col-md-6 col-6 ml-auto mr-auto">
+                <h5>2GB
+                  <br>
+                  <small>Used</small>
+                </h5>
+              </div>
+              <div class="col-lg-3 mr-auto">
+                <h5>24,6$
+                  <br>
+                  <small>Spent</small>
+                </h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Contact</h4>
+        </div>
+        <div class="card-body">
+          <ul class="list-unstyled team-members">
+            <ng-container *ngIf="showContacts">
+              <li>
+                <div class="row">
+                  <div class="col-md-2 col-2">
+                    <div class="avatar">
+                      <img src="./assets/img/faces/ayo-ogunseinde-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                    </div>
+                  </div>
+                  <div class="col-md-7 col-7">
+                    DJ Khaled
+                    <br />
+                    <!-- <span class="text-muted">
+                      <small>Offline</small>
+                    </span> -->
+                  </div>
+                  <div class="col-md-3 col-3 text-right">
+                    <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="fa fa-envelope"></i></button>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row">
+                  <div class="col-md-2 col-2">
+                    <div class="avatar">
+                      <img src="./assets/img/faces/joe-gardner-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                    </div>
+                  </div>
+                  <div class="col-md-7 col-7">
+                    Creative Tim
+                    <br />
+                    <!-- <span class="text-success">
+                      <small>Available</small>
+                    </span> -->
+                  </div>
+                  <div class="col-md-3 col-3 text-right">
+                    <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="fa fa-envelope"></i></button>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row">
+                  <div class="col-md-2 col-2">
+                    <div class="avatar">
+                      <img src="./assets/img/faces/clem-onojeghuo-2.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                    </div>
+                  </div>
+                  <div class="col-ms-7 col-7">
+                    Flume
+                    <br />
+                    <!-- <span class="text-danger">
+                      <small>Busy</small>
+                    </span> -->
+                  </div>
+                  <div class="col-md-3 col-3 text-right">
+                    <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="fa fa-envelope"></i></button>
+                  </div>
+                </div>
+              </li>
+            </ng-container>
+            <li *ngFor="let contact of myContacts | async">
+              <div class="row">
+                <div class="col-md-2 col-2">
+                  <div class="avatar">
+                    <img src="./assets/img/faces/default-avatar.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                  </div>
+                </div>
+                <div class="col-ms-7 col-7">
+                  {{ contact.name }}
+                  <br />
+                  <!-- <span class="text-danger">
+                    <small>Busy</small>
+                  </span> -->
+                </div>
+                <div class="col-md-3 col-3 text-right">
+                  <button class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="fa fa-envelope"></i></button>
+                </div>
+              </div>
+            </li>
+            <button class="info btn-link" data-toggle="modal" data-target="#myModal10">
+              New Contact
+            </button>
+
+          </ul>
+        </div>
+        <!-- small modal -->
+              <div class="modal fade modal-primary" id="myModal10" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog"><!-- modal-sm -->
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <div class="modal-profile ml-auto mr-auto">
+                        <i class="fa fa-address-card"></i>
+                      </div> New Conatct
+                    </div>
+                    <div class="modal-body">
+                      <p>Select from the list to add Contacts</p>
+
+                      <div *ngIf="selectedContacts" class="col-md-12">
+                        <p *ngFor="let item of selectedContacts">{{ item.name }},</p>
+                      </div>
+                      <form method="">
+                        <!-- <div class="form-group">
+                          <label>Contact Name</label>
+                          <input type="text" [(ngModel)]="contact.name" name="cName" class="form-control" placeholder="Simon">
+                        </div>
+                        <div class="form-group">
+                          <label>Email</label>
+                          <input type="email" [(ngModel)]="contact.email" name="cEmail" class="form-control" placeholder="exampleInputEmail1">
+                        </div>
+                        <div class="form-group">
+                          <label>Contact number</label>
+                          <input type="text" [(ngModel)]="contact.phoneNumber" name="cNumber" class="form-control" placeholder="+263774555666">
+                        </div> -->
+
+                        <ng-select [items]="coloursUsers | async" bindLabel="name" name="tClassification" placeholder="Select contact"
+                          (change)="addContact(newContact)"  [(ngModel)]="newContact">
+                        </ng-select>
+                      
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <div class="left-side">
+                        <button type="button" class="btn btn-link btn-link"  data-dismiss="modal">Back</button>
+                      </div>
+                      <div class="divider"></div>
+                      <div class="right-side">
+                        <button type="button" class="btn btn-link btn-link" data-dismiss="modal">Save</button> <!--  (click)="addContact()" -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--    end small modal -->
+      </div>
+    </div>
+    <div class="col-md-7" *ngIf="show1" >
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-7">
+              <h5 class="card-category clrs-h1">Edit Profile</h5>
+            </div>
+            <div class="col-md-5">
+              <button class="info btn-link" (click)="viewProfile()">Preview</button>
+              <button class="info btn-link" (click)="saveProfile(userData)">Save</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- <form> -->
+            <!-- <div class="row">
+              <div class="col-md-8 pr-1">
+                <div class="form-group">
+                  <label>Company (disabled)</label>
+                  <input type="text" class="form-control" name="userCompany" disabled="" placeholder="Company" value="Creative Code Inc.">
+                </div>
+              </div>
+            </div> -->
+            <div class="row">
+              <div class="col-md-8 pr-1">
+                <div class="form-group">
+                  <label>Username</label>
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userUsername"[(ngModel)]="userData.username">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-8 pr-1">
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input type="text" class="form-control card-category" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userDisplayName" [(ngModel)]="userData.name">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 pr-1">
+                <div class="form-group">
+                  <label>Date of birth</label>
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userDob" placeholder="dd/mm/yyyy" [(ngModel)]="userData.dob">
+                </div>
+              </div>
+              <div class="col-md-4 ">
+                <div class="form-group">
+                  <!-- <label>Gender</label> -->
+                  <!-- <input type="text" class="form-control" name="userGenger" placeholder="Male/Female" [(ngModel)]="userData.gender"> -->
+
+                  <ng-select bindLabel="name" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="userGenger" placeholder="Male/Female" [(ngModel)]="userData.gender">
+                    <ng-option value="Male" style="padding-top: 7px; padding-bottom: 0px; height: 32px;">Male</ng-option>
+                    <ng-option value="Female" style="padding-top: 7px; padding-bottom: 0px; height: 32px;">Female</ng-option>
+                </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3 pr-1">
+                <div class="form-group">
+                  <label>Weight</label>
+                  <div class="input-group">
+                    <input [(ngModel)]="userData.bodyWeight" name="weight" placeholder="60Kg" class="form-control"
+                      (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
+                    <div class="input-group-postpand" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                      <span class="input-group-text"><small>Kg</small>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 px-1">
+                <div class="form-group">
+                  <label>Height</label>
+                  <!-- <input type="number" class="form-control" name="Country" placeholder="178cm" [(ngModel)]="userData.bodyHeight"> -->
+                  
+                <div class="input-group">
+                  <input [(ngModel)]="userData.bodyHeight" name="height" placeholder="180cm" class="form-control"
+                    (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
+                  <div class="input-group-postpand" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                    <span class="input-group-text"><small>cm</small>
+                    </span>
+                  </div>
+                </div>
+
+                </div>
+              </div>
+              <div *ngIf="userData.bodyMassIndex != 0" class="col-md-3 pl-1">
+                <div class="form-group">
+                  <label>BMI</label>
+                  <!-- <div style="padding-top: 8px;padding-bottom: 0px; height: 32px;">{{ userData.bodyMassIndex }}</div> -->
+                  <p class="form-control" style="padding-top: 7px;padding-bottom: 0px; height: 32px;" name="Zipcode" placeholder="0.8"> {{ userData.bodyMassIndex }} </p>
+                  <!-- <div class="input-group-postpand" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                    <span class="input-group-text"><small>Kg/m2</small>
+                    </span>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-10">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Account email</label>
+                  <input type="email" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userEmail" [(ngModel)]="userData.email">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-10">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Business email</label>
+                  <input type="email" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="Bus_email" [(ngModel)]="userData.bus_email">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 pr-1">
+                <div class="form-group">
+                  <label>Mobile</label>
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userMobileContact" placeholder="0773344556" [(ngModel)]="userData.phoneNumber">
+                </div>
+              </div>
+              <div class="col-md-6 ">
+                <div class="form-group">
+                  <label>Telephone</label>
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userTelephone" placeholder="0566699777" [(ngModel)]="userData.telephone">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label>Address</label>
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="userHomeAddress"placeholder="400 Dough road, Cranehill" [(ngModel)]="userData.address">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 pr-1">
+                <div class="form-group">
+                  <label>City</label>
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="City" placeholder="Bulawayo" [(ngModel)]="userData.city">
+                </div>
+              </div>
+              <div class="col-md-4 px-1">
+                <div class="form-group">
+                  <label>Country</label>
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="Country" placeholder="Australia" [(ngModel)]="userData.country">
+                </div>
+              </div>
+              <div class="col-md-4 pl-1">
+                <div class="form-group">
+                  <label>Postal Code</label>
+                  <input type="number" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="Zipcode" placeholder="ZIP Code" [(ngModel)]="userData.zipCode">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-8 pr-1">
+                <div class="form-group">
+                  <label>National Id</label>
+                  <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="nationalId"[(ngModel)]="userData.nationalId">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label>About Me</label>
+                  <textarea rows="auto" cols="80" class="form-control textarea" placeholder="Oh so, your weak rhyme You doubt I'll bother, reading into it" [(ngModel)]="userData.aboutMe"></textarea>
+                  <!-- <textarea name="taskComment" id="comments" cols="50" rows="auto" placeholder="Click and type your comment here....." [(ngModel)]="aboutMe"></textarea> -->
+                </div>
+              </div>
+            </div>
+          <!-- </form> -->
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7" *ngIf="preview">
+      <!--  *ngIf="show1" -->
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-8">
+              <h5 *ngIf="userData.username !== '' || userData.username !== undefined; else showName" class="na-am">{{ userData.username }}'s Profile preview</h5>
+              <!-- <h5 class="card-category na-am">{{ userData.username || userData.name }}'s Profile preview</h5> -->
+              <ng-template #showName>
+                <h5 class="card-category na-am">{{ userData.name }}'s Profile preview</h5>                
+              </ng-template>
+            </div>
+            <div class="col-md-2">
+              <button class="info btn-link" (click)="run1()">Edit</button>
+            </div>
+            <div class="col-md-2">
+              <button class="info btn-link" (click)="done()">Done</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- <form> -->
+            <div class="row">
+              <div class="col-md-7 pr-1">
+                <div class="form-group">
+                  <label>Username</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="Username">{{ userData.username }}</p> 
+                  <!-- [(ngModel)]="userData.username"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-7 pr-1">
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <p type="text" class="form-control card-category" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="DisplayName">{{ userData.name }}</p>
+                   <!-- [(ngModel)]="userData.name"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 pr-1">
+                <div class="form-group">
+                  <label>Date of birth</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="userDob" placeholder="dd/mm/yyyy">{{ userData.dob }}</p>
+                   <!-- [(ngModel)]="userData.dob"> -->
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Gender</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="userGender" placeholder="male/female"> {{ userData.gender }} </p>
+                   <!-- [(ngModel)]="userData.gender"> -->
+                </div>
+              </div>
+            </div>
+            <div *ngIf="(userData.bodyMassIndex + userData.bodyWeight + userData.bodyHeight) != 0" class="row">
+              <div class="col-md-3 pr-1">
+                <div class="form-group">
+                  <label>Weight</label>
+                  <p type="number" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="City" placeholder="Bulawayo"> {{ userData.bodyWeight }} Kg</p>
+                   <!-- [(ngModel)]="userData.city"> -->
+                </div>
+              </div>
+              <div class="col-md-3 px-1">
+                <div class="form-group">
+                  <label>Height</label>
+                  <p type="number" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="Country" placeholder="Australia"> {{ userData.bodyHeight }} cm</p> 
+                  <!-- [(ngModel)]="userData.country"> -->
+                </div>
+              </div>
+              <div class="col-md-3 pl-1">
+                <div class="form-group">
+                  <label>BMI</label>
+                  <p type="number" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="Zipcode" placeholder="ZIP Code"> {{ userData.bodyMassIndex }} </p>
+                   <!-- [(ngModel)]="userData.zipCode"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-10">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Account Email</label>
+                  <p type="email" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="usermail"> {{ userData.email }} </p>
+                   <!-- [(ngModel)]="userData.email"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-10">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Business Email</label>
+                  <p type="email" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="busEmail"> {{ userData.bus_email }} </p>
+                  <!-- [(ngModel)]="userData.bus_email"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5 pr-1">
+                <div class="form-group">
+                  <label>Mobile</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="MobileContact" placeholder="0773344556"> {{ userData.phoneNumber }} </p>
+                   <!-- [(ngModel)]="userData.phoneNumber"> -->
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group">
+                  <label>Telephone</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="Telephone" placeholder="0566699777"> {{ userData.telephone }} </p>
+                   <!-- [(ngModel)]="userData.telephone"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label>Address</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="HomeAddress" placeholder="400 Dough road, Craneborne"> {{ userData.address }} </p>
+                  <!-- [(ngModel)]="userData.address"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 pr-1">
+                <div class="form-group">
+                  <label>City</label>
+                  <p type="text" class="form-control" name="City" placeholder="Bulawayo"> {{ userData.city }} </p>
+                   <!-- [(ngModel)]="userData.city"> -->
+                </div>
+              </div>
+              <div class="col-md-4 px-1">
+                <div class="form-group">
+                  <label>Country</label>
+                  <p type="text" class="form-control" name="Country" placeholder="Australia"> {{ userData.country }} </p> 
+                  <!-- [(ngModel)]="userData.country"> -->
+                </div>
+              </div>
+              <div class="col-md-4 pl-1">
+                <div class="form-group">
+                  <label>Postal Code</label>
+                  <p type="number" class="form-control" name="Zipcode" placeholder="ZIP Code"> {{ userData.zipCode }} </p>
+                   <!-- [(ngModel)]="userData.zipCode"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-7 pr-1">
+                <div class="form-group">
+                  <label>National Id</label>
+                  <p type="text" class="form-control" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="nId">{{ userData.nationalId }}</p> 
+                  <!-- [(ngModel)]="userData.username"> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label>About Me</label>
+                  <p rows="4" cols="80" class="form-control textarea" style="padding-top: 7px; padding-bottom: 0px; height: 32px;" name="aboutMeUser" placeholder="Tell colours about yourself"> {{ userData.aboutMe }} </p><!-- [(ngModel)]="userData.aboutMe" -->
+                </div>
+              </div>
+            </div>
+          <!-- </form> -->
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7" *ngIf="show">
+      <!--  *ngIf="show1" -->
+      <div class="card">
+        <div class="card-header">
+          <a class="card-category clrs-h1">Personal Progressive Profile Report</a>
+        </div>
+        <div class="card-body">
+          <div class="card-body">
+            <div class="nav-tabs-navigation">
+              <div class="nav-tabs-wrapper">
+                <ul id="tabs" class="nav nav-tabs" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#home" role="tab" aria-expanded="true">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#profile" role="tab" aria-expanded="false">Profile</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#messages" role="tab" aria-expanded="false">Messages</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div id="my-tab-content" class="tab-content text-center">
+              <div class="tab-pane active" id="home" role="tabpanel" aria-expanded="true">
+                <p>Larger, yet dramatically thinner. More powerful, but remarkably power efficient. With a smooth metal surface
+                  that seamlessly meets the new Retina HD display.</p>
+              </div>
+              <div class="tab-pane" id="profile" role="tabpanel" aria-expanded="false">
+                <p>Here is your profile.</p>
+              </div>
+              <div class="tab-pane" id="messages" role="tabpanel" aria-expanded="false">
+                <p>Here are your messages.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

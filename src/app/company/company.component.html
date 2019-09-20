@@ -1,0 +1,650 @@
+<div class="main-content">
+  <div class="card card-plain">
+    <div class="card-body">
+      <!-- <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body text-center">
+              <code>login/logout</code>
+              <div *ngIf="afAuth.user | async as user; else showLogin">
+                <button (click)="logout()">Logout</button>
+              </div>
+              <ng-template #showLogin>
+                <p>Please login.</p>
+                <button (click)="login()">Login with Google</button>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body text-center" *ngIf="afAuth.user | async as person">
+              <code>Profile</code>
+              <p><font size="4"> Hello <b> {{ person.displayName }} ! </b></font></p>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <div class="row" *ngIf="afAuth.user | async as user">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <div id="accordion" role="tablist" aria-multiselectable="true" class="card-collapse">
+                <div class="card card-plain">
+                  <div class="card-header" role="tab" id="headingThree">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false"
+                      aria-controls="collapseThree">
+                      Create a Company
+                      <i class="nc-icon nc-minimal-down"></i>
+                    </a>
+                  </div>
+                  <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+                    <div class="card-body">
+                      <form method="">
+                        <div class="form-group">
+                          <label>Company Name</label>
+                          <input type="text" [(ngModel)]="newEnterprise.name" name="enterprise_name" class="form-control"
+                            placeholder="e.g. Colours">
+                          </div>
+                          <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" [(ngModel)]="newEnterprise.location" name="enterprise_location" class="form-control" placeholder="e.g. Town / City">
+                          </div>
+                          <div class="form-group">
+                            <label>Industry Sector</label>
+                            <input type="text" [(ngModel)]="newEnterprise.sector" name="enterprise_sector" class="form-control" placeholder="e.g. Construction">
+                          </div>
+                      </form>
+                      <div class="card-footer ">
+                        <div class="row pull-left">
+                          <div class="col-md-9">
+                            <button type="submit" class="btn btn-info btn-round" (click)="saveEnterprise()">Add company</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>          
+        </div>
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">
+              <h6 class="card-category"> My Company Register</h6>
+            </div>
+            <div class="card-body text-center">
+              <code hidden>My Companies</code>
+              <div class="table-responsive pro_info text-left">
+                <table class="table">
+                  <thead class="">
+                    <th>Name</th>
+                    <th>Sector</th>
+                    <!-- <th>Created On</th> -->
+                    <th>Action</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let enterprise of myenterprises | async ">
+                      <td>{{ enterprise.name }}</td>
+                      <td>{{ enterprise.sector}}</td>
+                      <!-- <td *ngIf="enterprise.byId===myUser">{{ enterprise.createdOn}}</td> -->
+                      <td class="text-center">
+                        <button class="warning btn-link" rel="tooltip" title="show {{enterprise.name}} company details" (click)="toggle(); selectCompany(enterprise)">
+                          Select
+                        </button>
+                        <a class="danger btn-link btn-icon btn-sm remove" disabled="" hidden><i class="fa fa-times"></i></a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+
+        </div>
+        <ng-container *ngIf="show">
+          <div class="col-md-8" *ngIf="selectedCompany">
+            <div class="card">
+              <div class="card-body ">
+                <code>Selected Company: {{selectedCompany.name}}<br>Created by {{selectedCompany.by}} </code>
+                <div class="table-responsive pro_info">
+                  <table class="table">
+                    <thead class="">
+                      <th>Department Name</th>
+                      <th>Action</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let department of companyDepartments | async ">
+                        <td>{{ department.name }}</td>
+                        <td class="">
+                          <a class="btn btn-warning btn-link btn-icon btn-sm edit" rel="tooltip" title="Select Department"><i
+                              class="fa fa-edit"></i></a>
+                          <a class="btn btn-danger btn-link btn-icon btn-sm remove"><i class="fa fa-times"></i></a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> <input class="form-control" placeholder="Add Department" type="text" [(ngModel)]="dpt.name"></td>
+                        <td></td>
+                        <!-- <td>{{ today }}</td> -->
+                        <td class="">
+                          <button class="btn-primary btn-link" (click)="save(dpt)">save</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <hr>
+                <div class="table-responsive pro_info">
+                  <table class="table">
+                    <thead class="">
+                      <th>Participant Name</th>
+                      <th>Action</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let participant of companyParticipants | async ">
+                        <td>{{ participant.name }} </td>
+                        <td class="">
+                          <button class="primary btn-link" id="addParticipantToDept" (click)="selectParticipant(participant)" data-toggle="modal" data-target="#addDptModal" aria-haspopup="true" aria-expanded="false">
+                            <font size=2> Add to Department </font>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+
+                  <div class="modal fade" id="addDptModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+
+                    <div class="modal-dialog">
+                      <!--  modal-sm -->
+                      <div class="modal-content">
+                        <!-- <div class="modal-header justify-content-center"> -->
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            <i class="nc-icon nc-simple-remove"></i>
+                          </button>
+                          <p class="modal-title" id="myModalLabel">Select department to join</p>
+                        </div>
+                        <ng-container *ngIf="showDpt">
+                          <p>{{ department.name }}</p>
+                        </ng-container>
+                        <div class="modal-body">
+                          <div class="table-responsive pro_info">
+                            <table class="table">
+                              <thead class="">
+                                <th>Name </th>
+                                <th>Action</th>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let department of companyDepartments | async ">
+                                  <td>{{ department.name }}</td>
+                                  <td class="justify-content-center">
+                                    <button class="warning btn-link select" rel="tooltip" title="select {{department.name}} department" (click)="toggleDpt; selectDpt(department)"><font size=2>select</font></button>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td> <input class="form-control" placeholder="Add Department" type="text" [(ngModel)]="dpt.name"></td>
+                                  <td>{{ today }}</td>
+                                  <td class="text-right">
+                                    <button class="btn-primary btn-link" (click)="save(dpt)">save</button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <!-- <div class="modal-body">
+                                            <p>Cornfirm you want to connect to {{ selectedCompany.name }}</p>
+                                          </div> -->
+                        <div class="modal-footer">
+                          <div class="left-side">
+                            <button type="button" data-dismiss="modal" class="btn btn-link btn-link">Close</button>
+                          </div>
+                          <div class="divider"></div>
+                          <div class="right-side">
+                            <button type="button" class="btn btn-link btn-link" (click)="addParticipant()" data-dismiss="modal">
+                              Confirm</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
+                <hr>
+                <div class="table-responsive pro_info">
+                  <code>Projects List for Company: {{selectedCompany.name}} </code>
+
+                  <table class="table">
+                    <thead class="">
+                      <th>Project Name</th>
+                      <th>Location</th>
+                      <th>Sector</th>
+                      <th>Action</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let project of companyProjects | async ">
+                        <td>{{ project.name }}</td>
+                        <!-- <td *ngIf="!projectDepartments"> <a class="btn btn-primary btn-link" data-toggle="modal" data-target="#dptModal" (click)="selectProject(project)"><small>Assign</small></a></td>
+                        <td *ngIf="projectDepartments"> <p *ngFor="let dpt of projectDepartments | async">{{dpt.name}}</p></td> -->
+                        <td>{{ project.location}}</td>
+                        <td>{{ project.sector}}</td>
+                        <td> 
+                          <button class="dropdown-toggle primary btn-link" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <font size=5> ... </font>
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item primary btn-link" rel="tooltip" (click)="selectProject4Dept(project)" data-toggle="modal" data-target="#dptModal" title="Add {{ project.name }} to a department">Add department</button>
+                            <button class="dropdown-item primary btn-link" rel="tooltip" data-toggle="modal" data-target="#tskModal" (click)="selectProject4Dept(project)" title="create new task">Add task </button> <!--  (click)="toggle(); selectProject3(project) -->
+                            <button class="dropdown-item primary btn-link" rel="tooltip" title="Show commments">Show Comments </button> <!--  (click)="toggle(); selectProject3(project) -->
+                          </div>
+                        </td>
+
+                      </tr>
+                    </tbody>
+                  </table>
+
+
+                  <div class="modal fade" id="tskModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="card-body ">
+                          <div class="card-header text-center">
+                            <p class="col-md-8 ml-auto mr-auto col-form-label info">
+                              <font size=4>Create a Task</font>
+                            </p>
+                            <!-- <h4 class="card-title">Create a Task</h4> -->
+                          </div>
+                          <hr>
+                          <form class="form-horizontal">
+                            <div class="row">
+                              <label class="col-md-3 col-form-label">Task name</label>
+                              <div class="col-md-8">
+                                <div class="form-group">
+                                  <input type="text" [(ngModel)]="task.name" name="taskName" class="form-control" placeholder="Task name">
+                                  <!-- [(ngModel)]="task.name" -->
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <label class="col-md-3 col-form-label">Start Date</label>
+                              <div class="col-md-8">
+                                <div class="form-group">
+                                  <input type="date" [(ngModel)]="task.start" name="startTime" class="form-control">
+                                  <!-- [(ngModel)]="task.startTimeRange" -->
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <label class="col-md-3 col-form-label">Finish Date</label>
+                              <div class="col-md-8">
+                                <div class="form-group">
+                                  <input type="date" [(ngModel)]="task.finish" name="finishTime" class="form-control">
+                                </div>
+                              </div>
+                            </div>
+                            <ng-container *ngIf="showChamp">
+                              <div class="row">
+                                <label class="col-md-3 col-form-label">Champion</label>
+                                <div class="col-md-8">
+                                  <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
+                                    {{ (selectedParticipant)?.name }}
+                                    <button type="text" name="taskChampion" class="btn btn-icon primary btn-link " (click)="toggleUsersTable(); toggleChamp()">
+                                      <i class="fa fa-edit fa-fw"></i>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </ng-container>
+                            <div class="row">
+                              <div class="col-md-8 ml-auto mr-auto">
+                                <div class="form-group">
+                                  <ng-container *ngIf="showUserTable">
+                                    <div class="table-responsive user_table">
+                                      <code>Select a Champion</code>
+
+                                      <table class="table">
+                                        <tbody class="">
+                                          <tr *ngFor="let user of coloursUsers | async " class="">
+                                            <td>{{ user.name }}</td>
+                                            <td><button class="primary btn-link" (click)="selectColoursUser(user)"> select
+                                              </button></td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </ng-container>
+                                  <ng-container *ngIf="showChampBtn">
+                                    <div class="footer"><button class="primary btn-link" (click)="toggleUsersTable(); hideChampBtn()"
+                                        title=" Add task champion">
+                                        Select Champion </button>
+                                    </div>
+                                  </ng-container>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+
+                          <div class="modal-footer" style="margin-bottom:0%">
+                            <div class="left-side">
+                              <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="right-side">
+                              <button type="button" class="btn btn-success btn-link" (click)="saveProjectTask()" data-dismiss="modal" title="save task">Save</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  
+                  
+                  <div class="modal fade" id="dptModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+
+                    <div class="modal-dialog"> <!--  modal-sm -->
+                      <div class="modal-content">
+                        <div class="modal-header justify-content-center">
+                          <!-- <div class="modal-header"> -->
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                              <i class="nc-icon nc-simple-remove"></i>
+                            </button>
+                            <!-- <h5 class="modal-title" id="myModalLabel">How Do You Become an Affiliate?</h5> -->
+                            <code>Select department from the list</code>
+                            <ng-container *ngIf="showDpt">
+                              <p>{{ department.name }}</p>
+                            </ng-container>
+
+                          </div> 
+                        <div class="modal-body">
+                          <div class="table-responsive pro_info">
+                            <table class="table">
+                              <thead class="">
+                                <th>Name</th>
+                                <th>Created By</th>
+                                <th>Action</th>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let department of companyDepartments | async ">
+                                  <td>{{ department.name }}</td>
+                                  <td>{{ department.createdOn}}</td>
+                                  <td class="justify-content-center">
+                                    <button class="warning btn-link" rel="tooltip" title="Company"
+                                      (click)="toggleDpt; selectDpt(department)">select</button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <!-- <div class="modal-body">
+                          <p>Cornfirm you want to connect to {{ selectedCompany.name }}</p>
+                        </div> -->
+                        <div class="modal-footer">
+                          <div class="left-side">
+                            <button type="button" class="btn btn-link btn-link">Close</button>
+                          </div>
+                          <div class="divider"></div>
+                          <div class="right-side">
+                            <button type="button" class="btn btn-link btn-link" (click)="addProject()" data-dismiss="modal">
+                              Confirm</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <button class="primary btn-link" data-toggle="modal" data-target="#projectModal">Join Project</button>
+                  <!-- notice modal -->
+                  <div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-notice">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            <i class="nc-icon nc-simple-remove"></i>
+                          </button>
+                          <p class="modal-title" id="myModalLabel">Select the project to join & it's contact person</p>
+                        </div>
+                        <div class="modal-body">
+                          <ng-container *ngIf="showProj">
+                            <div class="row">
+                              <label class="col-md-3 col-form-label">Project</label>
+                              <div class="col-md-8">
+                                <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
+                                  {{(projectToJoin)?.name }}
+                                  <button type="text" name="taskProject" class="btn btn-icon primary btn-link " (click)="toggleProjTable(); toggleProj()">
+                                    <i class="fa fa-edit fa-fw"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+                          <div class="row">
+                            <div class="col-md-8 ml-auto mr-auto">
+                              <div class="form-group">
+                                <ng-container *ngIf="showProjectTable">
+                                  <div class="table-responsive user_table">
+                                    <code>Select Project</code>
+                                    <table class="table">
+                                      <tbody>
+                                        <tr *ngFor="let project of enterpriseProjects | async ">
+                                          <td>
+                                            {{project.name}}</td>
+                                          <td>
+                                            <button class="primary btn-link" (click)="chooseProject(project)"> select </button>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </ng-container>
+                              </div>
+                            </div>
+                          </div>
+                          <ng-container *ngIf="showChamp">
+                            <div class="row">
+                              <label class="col-md-3 col-form-label">Champion</label>
+                              <div class="col-md-8">
+                                <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
+                                  {{(selectedParticipant)?.name }}
+                                  <button type="text" name="taskChampion" class="btn btn-icon primary btn-link " (click)="toggleUsersTable(); toggleChamp()">
+                                    <i class="fa fa-edit fa-fw"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+                          <div class="row">
+                            <div class="col-md-8 ml-auto mr-auto">
+                              <div class="form-group">
+                                <ng-container *ngIf="showUserTable">
+                                  <div class="table-responsive user_table">
+                                    <code>Select a Champion</code>
+                                    <table class="table">
+                                      <tbody class="">
+                                        <tr *ngFor="let staff of companyStaff | async ">
+                                          <td>{{ staff.name }}</td>
+                                          <td><button class="primary btn-link" (click)="selectColoursUser(staff)"> select </button></td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </ng-container>
+                                <ng-container *ngIf="showChampBtn">
+                                  <div class="footer"><button class="primary btn-link" (click)="toggleUsersTable(); hideChampBtn()" title=" Add task champion">
+                                      Select Champion </button>
+                                  </div>
+                                </ng-container>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                          <button type="button" class="btn btn-info btn-round" (click)="connect2Project()" data-dismiss="modal">Join</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- end notice modal -->
+                </div>
+                <hr>
+                <div class="table-responsive pro_info">
+                  <code>Tasks for Company: {{selectedCompany.name}} </code>
+                  <table class="table">
+                    <thead class="">
+                      <th>Task name</th>
+                      <th>Champion</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let companytask of companyTasks | async ">
+                        <td>{{ companytask.name }}</td>
+                        <td>{{ (companytask.champion)?.name||(companytask)?.champion}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <!-- <div class="row" *ngIf="afAuth.user | async as user">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body text-center">
+              <code>All Companies</code>
+              <div class="table-responsive pro_info">
+                <table class="table">
+                  <thead class="">
+                    <th>Name</th>
+                    <th>Sector</th>
+                    <th>Location</th>
+                    <th>Action</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let enterprise of enterprises | async ">
+                      <td>{{ enterprise.name }} </td>
+                      <td>{{ enterprise.sector}}</td>
+                      <td>{{ enterprise.location}}</td>
+                      <td class="text-center">
+                        <button *ngIf="enterprise.byId !== myUser" class="success btn-link join" rel="tooltip" title="Connect to {{enterprise.name}}" (click)="selectCompany(enterprise)" data-toggle="modal"
+                          data-target="#myModal"> <font size=2>connect</font></button>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                      <div class="modal-header justify-content-center">
+                        <div class="modal-profile ml-auto mr-auto text-warning">
+                          <i class="nc-icon nc-bulb-63"></i>
+                        </div>
+                      </div>
+                      <div class="modal-body">
+                        <p>Cornfirm, you want to connect to <b class="primary-color">{{ selectedCompany.name }}</b></p>
+                      </div>
+                      <div class="modal-footer">
+                        <div class="left-side">
+                          <button type="button" class="btn btn-link btn-link" data-dismiss="modal">Close</button>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="right-side">
+                          <button type="button" class="btn btn-link btn-link" (click)="connect2Enterprise(selectedCompany)"
+                            data-dismiss="modal"> Confirm</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal fade" id="noticeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                  aria-hidden="true">
+                  <div class="modal-dialog modal-notice">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                          <i class="nc-icon nc-simple-remove"></i>
+                        </button>
+                        <h5 class="modal-title" id="myModalLabel">How Do You Become an Affiliate?</h5>
+                      </div>
+                      <div class="modal-body">
+                        <div class="instruction">
+                          <div class="row">
+                            <div class="col-md-8">
+                              <strong>1. Join as a Company</strong>
+                              <div class="row">
+                                <div class="col-sm-10" style="margin-left:3em">
+                                  <div class="form-check-inline">
+                                    <div class="form-check-radio">
+                                      <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="exampleRadioz" id="exampleRadios11"
+                                          value="option1"> As Company
+                                        <span class="form-check-sign"></span>
+                                      </label>
+                                    </div>
+                                    <div class="form-check-radio">
+                                      <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="exampleRadioz" id="exampleRadios12"
+                                          value="option2" checked=""> As an Individual
+                                        <span class="form-check-sign"></span>
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                          <button type="button" class="btn btn-info btn-round" data-dismiss="modal">Sounds good!</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal fade modal-primary" id="myModal10" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                      <div class="modal-content">
+                        <div class="modal-header justify-content-center">
+                          <div class="modal-profile ml-auto mr-auto">
+                            <i class="nc-icon nc-bulb-63"></i>
+                          </div>
+                        </div>
+                        <div class="modal-body">
+                          <p>Always have an access to your profile</p>
+                        </div>
+                        <div class="modal-footer">
+                          <div class="left-side">
+                            <button type="button" class="btn btn-link btn-link">Back</button>
+                          </div>
+                          <div class="divider"></div>
+                          <div class="right-side">
+                            <button type="button" class="btn btn-link btn-link" data-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div> -->
+    </div>
+  </div>

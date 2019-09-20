@@ -1,0 +1,353 @@
+.tim-row {
+  margin-bottom: 20px;
+}
+
+.tim-white-buttons {
+  background-color: #777777;
+}
+
+.typography-line {
+  padding-left: 25%;
+  margin-bottom: 35px;
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.typography-line span {
+  bottom: 10px;
+  color: #c0c1c2;
+  display: block;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 13px;
+  left: 0;
+  position: absolute;
+  width: 260px;
+  text-transform: none;
+}
+
+.tim-row {
+  padding-top: 60px;
+}
+
+.tim-row h3 {
+  margin-top: 0;
+}
+
+.offline-doc .page-header {
+  display: flex;
+  align-items: center;
+}
+
+.offline-doc .footer {
+  position: absolute;
+  width: 100%;
+  background: transparent;
+  bottom: 0;
+  color: #fff;
+  z-index: 1;
+}
+
+#map {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+.demo-iconshtml {
+  font-size: 62.5%;
+}
+
+.demo-icons body {
+  font-size: 1.6rem;
+  font-family: sans-serif;
+  color: #333333;
+  background: white;
+}
+
+.demo-icons a {
+  color: #608CEE;
+  text-decoration: none;
+}
+
+.demo-icons header {
+  text-align: center;
+  padding: 100px 0 0;
+}
+
+.demo-icons header h1 {
+  font-size: 2.8rem;
+}
+
+.demo-icons header p {
+  font-size: 1.4rem;
+  margin-top: 1em;
+}
+
+.demo-icons header a:hover {
+  text-decoration: underline;
+}
+
+.demo-icons .nc-icon {
+  font-size: 34px;
+}
+
+.demo-icons section h2 {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 0 0 1em .2em;
+  margin-bottom: 1em;
+}
+
+.demo-icons ul {
+  padding-left: 0;
+}
+
+.demo-icons ul::after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.demo-icons ul li {
+  width: 20%;
+  float: left;
+  padding: 16px 0;
+  text-align: center;
+  border-radius: .25em;
+  -webkit-transition: background 0.2s;
+  -moz-transition: background 0.2s;
+  transition: background 0.2s;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  overflow: hidden;
+}
+
+.demo-icons ul li:hover {
+  background: #f4f4f4;
+}
+
+.demo-icons ul p,
+.demo-icons ul em,
+.demo-icons ul input {
+  display: inline-block;
+  font-size: 1rem;
+  color: #999999;
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.demo-icons ul p {
+  padding: 20px 0 0;
+  font-size: 12px;
+  margin: 0;
+}
+
+.demo-icons ul p::selection,
+.demo-icons ul em::selection {
+  background: #608CEE;
+  color: #efefef;
+}
+
+.demo-icons ul em {
+  font-size: 12px;
+}
+
+.demo-icons ul em::before {
+  content: '[';
+}
+
+.demo-icons ul em::after {
+  content: ']';
+}
+
+.demo-icons ul input {
+  text-align: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  display: none;
+}
+
+.reg_info {
+  height: 35em;
+  overflow: hidden;
+  overflow-y: scroll
+}
+
+.table_info {
+  max-height: inherit ;
+  overflow: hidden;
+  overflow-y: scroll
+}
+
+/* .user_table {
+  height: 5em;
+  overflow: hidden;
+  overflow-y: scroll
+} */
+
+.pro_info {
+  max-height: 30em;
+  overflow: hidden;
+  overflow-y: scroll
+}
+
+.register-page .logo-imgn {
+  width: 72px;
+  max-height: auto;
+}
+
+.register-page .logo-imgn imgn {
+  width: 72px;
+  top: 16px;
+  left: 18px;
+  position: absolute;
+}
+
+
+
+.clrs-h4 {
+  /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+  font-family: AR ESSENCE;
+  /* color: steelblue; */
+
+  font-size: 23px;
+}
+
+.clrs-h1 {
+  font-family: AR ESSENCE;
+  color: steelblue;
+  font-size: 23px;
+
+}
+
+
+.dash-size {
+  width: 630px;
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+.dash-col {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.dash-col-left {
+  padding-left: 0px;
+  padding-right: 1px;
+}
+
+.dash-col-right {
+  padding-left: 1px;
+  padding-right: 0px;
+}
+
+.scroll-eT {
+  height: 15em;
+  /* overflow-y:scroll ; */
+  overflow: auto;
+}
+
+.cont {
+  height: 25em;
+  overflow: auto;
+}
+
+.cont .scrol-em {
+
+  width: auto;
+
+  max-height: 15em;
+  /* height: 10em; */
+  overflow: hidden;
+}
+
+.cont .scroll-T {
+  height: 15em;
+  overflow: hidden;
+
+}
+
+.blue-clr {
+  color:steelblue;
+}
+
+.clrs-logo {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  /* font-family: AR ESSENCE; */
+  /* color: steelblue; */
+  font-size: 30px;
+}
+
+.grey-clr {
+  color: slategray;
+}
+
+.na-am {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 20px;
+  color: slategray;
+}
+
+.na-sma {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+}
+
+.na-p {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+}
+
+.sma .na-p {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+}
+
+.sma .na-sma {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+}
+.title .na-am {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 20px;
+  color: slategray
+}
+
+.clrs-h4 {
+  /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+  font-family: AR ESSENCE;
+  /* color: steelblue; */
+
+  font-size: 18px;
+}
+
+.a-mycol {
+  padding-left: 0px;
+  padding-top: 3px;
+  padding-bottom: 2px;
+  margin-top: 3px;
+  margin-bottom: 2px;
+  padding-right: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+.clrs-cell {
+  border-top-width: 0px;
+  border-bottom-width: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+}

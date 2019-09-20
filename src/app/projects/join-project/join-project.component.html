@@ -1,0 +1,217 @@
+<div class="main-content" *ngIf="afAuth.user | async as user">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="card col-lg-12">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-6">
+                <!-- <h3>Some Title Here</h3> -->
+                <h5 class="title na-am">Search a Project<br><small>by filtering...</small></h5>
+                <div class="card ">
+                  <div class="card-body">
+                    <div class="nav-tabs-navigation">
+                      <div class="nav-tabs-wrapper">
+                        <ul id="tabs" class="nav nav-tabs sma na-p" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#home" (click)="clearSearchData()" role="tab" aria-expanded="true">Search
+                              by Location</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#profile" (click)="clearSearchData()" role="tab" aria-expanded="false">Sector</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div id="my-tab-content" class="tab-content text-center">
+                      <div class="tab-pane active" id="home" role="tabpanel" aria-expanded="true">
+                        <div class="card-body ">
+                          <div class="row">
+                            <div class="col-md-8 ml-auto mr-auto">
+                              <form class="form-horizontal">
+                                <div class="form-group">
+                                  <input type="text" class="form-control" [(ngModel)]="searchData" name="location_input"
+                                    placeholder="Enter location">
+                                </div>
+                              </form>
+                            </div>
+                            <div class="col-md-4 card-footer ">
+                              <button type="submit" class="info btn-link" (click)="search('location', searchData);showTable()">Search</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tab-pane" id="profile" role="tabpanel" aria-expanded="false">
+                        <div class="card-body ">
+                          <div class="row">
+                            <div class="col-md-8 ml-auto mr-auto">
+                              <form class="form-horizontal">
+                                <div class="form-group">
+                                  <input type="text" [(ngModel)]="searchData" name="sector_input" class="form-control"
+                                    placeholder="Input sector">
+                                </div>
+                              </form>
+                            </div>
+                            <div class="col-md-4 card-footer ">
+                              <button type="submit" class="info btn-link" (click)="search('sector', searchData);showTable()">Search</button>                            
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ng-container *ngIf="showSearch">
+                <div class="col-sm-6">
+                  <h5 class="title na-am" style="margin-left: 15px;">Project search results</h5>    
+                  <div class="card-body ">
+                    <p class="sma na-p">Projects in {{ searchData }} </p>
+                    <div class="table-responsive cont scrol-em">
+                      <table class="table">
+                        <thead class="sma na-sma">
+                          <th class="text-left">Project</th>
+                          <th class="text-left">Sector</th>
+                          <th class="text-left">Location</th>
+                          <th>Action</th>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let project of selectedProjects | async ">
+                            <td class="text-left tab-cell">{{ project.name }} </td>
+                            <td class="text-left tab-cell">{{ project.sector }}</td>
+                            <td class="text-left tab-cell">{{ project.location }}</td>
+                            <td class="text-center">
+                              <button class="success btn-link join" rel="tooltip" title="Connect to {{project.name}}"
+                                (click)="selectPoject(project)" data-toggle="modal" data-target="#myModalNO">
+                                <font size=2>Join </font>
+                              </button>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" hidden>
+        <div class="col-lg-12">
+          <div class="card card-pricing ">
+            <div class="card-header text-left">
+              <h6 class="card-category"> All Companies</h6>
+            </div>
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="card-body ">
+                  <code hidden>All Companies</code>
+                  <div class="table-responsive pro_info">
+                    <table class="table">
+                      <thead>
+                        <th class="text-left">Name</th>
+                        <th class="text-left">Sector</th>
+                        <th class="text-left">Location</th>
+                        <th>Action</th>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let enterprise of enterprises | async ">
+                          <td class="text-left tab-cell">{{ enterprise.name }} </td>
+                          <td class="text-left tab-cell">{{ enterprise.sector }}</td>
+                          <td class="text-left tab-cell">{{ enterprise.location }}</td>
+                          <td class="text-center">
+                            <button class="success btn-link join" rel="tooltip" title="Connect to {{enterprise.name}}"
+                              (click)="selectCompany(enterprise)" data-toggle="modal" data-target="#myModal">
+                              <font size=2>connect </font>
+                            </button>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+                      aria-hidden="true">
+
+                      <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                          <div class="modal-header justify-content-center">
+                            <div class="modal-profile ml-auto mr-auto text-warning">
+                              <i class="nc-icon nc-bulb-63"></i>
+                            </div>
+                          </div>
+                          <div class="modal-body">
+                            <p>Cornfirm, you want to connect to <b class="primary-color">{{ (selectedCompany)?.name
+                                }}</b></p>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="left-side">
+                              <button type="button" class="btn btn-link btn-link" data-dismiss="modal">Close</button>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="right-side">
+                              <!-- <button type="button" class="btn btn-link btn-link" (click)="connect2Enterprise(selectedCompany)" -->
+                              <button type="button" class="btn btn-link btn-link"
+                                data-dismiss="modal"> Confirm</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModalNO" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+        <p class="title-up clrs-h1">Select Company to Join {{ (projectToJoin)?.name }} project.<br>
+      </div>
+      <div class="card-body ">
+        
+        <!-- <form class="form-horizontal"> -->
+          <div class="row">
+            <label class="col-md-3 col-form-label text-left" style="margin-left: 2em;">Company</label>
+            <div class="col-md-9 col-lg-8 col-sm-7">
+              <ng-select [items]="enterprises2nd | async" bindLabel="name" name="WorkAction" placeholder="Select company"
+                (change)="selectCompany(ent)" [(ngModel)]="ent">
+              </ng-select>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-3 col-form-label text-left" style="margin-left: 2em;">Champion</label>
+            <div class="col-md-9 col-lg-8 col-sm-7">
+              <ng-select [items]="staff | async" bindLabel="name" name="WorkAction" placeholder="Select champion"
+                (change)="selectStaff(person)" [(ngModel)]="person">
+              </ng-select>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-3 col-form-label text-left" style="margin-left: 2em; margin-bottom: 0px; margin-top: 12px;">Roles</label>
+            <div class="col-md-9 col-lg-8 col-sm-7">
+              <tag-input [(ngModel)]='roles' theme='minimal'></tag-input>
+            </div>
+          </div>
+        <!-- </form> -->
+      </div>
+      <div class="modal-footer">
+        <div class="left-side">
+          <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Never mind</button>
+        </div>
+        <div class="divider"></div>
+        <div class="right-side">
+          <button type="button" class="btn btn-danger btn-link" (click)="sendRequest()" data-dismiss="modal">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

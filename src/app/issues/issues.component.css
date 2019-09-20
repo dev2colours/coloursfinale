@@ -1,0 +1,30 @@
+.vl {
+    border-left: 6px solid slategrey;    
+    height: auto;
+    position: absolute;
+    left: 50%;
+    margin-left: -3px;
+    top: 0;
+}
+
+.vl2 {
+    border-left: 6px solid slategrey;
+    /* border-left: 6px solid green; */
+    height: inherit;
+}
+
+.vl3 {
+    border-bottom: 6px slategrey;
+    border-bottom-style: dashed;
+    border-width: 2px;
+    /* border-left: 6px solid green; */
+    /* height: 500px; */
+}
+
+.vl4 {
+    border-bottom: 6px slategrey;
+    border-bottom-style: groove;
+    border-width: 2px;
+    /* border-left: 6px solid green; */
+    /* height: 500px; */
+}

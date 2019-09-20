@@ -1,0 +1,69 @@
+.nav-colors {
+    padding-bottom: 0px;
+    padding-top: 0px;
+    font-size: 12px;
+}
+
+.nav-hor-tabs {
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.td-clrs {
+    padding-left: 1em;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.clrs-h1 {
+    font-family: AR ESSENCE;
+    color: steelblue;
+    font-size: 25px;
+}
+
+.clrs-h4 {
+    /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+    font-family: AR ESSENCE;
+    /* color: steelblue; */
+
+    font-size: 20px;
+}
+.dash-size {
+    width: 630px;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.dash-col {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.dash-col-left {
+    padding-left: 0px;
+    padding-right: 1px;
+}
+
+.dash-col-right {
+    padding-left: 1px;
+    padding-right: 0px;
+}
+
+.clrs-h1-font {
+    /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+    font-family: ABeeZee;
+    /* color: steelblue; */
+    color: #333366;
+    /* font-size: 18px; */
+    font-size: 23px;
+
+}
+
+.clrs-h4-font {
+    /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+    font-family: ABeeZee;
+    /* color: steelblue; */
+    color: #333366;
+    font-size: 18px;
+    
+}

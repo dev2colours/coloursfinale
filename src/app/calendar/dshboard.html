@@ -1,0 +1,145 @@
+<div class="main-content">
+    <div class="tab-pane" id="reports">
+        <p class="clrs-h1" style="margin-top:0em; color:darkslategray">Personal Report... </p>
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body" style="margin-top: -3em">
+                    <div class="nav-tabs-navigation">
+                        <div class="nav-tabs-wrapper">
+                            <ul id="tabs" class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab"
+                                        href="#personal" role="tab"
+                                        aria-expanded="true">Private</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="my-tab-content" class="tab-content text-center">
+                        <div class="tab-pane active" id="personal" role="tabpanel"
+                            aria-expanded="true">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <p class="text-left clrs-h4"
+                                        style="color: darkslategray">Personal Details</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="text-left title clrs-h4" style="color: darkslategray">
+                                            <span> <a routerLink="../total-actions">My Time Sheet for each day</a></span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="spacer" style="height: 2em"></div>
+
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="text-left title clrs-h4" style="color: darkslategray">
+                                            <span> <a routerLink="../classification-log">My Summerized Time Sheet as @</a></span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="spacer" style="height: 2em"></div>
+
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="text-left title clrs-h4"
+                                            style="color: darkslategray">My Work Time Sheet as @</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="spacer" style="height: 2em"></div>
+
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="text-left title clrs-h4"
+                                            style="color: darkslategray">My Cumulative Time Sheet for Period</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="spacer" style="height: 2em"></div>
+
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4"
+                                    style="color: darkslategray">My Weekly Time Budget</p>
+                            </div>
+
+                            <div class="spacer" style="height: 2em"></div>
+
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4"
+                                    style="color: darkslategray">Time Budget Actual vs
+                                    Planned</p>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4"
+                                    style="color: darkslategray">Tasks</p>
+                                <br>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4"
+                                    style="color: darkslategray">Health Factor</p>
+                                <div class="col-md-9 text-left na-p">
+                                    Total Hours spent on Health and Exercise per week:
+                                    {{ (tasksImChamp | async)?.length }} <br>
+                                    Ratio of health to total week hours:
+                                    {{ completeTasksRt }} %<br>
+                                </div>
+                                <br>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4"
+                                    style="color: darkslategray">Work Factor</p>
+                                <br>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left" style="color: darkslategray"><span
+                                        class="title clrs-h4">Net Worth</span> (<small>As to date</small>)</p>
+                                <br>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4"
+                                    style="color: darkslategray">Schedule of Outstanding Personal Tasks</p>
+                                <br>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4"
+                                    style="color: darkslategray">Personal Project Reports
+                                </p>
+                                <br>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4"
+                                    style="color: darkslategray">User`s Enterprise Internal Reports</p>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4"
+                                    style="color: darkslategray">Personal Internal Perfomance reviews</p>
+                                <br>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                                <p class="text-left title clrs-h4"
+                                    style="color: darkslategray">Profile Summary</p>
+                                <br>
+                            </div>
+                            <div class="spacer" style="height: 2em"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                           

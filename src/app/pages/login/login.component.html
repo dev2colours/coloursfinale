@@ -1,0 +1,215 @@
+<!-- <div class="full-page register-page section-image" data-image="./assets/img/bg/login.png"> -->
+<div class="full-page register-page section-image" data-image="./assets/img/bg/login.png">
+  <div class="wrapper wrapper-full-page">
+      <div class="content" style="padding-top: 0px;">
+        <div class="container align-middle" style=" margin-top: 20px">
+          <div class="spacer" style="height: 2em"></div>
+          <div class="row">
+            <div class="col-md-4 ml-auto mr-auto">
+              <!-- <div class="logo" style="width: 62px; height: auto; padding: top 0em; padding-bottom:1.5em"> -->
+              <div class="logo center">
+                <div class="logo-imgn">
+                  <img src="./assets/img/faces/colours_icon2.png" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <!-- <div class="col-md-8 col-md-offset-1">
+            </div> -->
+            <div class="col-md-4 ml-auto mr-auto card"  style="background-color: transparent;">
+              <!-- <form method="#" action="#"> -->
+                <div class="card card-plain">
+                  <div class="content">
+                    <style>
+                      .clrs-logo{
+                          font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+                          /* font-family: AR ESSENCE; */
+                          /* color: steelblue; */
+                          font-size: 30px;
+                          backface-visibility: visible
+                      }
+                      .na-am{
+                        font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                          font-size: 20px;
+
+                      }
+
+                      .tmColor {
+                        color: #333366;
+                      }
+                    </style>
+                    <div class="card-content">
+                        <!-- <h4 style="margin-top:10px ; margin-bottom :10px; color:#333366"><span style="text-emphasis-color: #333366"><font size= 2 >Already have an account?</font></span><br><span class="clrs-logo">Sign-in to Colours</span> -->
+                        <h4 style="margin-top:10px ; margin-bottom :10px; color:#333366"><a style="text-emphasis-color: #333366" routerLink="/pages/register"><font size= 2 >Already have an account?</font></a><br><span class="clrs-logo">Sign-in to Colours</span>
+                        </h4>
+                      
+                        <h4 class=" na-am" style="margin-top:10px ; margin-bottom :10px; color:#333366"><font size=2>Login using Twitter, Google  or Facebook</font>
+                        </h4>
+                        <div class="social">
+                          <button class="btn btn-icon btn-round btn-twitter" (click)="signInWithTwitter()">
+                            <i class="fa fa-twitter"></i>
+                          </button>
+                          <button class="btn btn-icon btn-round btn-google" (click)="loginGoogle()">
+                            <i class="fa fa-google"></i>
+                          </button>
+                          <button class="btn btn-icon btn-round btn-facebook" (click)="signInWithFacebook()">
+                            <i class="fa fa-facebook-f"></i>
+                          </button>
+                          <!-- <p class="card-description"> or be classical </p> -->
+                        </div>
+                    </div>
+                    <div *ngIf="showemailLogin">
+                      <h4 class="card-category na-am" style="margin-top:10px ; margin-bottom :10px; color:#333366">
+                        <font size=2>login using email</font>
+                      </h4>
+                      <!-- <div class="link">
+                        <button type="text" class="btn-link" style="margin-top:10px ; margin-bottom :10px; color:#333366" (click)="emailRegister()"> <!- routerLink="/pages/register" ->
+                          New to Colours, register using email
+                        </button>
+                      </div> -->
+                      <!-- <form #f="ngForm" >                   -->
+                        <div class="card-body ">
+                          <p *ngIf="statusLoginEmail" class="category text-danger" style="margin-top:-1em; cursor: pointer;">Email Required</p>
+                          <div class="input-group" style="background-color: transparent;"> <!--  [ngClass]="{'input-group-focus':focus===true}"   -->
+                            <div class="input-group-prepend" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                              <span class="input-group-text">
+                                <i class="nc-icon nc-single-02"></i>
+                              </span>
+                            </div>
+                            <input [(ngModel)]="emailPasswordLogin.email" name="loginEmail" type="email" class="form-control" placeholder="e-mail address..." (focus)="focus=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus=false">
+                          </div>
+                          <p *ngIf="statusLoginPwd" class="category text-danger" style="margin-bottom: 0px; cursor: pointer;">Password Required</p>
+
+                          <div class="input-group"> <!--  [ngClass]="{'input-group-focus':focus1===true}" -->
+                            <div class="input-group-prepend" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                              <span class="input-group-text">
+                                <i class="nc-icon nc-key-25"></i>
+                              </span>
+                            </div>
+                            <input [(ngModel)]="emailPasswordLogin.password" name="loginPassword" type="password" placeholder="password" class="form-control" (focus)="focus1=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
+                          </div>
+                          
+                          <a class="category" style="margin-top:-1em; cursor: pointer;">Forgot your Password? </a>
+                          <div class="card-footer text-left card-category">
+                            <!-- <a class="btn btn-info btn-link btn-round" style="color:#333366;background-color: #3339;" (click)="toggleLogIn(emailPasswordLogin)">Login</a> -->
+                            <a class="btn btn-info btn-link btn-round" style="color:#fafafa;background-color: #333366;" (click)="toggleLogIn(emailPasswordLogin)">Log in</a>
+                          </div>
+                          <br>
+                          <!-- <div class="form-group">
+                            <div class="form-check">
+                              <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" value="">
+                                <span class="form-check-sign"></span>
+                                Subscribe to newsletter
+                              </label>
+                            </div>
+                          </div> -->
+                        </div>
+                      <!-- </form> -->
+                    </div>
+                    <div *ngIf="showEmailRegister">
+                      <ng-container *ngIf="emailVerifiedinit == false">
+                        <h4 class="card-category na-am" style="margin-top:10px ; margin-bottom :10px; color:#333366">
+                          <small>Register using email</small>
+                        </h4>
+                        <div class="link">
+                          <button type="text" class="btn-link"
+                            style="margin-top:10px ; margin-bottom :10px; color:#333366" (click)="emailLogin()">
+                            <!-- routerLink="/pages/register" -->
+                            Not new Colours, login using email
+                          </button>
+                        </div>
+                        <div class="card-body ">
+                          <p *ngIf="statusSigninEmail" class="category text-danger"
+                            style="margin-top:-1em; cursor: pointer;">Email Required</p>
+                          <div class="input-group">
+                            <div class="input-group-prepend"
+                              style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                              <span class="input-group-text">
+                                <i class="nc-icon nc-single-02"></i>
+                              </span>
+                            </div>
+                            <input [(ngModel)]="emailPasswordLogin.email" name="signEmail" type="email"
+                              class="form-control" placeholder="email address..." (focus)="focus=true"
+                              style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus=false">
+                          </div>
+                          <p *ngIf="statusSigninPwd" class="category text-danger"
+                            style="margin-bottom: 0px;cursor: pointer;">Password Required</p>
+
+                          <div class="input-group">
+                            <div class="input-group-prepend"
+                              style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                              <span class="input-group-text">
+                                <i class="nc-icon nc-key-25"></i>
+                              </span>
+                            </div>
+                            <input [(ngModel)]="emailPasswordLogin.password" name="signPassword" type="password"
+                              placeholder="Password" class="form-control" (focus)="focus1=true"
+                              style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus1=false">
+                          </div>
+                          <div class="card-footer text-left card-category">
+                            <a class="btn btn-info btn-link btn-round" style="color:#333366; cursor:pointer"
+                              (click)="coloursSignIn(emailPasswordLogin)">Sign up</a>
+                          </div>
+                          <br>
+                          <div class="form-group">
+                            <div class="form-check">
+                              <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" value="">
+                                <span class="form-check-sign"></span>
+                                Subscribe to newsletter
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="emailVerified == false">
+                        <div class="card-plain card-body" style="color:#333366">
+                          <p>Congratulations you have successfully signed up,<br>
+                             Waiting for verification <i class="fa fa-spinner fa-spin fa-2x fa-fw"></i> </p>
+                          <br>
+                          <p>Email: {{ emailId }}</p>
+                          <p>Verified: <span class="text-danger"> {{ emailVerified }}</span></p>
+                          <p>Go to your email and confirm to verify</p><br>
+                          <a class="btn btn-info btn-link btn-round" style="color:#333366" (click)="dismiss()">Cancel</a>
+                          <a class="btn btn-info btn-link btn-round" style="color:#333366" (click)="sendVerification()">Resend verification</a>
+
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              <!-- </form> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- </div> -->
+  </div>
+</div>
+<!-- <script>
+  window.fbAsyncInit = function () {
+    FB.init({
+    appId: '{235005784119427}',
+      cookie: true,
+      xfbml: true,
+      version: '{api-version}'
+    });
+
+    FB.AppEvents.logPageView();
+
+  };
+
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {
+      return;
+    }
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script> -->

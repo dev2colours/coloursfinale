@@ -1,0 +1,52 @@
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-8">
+      <p class="text-left title clrs-h4-font" style="color: darkslategray">My Time Sheet for each day</p>
+    </div>
+    <div class="col-md-4">
+      <div class="col-md-12">
+        <ng-select [items]="timesheetCollection | async" bindLabel="name" name="sPeriod" placeholder="Select Period"
+          (change)="dailyTimeSheet()" [(ngModel)]="selectedDate"></ng-select>
+      </div>
+      <!-- <div class="col-md-3">
+        <-- <button *ngIf="editRpt" class="btn-link btn-magnify">search</button> ->
+        <button class="btn-link btn-magnify" routerLink="./totalsAction"> view</button>
+      </div> -->
+    </div>
+  </div>
+  <div class="card-content table-responsive table-full-width">
+    <table class="table table-striped">
+      <thead class="title clrs-h4-font">
+        <th class="text-left table td-clrs">Sub-task</th>
+        <th class="table td-clrs">Start Date</th>
+        <th class="table td-clrs">End Date</th>
+        <th class="text-right table td-clrs">Hours Spent</th>
+      </thead>
+      <tbody>
+        <!-- <tr *ngFor="let action of actionItemsTotals | async"> -->
+        <tr *ngFor="let action of viewDailyTimeSheets | async">
+          <ng-container *ngIf="action.id !== 'lapsed'; else showLapsedField">
+            <td class="text-left table td-clrs">{{ action.name }} <span *ngIf="action.projectName !='' "> :{{ action.projectName }}</span></td>
+            <!-- <td>{{ moment(action.actualStart).format('MMMM Do YYYY, h:mm:ss a') }}</td>
+            <td>{{ moment(action.actualEnd).format('MMMM Do YYYY,h:mm:ss a') }}</td> -->
+            <td class="table td-clrs">{{ action.actualStart }}</td>
+            <td class="table td-clrs">{{ action.actualEnd }}</td>
+            <td class="text-right table td-clrs" style="padding-right:15px">{{ action.Hours }}</td>
+            <!-- <td>{{ action.workHours }}</td> -->
+            <!-- <td *ngIf="action.id == 'lapsed'; else showLapsedField">{{ action.workHours }}</td> -->
+          </ng-container>
+          <ng-template #showLapsedField>
+            <td class="text-left table td-clrs">{{ action.name }}<span *ngIf="action.projectName !='' "> :{{ action.projectName }}</span></td>
+            <td class="table td-clrs">{{ action.actualStart }}</td>
+            <td class="table td-clrs" >{{ action.actualEnd }}</td>
+            <!-- <td class="table td-clrs">{{ action.Hours }}</td> -->
+            <!-- <td class="text-right table td-clrs" style="padding-right:2em">{{ action.wrkHours }}</td> -->
+            <td class="text-right table td-clrs" style="padding-right:15px">{{ mlapsdata }}</td>
+          </ng-template>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+</div>

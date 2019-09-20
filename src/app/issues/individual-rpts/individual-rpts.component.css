@@ -1,0 +1,5 @@
+.user_table {
+    height: 10em;
+    overflow: hidden;
+    overflow-y: scroll
+}

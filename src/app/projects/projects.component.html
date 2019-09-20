@@ -1,0 +1,453 @@
+<div class="main-content">
+  <div class="card card-plain">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body text-center">
+              <code>login/logout</code>
+              <div *ngIf="afAuth.user | async as user; else showLogin">
+                <button (click)="logout()">Logout</button>
+              </div>
+              <ng-template #showLogin>
+                <p>Please login.</p>
+                <button (click)="login()">Login with Google</button>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body text-center" *ngIf="afAuth.user | async as person">
+              <code>Profile</code>
+              <p>
+                <font size="4"> Hello <b> {{ person.displayName }} ! </b></font>
+                <!-- <br>
+                  <small>{{person.uid}}</small> -->
+              </p>
+              <p>Projects you are involved <b> {{(projects | async)?.length}} </b><br>Projects you created<b>
+                  {{(myprojects | async)?.length}} </b></p>
+              <p>Number of Enterprise projects <i><b> {{(enterpriseProjects | async)?.length}} </b></i></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="afAuth.user | async as person">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body ">
+              <code>Create Project</code>
+              <form method="">
+                <div class="form-group">
+                  <label>Project Name</label>
+                  <input type="text" [(ngModel)]="project.name" name="pname" class="form-control" placeholder="e.g. Colours">
+                </div>
+                <div class="form-group">
+                  <label>Project Location</label>
+                  <input type="text" [(ngModel)]="project.location" name="pLocation" class="form-control" placeholder="e.g. Town / City">
+                </div>
+                <div class="form-group">
+                  <label>Industry Sector</label>
+                  <input type="text" [(ngModel)]="project.sector" name="psector" class="form-control" placeholder="e.g. Construction">
+                </div>
+                <!-- <div class="row"> -->
+                <div class="form-group">
+                  <label>Project Type</label>
+                  <select [(ngModel)]="project.type" name="ptype" class="form-control" data-style="btn btn-info btn-round"
+                    title="Select type" data-size="7">
+                    <option value="Personal" selected> Personal </option>
+                    <option value="Enterprise"> Enterprise </option>
+                  </select>
+                </div>
+              </form>
+            </div>
+            <div class="card-footer" *ngIf="afAuth.user | async as person">
+              <div class="row pull-left">
+                <div class="col-md-9">
+                  <button type="submit" class="btn btn-info btn-round" data-toggle="modal" data-target="#pModal">Save
+                    Project</button>
+                  <div class="modal fade" id="pModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header justify-content-center">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="nc-icon nc-simple-remove"></i>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="table-responsive pro_info">
+                            <table class="table">
+                              <thead class="">
+                                <th>Name</th>
+                                <th>Created By</th>
+                                <th>Action</th>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let ent of enterprises | async ">
+                                  <td>{{ ent.name }} </td>
+                                  <td>{{ ent.by}}</td>
+                                  <td class="text-center">
+                                    <a class="warning btn-link edit" routerLink="#" rel="tooltip" title="select {{ ent.name }}"
+                                      (click)="selectCompany(ent)" data-toggle="modal" data-target="#noticeModal">
+                                      <font size=2>Select</font>
+                                    </a>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <div class="left-side">
+                            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Never mind</button>
+                          </div>
+                          <div class="divider"></div>
+                          <div class="right-side">
+                            <button type="button" class="btn btn-danger btn-link" (click)="saveProject()" data-dismiss="modal">Confirm</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8" id="userprojects" *ngIf="afAuth.user | async as person">
+          <div class="card">
+            <div class="card-body text-left">
+              <code *ngIf="afAuth.user | async as user">All Projects you are involved in<span> {{user.displayName}} <br></span> </code>
+              <div class="table-responsive pro_info">
+                <table class="table">
+                  <thead class="">
+                    <th>Project name</th>
+                    <th>Location</th>
+                    <th>Sector</th>
+                    <th class="text-center">Action</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let project of projects | async " class="">
+                      <td>
+                        {{project.name}}</td>
+                      <td>
+                        {{ project.location}}</td>
+                      <td>
+                        {{project.sector}}</td>
+                      <td>
+                        <button class="text-center primary btn-link" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                          aria-haspopup="true" aria-expanded="false">
+                          <font size=5> ... </font>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                          <a class="dropdown-item text-warning" data-toggle="modal" (click)="selectProject(project)"
+                            rel="tooltip" title="Create Task for {{project.name}} project" data-target="#myModal">Create
+                            Task</a>
+                          <a class="dropdown-item text-danger" (click)="deleteProject(project.id)" rel="tooltip" title="Delete {{project.name}} project">Delete</a>
+                          <a class="dropdown-item text-info" (click)="toggle(); selectProject3(project)" rel="tooltip"
+                            title="Show {{project.name}} project detail">Show detail</a>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+                  aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="card-body ">
+                        <div class="col-md-12">
+                          <div class="modal-header justify-content-center">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <i class="nc-icon nc-simple-remove"></i>
+                            </button>
+                            <p>Create a task</p>
+                          </div>
+                          <div class="modal-body">
+                            <div class="card-body ">
+                              <form class="form-horizontal">
+                                <div class="row">
+                                  <label class="col-md-3 col-form-label">Task name</label>
+                                  <div class="col-md-9">
+                                    <div class="form-group">
+                                      <input type="text" [(ngModel)]="task.name" name="taskName" class="form-control"
+                                        placeholder="Task name">
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <label class="col-md-3 col-form-label">Start Date</label>
+                                  <div class="col-md-9">
+                                    <div class="form-group">
+                                      <input type="date" [(ngModel)]="task.start" name="startTime" class="form-control">
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <label class="col-md-3 col-form-label">Finish Date</label>
+                                  <div class="col-md-9">
+                                    <div class="form-group">
+                                      <input type="date" [(ngModel)]="task.finish" name="finishTime" class="form-control">
+                                    </div>
+                                  </div>
+                                </div>
+                                <ng-container *ngIf="showCompany">
+                                  <div class="row">
+                                    <label class="col-md-3 col-form-label">Company</label>
+                                    <div class="col-md-8">
+                                      <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
+                                        {{(selectedCompany)?.name }}
+                                        <button type="text" name="taskProject" class="btn btn-icon primary btn-link"
+                                          rel="tooltip" title="Change Champion" (click)="toggleCompTable(); toggleComp()">
+                                          <span class="pull-right"><i class="fa fa-edit fa-fw"></i></span>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </ng-container>
+                                <div class="row">
+                                  <div class="col-md-8 ml-auto mr-auto">
+                                    <div class="form-group">
+                                      <ng-container *ngIf="showCompanyTable">
+                                        <div class="table-responsive user_table">
+                                          <code>Select Company</code>
+                                          <table class="table">
+                                            <tbody>
+                                              <tr *ngFor="let ent of myEnterprises | async " class="">
+                                                <td>{{ ent.name }} </td>
+                                                <td><button class="primary btn-link" (click)="selectMyCompany(ent)">
+                                                    select </button>
+                                                </td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </ng-container>
+                                      <!-- <ng-container *ngIf="showCompanyBtn">
+                                        <div class="footer"><button class="primary btn-link" (click)="toggleCompTable(); hideCompBtn(); selectCompany(ent)"
+                                            title=" Add task to company">
+                                            Select Company</button>
+                                        </div>
+                                      </ng-container> -->
+                                    </div>
+                                  </div>
+                                </div>
+                                <ng-container *ngIf="showChamp">
+                                  <div class="row">
+                                    <label class="col-md-3 col-form-label">Champion</label>
+                                    <div class="col-md-8">
+                                      <div class="form-group" style="margin-top: -8px; margin-left: 15px; margin-bottom: -2px;">
+                                        {{ (selectedParticipant)?.name }}
+                                        <button type="text" name="taskChampion" class="btn btn-icon primary btn-link " (click)="toggleUsersTable(); toggleChamp()">
+                                          <i class="fa fa-edit fa-fw"></i>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </ng-container>
+                                <div class="row">
+                                  <div class="col-md-8 ml-auto mr-auto">
+                                    <div class="form-group">
+                                      <ng-container *ngIf="showUserTable">
+                                        <div class="table-responsive user_table">
+                                          <code>Select a Champion</code>
+
+                                          <table class="table">
+                                            <tbody class="">
+                                              <tr *ngFor="let user of staff | async " class="">
+                                                <td>{{ user.name }}</td>
+                                                <td><button class="primary btn-link" (click)="selectColoursUser(user)"> select
+                                                  </button></td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </ng-container>
+                                      <!-- <ng-container *ngIf="showChampBtn">
+                                        <div class="footer"><button class="primary btn-link" (click)="toggleUsersTable(); hideChampBtn()" title=" Add task champion">
+                                            Select Champion </button>
+                                        </div>
+                                      </ng-container> -->
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="left-side">
+                              <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="right-side">
+                              <button type="button" class="btn btn-success btn-link" (click)="saveTask()" data-dismiss="modal">Add
+                                Task</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="show">
+        <div class="col-md-10" *ngIf="selectedProject">
+          <div class="card">
+            <div class="card-body ">
+              <code>Companies involved in {{selectedProject.name}} project</code>
+              <div class="table-responsive pro_info">
+                <table class="table">
+                  <thead class="">
+                    <th>Company</th>
+                    <th>location</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let comp of projectParticipants | async ">
+                      <td>{{ comp.name }}</td>
+                      <td>{{ comp.location }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <hr>
+              <div class="table-responsive pro_info">
+                <table class="table">
+                  <thead class="">
+                    <th>Task name</th>
+                    <!-- <th>Created by</th> -->
+                    <th>Project</th>
+                    <th>Champion</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let tas of projectTasks | async ">
+                      <td>{{ tas.name }}</td>
+                      <!-- <td>{{ tas.createdBy}}</td> -->
+                      <td>{{ tas.projectName }}</td>
+                      <td>{{ (tas.champion)?.name||(tas)?.champion }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <!-- </ng-template> -->
+      <div class="col-md-10" id="allprojects" *ngIf="afAuth.user | async as user">
+        <div class="card">
+          <div class="card-body text-left">
+            <code>All Enterprise Projects</code>
+            <div class="table-responsive pro_info">
+              <table class="table">
+                <thead class="">
+                  <th>Project name</th>
+                  <th>Location</th>
+                  <th>Sector</th>
+                  <th>ByCompany</th>
+                  <th class="">Action</th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let project of enterpriseProjects | async">
+                    <td>
+                      {{ project.name }}</td>
+                    <td>
+                      {{ project.location}}</td>
+                    <td>
+                      {{ project.sector}}</td>
+                    <td>
+                      {{project.companyName}}</td>
+                    <td class="text-center" *ngIf="afAuth.user | async as user">
+                      <button *ngIf="project.byId !== myUser" class="primary btn-link connect" (click)="selectProject2(project)"
+                        data-toggle="modal" data-target="#myModal9">
+                        <font size=2>Join project</font>
+                      </button> <!-- <i class="fa fa-link fa-fw"></i> -->
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="modal fade" id="myModal9" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header justify-content-center">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="nc-icon nc-simple-remove"></i>
+                      </button>
+                      <code class="title title-up"> {{projectToJoin.name}} project<br><span *ngIf="showme">You have
+                          selected {{selectedCompany.name}}</span></code>
+                    </div>
+                    <div class="modal-body">
+                      <div class="table-responsive pro_info">
+                        <table class="table">
+                          <thead class="">
+                            <th>Company name</th>
+                            <th>Created By</th>
+                            <th>Action</th>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let ent of enterprises | async ">
+                              <td>{{ ent.name }} </td>
+                              <td>{{ ent.by}}</td>
+                              <td class="text-center">
+                                <a class="warning btn-link select" routerLink="#" (click)="toggleName(); selectCompany(ent)"
+                                  data-toggle="modal" data-target="#noticeModal">
+                                  <font size=2>Select</font>
+                                </a>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <div class="left-side">
+                        <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Never mind</button>
+                      </div>
+                      <div class="divider"></div>
+                      <div class="right-side">
+                        <button type="button" class="btn btn-danger btn-link" (click)="connect2Project()" data-dismiss="modal">Confirm</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--  End Modal -->
+              <!-- small modal -->
+              <div class="modal fade modal-primary" id="myModal10" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                  <div class="modal-content">
+                    <div class="modal-header justify-content-center">
+                      <div class="modal-profile ml-auto mr-auto">
+                        <i class="nc-icon nc-bulb-63"></i>
+                      </div>
+                    </div>
+                    <div class="modal-body">
+                      <p>Always have an access to your profile</p>
+                    </div>
+                    <div class="modal-footer">
+                      <div class="left-side">
+                        <button type="button" class="btn btn-link btn-link">Back</button>
+                      </div>
+                      <div class="divider"></div>
+                      <div class="right-side">
+                        <button type="button" class="btn btn-link btn-link" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--  End Modal -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

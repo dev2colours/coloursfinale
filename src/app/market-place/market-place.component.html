@@ -1,0 +1,59 @@
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card card-pricing ">
+            <div class="card-header">
+              <h6 class="card-category"> Alpha Pack</h6>
+            </div>
+            <div class="card-body">
+              <div class="card-icon icon-primary ">
+                <i class="nc-icon nc-spaceship"></i>
+              </div>
+              <h3 class="card-title">69$</h3>
+              <ul>
+                <li>New project has been created, its located in {{ project.location }}</li>
+                <li>6 months access to the library</li>
+              </ul>
+            </div>
+            <div class="card-footer">
+              <a href="#pablo" class="btn btn-round btn-primary">Add to Cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-stats">
+            <div class="card-body" style="padding-top: 0px;">
+              <div class="row" style="height: 66px;">
+                <div class="col-5 col-md-8">
+                  <div class="icon-big pull-left icon-warning" style="left:3em">
+                    <p><i class="fa fa-rss text-warning" style="font-size:24px">....</i>
+                    <span style="font-size:22px">Colours Marketplace News Feeds</span></p>
+                  </div>
+                </div>
+                <div class="col-8 col-md-8">
+                  <div class="numbers">
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card" data-background-color="blue">
+                
+                <span>
+                    <marquee>
+                        <p>
+                            <a *ngFor = "let project of allColoursProjects | async" style="color: red" routerLink="#" >New project in {{project.sector}} has been created, its located in {{project.location}}....... <span class="spacer" style="width:3em"></span></a>
+                        </p>
+                    </marquee>
+                </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

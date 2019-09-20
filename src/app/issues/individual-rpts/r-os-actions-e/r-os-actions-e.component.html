@@ -1,0 +1,27 @@
+
+<h3 id="org00">Personal Reports</h3>
+
+<h3>Participant: 
+<span><select id = "name-list00"></select></span>
+<span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
+
+<h4>Outstanding activities as at <span>
+		<!-- placeholder will not work, so stuck with dd----yyyyy -->
+		<input type="date" id="startdate00">
+	<!-- </span> to <span> -->
+<button id="btn00" click)="rService.rosactions_e()">Generate report for selected period</button>
+</span></h4>
+<!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
+<!-- button (click)="rService.clearTable()">Clear table</button> -->
+<!-- Table rows and headings only -->
+<table id="TbId00">
+    <!-- headings -->
+    <tr>
+        <th>Action Item</th>
+        <th>Task Name</th>
+        <th>Action Planned Start</th>
+        <th>Days Lapsed</th>
+        <th>Actual Start</th>
+        <th style="text-align:center"> Logged</th>
+    </tr>
+</table>

@@ -1,0 +1,108 @@
+  <div class="main-content">
+
+  <div class="row clrs-h1-font"><b>{{ user.name }}</b> </div>
+  <br>
+  <div class="spacer" style="height: 2em"></div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="clrs-h4-font">All sub-tasks</div><br>
+      <div *ngFor="let item of allActions | async">
+        <span>{{ item.name }}</span>&nbsp;&nbsp;
+        <span>{{ item.startDate | date}}</span>&nbsp;&nbsp;
+        <span>{{ setTim }}</span>
+      </div>
+    </div>
+  </div>
+  <br><br>
+  <div class="clrs-h4-font">Daily Report</div><br>
+  <div class="col-sm-12">
+    <ul style="list-style-type:none;padding-left: 10px;">   
+      <li *ngFor="let item of todayTasks">
+        <div class="row">
+          <div class="text-left col-md-4">
+            {{ item.name }}
+          </div>
+          <div class="row col-md-8 col-sm-8">
+            <div class="col-md-3 col-sm-3" style="padding-left: 5px; padding-right:5px">
+              <span>{{ item.actualStart| date }}</span>            
+            </div>
+            <div class="col-md-3 col-sm-2" style="padding-left: 5px; padding-right:5px">
+              <span>{{ item.actualEnd | date}}</span>
+            </div>
+            <div class="col-md-3 col-sm-2" style="padding-left: 5px; padding-right:5px">
+              {{ item.totalHours }}
+            </div>
+            <div class="col-md-3 col-ms-3" style="padding-left: 0px; padding-right:50px">
+              {{ item.complete }}
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <!-- <div class="row">
+    <div class="col-md-12">
+      <div *ngFor="let item of todayTasks">
+        <div class="col-sm-3">{{ item.name }}</div>
+        <div class="col-sm-6">
+          <span>{{ item.actualStart| date }}</span>&nbsp;
+          <span>{{ item.actualEnd | date}}</span>
+        </div>
+        <div class="col-sm-3">
+          <span>{{ item.totalHours }}</span>&nbsp;
+          <span>{{ item.complete }}</span>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <div class="clrs-h4-font">Daily Plan </div><br>
+
+  <div class="col-sm-12">
+    <ul style="list-style-type:none;padding-left: 10px;">
+  
+      <li *ngFor="let item of todaysubtasksArr">
+        <div class="row">
+          <div class="text-left col-md-4">
+            {{ item.name }}
+          </div>
+          <div class="row col-md-8 col-sm-8">
+            <div class="col-md-4 col-sm-3" style="padding-left: 5px; padding-right:5px">
+              <span>{{ item.startDate| date }}</span>
+            </div>
+            <div class="col-md-4 col-sm-3" style="padding-left: 5px; padding-right:5px">
+              <span>{{ item.endDate | date}}</span>
+            </div>
+            <div class="col-md-4 col-ms-3" style="padding-left: 0px; padding-right:50px">
+              {{ item.complete }}
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>>
+  <br>
+  <div class="row">
+    <div class="col-sm-3">
+      <span class="clrs-h4-font">Sub task</span>
+      <div *ngFor="let item of todayTasks">
+        <span>{{ item.name }}</span>&nbsp;&nbsp;
+      </div>
+    </div>
+
+    <div class="col-sm-3">
+      <span class="clrs-h4-font">Act Start</span>
+      <div *ngFor="let item of todayTasks">
+
+        <span> {{ item.actualStart | date }} </span>&nbsp;&nbsp;
+      </div>
+    </div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <div class="col-sm-3">
+      <span class="clrs-h4-font">Hours</span>
+      <div *ngFor="let item of todayTasks">
+        <span>{{ item.name }}</span>&nbsp;&nbsp;
+        <span>{{ item.totalHours }}</span>
+      </div>
+    </div>
+  </div>
+</div>

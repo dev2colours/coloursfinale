@@ -1,0 +1,108 @@
+<div class="main-content">
+  <div class="row">
+    <div class="col-sm-12 col-xs-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="nav-tabs-navigation" style="margin-bottom: 0px;">
+            <div class="nav-tabs-wrapper">
+              <ul id="tabs" class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#home" role="tab" aria-expanded="true">Projects</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#profile" role="tab" aria-expanded="false">Enterprise</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div id="my-tab-content" class="tab-content">
+            <div class="tab-pane active" id="home" role="tabpanel" aria-expanded="true">
+              <div class="col-md-12">
+                <div class="card">
+                  <form #f2="ngForm" class="form-horizontal" novalidate (ngSubmit)="save2(f2.value, f2.valid)">
+                    <div class="card-header ">
+                      <h5 class="card-title">Create Project</h5>
+                    </div>
+                    <div class="card-body">
+                      <fieldset>
+                        <div class="form-group">
+                          <div class="row">
+                            <div class="col-sm-5 col-md-offset-2">
+                              <input class="form-control loBorder" type="text" name="name" [ngModel]="typeValidation.name" required #text="ngModel" placeholder="Project Name">
+                              <small [hidden]="text.valid || (text.pristine && !f2.submitted)" class="text-danger">
+                                Projet's name is required.
+                              </small>
+                            </div>
+                            <div class="col-sm-4 form-group select-wizard" style="margin-top: -6px">
+                                <select [(ngModel)]="project.type" name="type" class="selectpicker" data-size="7" data-style="btn btn-primary btn-link" title="Project Type">
+                                  <option value="Personal"> Personal </option>
+                                  <option value="Enterprise"> Enterprise </option>
+                                </select>
+                            </div>
+                            <div class="card-footer text-center pull-left" style="margin-top: -6px">
+                              <button type="submit" class="btn btn-info btn-round btn-link"> <i class="fa fa-check" aria-hidden="true"></i> Save</button><!-- Save Project  (click)="saveProject()" -->
+                            </div>
+                          </div>
+                        </div>
+                      </fieldset>
+                    </div>
+                  </form>
+                  <div class="card-body text-center">
+                    <div class="table-responsive pro_info">
+                      <table class="table">
+                        <thead class="">
+                          <th class="text-left">
+                            Name
+                          </th>
+                          <th>
+                            By
+                          </th>
+                          <th>
+                            Type
+                          </th>
+                          <th>
+                            Project ID
+                          </th>
+                          <th>
+                            Action
+                          </th>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let project of projects | async; ">
+                            <td class="text-left">
+                              {{project.name}}
+                            </td>
+                            <td>
+                              {{ project.by}}
+                            </td>
+                            <td>
+                              {{project.type}}
+                            </td>
+                            <td>
+                              {{project.id}}
+                            </td>
+                            <td class="text-center">
+                              <a href="#" class="btn btn-warning btn-link btn-icon btn-sm edit">
+                                <i class="fa fa-edit"></i>
+                              </a>
+                              <a class="btn btn-danger btn-link btn-icon btn-sm remove" (click)="deleteProject(project.id)">
+                                <i class="fa fa-times"></i>
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane" id="profile" role="tabpanel" aria-expanded="false">
+              <p>Here is your profile.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

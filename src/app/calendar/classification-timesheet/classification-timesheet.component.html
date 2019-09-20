@@ -1,0 +1,43 @@
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-8">
+      <p class="text-left title clrs-h4-font" style="color: darkslategray">My Summerized Time Sheet</p>
+    </div>
+    <div class="col-md-4">
+      <div class="col-md-12">
+        <ng-select [items]="timesheetCollection | async" bindLabel="name" name="sPeriod" placeholder="Select Period"
+          (change)="dailyTimeSheetQuery()" [(ngModel)]="selectedDate"></ng-select>
+      </div>
+      <!-- <div class="col-md-3">
+        <-- <button *ngIf="editRpt" class="btn-link btn-magnify">search</button> ->
+        <button class="btn-link btn-magnify" routerLink="./totalsAction"> view</button>
+      </div> -->
+    </div>
+  </div>
+  <div class="card-content table-responsive table-full-width">
+    <table class="table table-striped">
+      <thead class="title clrs-h4-font">
+        <th class="text-left table td-clrs">Classification</th>
+        <th class="text-right table td-clrs">Hours Spent</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let action of viewDailyTimeSheets | async">
+          <ng-container *ngIf="action.id !== 'lapsed'; else showLapsedField">
+            <td class="text-left table td-clrs">{{ action.name }}</td>
+            <td class="text-right table td-clrs" style="padding-right:2em">{{ action.totalHours }}</td>
+          </ng-container>
+          <ng-template #showLapsedField>
+            <td class="text-left table td-clrs">{{ action.name }}</td>
+            <td class="text-right table td-clrs" style="padding-right:2em">{{ mlapsdata }}</td>
+          </ng-template>
+        </tr>
+        <tr>
+          <td class="text-left table td-clrs title clrs-h4-font"
+            style="color: darkslategray; border-bottom-style: double; border-top-color: black;border-bottom-color: black;">Totals</td>
+          <td class="text-right table td-clrs"
+            style="padding-right:2em; border-bottom-style: double; border-top-color: black;border-bottom-color: black;"><span>{{ totalHours }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

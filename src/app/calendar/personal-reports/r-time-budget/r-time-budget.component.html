@@ -1,0 +1,27 @@
+<div class="main-content">
+    <div class="card card-body">
+    
+    <div style="text-align:left">
+        <img alt="Southland Logo" src="../../../assets/img/Colourslogo.PNG">
+    </div>
+
+    <div style="text-align: right">
+        <button class="btn-link btn-magnify" (click)="rService.printReport()">Print</button> 
+        <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
+    </div> 
+    
+    <h2 id="UserP5"style="margin-top:-0.5em" >User</h2>
+
+    <h4 style="margin-top:-0.5em">My Time Budget <span>
+    <button id="btnP5" (click)="rService.rtimebudget()">View Time Budget</button>
+    </span></h4>
+    <!-- Table rows and headings only -->
+    <table id="TbIdP5">
+        <!-- headings -->
+        <tr>
+            <th>Life Classification Description</th>
+            <th style="text-align:center">Time Budget (in hours)</th>
+        </tr>
+    </table>
+</div>
+</div>
