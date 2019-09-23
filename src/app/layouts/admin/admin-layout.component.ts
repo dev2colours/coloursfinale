@@ -26,6 +26,7 @@ export class AdminLayoutComponent implements OnInit {
       this.location = location;
     }
 
+<<<<<<< Updated upstream
     // checkFullPageBackgroundImage() {
     //     var $page = $('.full-page');
     //     var image_src = $page.data('image');
@@ -38,6 +39,9 @@ export class AdminLayoutComponent implements OnInit {
 
     ngOnInit() {
     //   this.checkFullPageBackgroundImage();
+=======
+    ngOnInit() {
+>>>>>>> Stashed changes
       const elemMainPanel = <HTMLElement>document.querySelector('.main-panel');
       const elemSidebar = <HTMLElement>document.querySelector('.sidebar .sidebar-wrapper');
       this.location.subscribe((ev:PopStateEvent) => {

@@ -780,7 +780,7 @@ export class TaskService {
     this.userTaskCol.subscribe(usersRef => {
       this.usersData = usersRef;
       this.usersData.forEach(element => {
-        // console.log(element.name);
+        console.log(element.name);
         this.userTaskCollection = this.afs.collection('Users').doc(element.id).collection<Task>('tasks').valueChanges();
         this.userTaskColRef = this.afs.collection('Users').doc(element.id).collection('tasks');
         // this.clipTasks(this.userTaskCollection, this.userTaskColRef);
@@ -847,6 +847,7 @@ export class TaskService {
         // console.log(element.name);
         dmElement = element;
 
+<<<<<<< Updated upstream
         if (element.name === "" || element.name === null || element.name === undefined) {
           userTaskColRef.doc(element.id).delete().then(() => {
             console.log('Task id' + element.id + ' ' + "Has no name, wasn't properly created. It has been erased");
@@ -875,6 +876,27 @@ export class TaskService {
           // this.snd(element);
           // this.sndCheck(element);
         }
+=======
+    })
+  
+  }
+      // this.usersData.forEach(function (element, index) {
+
+  middleFcn(userTaskCollection){
+    userTaskCollection.subscribe(userstasks => {
+      // userstasks.forEach(item => {
+      // let newItem;
+      userstasks.forEach(function (item, index) {
+        console.log(item.name);
+        // n  ewItem = item;
+        // this.userTaskColRef.doc(item.id).
+        console.log('Task id' + item.id + ' ' + "Has no name, wasn't properly created. It has been erased");
+        console.log('passed this function snd(------)');
+
+
+      }).then((newItem)=>{
+        this.snd(newItem);
+>>>>>>> Stashed changes
       })
     })
   }

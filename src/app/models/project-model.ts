@@ -19,7 +19,6 @@ export interface Project {
 }
 
 export interface projectCompDetail { id: string, name: string };
-
 export interface abridgedBill {
     section: Section,  id: string, name: string, No: number, projectId: string,
     projectName: string, companyId: string, companyName: string, totalAmount: number,
@@ -37,6 +36,7 @@ export interface workItem {
     actualStart: string, actualEnd: string, Hours: string, selectedWeekWork: boolean, selectedWeekly: boolean
  };
 
+<<<<<<< Updated upstream
 export interface subReport extends workItem { totalHours: number };
 
 // export interface sectWorkItem extends workItem { section: string, sectionNumber: number }
@@ -53,6 +53,12 @@ export interface  subSection {
 
 export interface superSections extends Section { subSections: [subSection] }
 
+=======
+export interface Section {
+    id: string, no: number, name: string, projectId: string, projectName: string, companyId: string, companyName: string, Bills: [abridgedBill],
+}
+
+>>>>>>> Stashed changes
 export interface workHours {
     name: string; action: string; actionId: string; hours: number, time: string;
 }

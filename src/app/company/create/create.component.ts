@@ -557,7 +557,7 @@ export class CreateComponent implements OnInit {
       }
     });
 
-    this.section = { id: "", type: "", no: 0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills: null }
+    this.section = { id: "", no: 0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills: null }
     this.theSections = this.ps.getProjectSections(this.savedProject.id);
     this.newProjectSections = myProRef.valueChanges();
   }

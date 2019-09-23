@@ -10,6 +10,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TagInputModule } from 'ngx-chips'
 // import { PopupComponent } from 'app/calendar/popup/popup.component';
+<<<<<<< Updated upstream
+=======
+import { TimesheetComponent } from 'app/calendar/personal-reports/timesheet/timesheet.component';
+>>>>>>> Stashed changes
 
 @NgModule({
     imports: [RouterModule, CommonModule, NgSelectModule, JWBootstrapSwitchModule, NgbModule, TagInputModule, NgxChartsModule, ],

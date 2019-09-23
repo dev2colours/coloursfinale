@@ -1092,14 +1092,14 @@ export class CalendarComponent implements OnInit {
       if (a.complete == true) {
 
         this.allCompleteTasks.push(a);
-        // console.log(this.companyCompleteTasks);
+        console.log(this.companyCompleteTasks);
       }
     }))
 
     this.allMyTasks.forEach(element => element.map(a =>  {
       if (a.projectId) {
         this.projectsTasks.push(a);
-        // console.log(this.projectsTasks);
+        console.log(this.projectsTasks);
         if (a.complete == true) {
           this.projectsCompleteTasks.push(a);
           // console.log(this.projectsCompleteTasks);
@@ -1113,11 +1113,11 @@ export class CalendarComponent implements OnInit {
     this.allMyTasks.forEach(element => element.map(a => {
         if (a.companyId) {
         this.companyTasks.push(a);
-        // console.log(this.companyTasks);
+        console.log(this.companyTasks);
         if (a.complete == true) {
 
           this.companyCompleteTasks.push(a);
-          // console.log(this.companyCompleteTasks);
+          console.log(this.companyCompleteTasks);
         }
 
         this.NoOfCompanyTasks = this.companyTasks.length;

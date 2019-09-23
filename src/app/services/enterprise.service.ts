@@ -348,7 +348,11 @@ export class EnterpriseService {
     return this.projects;
   }
   getPersonalProjects(myUserId) {
+<<<<<<< Updated upstream
     this.myprojects = this.afs.collection('Users').doc(myUserId).collection('projects',
+=======
+    this.myprojects = this.afs.collection<Project>('Users').doc(myUserId).collection('projects',
+>>>>>>> Stashed changes
     ref => ref
     .orderBy('name', "asc")
     .where('type','==', 'Personal')
@@ -373,7 +377,11 @@ export class EnterpriseService {
   }
 
   getCompanyProjects(companyId: string) {
+<<<<<<< Updated upstream
     this.companyProjects = this.afs.collection('Enterprises').doc(companyId).collection('projects').snapshotChanges().pipe(
+=======
+    this.companyProjects = this.afs.collection<Project>('Enterprises').doc(companyId).collection('projects').snapshotChanges().pipe(
+>>>>>>> Stashed changes
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Project;
         const id = a.payload.doc.id;
@@ -389,7 +397,11 @@ export class EnterpriseService {
 
   getMyCompanyTasks(companyId: string, myUserId: string) {
     // this.myCompanyTasks = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref.where('byId', '==', myUserId) }).snapshotChanges().pipe(
+<<<<<<< Updated upstream
     this.myCompanyTasks = this.afs.collection('Enterprises').doc(companyId).collection('tasks', ref => { return ref.where('byId', '==', myUserId ) }).snapshotChanges().pipe(
+=======
+    this.myCompanyTasks = this.afs.collection<Project>('Enterprises').doc(companyId).collection('tasks', ref => { return ref.where('byId', '==', myUserId ) }).snapshotChanges().pipe(
+>>>>>>> Stashed changes
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Task;
         const id = a.payload.doc.id;
