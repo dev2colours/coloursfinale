@@ -27,7 +27,6 @@ declare var $: any;
   styleUrls: ['./work.component.css']
 })
 export class WorkComponent implements OnInit {
-
   user: any;
   projectId: string;
   myUser: string;
@@ -115,7 +114,7 @@ export class WorkComponent implements OnInit {
     this.initService = { display: "", value: "" }
     this.serviceTags = null;
     // this.newEnterprise = is.getnewEnterprise();
-    this.newEnterprise = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", bus_email: "", sector: "", participants: null, champion: this.userChampion, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "", updatedStatus: false };
+    this.newEnterprise = { name: "", by: "", byId: "", createdOn: "", updatedStatus: false, id: "", location: "", bus_email: "", sector: "", participants: null, champion: this.userChampion, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.taxDocument = null;
     // this.newEnterprise.services = [null];
     console.log('init newCompany services' + this.newEnterprise.services);
@@ -426,6 +425,8 @@ export class WorkComponent implements OnInit {
     let entRef = this.afs.collection('Enterprises').doc(company.id).collection('projects');
     let myProRef = this.afs.collection('/Users').doc(this.userId).collection('projects');
     let champProRef = this.afs.collection('/Users').doc(championId).collection('projects');
+    let nrouter = this.router;
+
     myProRef.add(project).then(function (pref) {
       ////Add this.project to users collection of projects
       console.log(pref.id);
@@ -445,10 +446,12 @@ export class WorkComponent implements OnInit {
         console.log('enterprise project');
       }
       project.id = projectId;
+    }).then(() => {
+      nrouter.navigate(['projects/', project.id]);
     });
     this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.setProject(project);
-    this.pNxtPage();
+    // this.pNxtPage();
   }
 
   setProject(project) {
@@ -483,7 +486,7 @@ export class WorkComponent implements OnInit {
     this.typeSet = { id: "", name: "" };
     this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
-    this.setCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "", updatedStatus: false };
+    this.setCompany = { name: "", by: "", byId: "", createdOn: "", updatedStatus: false, id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
     this.setChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
   }
 
@@ -493,14 +496,19 @@ export class WorkComponent implements OnInit {
     this.setChampion = null;
     this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
-    this.setCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "", updatedStatus: false };
+    this.setCompany = { name: "", by: "", byId: "", createdOn: "", updatedStatus: false, id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
   }
 
   checkType(data) {
     if (data.id == "Enterprise") {
       this.showComp = true;
+      this.showNext = false;
     } else {
+      this.showNext = true;
       this.showComp = false;
+      this.setChampion = this.myData;
+
+      this.setCompany = { name: "", by: "", byId: "", createdOn: "", updatedStatus: false, id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
       catchError;
     }
   }
@@ -540,26 +548,33 @@ export class WorkComponent implements OnInit {
     let projectId = this.savedProject.id;
     this.projectId = this.savedProject.id;
     let dref = this.afs.collection('Projects').doc(projectId).collection('sections');
+    let dref2 = this.afs.collection('Projects').doc(projectId).collection('enterprises').doc(project.companyId).collection('sections');
+
     let entRef = this.afs.collection('Enterprises').doc(project.companyId).collection('projects').doc(projectId).collection('sections');
     let myProRef = this.afs.collection('/Users').doc(this.myData.id).collection('projects').doc(projectId).collection<Section>('sections');
 
     myProRef.add(this.section).then(function (ref) {
       const sectionId = ref.id;
+      xsection.id = ref.id;
 
       if (project.type == 'Personal') {
         myProRef.doc(sectionId).update({ "id": sectionId });
       } else {
         dref.doc(sectionId).set(xsection);
+        dref2.doc(sectionId).set(xsection);
         entRef.doc(sectionId).set(xsection);
-        dref.doc(sectionId).update({ "id": sectionId });
-        entRef.doc(sectionId).update({ "id": sectionId });
+        // dref.doc(sectionId).update({ "id": sectionId });
+        // entRef.doc(sectionId).update({ "id": sectionId });
         myProRef.doc(sectionId).update({ "id": sectionId });
       }
+    }).then(() => {
+
+      this.section = { id: "", type: "", no: 0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills: null }
+      this.theSections = this.ps.getProjectSections(this.savedProject.id);
+      this.newProjectSections = myProRef.valueChanges();
+
     });
 
-    this.section = { id: "", no: 0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills: null }
-    this.theSections = this.ps.getProjectSections(this.savedProject.id);
-    this.newProjectSections = myProRef.valueChanges();
   }
 
   showNotification(data, from, align) {
@@ -771,17 +786,16 @@ export class WorkComponent implements OnInit {
     this.userProfile.subscribe(userData => {
       console.log(userData);
       let myData = {
-        name: this.user.displayName,
+        name: userData.name,
         email: this.user.email,
         bus_email: userData.bus_email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
+        phoneNumber: userData.phoneNumber,
         photoURL: this.user.photoURL,
         address: userData.address,
         nationality: userData.nationality,
         nationalId: userData.nationalId,
       }
-
       if (userData.address == "" || userData.address == null || userData.address == undefined) {
         userData.address = ""
       } else {

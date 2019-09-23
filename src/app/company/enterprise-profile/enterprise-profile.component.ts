@@ -9,13 +9,13 @@ import { EnterpriseService } from '../../services/enterprise.service';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentSnapshotExists, DocumentSnapshotDoesNotExist, Action } from 'angularfire2/firestore';
 import { map, switchMap, mapTo } from 'rxjs/operators';
 import { Enterprise, Subsidiary, ParticipantData, companyChampion, Department, companyStaff, asset, client, employeeData, compProfile } from "../../models/enterprise-model";
-import { Project, workItem } from "../../models/project-model";;
+import { Project, workItem } from "../../models/project-model";
 import * as moment from 'moment';
 import { scaleLinear } from "d3-scale";
 import * as d3 from "d3";
 import { TaskService } from 'app/services/task.service';
 import { coloursUser, mail } from 'app/models/user-model';
-import { Task, MomentTask } from "../../models/task-model";
+import { Task, MomentTask, rate } from "../../models/task-model";
 import { PersonalService } from 'app/services/personal.service';
 import { InitialiseService } from 'app/services/initialise.service';
 import { ProjectService } from 'app/services/project.service';
@@ -44,66 +44,68 @@ declare var $: any;
 export class EnterpriseProfileComponent {
 
   // cities: CityData[];
-  public show: boolean = false;
-  public showEnterprise: boolean = false;
+  public show = false;
+  public showEnterprise = false;
   public buttonName: any = 'Show';
   public btnName: any = 'Show';
 
-  public pgOne: boolean = true;
-  public pgTwo: boolean = false;
-  public pgThree: boolean = false;
+  public pgOne = true;
+  public pgTwo = false;
+  public pgThree = false;
   
   public btnTable: any = 'Show';
-  public showUserTable: boolean = false;
+  public showUserTable = false;
   public btnDptTable: any = 'Show';
-  public showDptUserTable: boolean = false;
-  public showChamp: boolean = true;
+  public showDptUserTable = false;
+  public showChamp = true;
   public btnChamp: any = 'Show';
-  public showDptChamp: boolean = true;
+  public showDptChamp = true;
   public btnDptChamp: any = 'Show';
 
-  public showdept: boolean = true;
+  public showdept = true;
   public btndept: any = 'Show';
-  public showDeptTable: boolean = false;
+  public showDeptTable = false;
   public btnDeptTable: any = 'Show';
 
-  public showdeptChamp: boolean = false;
+  public showdeptChamp = false;
   public btndeptChamp: any = 'Show';
-  public showDeptPartTable: boolean = false;
+  public showDeptPartTable = false;
   public btnDeptPartTable: any = 'Show';
 
-  showChampBtn: boolean = true;
+  showChampBtn = true;
 
-  public showProjectTable: boolean = false;
+  public showProjectTable = false;
   public btnProjTable: any = 'Show';
 
-  public showProj: boolean = true;
+  public showProj = true;
   public btnProj: any = 'Show';
 
-  showProjBtn: boolean = true;
+  showProjBtn = true;
 
-  public showCompanyTable: boolean = false;
+  public showCompanyTable = false;
   public btnCompanyTable: any = 'Show';
-  public showCompany: boolean = true;
+  public showCompany = true;
   public btnCompany: any = 'Show';
 
-  public showDpt: boolean = false;
-  public demoNotes: boolean = true;
+  public showDpt = false;
+  public demoNotes = true;
   public btnDpt: any = 'ShowDpt';
 
-  displayCompanyReport: boolean = false;
-  displayReport: boolean = true;
+  displayCompanyReport = false;
+  displayReport = true;
 
-  displayDptReport: boolean = true;
+  displayDptReport = true;
 
-  public displayUser: boolean = false;
-  public displayUserReport: boolean = true;
-  public displayProjReport: boolean = true;
+  public displayUser = false;
+  public displayUserReport = true;
+  public displayProjReport = true;
 
   public displayDept = false;
-  public displayDeptReport: boolean = true;
+  public displayDeptReport = true;
 
+  public showSubtasks = false;
 
+  editedTask: Task;
   setUserLongTermTAsks = [];
   setUserMediumTermTAsks = [];
   setUserShortTermTAsks = [];
@@ -161,6 +163,7 @@ export class EnterpriseProfileComponent {
   joinmyProject: Project;
   proj_ID: string;
   userChampion: employeeData;
+  userEmployee: employeeData;
 
   projects: Observable<Project[]>;
   projectsCollection: Observable<Project[]>;
@@ -179,7 +182,7 @@ export class EnterpriseProfileComponent {
   tes: any;
   x: any;
   user: firebase.User;
-  myData: ParticipantData;
+  myData: companyStaff;
   userId: string
   companyData: Observable<{ name: string; by: string; byId: string; createdOn: string; id: string; location: string; sector: string; participants: ParticipantData; }>;
 
@@ -213,10 +216,12 @@ export class EnterpriseProfileComponent {
   dpId: string;
   projId: string;
   Champion: ParticipantData;
+  duflowKey = 'srjSRMzLN0NXM';
   selParticipantId: any;
   selectedParticipant: ParticipantData;
   selectedStaff: companyStaff;
   selParticipantName: any;
+  staff4: ParticipantData;
   staff: Observable<ParticipantData[]>;
   staff2: Observable<ParticipantData[]>;
   clients: Observable<client[]>;
@@ -236,6 +241,7 @@ export class EnterpriseProfileComponent {
   companystaff2: companyStaff;
   contactPerson: ParticipantData;
   newPart: ParticipantData;
+  est = 'TNE1F77IjRzDZr2';
   day0label: string;
   day1label: string;
   day2label: string;
@@ -330,7 +336,8 @@ export class EnterpriseProfileComponent {
   selectedCity: ({ id: string; name: string; });
   selectedPart: any;
   cities: ({ id: number; name: string; disabled?: undefined; } | { id: number; name: string; disabled: boolean; })[];
-  compStaff: ({ id: number; name: string; email: string; phoneNumber: string; disabled?: undefined; } | { id: number; name: string; email: string; phoneNumber: string; disabled: boolean; })[];
+  compStaff: ({ id: number; name: string; email: string; phoneNumber: string; disabled?: undefined; } | { id: number;
+    name: string; email: string; phoneNumber: string; disabled: boolean; })[];
   compStaffList: Observable<ParticipantData[]>;
   enterpriseStaff: Observable<companyStaff>;
   qYear: string;
@@ -356,16 +363,16 @@ export class EnterpriseProfileComponent {
   actionNo: number;
   compServices: [string];
   setUser: ParticipantData;
-  showClient: boolean = false;
+  showClient = false;
   companies: Observable<Enterprise[]>;
   projectSettoJoin: Project;
   staffRequests: Observable<ParticipantData[]>;
   newEnterprise: Enterprise;
   setDept: Department;
   setCompProject: Project;
-  deptDemoNotes: boolean = true;
-  displayProject: boolean = false;
-  ProjectDemoNotes: boolean = true;
+  deptDemoNotes = true;
+  displayProject = false;
+  ProjectDemoNotes = true;
   allDeptTasks: Observable<Task[]>
   allDeptTasksComplete: Observable<Task[]>
   outstandingDptTasks = [];
@@ -387,7 +394,7 @@ export class EnterpriseProfileComponent {
 
   selectedActions: workItem[];
   viewDayActions: any;
-  viewTodayWork: boolean = false;
+  viewTodayWork = false;
   newCompanystaff: companyStaff;
   allStaff: Observable<employeeData[]>;
   action: workItem;
@@ -402,7 +409,9 @@ export class EnterpriseProfileComponent {
   departments4: Observable<any[]>;
   staffDepartment: Department;
   hierarchies: string[];
-  myCompProfile: { name: string; phoneNumber: string; by: string; byId: string; createdOn: string; email: string; bus_email: string; id: string; photoURL: string; departmentId: string; department: string; address: String; nationalId: string; nationality: string; hierarchy: string; };
+  myCompProfile: { name: string; phoneNumber: string; by: string; byId: string; createdOn: string; email: string;
+    bus_email: string; id: string; photoURL: string; departmentId: string; department: string; address: String;
+    nationalId: string; nationality: string; hierarchy: string; };
   allEnterpriseTasks: Task[];
   tss: Task;
 
@@ -413,16 +422,22 @@ export class EnterpriseProfileComponent {
   myProjects: Observable<Project[]>;
   projsNo: number;
 
-  public showProjs: boolean = false;
-  public hideProjs: boolean = false;
+  public showProjs = false;
+  public hideProjs = false;
   projs: Project[];
   maActivities: any;
   taskArr: MomentTask[];
+  compStaff3: Observable<employeeData[]>;
+  staffTasks2: Observable<MomentTask[]>;
+  setItem: workItem;
+  allWorks: Observable<rate[]>;
 
 
   /*   end */
 
-  constructor(public afAuth: AngularFireAuth, public rp: ReportsService, private ts: TaskService, private is: InitialiseService, private ps: ProjectService, private pns: PersonalService, public es: EnterpriseService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
+  constructor(public afAuth: AngularFireAuth, public rp: ReportsService, private ts: TaskService, private is: InitialiseService,
+    private ps: ProjectService, private pns: PersonalService, public es: EnterpriseService, public afs: AngularFirestore,
+    location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
 
     this.selectedCity = { id: "", name: "" };
     // this.setSui = { id: "", name: "" };
@@ -431,36 +446,82 @@ export class EnterpriseProfileComponent {
     this.location = location;
     this.nativeElement = element.nativeElement;
     this.sidebarVisible = false;
-    this.newPart = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationality: "", nationalId: "" };
+    this.newPart = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationality: "",
+      nationalId: "" };
     this.counter = 1;
-    this.selectedTask = { name: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
-    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, participants: null, classification: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
+    this.selectedTask = { name: "", update: "", champion: null, championName: "", championId: "", projectName: "", department: "",
+     departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "",
+     finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "",
+     projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "",
+     classification: null, selectedWeekly: false };
+    this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "",
+     byId: "", type: "", champion: null, participants: null, classification: null, departmentName: "", departmentId: "", billID: "",
+     billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false,
+     start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "",
+     taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false,
+     section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false,
+     championName: "", championId: "" };
     this.dpt = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
     this.asset = { name: "", assetNumber: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", cost: "" };
     this.client = is.getClient();
     this.subsidiary = is.getSubsidiary();
-    this.task = { name: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
-    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" }
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", nationalId: "", nationality: "", address: "", department: "", departmentId: "", hierarchy: "" };
-    this.contactPerson = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationality: "", nationalId: "" };
+    this.editedTask = { name: "", update: "", champion: null, championName: "", championId: "", projectName: "", department: "",
+      departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "",
+     finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "",
+     companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null,
+      selectedWeekly: false };
+    this.task = { name: "", update: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "",
+     start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "",
+     finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "",
+     companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null,
+     selectedWeekly: false };
+    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "",
+      location: "", sector: "", completion: "" }
+    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", nationalId: "", nationality: "",
+      address: "", department: "", departmentId: "", hierarchy: "" };
+    this.contactPerson = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationality: "",
+    nationalId: "" };
     this.selectedCompany = is.getSelectedCompany();
-    this.setCompStaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: "" };
-    this.selectedStaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: ""};
-    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: ""  };
-    this.companystaff2 = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "", departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: ""  };
+    this.setCompStaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "",
+      departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: "" };
+    this.selectedStaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "",
+      departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: ""};
+    this.companystaff = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "",
+      departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: ""  };
+    this.companystaff2 = { name: "", phoneNumber: "", by: "", byId: "", createdOn: "", email: "", bus_email: "", id: "", department: "",
+      departmentId: "", photoURL: "", address: "", nationalId: "", nationality: "", hierarchy: ""  };
     this.department = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
     this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
-    this.selectedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
-    this.editedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
-    this.setUser = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationality: "", nationalId: ""};
-    this.joinmyProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" }
-    this.tss = { name: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0,
+      workHours: null, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "",
+      billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null,
+      complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "",
+      taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false,
+      section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false,
+      championName: "", championId: "" };
+    this.editedAction = { uid: "", id: "", name: "", unit: "", by: "", byId: "", type: "", quantity: 0, targetQty: 0, rate: 0,
+      workHours: null, amount: 0, champion: null, classification: null, participants: null, departmentName: "", departmentId: "",
+      billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null,
+      complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "",
+      taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false,
+      section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false,
+      championName: "", championId: "" };
+    this.setUser = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationality: "",
+     nationalId: ""};
+    this.joinmyProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "",
+      location: "", sector: "", completion: "" }
+    this.tss = { name: "", update: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "",
+      start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "",
+      finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "",
+      companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "",
+      classification: null, selectedWeekly: false };
     let mmm = moment(new Date(), "DD-MM-YYYY");
     this.todayDate = moment(new Date(), "DD-MM-YYYY").format('dddd');
     console.log(this.todayDate);
     this.currentDay = moment(new Date(), "DD-MM-YYYY").dayOfYear();
     this.currentDate = moment(new Date(), "DD-MM-YYYY");
     console.log(this.currentDate.format('L'));
+    this.compId ='';
 
     this.cities = [
       { id: 1, name: 'Vilnius' },
@@ -1624,15 +1685,14 @@ export class EnterpriseProfileComponent {
   }
 
   checkLeapYear() {
-    let leapYear: boolean = false;
+    let leapYear = false;
     let numberOfDays;
     leapYear = moment(this.currentYear).isLeapYear()
     console.log(leapYear);
     if (leapYear == true) {
       console.log('Its a leapYear');
       numberOfDays = 366
-    }
-    else {
+    } else {
       console.log('Its not leapYear');
       numberOfDays = 365
     }
@@ -1712,7 +1772,6 @@ export class EnterpriseProfileComponent {
           break;
       }
     }
-
     if (period == 'startQuarter') {
       switch (action) {
         case 'previous': {
@@ -1911,7 +1970,6 @@ export class EnterpriseProfileComponent {
   }
 
   viewDateTasks(testPeriod, checkPeriod) {
-    // this.viewTasks = this.afs.collection('Users').doc(this.userId).collection('tasks', ref => { return ref.where(testPeriod, '==', checkPeriod) }).snapshotChanges().pipe(
     let viewTasksRef = this.afs.collection('Enterprises').doc(this.compId);
     this.viewTasks = viewTasksRef.collection('tasks', ref => { return ref.where(testPeriod, '==', checkPeriod) }).snapshotChanges().pipe(
       map(actions => actions.map(a => {
@@ -1927,17 +1985,36 @@ export class EnterpriseProfileComponent {
 
     let viewTasksRef = this.afs.collection('Enterprises').doc(this.compId);
     this.viewTasks = viewTasksRef.collection('tasks', ref => ref
+      // .orderBy('start')
       .where(testPeriod, '==', checkPeriod)
       .where('startYear', '==', year))
       .snapshotChanges().pipe(
         map(actions => actions.map(a => {
           const data = a.payload.doc.data() as Task;
+          console.log(data);
+          
           const id = a.payload.doc.id;
           return { id, ...data };
         }))
       );
     return this.viewTasks;
   }
+
+  // mviewDateTasks(testPeriod, checkPeriod, year) {
+
+  //   let viewTasksRef = this.afs.collection('Enterprises').doc(this.compId);
+  //   this.viewTasks = viewTasksRef.collection('tasks', ref => ref
+  //     .where(testPeriod, '==', checkPeriod)
+  //     .where('startYear', '==', year))
+  //     .snapshotChanges().pipe(
+  //       map(actions => actions.map(a => {
+  //         const data = a.payload.doc.data() as Task;
+  //         const id = a.payload.doc.id;
+  //         return { id, ...data };
+  //       }))
+  //     );
+  //   return this.viewTasks;
+  // }
 
   addTaskDptStaff() {
     this.es.addTaskDptStaff(this.compId, this.deptId, this.companystaff, this.selectedTask)
@@ -1977,9 +2054,9 @@ export class EnterpriseProfileComponent {
       photoURL: this.user.photoURL,
       // byId: this.userId,
       dateHeaded: new Date().toString(),
-      address: this.myData.address,
-      nationalId: this.myData.nationalId,
-      nationality: this.myData.nationality,
+      address: this.companystaff.address,
+      nationalId: this.companystaff.nationalId,
+      nationality: this.companystaff.nationality,
       
     };
     console.log('the departmentID-->' + " " + this.selectedDepartment.name);
@@ -2040,12 +2117,26 @@ export class EnterpriseProfileComponent {
   }
 
   showUserTasks(staffId) {
+    // let staffId = this.staff4.id;
     this.staffTasks = this.es.getDptStaffTasks(this.compId, this.deptId, staffId);
   }
 
+  showUserDetailTasks(staff: employeeData) {
+    console.log(staff);
+    let staffId = staff.id, deptId = staff.departmentId;
+    this.showSubtasks = true;
+    this.staffTasks2 = this.es.getDptStaffTasks(this.compId, deptId, staffId);
+  }
+
+  seeAllTSubTasks(){
+    this.showSubtasks = false;
+  }
+
   showTaskActions(task) {
-    this.selectTask(task)
-    this.taskActions = this.es.getDptTasksActions(this.compId, this.deptId, task.id)
+    this.selectTask(task);
+    let deptId = this.userEmployee.departmentId;
+
+    this.taskActions = this.es.getDptTasksActions(this.compId, deptId, task.id)
   }
 
   viewMyTaskActions(task) {
@@ -2071,7 +2162,8 @@ export class EnterpriseProfileComponent {
   deleteAction(action) {
     console.log(action);
     let actionId = action.id;
-    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId);
+    // let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId);
+    let userProjectDoc = this.afs.collection('Users').doc(action.champion.id).collection('myenterprises').doc(this.selectedTask.companyId);
     let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
     let deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<Department>('departments').doc(action.departmentId);
     let actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
@@ -2081,39 +2173,154 @@ export class EnterpriseProfileComponent {
     userActionRef.doc(actionId).delete();
   }
 
+  setWeekAction(e: { target: { checked: any; }; }, action: workItem) {
+
+    if (e.target.checked) {
+      console.log(action.name + '' + 'action checked');
+
+      action.selectedWeekly = true;
+      action.selectedWeekWork = true;
+
+      this.selectedActionItems.push(action);
+      let participantRef = this.afs.collection('Enterprises').doc(this.compId).collection('Participants').doc(action.champion.id).collection('WeeklyActions');
+      participantRef.doc(action.id).set(action);
+      // let compRef = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions').doc(action.id).set(action);
+      console.log("action" + " " + action.name + " " + " has been added");
+
+      let myActionsRef = this.myDocument.collection<Task>('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let compRefI = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('actionItems').doc(action.id);
+
+
+      let deptDoc = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId);
+      let actionRef = deptDoc.collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let compRefII = this.afs.collection('Enterprises').doc(action.companyId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let deptActDoc = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId).collection<workItem>('actionItems').doc(action.id);
+      let allMyActionsRef = this.myDocument.collection<workItem>('actionItems').doc(action.id);
+      this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions').doc(action.id).set(action);
+      this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).set(action).then(() => {
+
+        // myActionsRef.update({ 'selectedWeekly': true });
+        this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        compRefII.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          compRefII.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // compRefII.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        deptActDoc.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          deptActDoc.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // deptActDoc.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        allMyActionsRef.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          allMyActionsRef.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // allMyActionsRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        myActionsRef.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          myActionsRef.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // myActionsRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        compRefI.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          compRefI.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // compRefI.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        actionRef.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          actionRef.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // actionRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+
+        });
+
+        // this.selectAction(e, action);
+      });
+
+    } 
+    else {
+      console.log(action.name + '' + 'action checked');
+
+      let selectedWork = false;
+      this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).update({ 'selectedWeekWork': selectedWork });
+
+      this.selectedActionItems.splice(this.selectedActionItems.indexOf(action), 1);
+      let participantRef = this.afs.collection('Enterprises').doc(this.compId).collection('Participants').doc(action.champion.id).collection('WeeklyActions');
+      participantRef.doc(action.id).delete();
+      let compRef = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
+      compRef.doc(action.id).delete();
+    }
+  }
+
   newAction(action: workItem) {
     console.log(action);
     let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: "", actualTime: "", Varience: "" };
 
+    let userProjectDoc: AngularFirestoreDocument<Enterprise>,
+      userActionRef: AngularFirestoreCollection<workItem>,
+      EntRef: AngularFirestoreCollection<workItem>,
+      deptDoc: AngularFirestoreDocument<workItem>,
+      actionRef: AngularFirestoreCollection<workItem>,
+      EntPartRef: AngularFirestoreCollection<workItem>,
+      EntDeptPartRef: AngularFirestoreCollection<workItem>,
+      EntDeptPartTaskRef: AngularFirestoreCollection<workItem>,
+      proJeRef1: AngularFirestoreCollection<workItem>,
+      proJeRef2: AngularFirestoreCollection<workItem>,
+      proJeRef3: AngularFirestoreCollection<workItem>,
+      proJeRef4: AngularFirestoreCollection<workItem>,
+
+    task = this.selectedTask;
     action.by = this.user.displayName;
     action.byId = this.userId;
-    let dptId = this.deptId;
+    let dptId = this.selectedTask.departmentId;;
     action.createdOn = new Date().toISOString();
     action.taskId = this.selectedTask.id;
     action.taskName = this.selectedTask.name;
     action.projectId = this.selectedTask.projectId;
     action.projectName = this.selectedTask.projectName;
-    action.departmentId = this.deptId;
-    action.departmentName = this.setDpt.name;
+    action.departmentId = this.selectedTask.departmentId;
+    action.departmentName = this.selectedTask.department;
     action.companyId = this.selectedTask.companyId;
     action.companyName = this.selectedTask.companyName;
     action.classificationName = 'Work';
     action.classificationId = 'colourWorkId';
     action.classification = newClassification;
-
-    // action.startDate = moment(action.startDate).format('L');
-    // action.endDate = moment(action.endDate).format('L');
-    // action.startWeek = moment(action.startDate, 'MM-DD-YYYY').week().toString();
-    // action.endWeek = moment(action.endDate, 'MM-DD-YYYY').week().toString();
-    // action.startDay = moment(action.startDate, 'MM-DD-YYYY').format('ddd').toString();
-    // action.endDay = moment(action.endDate, 'MM-DD-YYYY').format('ddd').toString();
     action.startDate = "";
     action.endDate = "";
     action.startWeek = "";
     action.endWeek = "";
     action.startDay = "";
     action.endDay = "";
-    // action.champion = this.myData;
+    // action.champion = this.myData; Adding Title Blocks and Dimensions to Pomona Layouts
     action.champion = this.selectedTask.champion;
     action.unit = this.setSui.id;
     console.log(action.unit);
@@ -2123,42 +2330,149 @@ export class EnterpriseProfileComponent {
     console.log(mooom);
 
     console.log('the task--->' + this.selectedTask.name + " " + this.selectedTask.id);
-    console.log('the department-->' + action.name);
+    console.log('the department-->' + action.departmentName);
     if (action.projectId !== "") {
-      let proJeRef1 = this.afs.collection('Projects').doc(action.projectId).collection<Task>('workItems').doc(action.id);
-      let proJeRef2 = this.afs.collection('Projects').doc(action.projectId).collection('Participants').doc(action.champion.id).collection<Task>('workItems').doc(action.id);
-      let proJeRef3 = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection<Task>('workItems').doc(action.id);
-      let proJeRef4 = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection('labour').doc(action.champion.id).collection<Task>('workItems').doc(action.id);
+      proJeRef1 = this.afs.collection('Projects').doc(action.projectId).collection<workItem>('workItems');
+      proJeRef2 = this.afs.collection('Projects').doc(action.projectId).collection('Participants').doc(action.champion.id).collection<workItem>('workItems');
+      proJeRef3 = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection<workItem>('workItems');
+      proJeRef4 = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection('labour').doc(action.champion.id).collection<workItem>('workItems');
     }
 
-    let userProjectDoc = this.afs.collection('Users').doc(this.staffId).collection('myenterprises').doc(this.selectedTask.companyId);
-    let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
-    let deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<Department>('departments').doc(dptId);
-    let actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
-    let EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+    if (task.companyId !== "") {
+
+      userProjectDoc = this.afs.collection('Users').doc(this.selectedTask.champion.id).collection('myenterprises').doc(this.selectedTask.companyId);
+      userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+      deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<Department>('departments').doc(dptId);
+      actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
+      EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+      EntPartRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('Participants').doc(this.selectedTask.champion.id).collection<workItem>('actionItems');
+      EntDeptPartRef = deptDoc.collection('Participants').doc(this.selectedTask.champion.id).collection<workItem>('actionItems');
+      EntDeptPartTaskRef = deptDoc.collection('Participants').doc(this.selectedTask.champion.id).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+    }
+
+    let myTaskActionsRef = this.afs.collection('Users').doc(this.userId).collection<Task>('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+    let allMyActionsRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('actionItems');
+
     EntRef.add(action).then(function (Ref) {
       let newActionId = Ref.id;
+      action.id = Ref.id;
       console.log(Ref);
-      EntRef.doc(newActionId).update({ 'id': newActionId });
-      actionRef.doc(newActionId).set(action);
-      actionRef.doc(newActionId).update({ 'id': newActionId });
-      userActionRef.doc(newActionId).set(action);
-      userActionRef.doc(newActionId).update({ 'id': newActionId });
-
-      // proJeRef1.set(action);
-      // proJeRef2.set(action);
-      // proJeRef3.set(action);
-      // proJeRef4.set(action);
-
-
-      // proJeRef1.update({ 'id': newActionId });
-      // proJeRef2.update({ 'id': newActionId });
-      // proJeRef3.update({ 'id': newActionId });
-      // proJeRef4.update({ 'id': newActionId });
       
+      if (task.companyId !== "") {
+        EntRef.doc(newActionId).update({ 'id': newActionId });
+        actionRef.doc(newActionId).set(action);
+        actionRef.doc(newActionId).update({ 'id': newActionId });
+        userActionRef.doc(newActionId).set(action);
+        userActionRef.doc(newActionId).update({ 'id': newActionId });
+        EntPartRef.doc(newActionId).set(action);
+        EntDeptPartRef.doc(newActionId).set(action);
+        EntDeptPartTaskRef.doc(newActionId).set(action);
+
+        EntPartRef.doc(newActionId).update({ 'id': newActionId });
+        EntDeptPartRef.doc(newActionId).update({ 'id': newActionId });
+        EntDeptPartTaskRef.doc(newActionId).update({ 'id': newActionId });
+      }
+
+      myTaskActionsRef.doc(newActionId).set(action);
+      allMyActionsRef.doc(newActionId).set(action);
+
+      if (task.companyId !== "") {
+        
+        proJeRef1.doc(newActionId).set(action);
+        proJeRef2.doc(newActionId).set(action);
+        proJeRef3.doc(newActionId).set(action);
+        proJeRef4.doc(newActionId).set(action);
+
+
+        proJeRef1.doc(newActionId).update({ 'id': newActionId });
+        proJeRef2.doc(newActionId).update({ 'id': newActionId });
+        proJeRef3.doc(newActionId).update({ 'id': newActionId });
+        proJeRef4.doc(newActionId).update({ 'id': newActionId });
+      }
     })
     this.setSui = null;
     this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
+  }
+
+  newPjAction() {
+    console.log(this.setItem);
+    let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: "", actualTime: "", Varience: "" };
+
+    this.setItem = {
+      taskName: this.selectedTask.name, taskId: this.selectedTask.id, by: this.user.displayName, byId: this.userId, projectId: this.selectedTask.projectId,
+      projectName: this.selectedTask.projectName, companyId: this.selectedTask.companyId, companyName: this.selectedTask.companyName, classification: newClassification,
+      classificationName: 'Work', classificationId: 'colourWorkId', type: "planned", uid: "", id: this.setItem.id, name: this.setItem.name, unit: this.setItem.unit, quantity: null, targetQty: null, rate: null, workHours: null,
+      amount: null, champion: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null,
+      complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", selectedWork: false, section: this.selectedTask.section, actualStart: "",
+      actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: ""
+    };
+
+    console.log(this.setItem);
+
+    let staffId = this.selectedTask.champion.id;
+
+    this.setItem.startDate = "";
+    this.setItem.startWeek = "";
+    this.setItem.startDay = "";
+    this.setItem.endDate = "";
+    this.setItem.endWeek = "";
+    this.setItem.endDay = "";
+    // set Champion
+    this.setItem.champion = this.selectedTask.champion;
+    this.setItem.participants = [this.selectedTask.champion];
+    let mooom = this.setItem;
+    console.log(mooom);
+    console.log('Work Action =>' + '' + mooom.id);
+
+    console.log('the task-->' + this.selectedTask.name + " " + this.selectedTask.id);
+    console.log('the action-->' + this.setItem.name);
+
+    let userProjectDoc = this.afs.collection('Users').doc(staffId).collection('projects').doc(this.selectedTask.projectId);
+    let usd = this.afs.collection('Users').doc(staffId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems')
+    let userDocAct = this.afs.collection('Users').doc(staffId).collection<workItem>('actionItems');
+    let userActionRef = userProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let userCmpProjectDoc = this.afs.collection('Projects').doc(this.selectedTask.projectId).collection('enterprises').doc(this.selectedTask.companyId).collection('labour').doc(staffId).collection<workItem>('WeeklyActions');
+
+    let cmpProjectDoc = this.afs.collection('Projects').doc(this.selectedTask.projectId).collection('enterprises').doc(this.selectedTask.companyId);
+    let cmpProActions = cmpProjectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+
+    let projectTaskDoc = this.afs.collection('Projects').doc(this.selectedTask.projectId);
+    let projectTaskActions = projectTaskDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+
+    let projectDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('projects').doc(this.selectedTask.projectId);
+    let actionRef = projectDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+
+    // let EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('workItems');
+    let EntRef = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+    EntRef.doc(this.setItem.id).set(this.setItem);
+    cmpProActions.doc(this.setItem.id).set(this.setItem);
+    actionRef.doc(this.setItem.id).set(this.setItem);
+    userActionRef.doc(this.setItem.id).set(this.setItem);
+    projectTaskActions.doc(this.setItem.id).set(this.setItem);
+    usd.doc(this.setItem.id).set(this.setItem);
+    userDocAct.doc(this.setItem.id).set(this.setItem);
+    let ddfm = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('Participants').doc(this.userId);
+
+    ddfm.snapshotChanges().pipe(map(a => {
+      const data = a.payload.data() as employeeData;
+      const id = a.payload.id;
+      let pinkEnt = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('departments').doc(data.departmentId).collection('Participants').doc(id).collection('tasks').doc(this.setItem.taskId)
+        .collection<workItem>('actionItems').doc(this.setItem.id);
+      let pinkEntdpt = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('departments').doc(data.departmentId).collection('tasks').doc(this.setItem.taskId)
+        .collection<workItem>('actionItems').doc(this.setItem.id);
+
+      pinkEnt.set(this.setItem).then(() => {
+        console.log('Try 1  to set the document');
+        // pinkEnt.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+      });
+
+      pinkEntdpt.set(this.setItem).then(() => {
+        console.log('Try 1  to set the document');
+        // pinkEntdpt.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+      });
+
+      return { id, ...data };
+    }));
   }
 
   newActionToday(action: workItem) {
@@ -2261,8 +2575,8 @@ export class EnterpriseProfileComponent {
       'department': this.selectedDepartment.name,
       'champion': null
     });
-    this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+    this.selectedTask = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+    this.task = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
   }
 
   addStaff2Dpartment() {
@@ -2346,15 +2660,17 @@ export class EnterpriseProfileComponent {
     console.log(checkPeriod);
 
     let viewActionsRef = this.afs.collection('Enterprises').doc(this.compId);
-    this.viewActions = viewActionsRef.collection<workItem>('WeeklyActions',
-      // , ref => ref
-      // .orderBy('start')
-      // .where(testPeriod, '==', checkPeriod)
+    this.viewActions = viewActionsRef.collection<workItem>('WeeklyActions',ref => ref
+      .orderBy('taskName', 'asc')
+      .where('complete', '==', false)
     ).snapshotChanges().pipe(
       map(actions => actions.map(a => {
         this.viewDayActions = [];
         let data = a.payload.doc.data() as workItem;
         const id = a.payload.doc.id;
+        // viewActionsRef.collection<Task>('tasks').doc(data.taskId).ref.get().then(function (tsk) {
+        //   data.taskName = tsk.data().name
+        // });
         data.championName = a.payload.doc.data().champion.name;
         data.championId = a.payload.doc.data().champion.id;
         return { id, ...data };
@@ -2362,28 +2678,44 @@ export class EnterpriseProfileComponent {
     );
 
     this.viewDayActions = [];
+    let viewDayActions = [];
 
     this.viewActions.subscribe((actions) => {
-      console.log(actions);
+      // console.log(actions);
       this.selectedActions = actions;
       actions.forEach(element => {
         let data = element;
         // this.viewDayActions = [];
+        viewActionsRef.collection<Task>('tasks').doc(data.taskId).ref.get().then(function (tsk) {
+          element.taskName = tsk.data().name;
 
-        // if (moment(element.startDate).isSameOrAfter(today) && element.complete == false) {
-        // if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
-        if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
-          this.viewDayActions.push(element);
-          console.log(this.viewDayActions);
+          // if (moment(element.startDate).isSameOrAfter(today) && element.complete == false) {
+          // if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
 
-        }
+          if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
+
+            // if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
+            // this.viewDayActions.push(element);
+            viewDayActions.push(element);
+            // console.log(this.viewDayActions);
+
+          }
+          if (element.startDate === "" && element.complete == false) {
+
+            let vieDayActions = [];
+            vieDayActions.push(element);
+            // console.log(vieDayActions);
+            // this.viewDayActions.push(element);
+            viewDayActions.push(element);
+
+          }
+        }).catch(err => {
+          console.log(err);
+          element.taskName = "";
+        });
+        this.viewDayActions = viewDayActions;
 
       });
-      if (this.selectedActions.length > 0) {
-        this.viewTodayWork = true;
-      } else {
-        this.viewTodayWork = false;
-      }
     });
     return this.viewActions;
   }
@@ -2527,7 +2859,7 @@ export class EnterpriseProfileComponent {
   refreshData() {
     this.aCurrentDate = moment(new Date()).format('L');
     console.log(this.aCurrentDate);
-    this.company = this.testCompany;
+    // this.company = this.testCompany;
 
     // let compServices = this.company.services;
     // console.log(compServices);
@@ -2596,7 +2928,8 @@ export class EnterpriseProfileComponent {
       if (champId != "") {
         let championRef2 = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyTasks');
         championRef2.doc(action.id).set(action);
-        let championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(action.companyId).collection<workItem>('WeeklyActions');
+        let championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(action.companyId)
+          .collection<workItem>('WeeklyActions');
         championRef.doc(action.id).set(action);
 
 
@@ -2606,8 +2939,55 @@ export class EnterpriseProfileComponent {
         allMyActionsRef.doc(action.id).set(action);
       };
     }
+  }
 
+  editTask() {
+    console.log(this.editedTask);
+    this.editedTask;
+    let pr: Project;
+    console.log(this.selectedCompany)
+    console.log(this.selectedDepartment);
+    this.editedTask.by = this.user.displayName;
+    this.editedTask.byId = this.userId;
+    console.log(this.start);
+    console.log(this.finish);
+    // setting dates
+    this.editedTask.createdOn = new Date().toISOString();
+    // this.editedTask.start = this.start.toISOString();
+    this.editedTask.start = this.start, "YYYY-MM-DD";
+    this.editedTask.finish = this.finish, "YYYY-MM-DD";/* .format('LLLL') */
+    this.editedTask.startDay = String(moment(this.start, "YYYY-MM-DD").dayOfYear());
+    this.editedTask.startWeek = String(moment(this.start, "YYYY-MM-DD").week());
+    this.editedTask.startMonth = String(moment(this.start, "YYYY-MM-DD").month());
+    this.editedTask.startQuarter = String(moment(this.start, "YYYY-MM-DD").quarter());
+    this.editedTask.startYear = String(moment(this.start, "YYYY-MM-DD").year());
+    this.editedTask.finishDay = String(moment(this.finish, "YYYY-MM-DD").subtract(2, 'd').dayOfYear());
+    this.editedTask.finishWeek = String(moment(this.finish, "YYYY-MM-DD").week());
+    this.editedTask.finishMonth = String(moment(this.finish, "YYYY-MM-DD").month());
+    this.editedTask.finishQuarter = String(moment(this.finish, "YYYY-MM-DD").quarter());
+    this.editedTask.finishYear = String(moment(this.finish, "YYYY-MM-DD").year());
+    this.editedTask.complete = false;
 
+    console.log(this.editedTask);
+    console.log(this.editedTask.start);
+    console.log(this.editedTask.startDay);
+
+    console.log('Task' + ' ' + this.editedTask.name);
+    console.log('selectedDepartment' + ' ' + this.editedTask.department);
+
+    this.myDocument.ref.get().then(function (tsk) {
+      this.ts.addTask(this.editedTask, this.company);
+    }).then( () => {
+      this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "",
+       photoURL: "", address: "", department: "", departmentId: "", hierarchy: ""  };
+      this.editedTask = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "",
+        startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "",
+        finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "",
+        participants: null, status: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null,
+        complete: null, id: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+      this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null,
+      createdOn: "",id: "", location: "", sector: "", completion: "" };
+    })
   }
 
   editAction(startDate, endDate) {
@@ -2640,11 +3020,13 @@ export class EnterpriseProfileComponent {
     };
     // Company update
     if (this.selectedAction.companyId != "") {
-
+      let dptRef = this.afs.collection<Enterprise>('Enterprises').doc(this.selectedAction.companyId).collection<Department>('departments');
+      let taskActions = dptRef.doc(this.selectedAction.departmentId).collection('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
       let allMyActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<workItem>('actionItems');
       let allWeekActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
       let myTaskActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<Task>('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
       allMyActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
+      taskActions.doc(this.selectedAction.id).set(this.selectedAction);
       allWeekActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
       myTaskActionsRef.doc(this.selectedAction.id).set(this.selectedAction);
 
@@ -2690,7 +3072,6 @@ export class EnterpriseProfileComponent {
         let championRef = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
         championRef.doc(this.selectedAction.id).set(this.selectedAction);
 
-
         let weeklyRef = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection<workItem>('WeeklyActions');
         let allMyActionsRef = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection<workItem>('actionItems');
         weeklyRef.doc(this.selectedAction.id).set(this.selectedAction);
@@ -2698,10 +3079,14 @@ export class EnterpriseProfileComponent {
       };
     }
 
-
     this.startDate = null;
     this.endDate = null;
-    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "",
+     byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "",
+     billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false,
+     start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "",
+     companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(),
+     actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
   }
 
   editActivity() {
@@ -2712,25 +3097,45 @@ export class EnterpriseProfileComponent {
     // Project update
 
     if (this.selectedAction.projectId != "") {
-      let prjectCompWeeklyRef = this.afs.collection<Project>('Projects').doc(this.selectedAction.projectId).collection('enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
+      let prjectCompWeeklyRef = this.afs.collection<Project>('Projects').doc(this.selectedAction.projectId).collection('enterprises')
+        .doc(this.compId).collection<workItem>('WeeklyActions');
       prjectCompWeeklyRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
       prjectCompWeeklyRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
       console.log('project updated');
-      
     };
     // Company update
     if (this.selectedAction.companyId != "") {
 
       let allMyActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<workItem>('actionItems');
       let allWeekActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
-      let myTaskActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<Task>('tasks').doc(this.selectedAction.taskId).collection<workItem>('actionItems');
+      let allMyActionsRef1 = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection('Participants')
+        .doc(this.selectedAction.champion.id).collection<workItem>('actionItems');
+      let allWeekActionsRef1 = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection('Participants')
+        .doc(this.selectedAction.champion.id).collection<workItem>('WeeklyActions');
+      let allMyActionsRef2 = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection('departments')
+        .doc(this.selectedAction.departmentId).collection<workItem>('actionItems');
+      let allWeekActionsRef2 = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection('departments')
+        .doc(this.selectedAction.departmentId).collection<workItem>('WeeklyActions');
+      let allMyActionsRef3 = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection('departments')
+        .doc(this.selectedAction.departmentId).collection('Participants').doc(this.selectedAction.champion.id).collection('actionItems');
+      let allWeekActionsRef3 = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection('departments')
+        .doc(this.selectedAction.departmentId).collection('Participants').doc(this.selectedAction.champion.id).collection('WeeklyActions');
+      let myTaskActionsRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection<Task>('tasks')
+        .doc(this.selectedAction.taskId).collection<workItem>('actionItems');
       allMyActionsRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
       allWeekActionsRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      allMyActionsRef1.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      allWeekActionsRef1.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      allMyActionsRef2.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      allWeekActionsRef2.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      allMyActionsRef3.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+      allWeekActionsRef3.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
       myTaskActionsRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
       console.log('company updated');
 
       if (this.selectedAction.projectId != "") {
-        let weeklyRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection('projects').doc(this.selectedAction.projectId).collection<workItem>('WeeklyActions');
+        let weeklyRef = this.afs.collection('Enterprises').doc(this.selectedAction.companyId).collection('projects')
+          .doc(this.selectedAction.projectId).collection<workItem>('WeeklyActions');
         weeklyRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
         console.log('company projects updated');
 
@@ -2739,28 +3144,37 @@ export class EnterpriseProfileComponent {
     if (this.selectedAction.byId === this.selectedAction.champion.id) {
 
       if (this.selectedAction.byId != "") {
-        let creatorRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+        let creatorRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection('myenterprises')
+          .doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
         creatorRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
 
         let weeklyRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('WeeklyActions');
         let allMyActionsRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('actionItems');
+
+        let weeklyRef1 = this.afs.collection('Users').doc(this.selectedAction.byId).collection('tasks').doc(this.selectedAction.taskId)
+        .collection<workItem>('WeeklyActions');
+        let allMyActionsRef1 = this.afs.collection('Users').doc(this.selectedAction.byId).collection('WeeklyTasks')
+        .doc(this.selectedAction.taskId)
+        .collection<workItem>('actionItems');
         weeklyRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
         allMyActionsRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+        weeklyRef1.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
+        allMyActionsRef1.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
         console.log('by& champ by updated');
 
       };
     }
 
-    else if (this.selectedAction.byId !== this.selectedAction.champion.id) {
+     if (this.selectedAction.byId !== this.selectedAction.champion.id) {
 
       // creator update
 
       if (this.selectedAction.byId !== "") {
         let creatorRef2 = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('WeeklyActions');
         creatorRef2.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
-        let creatorRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+        let creatorRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection('myenterprises')
+          .doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
         creatorRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
-
 
         let weeklyRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('WeeklyActions');
         let allMyActionsRef = this.afs.collection('Users').doc(this.selectedAction.byId).collection<workItem>('actionItems');
@@ -2779,7 +3193,8 @@ export class EnterpriseProfileComponent {
 
         let championRef2 = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection<workItem>('WeeklyTasks');
         championRef2.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
-        let championRef = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection('myenterprises').doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
+        let championRef = this.afs.collection('Users').doc(this.selectedAction.champion.id).collection('myenterprises')
+            .doc(this.selectedAction.companyId).collection<workItem>('WeeklyActions');
         championRef.doc(this.selectedAction.id).update({ 'name': this.selectedAction.name });
 
 
@@ -2790,143 +3205,12 @@ export class EnterpriseProfileComponent {
       };
     }
 
-    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
-  }
-
-
-  compActions() {
-
-    this.companyWeeklyActions = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions', ref => ref
-      .where("complete", '==', false)
-      // ref => ref.where('startWeek', '==', moment().week().toString())
-    ).snapshotChanges().pipe(
-      map(b => b.map(a => {
-        const data = a.payload.doc.data() as workItem;
-        const id = a.payload.doc.id;
-        data.startDate = moment(data.startDate, "MM-DD-YYYY").format('LL');
-        data.endDate = moment(data.endDate, "MM-DD-YYYY").format('LL');
-        this.actiondata = data;
-        return { id, ...this.actiondata };
-      }))
-    );
-    this.companyWeeklyActions.subscribe((actions) => {
-      this.companyActions = actions;
-      console.log(this.companyActions);
-      console.log(this.companyActions.length);
-    });
-
-    let arraySize = this.companyActions.length;
-    console.log(arraySize);
-
-
-
-    // this.showActions = false;
-    // this.hideActions = false;
-
-    // let currentDate = moment(new Date()).format('L');;
-    let today = moment(new Date(), "YYYY-MM-DD");
-
-
-
-    let userDocRef = this.myDocument;
-    this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
-      // .limit(4)
-      // .where("startDate", '==', currentDate)
-      .orderBy('start', 'asc')
-
-      // .limit(4)
-    ).snapshotChanges().pipe(
-      map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as workItem;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))
-    );
-
-    this.viewActions.subscribe((actions) => {
-      console.log(actions);
-
-      this.diaryActionItems = [];
-
-      actions.forEach(element => {
-        if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
-          if (element.selectedWork === true) {
-
-            this.diaryActionItems.push(element);
-
-          }
-        }
-      });
-
-      console.log(actions.length);
-      console.log(actions);
-      this.actionNo2 = actions.length;
-      // if (this.actionNo == 0) {
-      //   this.showActions = false;
-      //   this.hideActions = true;
-      // } else {
-      //   this.hideActions = false;
-      //   this.showActions = true;
-      // }
-
-      let maActivities;
-      maActivities = [];
-
-      let arrT = this.diaryActionItems;
-      let timeB4;
-      let timeA4;
-      timeB4 = moment().subtract(2, 'h').format('HH:mm');
-      timeA4 = moment().add(2, 'h').format('HH:mm');
-
-      console.log('timeB4' + timeB4);
-      console.log('timeA4' + timeA4);
-
-
-
-      arrT.forEach((function (element, index) {
-        console.log(index);
-        console.log(element);
-        if (element.selectedWeekWork == true) {
-          if (moment(element.start).isBetween(timeB4, timeA4)) {
-            element.txtColours = "red";
-            maActivities.push(element);
-          }
-          else {
-            element.txtColours = "333366";
-            maActivities.push(element);
-          }
-        }
-      }));
-
-      this.maActivities = maActivities;
-    });
-
-
-    this.showProjs = false;
-    this.hideProjs = false;
-    this.projs = [];
-    this.myProjects = this.ps.getProjects(this.userId);
-    this.myProjects.subscribe(projs => {
-      this.projs = projs;
-      let projects = projs;
-      console.log('Pojs N0' + ' ' + projs.length);
-      let noProjects = projs.length;
-      this.projsNo = projects.length;
-      if (this.projsNo == 0) {
-
-        this.showProjs = false;
-        this.hideProjs = true;
-
-      } else {
-
-
-        this.showProjs = true;
-        this.hideProjs = false;
-      }
-
-    })
-
-
+    this.selectedAction = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "",
+     byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "",
+     billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false,
+     start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "",
+     companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(),
+     actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
   }
 
   acceptRequest(man) {
@@ -2956,156 +3240,6 @@ export class EnterpriseProfileComponent {
     // this.resetForm();
   }
 
-  refreshCompany() {
-
-    // this.es.compParams(this.company.id);
-    console.log('kkkkkkk......... no bugs')
-    this.companies = this.es.getColoursCompanies();
-    this.projects = this.es.getCompanyProjects(this.compId);
-    this.compProjects = this.es.getCompanyProjects(this.compId);
-    this.allCompProjects = this.es.getCompanyProjects(this.compId);
-    this.myTasks = this.es.getMyCompanyTasks(this.compId, this.userId);
-    this.tasksImChamp = this.es.getTasksImChamp(this.compId, this.userId);
-    this.departments = this.es.getCompanyDepts(this.compId);
-    this.departments1 = this.es.getCompanyDepts(this.compId);
-    this.departments2 = this.es.getCompanyDepts(this.compId);
-    this.departments3 = this.es.getCompanyDepts(this.compId);
-    this.departments4 = this.es.getCompanyDepts(this.compId);
-    this.departsList = this.es.getCompanyDepts(this.compId);
-    this.companyDpts = this.es.getCompanyDepts(this.compId);
-    this.companyDpts1 = this.es.getCompanyDepts(this.compId);
-    this.companyDptsArray = this.es.getCompanyDepts(this.compId);
-    this.staff = this.es.getStaff(this.compId);
-    this.allStaff = this.es.getStaff(this.compId);
-    this.staff3 = this.es.getStaff(this.compId);
-    this.compStaffList = this.es.getStaff(this.compId);
-    this.compStaff2 = this.es.getStaff(this.compId);
-    this.companyStaff = this.es.getStaff(this.compId);
-    this.companyProjects = this.es.getCompanyProjects(this.compId);
-    this.assets = this.es.getCompanyAssets(this.compId);
-    this.clients = this.es.getClients(this.compId);
-    this.subsidiaries = this.es.getCompanySubsidiaries(this.compId);
-    this.compServices = [null];
-
-    let usersRef = this.afs.collection('Enterprises').doc(this.compId).collection('Participants').snapshotChanges().pipe(
-        map(actions => actions.map(a => {
-            const data = a.payload.doc.data() as companyStaff;
-            const id = a.payload.doc.id;
-
-            return { id, ...data };
-        }))
-    );
-
-    usersRef.subscribe(ref => {
-      const index = ref.findIndex(myCompProfile => myCompProfile.id === this.userId);
-      if (index > -1) {
-        let value = ref[index];
-        this.myCompProfile = value;
-        console.log(this.myCompProfile);
-        // this.workdemo = false;
-      } else {
-      }
-    })
-
-    this.afs.collection<Project>('Enterprises').doc(this.compId).collection('projects').snapshotChanges().pipe(
-      map(b => b.map(a => {
-        const data = a.payload.doc.data() as Project;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))
-    );
-
-    this.staffRequests = this.afs.collection('Enterprises').doc(this.compId).collection('Requests').snapshotChanges().pipe(
-      map(b => b.map(a => {
-        const data = a.payload.doc.data() as ParticipantData;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))
-    );
-
-    this.tasks = this.afs.collection('Enterprises').doc(this.compId).collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
-      map(b => b.map(a => {
-        let data = a.payload.doc.data() as MomentTask;
-        const id = a.payload.doc.id;
-        // data.championName = data.champion.name;
-        // data.championId = data.champion.id;
-        this.myTaskData = data;
-        this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
-        this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
-        return { id, ...data };
-      }))
-    );
-
-    this.tasks.subscribe((tasks) => {
-      console.log(tasks);
-      this.OutstandingTasks = [];
-      this.CurrentTAsks = [];
-      this.UpcomingTAsks = [];
-      this.ShortTermTAsks = [];
-      this.MediumTermTAsks = [];
-      this.LongTermTAsks = [];
-      tasks.forEach(data => {
-        let today = moment(new Date(), "YYYY-MM-DD");
-        // if (data.champion !== null || data.champion.id !== "" || data.champion.id !== undefined || data.champion.id !== null ){
-          // if (data.champion.id === this.userId) {
-            if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
-              // currentWorkItems
-              this.CurrentTAsks.push(data);
-            };
-            // outstanding tasks
-            if (moment(data.finish).isBefore(today)) {
-              this.OutstandingTasks.push(data);
-            };
-            // Upcoming tasks
-
-            if (moment(data.start).isAfter(today)) {
-              this.UpcomingTAsks.push(data);
-              if (moment(data.start).isSameOrBefore(today.add(3, "month"))) {
-                this.ShortTermTAsks.push(data);
-              }
-
-              else if (moment(data.start).isSameOrBefore(today.add(12, "month"))) {
-                this.MediumTermTAsks.push(data);
-              }
-              else if (moment(data.start).isBefore(today.add(12, "month"))) {
-                this.LongTermTAsks.push(data)
-                console.log('long term Tasks' + ' ' + this.LongTermTAsks);
-              }
-              console.log(this.OutstandingTasks);
-            };
-          // }
-        //  }
-      });
-      this.allEnterpriseTasks = tasks;
-    });
-
-    this.coloursUsers = this.pns.getColoursUsers();
-    this.coloursUsersList = this.pns.getColoursUsers();
-
-
-
-    this.projectsCollection = this.afs.collection('/Users').doc(this.userId).collection('projects').snapshotChanges().pipe(
-      map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as Project;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))
-    );
-
-    this.enterpriseCollection = this.afs.collection('/Users').doc(this.userId).collection('myenterprises').snapshotChanges().pipe(
-      map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as Enterprise;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))
-    );
-
-    // return
-  }
-
-  // compReport(){
-  //   this.rp.compParams(this.company);
-  // }
 
   viewStaff(x:companyStaff){
     console.log(x);
@@ -3169,25 +3303,28 @@ export class EnterpriseProfileComponent {
 
   setDel(tss: Task){
     this.tss = tss;
+    console.log(this.tss.name);
+    console.log(tss.name);
   }
 
   deleteTask() {
     let task = this.tss;
+    console.log(this.tss.name);
+    
     console.log(task.name + " " + "Removed");
 
     let taskId = task.id;
-    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks').doc(taskId);
-    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks').doc(taskId);
-    let champRef2 = this.afs.collection('Users').doc(task.champion.id).collection('WeeklyTasks').doc(taskId);
-    // let userEntDeptRef = this.afs.collection('Enterprises').doc(this.compId).collection('departments').doc(task.departmentId).collection('tasks').doc(taskId);
-    userRef.delete().catch(error => { console.log(error) });
-    champRef.delete().catch(error => { console.log(error) });
-    champRef2.delete().catch(error => { console.log(error) });
-    // entDeptRef.delete();
-    // userEntDeptRef.delete();
 
+    if (task.byId === task.champion.id) {
+      this.afs.collection('Users').doc(task.champion.id).collection('tasks').doc(taskId).delete().catch(error => { console.log(error) });
+    } else {
+      this.afs.collection('Users').doc(task.byId).collection('tasks').doc(taskId).delete().catch(error => { console.log(error) });
+      this.afs.collection('Users').doc(task.champion.id).collection('tasks').doc(taskId).delete().catch(error => { console.log(error) });
+    }
 
-    if (task.departmentId != "") {
+    this.afs.collection('Users').doc(task.champion.id).collection('WeeklyTasks').doc(taskId).delete().catch(error => { console.log(error) });
+
+    if (task.departmentId !== "") {
       let entRef = this.afs.collection('Enterprises').doc(this.compId).collection('tasks').doc(taskId);
       let entDeptRef = this.afs.collection('Enterprises').doc(this.compId).collection('departments').doc(task.departmentId).collection('tasks').doc(taskId);
       let userEntDeptRef = this.afs.collection('Enterprises').doc(this.compId).collection('departments').doc(task.departmentId).collection<employeeData>('Participants')
@@ -3197,33 +3334,37 @@ export class EnterpriseProfileComponent {
       entRef.delete().catch(error => { console.log(error) });
 
       console.log('deleted from Department succesfully' );
-
-      if (task.projectId != "") {
-
-        let entProjRef = this.afs.collection('Enterprises').doc(this.compId).collection('projects').doc(task.projectId).collection('tasks');
-        let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
-        let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(this.compId).collection('tasks');
-
-        let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
-        let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
-
-        entProjRef.doc(taskId).delete().catch(error => { console.log(error) });
-        projectsRef.doc(taskId).delete().catch(error => { console.log(error) });
-        projectCompanyRef.doc(taskId).delete().catch(error => { console.log(error) });
-        userProjRef.doc(taskId).delete().catch(error => { console.log(error) });
-        champProjRef.doc(taskId).delete().catch(error => { console.log(error) });
-        console.log('deleted from Project successfully');
-      } else {
-        console.log('No Project selected');
-        // what happens if projectID is personal
-      }
     }
     
     else {
+      let entRef = this.afs.collection('Enterprises').doc(this.compId).collection('tasks').doc(taskId);
+
+      entRef.delete().catch(error => { console.log(error) });
+      
       console.log('No Department selected');
       // what happens if projectID is personal
     }
-    this.tss = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+
+    if (task.projectId != "") {
+
+      let entProjRef = this.afs.collection('Enterprises').doc(this.compId).collection('projects').doc(task.projectId).collection('tasks');
+      let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
+      let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(this.compId).collection('tasks');
+
+      let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
+      let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+
+      entProjRef.doc(taskId).delete().catch(error => { console.log(error) });
+      projectsRef.doc(taskId).delete().catch(error => { console.log(error) });
+      projectCompanyRef.doc(taskId).delete().catch(error => { console.log(error) });
+      userProjRef.doc(taskId).delete().catch(error => { console.log(error) });
+      champProjRef.doc(taskId).delete().catch(error => { console.log(error) });
+      console.log('deleted from Project successfully');
+    } else {
+      console.log('No Project selected');
+      // what happens if projectID is personal
+    }
+    this.tss = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
   }
 
   deleteDept(x) {
@@ -3331,7 +3472,303 @@ export class EnterpriseProfileComponent {
 
   }
 
+  refreshCompany() {
+
+    // this.es.compParams(this.company.id);
+    console.log('kkkkkkk......... no bugs')
+    this.companies = this.es.getColoursCompanies();
+    this.projects = this.compProjects = this.companyProjects = this.allCompProjects = this.es.getCompanyProjects(this.compId);
+    this.myTasks = this.es.getMyCompanyTasks(this.compId, this.userId);
+    this.tasksImChamp = this.es.getTasksImChamp(this.compId, this.userId);
+    this.departments = this.departments1 = this.departments2 = this.departments3 = this.departments = this.departments4 =
+    this.departsList =  this.companyDpts = this.companyDpts1 = this.companyDptsArray = this.es.getCompanyDepts(this.compId);
+    this.staff =  this.allStaff = this.staff3 = this.compStaffList = this.compStaff2 = this.compStaff3 =
+    this.companyStaff = this.es.getStaff(this.compId);
+    this.assets = this.es.getCompanyAssets(this.compId);
+    this.clients = this.es.getClients(this.compId);
+    this.subsidiaries = this.es.getCompanySubsidiaries(this.compId);
+    this.compServices = [null];
+
+    let usersRef = this.afs.collection('Enterprises').doc(this.compId).collection('Participants').snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+            const data = a.payload.doc.data() as companyStaff;
+            const id = a.payload.doc.id;
+
+            return { id, ...data };
+        }))
+    );
+
+    usersRef.subscribe(ref => {
+      const index = ref.findIndex(myCompProfile => myCompProfile.id === this.userId);
+      if (index > -1) {
+        let value = ref[index];
+        this.myCompProfile = value;
+        console.log(this.myCompProfile);
+        // this.workdemo = false;
+      } else {
+      }
+    })
+
+    this.afs.collection<Project>('Enterprises').doc(this.compId).collection('projects').snapshotChanges().pipe(
+      map(b => b.map(a => {
+        const data = a.payload.doc.data() as Project;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    this.staffRequests = this.afs.collection('Enterprises').doc(this.compId).collection('Requests').snapshotChanges().pipe(
+      map(b => b.map(a => {
+        const data = a.payload.doc.data() as ParticipantData;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    this.tasks = this.afs.collection('Enterprises').doc(this.compId).collection<Task>('tasks', ref => 
+    ref.orderBy('start')).snapshotChanges().pipe(
+      map(b => b.map(a => {
+        let data = a.payload.doc.data() as MomentTask;
+        const id = a.payload.doc.id;
+        // data.championName = data.champion.name;
+        // data.championId = data.champion.id;
+        this.myTaskData = data;
+        this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
+        this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
+        return { id, ...data };
+      }))
+    );
+
+    this.tasks.subscribe((tasks) => {
+      console.log(tasks);
+      this.OutstandingTasks = [];
+      this.CurrentTAsks = [];
+      this.UpcomingTAsks = [];
+      this.ShortTermTAsks = [];
+      this.MediumTermTAsks = [];
+      this.LongTermTAsks = [];
+      tasks.forEach(data => {
+        let today = moment(new Date(), "YYYY-MM-DD");
+        // if (data.champion !== null || data.champion.id !== "" || data.champion.id !== undefined || data.champion.id !== null ){
+          // if (data.champion.id === this.userId) {
+            if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
+              // currentWorkItems
+              this.CurrentTAsks.push(data);
+            };
+            // outstanding tasks
+            if (moment(data.finish).isBefore(today)) {
+              this.OutstandingTasks.push(data);
+            };
+            // Upcoming tasks
+
+            if (moment(data.start).isAfter(today)) {
+              this.UpcomingTAsks.push(data);
+              if (moment(data.start).isSameOrBefore(today.add(3, "month"))) {
+                this.ShortTermTAsks.push(data);
+              }
+
+              if (moment(data.start).isSameOrBefore(today.add(12, "month"))) {
+                this.MediumTermTAsks.push(data);
+              }
+
+              if (moment(data.start).isBefore(today.add(12, "month"))) {
+                this.LongTermTAsks.push(data)
+                console.log('long term Tasks' + ' ' + this.LongTermTAsks);
+              }
+              // console.log(this.OutstandingTasks);
+            };
+      });
+      this.allEnterpriseTasks = tasks;
+    });
+
+    this.coloursUsers = this.pns.getColoursUsers();
+    this.coloursUsersList = this.pns.getColoursUsers();
+
+    this.projectsCollection = this.afs.collection('/Users').doc(this.userId).collection('projects').snapshotChanges().
+    pipe( map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Project;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    this.enterpriseCollection = this.afs.collection('/Users').doc(this.userId).collection('myenterprises').snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Enterprise;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+  }
+
+  compActions() {
+
+    this.afs.collection('Enterprises').doc(this.compId).collection('Participants').doc(this.user.uid).ref.get().then(function (tsk) {
+      copDData.department = tsk.data().department,
+      copDData.departmentId = tsk.data().departmentId,
+      copDData.by = tsk.data().by,
+      copDData.byId = tsk.data().byId,
+      copDData.createdOn = tsk.data().createdOn,
+      copDData.hierarchy = tsk.data().hierarchy
+    });
+
+    console.log(this.myData);
+    console.log(copDData);
+
+    this.companyWeeklyActions = this.afs.collection('Enterprises').doc(this.compId).collection<workItem>('WeeklyActions', ref => ref
+      .where("complete", '==', false)
+      // ref => ref.where('startWeek', '==', moment().week().toString())
+    ).snapshotChanges().pipe(
+      map(b => b.map(a => {
+        const data = a.payload.doc.data() as workItem;
+        const id = a.payload.doc.id;
+        data.startDate = moment(data.startDate, "MM-DD-YYYY").format('LL');
+        data.endDate = moment(data.endDate, "MM-DD-YYYY").format('LL');
+        this.actiondata = data;
+        return { id, ...this.actiondata };
+      }))
+    );
+    this.companyWeeklyActions.subscribe((actions) => {
+      this.companyActions = actions;
+      // console.log(this.companyActions);
+      // console.log(this.companyActions.length);
+    });
+
+    let arraySize = this.companyActions.length;
+    console.log(arraySize);
+
+    let today = moment(new Date(), "YYYY-MM-DD");
+
+    let userDocRef = this.myDocument;
+    this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
+      // .limit(4)
+      // .where("startDate", '==', currentDate)
+      .orderBy('start', 'asc')
+
+      // .limit(4)
+    ).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as workItem;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+
+    this.viewActions.subscribe((actions) => {
+      console.log(actions);
+
+      this.diaryActionItems = [];
+
+      actions.forEach(element => {
+        if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
+          if (element.selectedWork === true) {
+
+            this.diaryActionItems.push(element);
+
+          }
+        }
+      });
+
+      console.log(actions.length);
+      console.log(actions);
+      this.actionNo2 = actions.length;
+
+      let maActivities;
+      maActivities = [];
+
+      let arrT = this.diaryActionItems;
+      let timeB4;
+      let timeA4;
+      timeB4 = moment().subtract(2, 'h').format('HH:mm');
+      timeA4 = moment().add(2, 'h').format('HH:mm');
+
+      console.log('timeB4' + timeB4);
+      console.log('timeA4' + timeA4);
+
+      arrT.forEach((function (element, index) {
+        console.log(index);
+        console.log(element);
+        if (element.selectedWeekWork == true) {
+          if (moment(element.start).isBetween(timeB4, timeA4)) {
+            element.txtColours = "red";
+            maActivities.push(element);
+          }
+          else {
+            element.txtColours = "333366";
+            maActivities.push(element);
+          }
+        }
+      }));
+
+      this.maActivities = maActivities;
+    });
+
+    this.showProjs = false;
+    this.hideProjs = false;
+    this.projs = [];
+    this.myProjects = this.ps.getProjects(this.userId);
+    this.myProjects.subscribe(projs => {
+      this.projs = projs;
+      let projects = projs;
+      console.log('Pojs N0' + ' ' + projs.length);
+      let noProjects = projs.length;
+      this.projsNo = projects.length;
+      if (this.projsNo == 0) {
+
+        this.showProjs = false;
+        this.hideProjs = true;
+
+      } else {
+
+
+        this.showProjs = true;
+        this.hideProjs = false;
+      }
+
+    })
+ 
+    this.initDiary();
+
+  }
+
+  
+
   dataCall(): Observable<Enterprise> {
+    let copDData;
+    let Ref: AngularFirestoreDocument<any>;
+
+    this.comp = this.as.paramMap.pipe(
+      switchMap(params => {
+        const id = params.get('id');
+        this.compId = id;
+        this.es.compParams(id);
+        console.log(id);
+        Ref = this.afs.collection<compProfile>('Enterprises').doc(id);
+        this.refreshCompany();
+        this.afs.collection('Enterprises').doc(id).collection('Participants').doc(this.user.uid).snapshotChanges().pipe(map(a => {
+          const data = a.payload.data() as companyStaff;
+          const id = a.payload.id;
+          copDData = data;
+          return { id, ...data };
+        }));
+        this.newCompany = Ref.snapshotChanges().pipe(
+          map(doc => {
+            const data = doc.payload.data() as compProfile;
+            const cname = doc.payload.get('name');
+            this.companyName = cname;
+            console.log(this.companyName);
+            console.log('test if I get data on 781');
+            // console.log(data);
+            this.testCompany = data;
+            // this.company = data;
+            this.company = doc.payload.data() as compProfile;
+            return { id, ...data };
+          }));
+        this.compActions();
+        return this.newCompany;
+      })
+    );
 
     this.myDocument = this.afs.collection('Users').doc(this.user.uid);
 
@@ -3340,20 +3777,34 @@ export class EnterpriseProfileComponent {
       const id = a.payload.id;
       return { id, ...data };
     }));
-
+    
     this.userProfile.subscribe(userData => {
       console.log(userData);
+      console.log(copDData);
+      // this.afs.collection('Enterprises').doc(task.companyId).collection('Participants').doc(usrId)\
+      
       let myData = {
-        name: this.user.displayName,
+        name: userData.name,
         email: this.user.email,
         bus_email: userData.bus_email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
+        phoneNumber: userData.phoneNumber,
         photoURL: this.user.photoURL,
         address: userData.address,
         nationality: userData.nationality,
         nationalId: userData.nationalId,
+        department: copDData.department,
+        departmentId: copDData.departmentId,
+        by: copDData.by,
+        byId: copDData.byId,
+        createdOn: copDData.createdOn,
+        hierarchy: copDData.hierarchy
       }
+      // userCompRef.then((dst) => {
+      //     myData.department = dst.data().department,
+      //     myData.departmentId = dst.data().departmentId;
+      //     console.log(myData);
+      //  });
 
       if (userData.address == "" || userData.address == null || userData.address == undefined) {
         userData.address = ""
@@ -3387,48 +3838,24 @@ export class EnterpriseProfileComponent {
 
       this.myData = myData;
       this.userData = userData;
+
+      console.log(myData);
+
       
     });
 
-    this.comp = this.as.paramMap.pipe(
-      switchMap(params => {
-        const id = params.get('id');
-        this.compId = id;
-        this.es.compParams(id);
-        console.log(id);
-        let Ref = this.afs.collection<compProfile>('Enterprises').doc(id);
-        this.newCompany = Ref.snapshotChanges().pipe(
-          map(doc => {
-            const data = doc.payload.data() as compProfile;
-            const cname = doc.payload.get('name');
-            this.companyName = cname;
-            console.log(this.companyName);
-            console.log('test if I get data on 781');
-            console.log(data);
-            this.testCompany = data;
-            this.company = data;
-            return { id, ...data };
-          }));
-        this.compActions();
-        this.refreshCompany();
-        return this.newCompany;
-      })
-    )
     return this.comp;
+
   }
 
-  doParams(){
-    this.comp = this.as.paramMap.pipe(
-      switchMap(params => {
-        const id = params.get('id');
-        this.compId = id;
-        // this.es.compParams(id);
-        
-        return this.newCompany;
-      }))
-  }
-
-
+  // doParams(){
+  //   this.comp = this.as.paramMap.pipe(
+  //     switchMap(params => {
+  //       const id = params.get('id');
+  //       this.compId = id;
+  //       return this.newCompany;
+  //     }))
+  // }
 
   newTask() {
     console.log(this.task);
@@ -3461,33 +3888,26 @@ export class EnterpriseProfileComponent {
     console.log(this.task.start);
     console.log(this.task.startDay);
 
-    // this.task.champion = this.myData;
-
-    // if (this.selectedProject.type === 'Enterprise') {
-    //   this.task.projectId = this.proj_ID;
-    //   this.task.projectName = this.selectedProject.name;
-    //   this.task.projectType = this.selectedProject.type;
-
-    //   if (this.selectedDepartment.id != "") {
-    //     this.task.department = this.selectedDepartment.name;
-    //     this.task.departmentId = this.selectedDepartment.id;
-    //   }
-    // }
-
-    // else {
-    //   // what happens if projectID is personal
-    // }
-
     console.log('Task' + ' ' + this.task.name);
     console.log('Company' + ' ' + this.company.name);
     console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
 
-    this.ts.addTask(this.task, this.company, this.selectedDepartment);
 
     this.selectedCompany = this.is.getSelectedCompany();
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: ""  };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
-    this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+    this.myDocument.ref.get().then(function (tsk) {
+      this.ts.addTask(this.task, this.company);
+    }).then( ref => {
+      this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "",
+       nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: ""  };
+      this.task = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "",
+       start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "",
+       finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "",
+       projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null,
+       complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false,
+       championName: "", championId: "" };
+      this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null,
+       createdOn: "", id: "", location: "", sector: "", completion: "" };
+    })
   }
 
   newProjectTask() {
@@ -3525,11 +3945,11 @@ export class EnterpriseProfileComponent {
     console.log('Company' + ' ' + this.company.name);
     console.log('selectedDepartment' + ' ' + this.selectedDepartment.name);
 
-    this.ts.addTask(this.task, this.company, this.selectedDepartment);
+    this.ts.addTask(this.task, this.company);
 
     this.selectedCompany = this.is.getSelectedCompany();
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: ""  };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+    this.task = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
   }
 
@@ -3571,7 +3991,7 @@ export class EnterpriseProfileComponent {
 
     this.selectedCompany = this.is.getSelectedCompany();
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+    this.task = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
   }
 
@@ -3612,7 +4032,7 @@ export class EnterpriseProfileComponent {
 
     this.selectedCompany = this.is.getSelectedCompany();
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+    this.task = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
 
@@ -3655,7 +4075,7 @@ export class EnterpriseProfileComponent {
 
     this.selectedCompany = this.is.getSelectedCompany();
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+    this.task = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
 
@@ -3847,7 +4267,7 @@ export class EnterpriseProfileComponent {
 
     this.selectedCompany = this.is.getSelectedCompany();
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+    this.task = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
   }
@@ -3891,7 +4311,7 @@ export class EnterpriseProfileComponent {
 
     this.selectedCompany = this.is.getSelectedCompany();
     this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", nationalId: "", nationality: "", photoURL: "", address: "", department: "", departmentId: "", hierarchy: "" };
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+    this.task = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
     this.selectedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
     this.selectedDepartment = { name: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", hod: null };
 
@@ -4222,6 +4642,27 @@ export class EnterpriseProfileComponent {
     console.log(proj)
     this.joinmyProject = proj;
   }
+  
+  setAction(setItem: workItem) {
+    console.log(setItem.name);
+    this.setItem = setItem;
+  }
+
+  setAllworks() {
+    if (this.selectedTask.name !== '' || this.selectedTask !== null) {
+        console.log(this.selectedTask.name);
+        this.allWorks = this.ps.getRates(this.selectedTask.projectId, this.compId);
+    } else {
+        console.log('Has no section');
+    }
+}
+
+selectTask1(TAsk){
+    this.selectedTask = TAsk;
+    this.myDocument.valueChanges().subscribe(rt => {
+        this.setAllworks();
+    });
+}
 
   // 0000000000000000000000000000000000000000000000000000000000000000
 

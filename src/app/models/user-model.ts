@@ -169,5 +169,5 @@ export interface rpt extends workItem {
     endTime: string
 }
 
-export interface report { name: string, description: String, type: string, id: string, byId: string, by: string, createdOn: string, photoUrl: string, companyName: string, companyId: string, projectName: string, projectId: string, }
+export interface report { name: string, description: String, type: string, id: string, byId: string, byPhotoUrl: string, by: string, createdOn: string, photoUrl: string, companyName: string, companyId: string, projectName: string, projectId: string, }
 export interface comment { name: string, id: string, byId: string, by: string, createdOn: string, photoUrl: string }

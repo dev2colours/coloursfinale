@@ -385,7 +385,7 @@ export class TasksComponent {
 
       console.log(this.task)
 
-      this.ts.addTask(this.task, this.selectedCompany ,"");
+      this.ts.addTask(this.task, this.selectedCompany);
 
     this.selectedCompany = this.is.getSelectedCompany();
     this.task = this.is.getTask();

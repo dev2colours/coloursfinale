@@ -5,7 +5,7 @@ import { Section } from "./project-model";
 import { classification } from "./user-model";
 
 export interface Task {
-    id: string, name: string,
+    id: string, name: string, update: string,
     companyId: string, companyName: string, department: string, departmentId: string, championName: string, championId: string,
     champion: ParticipantData, participants: [ParticipantData], classification: classification, 
     start: string, startDay: string, startWeek: string, startMonth: string, startQuarter: string, startYear: string,
@@ -66,4 +66,16 @@ export interface actionActualData {
 
 export interface actualData {
     updateTime: string, qty: number
+}
+
+export interface rate {
+    name: string;
+    id: string;
+    unit: string;
+    rate: string;
+    by: string;
+    byId: string;
+    createdOn: string;
+    companyId: string;
+    companyName: string;
 }

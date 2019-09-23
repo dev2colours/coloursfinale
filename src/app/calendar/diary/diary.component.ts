@@ -41,17 +41,43 @@ export class DiaryComponent implements OnInit {
   updatedActionItems = [];
   msum = [];
   actionNo: number;
-  popData: boolean = false;
-  showActions: boolean = false;
+  popData  = false;
+  showActions  = false;
   actualData: actionActualData;
   selectedAction: workItem;
   currentTime: number;
   nMin: number;
   nHrs: number;
   nSecs: number;
-  chartdata: boolean = false;
+  chartdata  = false;
   workItemCount = [];
   workItemData = [];
+
+  /* ngx-line-chart   */
+
+//  view: any[] = [700, 400];
+
+ // options
+ showXAxis = true;
+ showYAxis = true;
+ gradient = false;
+//  showLegend = true;
+ showXAxisLabel = true;
+ xAxisLabel = 'Country';
+ showYAxisLabel = true;
+ yAxisLabel = 'Population';
+
+//  colorScheme = {
+//    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+//  };
+
+ // line, area
+ autoScale = true;
+
+ multi: { "name": string; "series": { "name": string; "value": number; }[]; }[];
+ single: { "name": string; "value": number; }[];
+
+ /* 8888888888888888888     End     0000000000008 */
 
   //Chart
   view: any[] = [500, 300];
@@ -60,6 +86,7 @@ export class DiaryComponent implements OnInit {
   colorScheme = {
     domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
   };
+
 
   showLabels = true;
   explodeSlices = false;
@@ -84,7 +111,66 @@ export class DiaryComponent implements OnInit {
     this.actionData = { name: "", time:"", actionId: "", id: "", actuals: null };
     this.item = is.getActionItem();
     this.timedstamp = 0;
-
+    this.single = [
+      {
+        "name": "Germany",
+        "value": 8940000
+      },
+      {
+        "name": "USA",
+        "value": 5000000
+      },
+      {
+        "name": "France",
+        "value": 7200000
+      }
+    ];
+    this.multi = [
+      {
+        "name": "Germany",
+        "series": [
+          {
+            "name": "2010",
+            "value": 7300000
+          },
+          {
+            "name": "2011",
+            "value": 8940000
+          }
+        ]
+      },
+    
+      {
+        "name": "USA",
+        "series": [
+          {
+            "name": "2010",
+            "value": 7870000
+          },
+          {
+            "name": "2011",
+            "value": 8270000
+          }
+        ]
+      },
+    
+      {
+        "name": "France",
+        "series": [
+          {
+            "name": "2010",
+            "value": 5000002
+          },
+          {
+            "name": "2011",
+            "value": 5800000
+          }
+        ]
+      }
+    ];
+    const single = this.single;
+    const multi = this.multi;
+    Object.assign(this, {single, multi})
   }
 
   selectAction(item){
@@ -445,6 +531,8 @@ export class DiaryComponent implements OnInit {
     //   allMyActionsRef.doc(newActionId).set(unplannedTask);
     //   allMyActionsRef.doc(newActionId).update({ 'id': newActionId });
     // })
+    // console.log(unplannedTask);
+
     let champId = this.userId;
     let selectedWork = true;
 
@@ -591,7 +679,6 @@ export class DiaryComponent implements OnInit {
     });
 
     console.log(unplannedTask);
-    console.log(unplannedTask);
     this.item = { uid: "", id: "", name: "", unit: "", quantity: 0, selectedWork: false, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
   }
 
@@ -627,17 +714,16 @@ export class DiaryComponent implements OnInit {
     this.userProfile.subscribe(userData => {
       console.log(userData);
       let myData = {
-        name: this.user.displayName,
+        name: userData.name,
         email: this.user.email,
         bus_email: userData.bus_email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
+        phoneNumber: userData.phoneNumber,
         photoURL: this.user.photoURL,
         address: userData.address,
         nationality: userData.nationality,
         nationalId: userData.nationalId,
       }
-
       if (userData.address == "" || userData.address == null || userData.address == undefined) {
         userData.address = ""
       } else {
@@ -698,7 +784,7 @@ export class DiaryComponent implements OnInit {
           if (element.selectedWork == true) {
             this.myActionItems.push(element);
             this.myDiaryItems.push(element);
-            console.log(this.myActionItems);
+            // console.log(this.myActionItems);
 
             this.chartdata = true;
             this.processData(this.myActionItems);

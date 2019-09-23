@@ -31,37 +31,45 @@ export const ROUTES: RouteInfo[] = [{
         path: '/dashboard',
         title: 'Dashboard',
         type: 'link',
-        icontype: 'nc-icon nc-bank'
+        // icontype: 'nc-icon nc-bank'
+        icontype: '',
     },{
         path: '/notebook',
         title: 'Notebook',
         type: 'link',
-        icontype: 'fa fa-pied-piper-alt',
+        // icontype: 'fa fa-pied-piper-alt',
+        icontype: '',
     },{
         path: '/tasks-24/7',
         title: 'Tasks 24/7',
         type: 'link',
-        icontype: 'fa fa-codiepie',
+        // icontype: 'fa fa-codiepie',
+        icontype: '',
+
     }, {
         path: '/meeting-assistant',
         title: 'Meeting Assistant',
         type: 'link',
-        icontype: 'fa fa-users',
+        // icontype: 'fa fa-users',
+        icontype: '',
     }, {
         path: '/document-manager',
         title: 'Document Manager',
         type: 'link',
-        icontype: 'nc-icon nc-box',
+        // icontype: 'nc-icon nc-box',
+        icontype: '',
     }, {
         path: '/reporting-assistant',
         title: 'Reporting Assistant',
         type: 'link',
-        icontype: 'fa fa-black-tie',
+        // icontype: 'fa fa-black-tie',
+        icontype: '',
     }, {
         path: '/issues',
         title: 'Issues',
         type: 'link',
-        icontype: 'fa  fa-gears',
+        // icontype: 'fa  fa-gears',
+        icontype: '',
     },
     // {
     //     path: '/enterprises',

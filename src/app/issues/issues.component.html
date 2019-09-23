@@ -54,9 +54,14 @@
                         <button class="btn-link btn-magnify" (click)="initPage()"><font size=2>Report issue</font></button>                                                      
                       </span><br>
                       <ol>
-                        <li *ngFor="let item of issues | async">
+                        <li *ngFor="let item of (issues | async)">
                           <!-- <p class="col-md-12" style="margin-bottom: 0px;">{{ item.name }}</p> -->
-                          <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;"><button class="btn-link btn-magnify text-info" (click)="viewPersonalRpt(item)">{{ item.name }}</button></p>
+                          <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;"><button class="btn-link btn-magnify text-info" (click)="viewPersonalRpt(item)">{{ item.name }}</button>
+                            <span *ngIf="item.byPhotoUrl" class="photo">
+                              <img src="{{ item.byPhotoUrl }}" width="50px">
+                            </span>
+                            <span><font size=2>. {{ item.by }}<span class="spacer" style="padding-left: 1em"> </span>{{ item.createdOn | date }}</font></span>
+                          </p>
                           <p class="category col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>Description," {{ item.description }} ".</p>
                         </li>
                       </ol>
@@ -135,9 +140,12 @@
                       </span>
                       <br>
                       <ol>
-                        <li *ngFor="let item of entIssues | async">
+                        <!-- <li *ngFor="let item of (entIssues | async)?.slice().reverse()"> -->
+                        <li *ngFor="let item of (entIssues | async)">
                           <!-- <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;">{{ item.name }}</p> -->
-                          <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;"><button class="btn-link btn-magnify text-info" (click)="viewCompanyRpt(item)">{{ item.name }}</button></p>
+                          <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;"><button class="btn-link btn-magnify text-info" (click)="viewCompanyRpt(item)">{{ item.name }}</button>
+                            <span><font size=2>. {{ item.by }}<span class="spacer" style="padding-left: 1em"> </span>{{ item.createdOn | date }}</font></span>                          
+                          </p>
                           <p class="category col-ms-12 col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>Description," {{ item.description }} ".</p>
                         </li>
                       </ol>
@@ -220,8 +228,12 @@
                         </button>
                       </span><br>
                       <ol>
-                        <li *ngFor="let item of projIssues | async">
-                          <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;"><button class="btn-link btn-magnify text-info" (click)="viewProjectRpt(item)">{{ item.name }}</button></p>                          
+                        <li *ngFor="let item of (projIssues | async)">
+                          <p class="col-ms-12 col-md-12" style="margin-bottom: 0px;"><button class="btn-link btn-magnify text-info" (click)="viewProjectRpt(item)">{{ item.name }}</button>
+                            <span>
+                              <font size=2>. {{ item.by }}<span class="spacer" style="padding-left: 1em"> </span>{{ item.createdOn | date }}</font>
+                            </span>                          
+                          </p>                          
                           <p class="category col-ms-12 col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>Description," {{ item.description }} ".</p>
                         </li>
                       </ol>
@@ -330,7 +342,7 @@
                   </button>
                 </span><br>
               </p>
-              <div class="card-plain" *ngFor="let item of pIssuesComments | async">
+              <div class="card-plain" *ngFor="let item of (pIssuesComments | async)">
                 <div class="vl3">
                   <label>{{ item.by }}</label>
                   <p class="clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"
@@ -396,7 +408,7 @@
                   </button>
                 </span><br>
               </p>
-              <div class="card-plain" *ngFor="let item of entIssuesComments | async">
+              <div class="card-plain" *ngFor="let item of (entIssuesComments | async)">
                 <div class="vl3">
                   <label>{{ item.by }}</label>
                   <p class="clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>
@@ -459,7 +471,7 @@
                   </button>
                 </span><br>
               </p>
-              <div class="card-plain" *ngFor="let item of prjIssuesComments | async">
+              <div class="card-plain" *ngFor="let item of (prjIssuesComments | async)">
                 <div class="vl3">
                   <label>{{ item.by }}</label>
                   <p class="clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"

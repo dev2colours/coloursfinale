@@ -16,12 +16,7 @@ export const AppRoutes: Routes = [{
         },{
             path: '',
             loadChildren: './userpage/user.module#UserModule'
-        },
-        // {
-        //     path: '',
-        //     loadChildren: './r-time-spent-e/r-time-spent-e.module#RTimeSpentEModule'
-        // },
-        {
+        },{
             path: '',
             loadChildren: './projects/projects.module#ProjectsModule'
         },{
@@ -47,6 +42,9 @@ export const AppRoutes: Routes = [{
             loadChildren: './notebook/notebook.module#NotebookModule'
         },{
             path: '',
+            loadChildren: './reportbook/reportbook.module#ReportbookModule'
+        },{
+            path: '',
             loadChildren: './meeting-assistant/meeting-assistant.module#MeetingAssistantModule'
         },{
             path: '',
@@ -61,12 +59,8 @@ export const AppRoutes: Routes = [{
             path: '',
             loadChildren: './work/work.module#WorkModule'
         }
-        ,{
-            path: '',
-            loadChildren: './messages/messages.module#MessagesModule'
-        }
-    ]
-        },
+        
+    ]},
     {
         path: '',
         component: AuthLayoutComponent,
@@ -75,11 +69,7 @@ export const AppRoutes: Routes = [{
             loadChildren: './pages/pages.module#PagesModule'
         },{
             path: '',
-            loadChildren: './enterprise-rpts/enterprise-rpts.module#IndividualRptsModule'
-        },{
-            path: '',
             loadChildren: './departmental-rpts/departmental-rpts.module#DepartmentalRptsModule'
         },]
     }
-
 ];

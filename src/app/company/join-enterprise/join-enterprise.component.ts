@@ -382,7 +382,7 @@ export class JoinEnterpriseComponent {
     this.userProfile.subscribe(userData => {
       console.log(userData);
       let myData = {
-        name: this.user.displayName,
+        name: userData.name,
         email: this.user.email,
         bus_email: userData.bus_email,
         id: this.user.uid,
@@ -390,10 +390,8 @@ export class JoinEnterpriseComponent {
         photoURL: this.user.photoURL,
         address: userData.address,
         nationality: userData.nationality,
-        nationalId: userData.nationalId
-
+        nationalId: userData.nationalId,
       }
-
       if (userData.address == "" || userData.address == null || userData.address == undefined) {
         userData.address = ""
       } else {

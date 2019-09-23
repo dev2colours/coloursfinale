@@ -8,7 +8,7 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument 
 import * as firebase from 'firebase';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Enterprise, ParticipantData, companyChampion, Department } from "../../models/enterprise-model";
+import { Enterprise, ParticipantData, companyChampion, Department, employeeData } from "../../models/enterprise-model";
 import { Project, workItem } from "../../models/project-model";
 import { Task, MomentTask } from "../../models/task-model";
 import { map } from 'rxjs/operators';
@@ -147,6 +147,8 @@ export class ImplementationComponent {
   actionTask: classTask;
   model: { left: boolean; middle: boolean; right: boolean; };
   actionSet: workItem;
+  pickededTask: classTask;
+  today2: any;
 
   constructor(public auth: AuthService, private is: InitialiseService, private pns: PersonalService, private ts: TaskService, public afAuth: AngularFireAuth, public es: EnterpriseService, public afs: AngularFirestore, private renderer: Renderer,
     private element: ElementRef, private router: Router, private as: ActivatedRoute) { 
@@ -157,10 +159,9 @@ export class ImplementationComponent {
       this.currentMonth = moment(new Date(), "YYYY-MM-DD").month().toString();
       this.currentWeek = moment(new Date(), "YYYY-MM-DD").week().toString();
       console.log(this.todayDate);
-
-
-    this.startDate = null; 
-    this.endDate = null;
+      this.viewDayActions = []
+      this.startDate = null; 
+      this.endDate = null;
 
       this.SIunits = [
         { id: 'hours', name: 'Time(hrs)' },
@@ -190,7 +191,7 @@ export class ImplementationComponent {
       this.selectedProject = is.getSelectedProject();
       this.userChampion = is.getUserChampion();
       this.selectedCompany = is.getSelectedCompany();
-    this.selectedTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", classification: this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", selectedWeekly: false, championName: "", championId: "" };
+      this.selectedTask = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", classification: this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", selectedWeekly: false, championName: "", championId: "" };
       this.actionItem = is.getActionItem();
       this.selectedAction = is.getSelectedAction();
       this.actionSet = is.getSelectedAction();
@@ -246,6 +247,11 @@ export class ImplementationComponent {
     this.selectedTask = TAsk;
   }
 
+  pickTask(TAsk) {
+    console.log(TAsk);
+    this.pickededTask = TAsk;
+  }
+
   theItem(item: workItem){
     this.selectEditWorkItem = item;
   }
@@ -254,7 +260,11 @@ export class ImplementationComponent {
     console.log(this.selectEditWorkItem.unit);
     this.afs.collection('Users').doc(this.userId).collection('myStandards').doc(this.selectEditWorkItem.id).set( this.selectEditWorkItem );
     console.log(this.selectEditWorkItem.name + ' ' + 'updated untits' + this.selectEditWorkItem.unit);
-    this.selectEditWorkItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
+    this.selectEditWorkItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "",
+    type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "",
+    projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "",
+    startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "",
+    selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
   }
   /* add to my weekly to do list */
 
@@ -263,8 +273,8 @@ export class ImplementationComponent {
     console.log(this.selectedTask.name);
     console.log(this.selectedTask.id);
     this.myDocument.collection<Task>('tasks').doc(task.id).update({ 'selectedWeekly' : true });
-    this.ts.add2WeekPlan(task, this.userId);
-    this.task = { name: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
+    this.ts.add2WeekPlan(task, this.userId);this.dataCALL();
+    this.task = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
   }
 
   removeWeekTask(task){
@@ -329,11 +339,202 @@ export class ImplementationComponent {
 
   setWeekAction(e: { target: { checked: any; }; }, action: workItem) {
 
+    let compRefI, compRefII, deptActDoc, actionRef, deptDoc: AngularFirestoreDocument<Department>
     if (e.target.checked) {
       console.log(action.name + '' + 'action checked');
+      action.selectedWeekly = true;
+      action.selectedWeekWork = true;
 
-      let selectedWork = true;
-      this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).update({ 'selectedWeekWork': selectedWork });
+      let championRef = this.afs.collection<Project>('Users').doc(action.champion.id).collection<Enterprise>('tasks').doc(action.taskId).collection<workItem>('WeeklyActions').doc(action.id);
+      let championRef2 = this.afs.collection<Project>('Users').doc(action.champion.id).collection<workItem>('WeeklyActions').doc(action.id);
+      let championRef3 = this.afs.collection<Project>('Users').doc(action.champion.id).collection<workItem>('actionItems').doc(action.id);
+      let myActionsRef = this.myDocument.collection<Task>('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let allMyActionsRef = this.myDocument.collection<workItem>('actionItems').doc(action.id);
+      this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).set(action).then(() => {
+
+        championRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => {
+
+        }).catch(err => {
+          console.log('Document Not Found', err);
+          championRef.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // championRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+        });
+
+        championRef2.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => {
+
+        }).catch(err => {
+          console.log('Document Not Found', err);
+          championRef2.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // championRef2.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+        });
+
+        championRef3.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => {
+
+        }).catch(err => {
+          console.log('Document Not Found', err);
+          championRef3.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // championRef3.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+        });
+
+        myActionsRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => {
+          
+        }).catch(err => {
+          console.log('Document Not Found', err);
+          myActionsRef.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // myActionsRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+        });
+
+        if (action.projectId !== "") {
+          //project
+
+          let proRef = this.afs.collection('Users').doc(action.champion.id).collection<Project>('projects').doc(action.projectId);
+          let championProRef = proRef.collection<Task>('tasks').doc(action.taskId).collection<workItem>('workItems').doc(action.id);
+          let prjectCompWeeklyRef = this.afs.collection<Project>('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection<workItem>('WeeklyActions').doc(action.id);
+          let prjectCompWeeklyRef1 = this.afs.collection<Project>('Projects').doc(action.projectId).collection('tasks').doc(action.taskId).collection<workItem>('WeeklyActions').doc(action.id);
+          let prjectCompWeeklyRef2 = this.afs.collection<Project>('Projects').doc(action.projectId).collection<workItem>('WeeklyActions').doc(action.id);
+          let prjectCompWeeklyRef3 = this.afs.collection<Project>('Projects').doc(action.projectId).collection<workItem>('workItems').doc(action.id);
+          let weeklyRef = this.afs.collection<Enterprise>('Enterprises').doc(action.companyId).collection<Project>('projects').doc(action.projectId).collection<workItem>('WeeklyActions').doc(action.id);
+          let weeklyRef2 = this.afs.collection<Enterprise>('Enterprises').doc(action.companyId).collection<Project>('projects').doc(action.projectId).collection<workItem>('workItems').doc(action.id);
+          
+          championProRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => {
+
+          }).catch(err => {
+            console.log('Document Not Found', err);
+            championProRef.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // championProRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+          weeklyRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            weeklyRef.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // weeklyRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+          weeklyRef2.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            weeklyRef2.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // weeklyRef2.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+
+          prjectCompWeeklyRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            prjectCompWeeklyRef.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // prjectCompWeeklyRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+          prjectCompWeeklyRef1.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            prjectCompWeeklyRef1.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // prjectCompWeeklyRef1.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+          prjectCompWeeklyRef2.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            prjectCompWeeklyRef2.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // prjectCompWeeklyRef2.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+          prjectCompWeeklyRef2.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            prjectCompWeeklyRef2.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // prjectCompWeeklyRef2.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+          prjectCompWeeklyRef3.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            prjectCompWeeklyRef3.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // prjectCompWeeklyRef3.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+        }
+
+        if (action.companyId !== "") {
+          
+          // Enterprise
+          this.afs.collection('Enterprises').doc(action.companyId).collection<workItem>('WeeklyActions').doc(action.id).set(action);
+          let allWeekActionsRef = this.afs.collection<Enterprise>('Enterprises').doc(action.companyId).collection<workItem>('WeeklyActions').doc(action.id);
+          compRefI = this.afs.collection('Enterprises').doc(action.companyId).collection<workItem>('actionItems').doc(action.id);
+          compRefII = this.afs.collection('Enterprises').doc(action.companyId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+          deptActDoc = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId).collection<workItem>('actionItems').doc(action.id);
+          deptDoc = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId);
+          actionRef = deptDoc.collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+
+          allWeekActionsRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            allWeekActionsRef.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // allWeekActionsRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+          
+          compRefII.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            compRefII.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // compRefII.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+
+          deptActDoc.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            deptActDoc.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // deptActDoc.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+          });
+
+          compRefI.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            compRefI.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // compRefI.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+
+          });
+
+          actionRef.update({ 'selectedWeekWork': true, 'selectedWeekly': true }).then(() => { }).catch(err => {
+            console.log('Document Not Found', err);
+            actionRef.set(action).then(() => {
+              console.log('Try 1  to set the document');
+              // actionRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+            });
+
+          });
+        }
+
+        allMyActionsRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true }).then(() => { }).catch(err => {
+          console.log('Document Not Found', err);
+          allMyActionsRef.set(action).then(() => {
+            console.log('Try 1  to set the document');
+            // allMyActionsRef.update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+          });
+        });
+        // this.selectAction(e, action);
+      }).then(() => { console.log('document set') }).catch(err => {
+        console.log('Document Not Found', err);
+        this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).set(action).then(() => {
+          console.log('Try 1  to set the document');
+          this.myDocument.collection<workItem>('WeeklyActions').doc(action.id).update({ 'selectedWeekly': true, 'selectedWeekWork': true });
+        });
+
+      });
 
     } else {
       console.log(action.name + '' + 'action checked');
@@ -417,13 +618,14 @@ export class ImplementationComponent {
         break;
     }
     let testPeriod = "startDate";
-    this.dayTasks = this.viewTodayAction(testPeriod, this.aPeriod);
+    // this.dayTasks = this.viewTodayAction(testPeriod, this.aPeriod);
+    this.dayTasks = this.viewTodayActionQuery(this.aPeriod);
   }
 
   initDiary() {
     let testPeriod = "startDate";
     // this.viewTodayAction(testPeriod, this.currentDate);
-    this.viewTodayActionQuery(testPeriod, this.currentDate);
+    this.viewTodayActionQuery(this.currentDate);
   }
 
   viewTodayAction(testPeriod, checkPeriod) {
@@ -442,7 +644,6 @@ export class ImplementationComponent {
         return { id, ...data };
       }))
     );
-    
 
     console.log(testPeriod + ' ' + checkPeriod);
     
@@ -454,7 +655,7 @@ export class ImplementationComponent {
         map(actions => actions.map(a => {
           const data = a.payload.doc.data() as workItem;
           const id = a.payload.doc.id;
-
+          
           if (actions.length > 0) {
             this.viewTodayWork = true;
           } else {
@@ -463,19 +664,42 @@ export class ImplementationComponent {
           return { id, ...data };
         }))
       );
-
-    this.viewDayActions = [];
+    
     this.allActions.subscribe((actions) => {
+
+      this.viewDayActions = [];
+      let viewDayActions = [];
+
       this.selectedActions = actions;
       actions.forEach(element => {
-        if (moment(element.startDate).isSameOrAfter(today) || element.complete == false) {
-          // if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
-          this.viewDayActions.push(element);
+        if (element.name === null || element.name === '' || element.name === undefined) {
+          viewActionsRef.collection<workItem>('WeeklyActions').doc(element.id).delete();
+          viewActionsRef.collection<workItem>('actionsItems').doc(element.id).delete();
         }
-
       });
-      // console.log(this.selectedActions);
-      // console.log(this.selectedActions.length);
+      actions.forEach(element => {
+        console.log(element.name + ' ' + 'has' +' ' + element.startDate);
+        // if (element.name === null || element.name === '' || element.name === undefined) {
+        //   viewActionsRef.collection<workItem>('WeeklyActions').doc(element.id).delete();
+        //   viewActionsRef.collection<workItem>('actionsItems').doc(element.id).delete();
+        // } else {
+          viewActionsRef.collection<Task>('tasks').doc(element.taskId).ref.get().then(function (tsk) {
+            element.taskName = tsk.data().name;
+            if (moment(element.startDate).isSameOrBefore(today) && element.complete == false) {
+              viewDayActions.push(element);
+            }
+            if (element.startDate === "" && element.complete == false) {
+
+              let vieDayActions = [];
+              vieDayActions.push(element);
+              console.log(vieDayActions);
+              viewDayActions.push(element);
+
+            }
+          });
+          this.viewDayActions = viewDayActions;
+      });
+
       if (this.selectedActions.length > 0) {
         this.viewTodayWork = true;
       } else {
@@ -488,52 +712,124 @@ export class ImplementationComponent {
     return this.viewActions;
   }
 
-  viewTodayActionQuery(testPeriod, checkPeriod) {
+
+
+  viewTodayActionQuery(checkPeriod) {
     let viewActionsRef = this.myDocument;
     // console.log(testPeriod + ' ' + checkPeriod);
-
+    // console.log(checkPeriod);
+    
     let today = moment(new Date(), "YYYY-MM-DD");
-    let today2 = moment(new Date(), "MM-DD-YYYY").format('L');
-    today2 = checkPeriod;
+    // let today2 = moment(new Date(), "MM-DD-YYYY").format('L');
+    let today2 = checkPeriod;
+    this.today2 = checkPeriod;
     this.currentWorkItems = [];
 
-    this.allActions = viewActionsRef.collection<workItem>('WeeklyActions').snapshotChanges().pipe(
+    this.allActions = viewActionsRef.collection<workItem>('WeeklyActions', ref => ref
+      .orderBy('taskName', 'asc')
+      .where('complete', '==', false)
+    ).snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as workItem;
         const id = a.payload.doc.id;
-        this.viewDayActions = [];
-
-        if (actions.length > 0) {
-          this.viewTodayWork = true;
-        } else {
-          this.viewTodayWork = false;
-        }
         return { id, ...data };
       }))
     );
 
     this.viewDayActions = [];
+    let viewDayActions = [];
+    let compCollection = this.afs.collection('Enterprises');
+    // let projCollection = this.afs.collection('Projects');
+    let projCollection = this.myDocument.collection('projects');
+    let eme: workItem;
+    let doMethods = {
+      numbers: [1, 5, 8],
+      computeData: function  (element: workItem){
+        if (element.selectedWeekWork == true) {
+          if (moment(element.startDate).isSameOrBefore(this.today2) && element.complete == false) {
+            viewDayActions.push(element);
+          }
+          if (element.startDate === "" && element.complete == false) {
+            let vieDayActions = [];
+            vieDayActions.push(element);
+            console.log(vieDayActions);
+
+            viewDayActions.push(element);
+          }
+        }
+        this.viewDayActions = viewDayActions;
+      },
+      SumData: function () {
+       return this.viewDayActions = viewDayActions;
+      }
+    }
+
+    let myDc = this.myDocument;
+
+
     this.allActions.subscribe((actions) => {
       this.selectedActions = actions;
       actions.forEach(element => {
-        let data = element;
+        console.log(element.name);
+        
+        if (element.taskId !== "") {
+          viewActionsRef.collection<Task>('tasks').doc(element.taskId).ref.get().then(function (tsk) {
+            element.taskName = tsk.data().name;
+            element.companyName = tsk.data().companyName;
+            element.projectName = tsk.data().projectName;
+            if (element.companyId !== "" && element.companyName === "") {
+              compCollection.doc(element.companyId).ref.get().then(function (cmp) {
+                element.companyName = cmp.data().name;
+              })
+            }
+            if (element.projectName === "") {
+              projCollection.doc(element.projectId).ref.get().then(function (prj) {
+                element.projectName = prj.data().name;
+              })
+            }
+          }).catch(err => {
+            console.log(err + ' ' + 'Act' + ' ' + element.name + ' ' + element.Id);
+            element.taskName = "";
+          });
+        }
+
         if (element.selectedWeekWork == true) {
-          if (moment(element.startDate).isSameOrBefore(today2) && element.complete == false) {
-            this.viewDayActions.push(element);
-            console.log(this.viewDayActions);
+          if (moment(element.startDate).isSameOrBefore(this.today2) && element.complete == false) {
+            viewDayActions.push(element);
+          }
+          if (element.startDate === "" && element.complete == false) {
+            let vieDayActions = [];
+            vieDayActions.push(element);
+            // console.log(vieDayActions);
+            viewDayActions.push(element);
+            console.log(element.name);
           }
         }
+        this.viewDayActions = viewDayActions;
+
       });
-      if (this.selectedActions.length > 0) {
-        this.viewTodayWork = true;
-      } else {
-        this.viewTodayWork = false;
-      }
     });
+    
 
     this.theViewedActions = this.viewActions;
 
     return this.viewActions;
+  }
+
+  computeData(element: workItem){
+    if (element.selectedWeekWork == true) {
+      if (moment(element.startDate).isSameOrBefore(this.today2) && element.complete == false) {
+        this.viewDayActions.push(element);
+      }
+      if (element.startDate === "" && element.complete == false) {
+        let vieDayActions = [];
+        vieDayActions.push(element);
+        console.log(vieDayActions);
+
+        this.viewDayActions.push(element);
+      }
+    }
+    this.viewDayActions
   }
 
   addActionTime(action: workItem) {
@@ -563,12 +859,14 @@ export class ImplementationComponent {
 
   setComplete() {
     let selectedAction = this.actionSet;
-
+    let action = selectedAction;
     console.log('the actionItem-->' + selectedAction.name);
     let weeklyRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('WeeklyActions');
     let allMyActionsRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('actionItems');
+
     weeklyRef.doc(selectedAction.id).update({ 'complete': true }).then(() => {
       console.log('Update successful, document exists');
+      this.viewTodayActionQuery(this.today2);
       // update successful (document exists)
     }).catch((error) => {
       console.log('Error updating Completion, document does not exists trying Again', error);
@@ -582,8 +880,7 @@ export class ImplementationComponent {
     });
 
     allMyActionsRef.doc(selectedAction.id).update({ 'complete': true }).then(() => {
-      console.log('Update successful, document exists');
-      // update successful (document exists)
+      console.log('Update successful, document exists'); // update successful (document exists)
     }).catch((error) => {
       console.log('Error updating Completion, document does not exists trying Again', error);
       // .set({ data });
@@ -599,7 +896,7 @@ export class ImplementationComponent {
       let myTaskActionsRef = this.afs.collection('Users').doc(this.userId).collection<Task>('tasks').doc(selectedAction.taskId).collection<workItem>('actionItems');
       myTaskActionsRef.doc(selectedAction.id).update({ 'complete': true }).then(() => {
         console.log('Update successful, document exists');
-        this.setCompData(selectedAction);
+        // this.setCompData(selectedAction);
 
         
         // update successful (document exists)
@@ -611,96 +908,351 @@ export class ImplementationComponent {
           // update successful (document exists)
           allMyActionsRef.doc(selectedAction.id).update({ 'complete': true });
           console.log('Update successful, document created');
-          this.setCompData(selectedAction);
+          // this.setCompData(selectedAction);
         })
       });
+    }
+    if (selectedAction.companyId !=="") {
+      let compRefI = this.afs.collection('Enterprises').doc(action.companyId).collection<workItem>('actionItems').doc(action.id);
+      let compRefII = this.afs.collection('Enterprises').doc(action.companyId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let deptActDoc = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId).collection<workItem>('actionItems').doc(action.id);
+      let deptDoc = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId);
+      let dptRef = this.afs.collection<Enterprise>('Enterprises').doc(action.companyId).collection<Department>('departments');
+      let task2Actions = dptRef.doc(action.departmentId).collection<workItem>('actionItems').doc(action.id);
+      let taskActions = dptRef.doc(action.departmentId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let actionRef = deptDoc.collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+
+      taskActions.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        taskActions.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          taskActions.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+
+      task2Actions.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        task2Actions.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          task2Actions.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+
+      compRefI.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        compRefI.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          compRefI.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+
+      compRefII.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        compRefII.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          compRefII.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+
+      deptActDoc.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        deptActDoc.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          deptActDoc.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+
+      actionRef.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        actionRef.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          actionRef.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+    }
+    if (selectedAction.projectId !== "") {
+      let prjectCompWeeklyRef = this.afs.collection<Project>('Projects').doc(selectedAction.projectId).collection('enterprises').doc(selectedAction.companyId).collection<workItem>('WeeklyActions').doc(action.id);
+      let prjectCompWeeklyRef1 = this.afs.collection<Project>('Projects').doc(selectedAction.projectId).collection('tasks').doc(selectedAction.taskId).collection<workItem>('WeeklyActions').doc(action.id);
+      let prjectCompWeeklyRef2 = this.afs.collection<Project>('Projects').doc(selectedAction.projectId).collection<workItem>('WeeklyActions').doc(action.id);
+      let prjectCompWeeklyRef3 = this.afs.collection<Project>('Projects').doc(selectedAction.projectId).collection<workItem>('workItems').doc(action.id);
+      let proUserRef = this.afs.collection('Users').doc(selectedAction.champion.id).collection<Project>('projects').doc(selectedAction.projectId);
+      let proUsertaskActions = proUserRef.collection<Task>('tasks').doc(selectedAction.taskId).collection<workItem>('workItems').doc(action.id);
+      proUsertaskActions.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        proUsertaskActions.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          proUsertaskActions.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+      prjectCompWeeklyRef.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        prjectCompWeeklyRef.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          prjectCompWeeklyRef.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+      prjectCompWeeklyRef1.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        prjectCompWeeklyRef1.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          prjectCompWeeklyRef1.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+      prjectCompWeeklyRef2.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        prjectCompWeeklyRef2.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          prjectCompWeeklyRef2.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+      prjectCompWeeklyRef3.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        prjectCompWeeklyRef3.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          prjectCompWeeklyRef3.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+    // };
     }
   }
 
   setCompData(selectedAction) {
+    let action = selectedAction;
 
-    if (selectedAction.companyId != "") {
+    if (selectedAction.companyId !== "") {
+      let compRefI = this.afs.collection('Enterprises').doc(action.companyId).collection<workItem>('actionItems').doc(action.id);
+      let compRefII = this.afs.collection('Enterprises').doc(action.companyId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let deptActDoc = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId).collection<workItem>('actionItems').doc(action.id);
+      let deptDoc = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId);
+      let dptRef = this.afs.collection<Enterprise>('Enterprises').doc(action.companyId).collection<Department>('departments');
+      let task2Actions = dptRef.doc(action.departmentId).collection<workItem>('actionItems').doc(action.id);
+      let taskActions = dptRef.doc(action.departmentId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
+      let actionRef = deptDoc.collection('tasks').doc(action.taskId).collection<workItem>('actionItems').doc(action.id);
 
-      let allMyActionsRef = this.afs.collection('Enterprises').doc(selectedAction.companyId).collection<workItem>('actionItems');
-      let allWeekActionsRef = this.afs.collection('Enterprises').doc(selectedAction.companyId).collection<workItem>('WeeklyActions');
-      let myTaskActionsRef = this.afs.collection('Enterprises').doc(selectedAction.companyId).collection<Task>('tasks').doc(selectedAction.taskId).collection<workItem>('actionItems');
-
-      allMyActionsRef.doc(selectedAction.id).update({ 'complete': true }).then(() => {
+      taskActions.update({ 'complete': true }).then(() => {
         console.log('Update successful, document exists');
         // update successful (document exists)
       }).catch((error) => {
         console.log('Error updating Completion, document does not exists trying Again', error);
         // .set({ data });
-        allMyActionsRef.doc(selectedAction.id).set(selectedAction).then(() => {
+        taskActions.set(selectedAction).then(() => {
           console.log('document created');
           // update successful (document exists)
-          allMyActionsRef.doc(selectedAction.id).update({ 'complete': true });
+          taskActions.update({ 'complete': true });
           console.log('Update successful, document created');
         })
       });
 
-      allWeekActionsRef.doc(selectedAction.id).update({ 'complete': true }).then(() => {
+      task2Actions.update({ 'complete': true }).then(() => {
         console.log('Update successful, document exists');
         // update successful (document exists)
       }).catch((error) => {
         console.log('Error updating Completion, document does not exists trying Again', error);
         // .set({ data });
-        allWeekActionsRef.doc(selectedAction.id).set(selectedAction).then(() => {
+        task2Actions.set(selectedAction).then(() => {
           console.log('document created');
           // update successful (document exists)
-          allWeekActionsRef.doc(selectedAction.id).update({ 'complete': true });
+          task2Actions.update({ 'complete': true });
           console.log('Update successful, document created');
         })
       });
 
-      myTaskActionsRef.doc(selectedAction.id).update({ 'complete': true }).then(() => {
+      compRefI.update({ 'complete': true }).then(() => {
         console.log('Update successful, document exists');
         // update successful (document exists)
       }).catch((error) => {
         console.log('Error updating Completion, document does not exists trying Again', error);
         // .set({ data });
-        myTaskActionsRef.doc(selectedAction.id).set(selectedAction).then(() => {
+        compRefI.set(selectedAction).then(() => {
           console.log('document created');
           // update successful (document exists)
-          myTaskActionsRef.doc(selectedAction.id).update({ 'complete': true });
+          compRefI.update({ 'complete': true });
           console.log('Update successful, document created');
         })
       });
 
-      // console.log('delete complete under company');
+      compRefII.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        compRefII.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          compRefII.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
 
-      if (selectedAction.projectId !== "") {
-        let weeklyRef = this.afs.collection('Enterprises').doc(selectedAction.companyId).collection('projects').doc(selectedAction.projectId).collection<workItem>('WeeklyActions');
-        let prjectCompWeeklyRef = this.afs.collection<Project>('Projects').doc(selectedAction.projectId).collection('enterprises').doc(selectedAction.companyId).collection<workItem>('WeeklyActions');
-        // let prjectCompWeeklyRef = this.afs.collection<Project>('Projects').doc(selectedAction.projectId).collection('enterprises').doc(this.compId).collection<workItem>('WeeklyActions');
-        prjectCompWeeklyRef.doc(selectedAction.id).update({ 'complete': true }).then(() => {
-          console.log('Update successful, document exists');
+      deptActDoc.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        deptActDoc.set(selectedAction).then(() => {
+          console.log('document created');
           // update successful (document exists)
-        }).catch((error) => {
-          console.log('prjectCompWeekly Error updating Completion, document does not exists trying Again', error);
-          // .set({ data });
-          prjectCompWeeklyRef.doc(selectedAction.id).set(selectedAction).then(() => {
-            console.log('document created');
-            // update successful (document exists)
-            prjectCompWeeklyRef.doc(selectedAction.id).update({ 'complete': true });
-            console.log('Update successful, document created');
-          })
-        });
-        weeklyRef.doc(selectedAction.id).update({ 'complete': true }).then(() => {
-          console.log('Update successful, document exists');
+          deptActDoc.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+
+      actionRef.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        actionRef.set(selectedAction).then(() => {
+          console.log('document created');
           // update successful (document exists)
-        }).catch((error) => {
-          console.log('Project Error updating Completion, document does not exists trying Again', error);
-          // .set({ data });
-          myTaskActionsRef.doc(selectedAction.id).set(selectedAction).then(() => {
-            console.log('document created');
-            // update successful (document exists)
-            myTaskActionsRef.doc(selectedAction.id).update({ 'complete': true });
-            console.log('Update successful, document created');
-          })
-        });
-      }
-    };
+          actionRef.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+    }
+    if (selectedAction.projectId !== "") {
+      let prjectCompWeeklyRef = this.afs.collection<Project>('Projects').doc(selectedAction.projectId).collection('enterprises').doc(selectedAction.companyId).collection<workItem>('WeeklyActions').doc(action.id);
+      let prjectCompWeeklyRef1 = this.afs.collection<Project>('Projects').doc(selectedAction.projectId).collection('tasks').doc(selectedAction.taskId).collection<workItem>('WeeklyActions').doc(action.id);
+      let prjectCompWeeklyRef2 = this.afs.collection<Project>('Projects').doc(selectedAction.projectId).collection<workItem>('WeeklyActions').doc(action.id);
+      let prjectCompWeeklyRef3 = this.afs.collection<Project>('Projects').doc(selectedAction.projectId).collection<workItem>('workItems').doc(action.id);
+      let proUserRef = this.afs.collection('Users').doc(selectedAction.champion.id).collection<Project>('projects').doc(selectedAction.projectId);
+      let proUsertaskActions = proUserRef.collection<Task>('tasks').doc(selectedAction.taskId).collection<workItem>('workItems').doc(action.id);
+      proUsertaskActions.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        proUsertaskActions.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          proUsertaskActions.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+      prjectCompWeeklyRef.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        prjectCompWeeklyRef.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          prjectCompWeeklyRef.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+      prjectCompWeeklyRef1.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        prjectCompWeeklyRef1.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          prjectCompWeeklyRef1.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+      prjectCompWeeklyRef2.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        prjectCompWeeklyRef2.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          prjectCompWeeklyRef2.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+      prjectCompWeeklyRef3.update({ 'complete': true }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+      }).catch((error) => {
+        console.log('Error updating Completion, document does not exists trying Again', error);
+        // .set({ data });
+        prjectCompWeeklyRef3.set(selectedAction).then(() => {
+          console.log('document created');
+          // update successful (document exists)
+          prjectCompWeeklyRef3.update({ 'complete': true });
+          console.log('Update successful, document created');
+        })
+      });
+      // };
+    }
   }
 
   setCompProData(selectedAction) {
@@ -726,6 +1278,9 @@ export class ImplementationComponent {
   newAction(action: workItem) {
 
     let task = this.selectedTask;
+    let cmpProjectDoc, weeklyRef, champTimeSheetRef, champCompActions, champCompDptActions, champCompDptChampActions, champCompDptChampTaskActions, proRef,
+      champCompTaskActions, proCompTaskRef, proTasks, champCompDptTaskActionsdeptDoc, champCompDptTaskActions, deptDoc: AngularFirestoreDocument<{}>, actionRef, entActions;
+
     // task.classification.id != ""
     // task = this.selectedTask;
     console.log(action);
@@ -737,10 +1292,41 @@ export class ImplementationComponent {
     action.taskName = this.selectedTask.name;
     action.type = "planned";
 
+    action.companyId = this.selectedTask.companyId;
+    action.companyName = this.selectedTask.companyName;
+
+    action.departmentName = this.selectedTask.department;
+    action.departmentId = this.selectedTask.departmentId;
+
+    action.projectId = this.selectedTask.projectId;
+    action.projectName = this.selectedTask.projectName;
+
     if (this.selectedTask.projectId !== "") {
 
-      action.projectId = this.selectedTask.projectId;
-      action.projectName = this.selectedTask.projectName;
+
+      cmpProjectDoc = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection('labour').doc(this.userId).collection<workItem>('WeeklyActions');
+      weeklyRef = this.afs.collection('Enterprises').doc(action.companyId).collection('projects').doc(action.projectId).collection('labour').doc(this.userId).collection<workItem>('WeeklyActions');
+      champTimeSheetRef = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection('labour').doc(this.userId).collection('TimeSheets').doc(this.userId).collection<workItem>('actionItems');
+      proCompTaskRef = this.afs.collection('Projects').doc(action.projectId).collection('enterprises').doc(action.companyId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems');
+      proTasks = this.afs.collection('Projects').doc(action.projectId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems');
+      proRef = this.afs.collection('Users').doc(this.userId).collection<Project>('projects').doc(action.projectId).collection<Task>('tasks').doc(action.taskId).collection<workItem>('workItems');
+    }
+
+    if (this.selectedTask.companyId !== "") {
+      deptDoc = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection('departments').doc(this.selectedTask.departmentId);
+      actionRef = deptDoc.collection('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
+      entActions = this.afs.collection('Enterprises').doc(this.selectedTask.companyId).collection<workItem>('actionItems');
+
+      champCompDptTaskActions = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId).collection('tasks')
+        .doc(this.userId).collection<workItem>('actionItems');
+
+      champCompActions = this.afs.collection('Enterprises').doc(action.companyId).collection('Participants').doc(this.userId).collection<workItem>('actionItems');
+      champCompTaskActions = this.afs.collection('Enterprises').doc(action.companyId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems');
+      champCompDptActions = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId).collection<workItem>('actionItems');
+      champCompDptChampActions = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId).collection('Participants')
+      .doc(this.userId).collection<workItem>('actionItems');
+      champCompDptChampTaskActions = this.afs.collection('Enterprises').doc(action.companyId).collection('departments').doc(action.departmentId)
+        .collection('Participants').doc(this.userId).collection('tasks').doc(action.taskId).collection<workItem>('actionItems');
 
     }
 
@@ -769,7 +1355,7 @@ export class ImplementationComponent {
     console.log(action);
 
     console.log('the task--->' + this.selectedTask.name + " " + this.selectedTask.id);
-    console.log('the department-->' + action.name);
+    console.log('the department-->' + action.departmentName);
 
     let myTaskActionsRef = this.afs.collection('Users').doc(this.userId).collection<Task>('tasks').doc(this.selectedTask.id).collection<workItem>('actionItems');
     let allMyActionsRef = this.afs.collection('Users').doc(this.userId).collection<workItem>('actionItems');
@@ -777,10 +1363,30 @@ export class ImplementationComponent {
     myTaskActionsRef.add(action).then(function (Ref) {
       let newActionId = Ref.id;
       console.log(Ref);
+      action.id = Ref.id;
       myTaskActionsRef.doc(newActionId).update({ 'id': newActionId });
       allMyActionsRef.doc(newActionId).set(action);
-      allMyActionsRef.doc(newActionId).update({ 'id': newActionId });
-    }).then(refff =>{
+      // allMyActionsRef.doc(newActionId).update({ 'id': newActionId });
+      if (action.projectId !== "") {
+        cmpProjectDoc.doc(newActionId).set(action);
+        weeklyRef.doc(newActionId).set(action);
+        proCompTaskRef.doc(newActionId).set(action);
+        proTasks.doc(newActionId).set(action);
+        proRef.doc(newActionId).set(action);
+      }
+      if (action.companyId !== "") {
+        champCompActions.doc(newActionId).set(action);
+        champCompTaskActions.doc(newActionId).set(action);
+        if (action.departmentId !==""){
+          champCompDptActions.doc(newActionId).set(action);
+          champCompDptTaskActions.doc(newActionId).set(action);
+          champCompDptChampActions.doc(newActionId).set(action);
+          champCompDptChampTaskActions.doc(newActionId).set(action);
+          actionRef.doc(newActionId).set(action);
+          entActions.doc(newActionId).set(action);
+        }
+      }
+    }).then(() =>{
       this.setSui = null;
       this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
     })
@@ -848,7 +1454,7 @@ export class ImplementationComponent {
       allChmpWeklyeActionsRef.doc(newActionId).update({ 'id': newActionId });
     }).then(refff => {
       this.setSui = null;
-      this.actionTask = { name: "", champion: null, projectName: "", department: "", departmentId: "", classification: this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", selectedWeekly: false, championName: "", championId: "" };
+      this.actionTask = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", classification: this.classification, start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", selectedWeekly: false, championName: "", championId: "" };
       this.actionItem = { uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: this.is.getCompChampion(), classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
     })
 
@@ -943,17 +1549,16 @@ export class ImplementationComponent {
     this.userProfile.subscribe(userData => {
       console.log(userData);
       let myData = {
-        name: this.user.displayName,
+        name: userData.name,
         email: this.user.email,
         bus_email: userData.bus_email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
+        phoneNumber: userData.phoneNumber,
         photoURL: this.user.photoURL,
         address: userData.address,
-        nationalId: userData.nationalId,
         nationality: userData.nationality,
+        nationalId: userData.nationalId,
       }
-
       if (userData.address == "" || userData.address == null || userData.address == undefined) {
         userData.address = ""
       } else {
@@ -990,9 +1595,11 @@ export class ImplementationComponent {
     console.log(moment().week());
     console.log(this.userId);
 
+    this.initDiary();
+
     let userdataRef = this.afs.collection('Users').doc(this.userId);
     
-    this.tasks = userdataRef.collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
+    this.tasks = userdataRef.collection<Task>('tasks', ref => ref.orderBy('start').where('champion.id', '==', this.userId)).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
@@ -1000,13 +1607,12 @@ export class ImplementationComponent {
         this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
         this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
         // this.categorizedTasks.push(this.myTaskData);
-        
         return { id, ...data };
       }))
     );
 
     this.tasks.subscribe((tasks) => {
-      console.log(tasks);
+      // console.log(tasks);
       this.OutstandingTasks = [];
       this.CurrentTAsks = [];
       this.UpcomingTAsks = [];
@@ -1015,32 +1621,35 @@ export class ImplementationComponent {
       this.LongTermTAsks = [];
       tasks.forEach(data => {
         let today = moment(new Date(), "YYYY-MM-DD");
-        if (data.champion.id == this.userId) {
-          if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
-            // currentWorkItems
-            this.CurrentTAsks.push(data);
-          };
-          // outstanding tasks
-          if (moment(data.finish).isBefore(today)) {
-            this.OutstandingTasks.push(data);
-          };
-          // Upcoming tasks
+        let t2 = moment().add(3 ,'w');
+        if (data.update == undefined || data.update == "" || data.update == undefined || moment(data.update).isBefore(t2) ) {
+          if (data.champion.id == this.userId) {
+            if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
+              // currentWorkItems
+              this.CurrentTAsks.push(data);
+            };
+            // outstanding tasks
+            if (moment(data.finish).isBefore(today)) {
+              this.OutstandingTasks.push(data);
+            };
+            // Upcoming tasks
 
-          if (moment(data.start).isAfter(today)) {
-            this.UpcomingTAsks.push(data);
-            if (moment(data.start).isSameOrBefore(today.add(3, "month"))) {
-              this.ShortTermTAsks.push(data);
-            }
+            if (moment(data.start).isAfter(today)) {
+              this.UpcomingTAsks.push(data);
+              if (moment(data.start).isSameOrBefore(today.add(3, "month"))) {
+                this.ShortTermTAsks.push(data);
+              }
 
-            else if (moment(data.start).isSameOrBefore(today.add(12, "month"))) {
-              this.MediumTermTAsks.push(data);
-            }
-            else if (moment(data.start).isBefore(today.add(12, "month"))) {
-              this.LongTermTAsks.push(data)
-              console.log('long term Tasks' + ' ' + this.LongTermTAsks);
-            }
-            console.log(this.OutstandingTasks);
-          };
+              else if (moment(data.start).isSameOrBefore(today.add(12, "month"))) {
+                this.MediumTermTAsks.push(data);
+              }
+              else if (moment(data.start).isBefore(today.add(12, "month"))) {
+                this.LongTermTAsks.push(data)
+                console.log('long term Tasks' + ' ' + this.LongTermTAsks);
+              }
+              console.log(this.OutstandingTasks);
+            };
+          }
         }
       });
       this.allMyTasks = tasks;
@@ -1093,7 +1702,7 @@ export class ImplementationComponent {
        //  converting into san array
     this.myWeeklyActions.subscribe((actions) => {
       this.myActions = actions;
-      console.log(this.myActions); 
+      // console.log(this.myActions); 
       console.log(this.myActions.length);
     });
 

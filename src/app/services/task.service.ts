@@ -45,6 +45,8 @@ export class TaskService {
   task: Task;
   userTaskCollection: any;
   userTaskColRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
+  userstasks: Task[];
+  userWeeklyTaskRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
 
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
@@ -56,8 +58,10 @@ export class TaskService {
 
       this.userTaskCol = this.afs.collection('Users').doc(this.userId).collection<completeTask>('tasks').valueChanges()
       this.userTaskRef = this.afs.collection('Users').doc(this.userId).collection('tasks');
+      this.userWeeklyTaskRef = this.afs.collection('Users').doc(this.userId).collection('WeeklyTasks');
       this.ArcSortCompleteTasks();
-      // this.sortCompleteTasks();
+      this.sortCompleteTasks();
+      // this.setUserTaskCollection();
       
     });
 
@@ -159,7 +163,7 @@ export class TaskService {
   }
 
   getWeeklyTasks(userID){
-    let userRef = this.afs.collection('Users').doc(userID).collection<Task>('WeeklyTasks');
+    let userRef = this.afs.collection('Users').doc(userID).collection<Task>('WeeklyTasks', ref => ref.where('champion.id', '==', userID ));
     this.weeklyTasks = userRef.snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Task;
@@ -170,42 +174,50 @@ export class TaskService {
     return this.weeklyTasks
   }
 
-  addProjectTask(task, company) {
+  addProjectTask(task :Task, company) {
     let newClassification = { name: "Work", createdOn: new Date().toISOString(), id: "colourWorkId", plannedTime: "", actualTime: "", Varience: "" };
-
+    task.classification = newClassification;
     console.log('task created' + task.name)
     let oop = company.id;
     let createdTask = task;
     let tasksRef = this.afs.collection('tasks');
+    
+    let userRefCheck = this.afs.collection('Users').doc(task.byId);
     let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+
     let userProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
     let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    let userClassRef = this.afs.collection('Users').doc(task.champion.id).collection('classifications').doc(newClassification.id).collection('tasks');
     let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+
     let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
     let entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
+    let entPartRef = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+
     let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
     let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
-    let userClassRef = this.afs.collection('Users').doc(this.userId).collection('classifications').doc(newClassification.id).collection('tasks');
+    let projectCompany1Ref = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    let projectCompany2Ref = this.afs.collection('Projects').doc(task.projectId).collection('Participants').doc(task.champion.id).collection('tasks');
 
 
     //set task under a user
+    let newTaskId 
     userRef.add(createdTask).then(function (Ref) {
-      let newTaskId = Ref.id;
-      userRef.doc(newTaskId).update({ 'id': newTaskId });
+      newTaskId = Ref.id;
+      createdTask.id = Ref.id;
+    // }).then(() => {
 
+      userRef.doc(newTaskId).update({ 'id': newTaskId });
+      userClassRef.doc(newTaskId).set(createdTask);
       //set task under a tasks
       tasksRef.doc(newTaskId).set(createdTask);
       //update id for task under a tasks
       tasksRef.doc(newTaskId).update({ 'id': newTaskId });
 
       //set task under a company                        
-      entRef.doc(newTaskId).set(createdTask);
-
-      //update id for task under a company
-      entRef.doc(newTaskId).update({ 'id': newTaskId });
+      ;
 
       if (task.projectType === 'Enterprise') {
-        console.log(Ref);
         //set task under a champion
         champRef.doc(newTaskId).set(createdTask);
         champProjRef.doc(newTaskId).set(createdTask);
@@ -213,16 +225,17 @@ export class TaskService {
         userProjRef.doc(newTaskId).set(createdTask);
         //set task under a project
         projectsRef.doc(newTaskId).set(createdTask);
+        entPartRef.doc(newTaskId).set(createdTask);
+        projectCompany1Ref.doc(newTaskId).set(createdTask);
+        projectCompany2Ref.doc(newTaskId).set(createdTask);
 
         //set task under a company                
         entProjRef.doc(newTaskId).set(createdTask);
-
+        entRef.doc(newTaskId).set(createdTask);
         //set task under a projectCompanyRef
         projectCompanyRef.doc(newTaskId).set(createdTask);
-
         //update task id under a company
         entProjRef.doc(newTaskId).update({ 'id': newTaskId });
-
         // update id for task in user project tasks
         userProjRef.doc(newTaskId).update({ 'id': newTaskId });
         // update id for champion
@@ -231,11 +244,16 @@ export class TaskService {
         //update id for task under a project
         projectsRef.doc(newTaskId).update({ 'id': newTaskId });
         projectCompanyRef.doc(newTaskId).update({ 'id': newTaskId });
+        entPartRef.doc(newTaskId).update({ 'id': newTaskId });
+        projectCompany1Ref.doc(newTaskId).update({ 'id': newTaskId });
+        projectCompany2Ref.doc(newTaskId).update({ 'id': newTaskId });
+
       };
     });
+    return userRefCheck.ref.get();
   }
 
-  addTask( task, company, dept ){
+  addTask( task, company){
     console.log('Company' + ' ' + company.name)
     console.log('task created' + ' ' + task.name)
     let oop = company.id;
@@ -260,8 +278,12 @@ export class TaskService {
     }
 
     //set task under a user
+    let newTaskId
     userRef.add(createdTask).then(function (Ref) {
-      let newTaskId = Ref.id;
+      newTaskId = Ref.id;
+      createdTask.id = Ref.id;
+
+    }).then(function (Ref) {
       userRef.doc(newTaskId).update({ 'id': newTaskId });
 
       //set champ task under a enterprise
@@ -280,7 +302,7 @@ export class TaskService {
       //update id for task under a company
       entRef.doc(newTaskId).update({ 'id': newTaskId });
       
-      if (task.departmentId != "") {
+      if (task.departmentId !== "") {
 
         //set task under a enterprise dept
         entDeptRef.doc(newTaskId).set(createdTask);
@@ -758,7 +780,7 @@ export class TaskService {
     this.userTaskCol.subscribe(usersRef => {
       this.usersData = usersRef;
       this.usersData.forEach(element => {
-        console.log(element.name);
+        // console.log(element.name);
         this.userTaskCollection = this.afs.collection('Users').doc(element.id).collection<Task>('tasks').valueChanges();
         this.userTaskColRef = this.afs.collection('Users').doc(element.id).collection('tasks');
         // this.clipTasks(this.userTaskCollection, this.userTaskColRef);
@@ -815,95 +837,56 @@ export class TaskService {
   }
 
   sortCompleteTasks() {
-
+    let userTaskColRef = this.afs.collection('Users').doc(this.userId).collection('tasks');
+    // let userTaskColRef = this.afs.collection('Users').doc(this.userId).collection('WeeklyTasks');
+    let dmElement;
     this.userTaskCol.subscribe(usersRef => {
       this.usersData = usersRef;
+      
       this.usersData.forEach(element => {
-        console.log(element.name);
-        let userTaskCollection = this.afs.collection('Users').doc(element.id).collection<Task>('tasks').valueChanges();
-        let userTaskColRef = this.afs.collection('Users').doc(element.id).collection('tasks');
-        // this.clipTasks(this.userTaskCollection, this.userTaskColRef);
-        this.middleFcn(userTaskCollection)
-      });
+        // console.log(element.name);
+        dmElement = element;
 
-    })
-  
-  }
-      // this.usersData.forEach(function (element, index) {
+        if (element.name === "" || element.name === null || element.name === undefined) {
+          userTaskColRef.doc(element.id).delete().then(() => {
+            console.log('Task id' + element.id + ' ' + "Has no name, wasn't properly created. It has been erased");
+            console.log('passed this function snd(------)');
+          })
+        } else {
+          console.log(element.name);
+          userTaskColRef.doc(element.id).collection<workItem>('actionItems', ref => ref.where('complete', '==', true)).valueChanges().subscribe(dm => { 
+            console.log('task Actions complete', 'No', dm.length);
+            const allcomplet = dm.length;
 
-  middleFcn(userTaskCollection){
-    userTaskCollection.subscribe(userstasks => {
-      // userstasks.forEach(item => {
-      // let newItem;
-      userstasks.forEach(function (item, index) {
-        console.log(item.name);
-        // n  ewItem = item;
-        // this.userTaskColRef.doc(item.id).
-        console.log('Task id' + item.id + ' ' + "Has no name, wasn't properly created. It has been erased");
-        console.log('passed this function snd(------)');
+            userTaskColRef.doc(element.id).collection<workItem>('actionItems').valueChanges().subscribe(d => {
+              console.log('task Actions', 'No', d.length);
+              const total = d.length;
+              if (allcomplet === total) {
+                console.log(true);
+                if (total !== 0) {
+                  this.correctStatus(element);                  
+                }
+              } else {
+                console.log(false);
+              }
+            });
+          });
 
-
-      }).then((newItem)=>{
-        this.snd(newItem);
+          // this.snd(element);
+          // this.sndCheck(element);
+        }
       })
     })
   }
 
-  snd(item) {
-  //  let userTaskActivitiesCol;
-    console.log('inside function snd(------)');
-
-    let userTaskActivitiesCol;
-
-    let noTAskActivities = 0;
-    let noTaskActivitiesComplete = 0;
-    console.log(item);
-    const task = item;
-    console.log(task.name + ' ' + ' complete ' + task.complete);
-    const userTaskDocRef = this.userTaskRef.doc(task.id);
-    this.task = task;
-    this.userTaskActivitiesCol = this.userTaskRef.doc(task.id).collection<workItem>('actionItems').valueChanges();
-    userTaskActivitiesCol = this.userTaskRef.doc(task.id).collection<workItem>('actionItems').valueChanges();
-    console.log('task Actions' + ' ' + userTaskActivitiesCol);
-    
-    // this.noTAskActivities = this.userTaskActivitiesCol.operator.call.length;
-    noTAskActivities = userTaskActivitiesCol.operator.call.length;
-    console.log(noTAskActivities);
-
-    userTaskDocRef.update({ 'noAllActions': noTAskActivities }).then(() => {
-      // this.userTaskActivitiesCol.subscribe(userActs => {
-      userTaskActivitiesCol.subscribe(userActs => {
-        userActs.forEach(act => {
-          console.log('Task' + ' ' + act.taskName + ' ' + 'Action' + ' ' + act.name + ' ' + 'complete' + ' ' + act.complete);
-          this.act = act;
-          //  this.snd3(act);
-          // this.snd3(this.act);
-          if (act.complete === true) {
-            noTaskActivitiesComplete = + 1;
-            console.log(noTaskActivitiesComplete);
-            console.log(noTAskActivities);
-
-          } else {
-
-          }
-          userTaskDocRef.update({ 'noCompleteActions': noTaskActivitiesComplete }).then(() => {
-          }).catch((error) => {
-            console.error(error);
-          });
-        })
-      });
-    }).catch((error) => {
-      console.error(error);
-    });
-     
-  }
-
-  correctStatus(){
-    let task = this.task;
+  correctStatus(nemesis : Task){
+    // let task = this.task;
+    let task = nemesis;
     let usrId =  this.userId;
     let taskDoc = this.userTaskRef.doc(task.id);
+    let taskdoc2 = this.userWeeklyTaskRef.doc(task.id);
     let taskEntDoc, taskEntUserDoc, taskEntDptDoc, taskEntDptUserDoc, taskProjectDoc, taskProjectUserDoc, taskProjectCompDoc, taskProjectCompUserDoc;
-    if (task.companyId) {
+    if (task.companyId !== "") {
 
       taskEntDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('tasks').doc(task.id);
       taskEntUserDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('Participants').doc(usrId).collection('tasks').doc(task.id);
@@ -913,7 +896,7 @@ export class TaskService {
     } else {
 
     }
-    if (task.projectId) {
+    if (task.projectId !== "") {
 
       taskProjectDoc = this.afs.collection('Projects').doc(task.projectId).collection('tasks').doc(task.id);
       taskProjectUserDoc = this.afs.collection('Projects').doc(task.companyId).collection('Participants').doc(usrId).collection('tasks').doc(task.id);
@@ -926,51 +909,66 @@ export class TaskService {
     let taskRootDoc = this.afs.collection('tasks').doc(task.id)
 
       if (task.complete === false) {
-        taskDoc.update({ 'complete': true }).then(() => {
+        taskDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
+          console.log('user/tasks updated');
         }).catch((error) => {
           console.error(error);
         });
+        taskdoc2.update({ 'complete': true, ' update': new Date().toISOString() }).then(() => {
+          console.log('user/weeklytasks updated');
+        }).catch((error) => {
+          console.error(error);
+        });
+        if (task.companyId !== "") {
+          console.log('Processing Company Tasks');
 
-        if (task.companyId) {
-
-          taskEntDoc.update({ 'complete': true }).then(() => {
+          taskEntDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
+            console.log('Ent/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskEntUserDoc.update({ 'complete': true }).then(() => {
+          taskEntUserDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
+            console.log('Ent/Part/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskEntDptDoc.update({ 'complete': true }).then(() => {
+          taskEntDptDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
+            console.log('Ent/Dpt/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskEntDptUserDoc.update({ 'complete': true }).then(() => {
+          taskEntDptUserDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
+            console.log('Ent/Dpt/Part/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
 
         }
-        if (task.projectId) {
-
-          taskProjectDoc.update({ 'complete': true }).then(() => {
+        if (task.projectId !== "") {
+          console.log('Processing Project Tasks');
+          taskProjectDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
+            console.log('Projects/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskProjectUserDoc.update({ 'complete': true }).then(() => {
+          taskProjectUserDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
+            console.log('Projects/Participants/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskProjectCompDoc.update({ 'complete': true }).then(() => {
+          taskProjectCompDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
+            console.log('Projects/enterprise/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskProjectCompUserDoc.update({ 'complete': true }).then(() => {
+          taskProjectCompUserDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
+            console.log('Projects/enterprise/Participants/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
         }
-        taskRootDoc.update({ 'complete': true }).then(() => {
+        taskRootDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
+          console.log('root/tasks updated');
         }).catch((error) => {
           console.error(error);
         });

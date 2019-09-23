@@ -401,3 +401,20 @@ div.scrollmenu {
   overflow: auto;
   white-space: nowrap;
 }
+
+.impl-flow {
+  /* background-color: #333; */
+  overflow-y: auto;
+  max-height: 420px;
+}
+
+.impl-dpt-flow {
+  /* background-color: #333; */
+  overflow-y: auto;
+  max-height: 10em;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+  color: red;
+}

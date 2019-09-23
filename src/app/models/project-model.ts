@@ -19,15 +19,16 @@ export interface Project {
 }
 
 export interface projectCompDetail { id: string, name: string };
+
 export interface abridgedBill {
-    section:Section,  id: string, name: string, No: number, projectId: string,
+    section: Section,  id: string, name: string, No: number, projectId: string,
     projectName: string, companyId: string, companyName: string, totalAmount: number,
     createdOn: string, UpdatedOn: string
 };
 
 export interface workItem {
-    id: string, uid: string, name: string, unit: string, quantity: number, rate: number, amount: number, billID: string,
-    billName: string, projectId: string, projectName: string, byId: string, by: string, createdOn: string, championName: string, championId: string,
+    id: string, uid: string, name: string, unit: string, quantity: number, rate: number, amount: number, billID: string, championId: string,
+    billName: string, projectId: string, projectName: string, byId: string, by: string, createdOn: string, championName: string,
     UpdatedOn: string, actualData: [actionActualData], workStatus: string, complete: boolean, start: string, end: string,
     startWeek: string, startDay: string, startDate: string, endDay: string, endDate: string, endWeek: string, taskName: string,
     taskId: string, companyName: string, companyId: string, champion: ParticipantData, participants: [ParticipantData],
@@ -36,13 +37,25 @@ export interface workItem {
     actualStart: string, actualEnd: string, Hours: string, selectedWeekWork: boolean, selectedWeekly: boolean
  };
 
+export interface subReport extends workItem { totalHours: number };
+
+// export interface sectWorkItem extends workItem { section: string, sectionNumber: number }
+
 export interface Section {
-    id: string, no: number, name: string, projectId: string, projectName: string, companyId: string, companyName: string, Bills: [abridgedBill],
+    id: string, no: number, name: string, projectId: string, projectName: string, companyId: string, companyName: string,
+    Bills: [abridgedBill], type: string
 }
+
+export interface  subSection {
+    id: string, no: number, name: string, type: string, sectionNo: number, sectionName: string, sectionId: string, projectId: string,
+    projectName: string, companyId: string, companyName: string, Bills: [abridgedBill] 
+}
+
+export interface superSections extends Section { subSections: [subSection] }
 
 export interface workHours {
     name: string; action: string; actionId: string; hours: number, time: string;
-} 
+}
 
 export interface setTime {
     name: string; id: string;

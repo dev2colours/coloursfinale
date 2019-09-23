@@ -67,7 +67,7 @@ export class DashboardComponent implements OnInit {
   thyProjects: any;
   marketProjects: any;
   projs2No: number;
-  viewProjects: any;
+  viewProjects : any[];
   maActivities: any;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore, private ps: ProjectService) {
@@ -76,6 +76,7 @@ export class DashboardComponent implements OnInit {
     //   this.user = user;
     //   this.dataCall();
     // });
+    this.viewProjects = [];
     this.afAuth.authState.subscribe(user => {
       if (user === null) {
         this.router.navigate(['/pages/login']);
@@ -147,17 +148,16 @@ export class DashboardComponent implements OnInit {
     this.userProfile.subscribe(userData => {
       console.log(userData);
       let myData = {
-        name: this.user.displayName,
+        name: userData.name,
         email: this.user.email,
         bus_email: userData.bus_email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
+        phoneNumber: userData.phoneNumber,
         photoURL: this.user.photoURL,
         address: userData.address,
         nationality: userData.nationality,
-        nationalId: userData.nationalId
+        nationalId: userData.nationalId,
       }
-
       if (userData.address == "" || userData.address == null || userData.address == undefined) {
         userData.address = ""
       } else {
@@ -298,17 +298,7 @@ export class DashboardComponent implements OnInit {
       this.thyProjects = projects;
 
       this.projsNo = projects.length;
-      if (this.projsNo == 0) {
-
-        this.showProjs = false;
-        this.hideProjs = true;
-
-      } else {
-
-
-        this.showProjs = true;
-        this.hideProjs = false;
-      }
+      
     });
 
     this.myProjects = myProjects;
@@ -321,17 +311,6 @@ export class DashboardComponent implements OnInit {
       console.log(this.allMyProjects);
       this.viewProjects = projects;
       this.projsNo = projects.length;
-      if (this.projsNo == 0) {
-
-        this.showProjs = false;
-        this.hideProjs = true;
-
-      } else {
-
-
-        this.showProjs = true;
-        this.hideProjs = false;
-      }
     })
   }
 

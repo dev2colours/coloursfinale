@@ -12,8 +12,9 @@ import { CalendarComponent } from './calendar.component';
 import { CalendarRoutes } from './calendar.routing';
 import { MapTaskComponent } from './map-task/map-task.component';
 import { ImplementationComponent } from './implementation/implementation.component';
-import { TimesheetComponent } from './personal-reports/timesheet/timesheet.component';
+// import { TimesheetComponent } from './timesheet/timesheet.component';
 import { PopupComponent } from './popup/popup.component';
+
 import { TotalsActionItemsComponent } from './personal-reports/totals-action-items/totals-action-items.component';
 import { ActivityLogComponent } from './personal-reports/activity-log/activity-log.component';
 import { ClassificationTimesheetComponent } from './classification-timesheet/classification-timesheet.component';
@@ -36,10 +37,14 @@ import { RTimeActualComponent } from './personal-reports/r-time-actual/r-time-ac
     imports: [
         CommonModule,
         RouterModule.forChild(CalendarRoutes),
-        FormsModule, NgSelectModule, NgxChartsModule, TagInputModule,
+        FormsModule, NgSelectModule, NgxChartsModule, TagInputModule
     ],
-    declarations: [CalendarComponent,MapTaskComponent,ImplementationComponent,DiaryComponent,TimesheetComponent, PopupComponent, TotalsActionItemsComponent,
-        ActivityLogComponent,RTimeBudgetComponent,RTimeActualComponent,ClassificationTimesheetComponent,PersonalRdashboardComponent, RActivityLogComponent, RTimeSpentComponent, PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent]
+    declarations: [
+        CalendarComponent, MapTaskComponent, ImplementationComponent, DiaryComponent,
+        // TimesheetComponent,
+        PopupComponent, TotalsActionItemsComponent, ActivityLogComponent, RTimeBudgetComponent, RTimeActualComponent,
+        ClassificationTimesheetComponent, PersonalRdashboardComponent, RActivityLogComponent, RTimeSpentComponent,
+        PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent]
 })
 
 export class CalendarModule {}

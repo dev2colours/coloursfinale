@@ -367,17 +367,15 @@
                   <button class="form-control panel-boader clrs-cell btn-link text-left close" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
                     aria-label="Close" (click)="upDateTime(action);modalRef.hide()">
                     <span class="label text-warning card-category col-md-3" style="width: 20em;">{{ action.start }}</span>
-                    <span class="label card-category col-md-9 ml-auto mr-auto" style="width: 20em;">{{ action.name }}<!-- text-info -->
-                      <!-- <span style="width: 10em;" class="pull-right"><small *ngIf="action.targetQty">Target
-                          <span class="label text-warning">{{ action.targetQty }} {{ action.unit }}</span></small>
-                      </span> -->
+                    <span class="label card-category col-md-9 ml-auto mr-auto" style="width: 20em;">{{ action.name }}
                     </span>
                   </button>
                 </div>
                 <ng-template #showNonChampField>
                   <div class="row">
-                    <div class="col-md-9"><!-- text-info -->
-                      <span class="label text-warning"> {{ action.start }}</span> {{ action.name }}
+                      <span class="label text-warning card-category col-md-3" style="width: 8em;padding-left: 2em">{{ action.start }}</span>
+                    <div class="col-md-6"><!-- text-info -->
+                      {{ action.name }}
                     </div>
                     <div class="col-md-3" style="padding-top: 5px;">
                       <input class="card-category col-form-label" type="checkbox" (change)="updateAction($event, action)">
@@ -509,7 +507,8 @@
                 </div>
                 <ng-template #showNonChampField>
                   <div class="row">
-                    <div class="col-md-9">
+                      <span class="label text-warning card-category col-md-3" style="width: 8em;padding-left: 2em">{{ action.start }}</span>
+                    <div class="col-md-6">
                       {{ item.name }}
                     </div>
                     <div class="col-md-3" style="padding-top: 5px;">

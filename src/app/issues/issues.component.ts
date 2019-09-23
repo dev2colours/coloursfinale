@@ -72,16 +72,16 @@ export class IssuesComponent {
       this.dataCALL();
 
     });
-    this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
-    this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
-    this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+    this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+    this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+    this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
 
-    this.setPersonalreport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
-    this.setEntReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
-    this.setProjReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
-    this.issues = this.afs.collection<report>('PersonalIssues').valueChanges();
-    this.entIssues = this.afs.collection<report>('EnterpriseIssues').valueChanges();
-    this.projIssues = this.afs.collection<report>('ProjectsIssues').valueChanges();
+    this.setPersonalreport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+    this.setEntReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+    this.setProjReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+    this.issues = this.afs.collection<report>('PersonalIssues', ref => ref.orderBy('createdOn', 'desc')).valueChanges();
+    this.entIssues = this.afs.collection<report>('EnterpriseIssues', ref => ref.orderBy('createdOn', 'desc')).valueChanges();
+    this.projIssues = this.afs.collection<report>('ProjectsIssues', ref => ref.orderBy('createdOn', 'desc')).valueChanges();
     this.newCommentPrs = { name: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "" };
     this.newCommentEnt = { name: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "" };
     this.newCommentprj = { name: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "" };
@@ -93,7 +93,7 @@ export class IssuesComponent {
 
   OninitPage() {
     this.newReport = true;
-    this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };      
+    this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };      
   }
 
   addPsnComment(){
@@ -148,7 +148,7 @@ export class IssuesComponent {
 
   OninitEntPage() {
     this.newEnReport = true;
-    this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };    
+    this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };    
   }
 
   initProjPage() {
@@ -157,7 +157,7 @@ export class IssuesComponent {
 
   OninitProjPage() {
     this.newPrReport = true;
-    this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };    
+    this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };    
   }
 
   postIssue(){
@@ -174,14 +174,14 @@ export class IssuesComponent {
           let docId = ref.id;
           this.afs.collection('PersonalIssues').doc(docId).update({ 'id': docId }).then(() => {
             console.log('Issues set');
-            this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+            this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
             this.OninitPage();
 
           }).catch(error => {
             console.log('Issues not saved', error);
           })
           console.log('Issues SAVED');
-          this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+          this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
           this.OninitPage();
 
         }).catch(error => {
@@ -216,13 +216,13 @@ export class IssuesComponent {
           let docId = ref.id;
           this.afs.collection('EnterpriseIssues').doc(docId).update({ 'id': docId }).then(() => {
             console.log(' Enterprise issues set');
-            this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+            this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
             this.OninitEntPage();
           }).catch(error => {
             console.log('Enterprise issues not saved', error);
           })
           console.log('Enterprise issues SAVED');
-          this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+          this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
           this.OninitEntPage();
         }).catch(error => {
           console.log('Enterprise issues not saved', error);
@@ -255,13 +255,13 @@ export class IssuesComponent {
           let docId = ref.id;
           this.afs.collection('ProjectsIssues').doc(docId).update({ 'id': docId }).then(() => {
             console.log('Project issues set');
-            this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+            this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
             this.OninitProjPage();
           }).catch(error => {
             console.log('Project issues not saved', error);
           })
           console.log('Project issues SAVED');
-          this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+          this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
           this.OninitProjPage();
         }).catch(error => {
           console.log('Project issues not saved', error);
@@ -357,17 +357,16 @@ export class IssuesComponent {
     this.userProfile.subscribe(userData => {
       console.log(userData);
       let myData = {
-        name: this.user.displayName,
+        name: userData.name,
         email: this.user.email,
         bus_email: userData.bus_email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
+        phoneNumber: userData.phoneNumber,
         photoURL: this.user.photoURL,
         address: userData.address,
-        nationalId: userData.nationalId,
         nationality: userData.nationality,
+        nationalId: userData.nationalId,
       }
-
     this.myData = myData;
 
 

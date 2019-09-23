@@ -153,6 +153,8 @@ export class MapTaskComponent {
   myDocument: AngularFirestoreDocument<{}>;
   userData: coloursUser;
   myData: ParticipantData;
+  tss: Task;
+  compId: string;
 
   constructor(public auth: AuthService, private is: InitialiseService, private pns: PersonalService, private ts: TaskService, public afAuth: AngularFireAuth, public es: EnterpriseService, public afs: AngularFirestore, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
     
@@ -177,7 +179,7 @@ export class MapTaskComponent {
     this.currentDay = moment(new Date(), "DD-MM-YYYY").dayOfYear();
     this.currentDate = moment(new Date(), "DD-MM-YYYY");
     console.log(this.currentDate.format('L'));
-
+    this.tss = is.getSelectedTask();
 
     // this.testDay = moment(new Date().toISOString(), "DD-MM-YYYY").dayOfYear();
     console.log(moment().add(2, 'Q').toString());
@@ -254,7 +256,7 @@ export class MapTaskComponent {
 
   }
 
-  deleteTask(task){
+  deleteTask_Old(task){
     console.log(task);
     
     let taskId = task.id;
@@ -264,6 +266,66 @@ export class MapTaskComponent {
     this.afs.collection('Users').doc(this.userId).collection('tasks').doc(taskId).delete();
     this.afs.collection('Users').doc(this.task.champion.id).collection('tasks').doc(taskId).delete();
     this.afs.collection('Users').doc(task.champion.id).collection('WeeklyTasks').doc(taskId).delete();
+  }
+
+  deleteTask() {
+
+    let task = this.tss;
+    console.log(task);
+
+    // let compId = tss.companyId;
+    this.compId = this.tss.companyId;
+    console.log(task.name + " " + "Removed");
+
+    let taskId = this.tss.id;
+
+    if (task.byId === task.champion.id) {
+      this.afs.collection('Users').doc(task.champion.id).collection('tasks').doc(taskId).delete().catch(error => { console.log(error) });
+    } else {
+      this.afs.collection('Users').doc(task.byId).collection('tasks').doc(taskId).delete().catch(error => { console.log(error) });
+      this.afs.collection('Users').doc(task.champion.id).collection('tasks').doc(taskId).delete().catch(error => { console.log(error) });
+    }
+
+    this.afs.collection('Users').doc(task.champion.id).collection('WeeklyTasks').doc(taskId).delete().catch(error => { console.log(error) });
+
+    if (task.departmentId != "") {
+      let entRef = this.afs.collection('Enterprises').doc(this.compId).collection('tasks').doc(this.tss.id);
+      let entDeptRef = this.afs.collection('Enterprises').doc(this.compId).collection('departments').doc(task.departmentId).collection('tasks').doc(this.tss.id);
+      let userEntDeptRef = this.afs.collection('Enterprises').doc(this.compId).collection('departments').doc(task.departmentId).collection('Participants')
+        .doc(task.champion.id).collection('tasks').doc(this.tss.id);
+      userEntDeptRef.delete();
+      entDeptRef.delete();
+      entRef.delete().catch(error => { console.log(error) });
+
+      console.log('deleted from Department succesfully');
+
+    }
+
+    else {
+      console.log('No Department selected');
+      // what happens if projectID is personal
+    }
+
+    if (task.projectId != "") {
+
+      let entProjRef = this.afs.collection('Enterprises').doc(this.compId).collection('projects').doc(task.projectId).collection('tasks');
+      let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
+      let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(this.compId).collection('tasks');
+
+      let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
+      let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+
+      entProjRef.doc(this.tss.id).delete().catch(error => { console.log(error) });
+      projectsRef.doc(this.tss.id).delete().catch(error => { console.log(error) });
+      projectCompanyRef.doc(this.tss.id).delete().catch(error => { console.log(error) });
+      userProjRef.doc(this.tss.id).delete().catch(error => { console.log(error) });
+      champProjRef.doc(this.tss.id).delete().catch(error => { console.log(error) });
+      console.log('deleted from Project successfully');
+    } else {
+      console.log('No Project selected');
+      // what happens if projectID is personal
+    }
+    this.tss = { name: "", update: "", champion: null, projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: null, id: "", participants: null, status: "", classification: null, selectedWeekly: false, championName: "", championId: "" };
   }
 
    newTask(){
@@ -333,7 +395,7 @@ export class MapTaskComponent {
      });    
 
     //  this.task = this.is.getTask();
-     this.task = { name: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
+     this.task = { name: "", update: "", champion: null, championName: "", championId: "", projectName: "", department: "", departmentId: "", start: "", startDay: "", startWeek: "", startMonth: "", startQuarter: "", startYear: "", finish: "", finishDay: "", finishWeek: "", finishMonth: "", finishQuarter: "", finishYear: "", by: "", createdOn: "", projectId: "", byId: "", projectType: "", companyName: "", companyId: "", trade: "", section: null, complete: false, id: "", participants: null, status: "", classification: null, selectedWeekly: false };
     //  this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
      this.myChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
   }
@@ -352,17 +414,16 @@ export class MapTaskComponent {
     this.userProfile.subscribe(userData => {
       console.log(userData);
       let myData = {
-        name: this.user.displayName,
+        name: userData.name,
         email: this.user.email,
         bus_email: userData.bus_email,
         id: this.user.uid,
-        phoneNumber: this.user.phoneNumber,
+        phoneNumber: userData.phoneNumber,
         photoURL: this.user.photoURL,
         address: userData.address,
-        nationalId: userData.nationalId,
         nationality: userData.nationality,
+        nationalId: userData.nationalId,
       }
-
       if (userData.address == "" || userData.address == null || userData.address == undefined) {
         userData.address = ""
       } else {
@@ -555,6 +616,13 @@ export class MapTaskComponent {
       this.btnCompany = "Hide";
     else
       this.btnCompany = "Show";
+  }
+  
+  setDel(tss: Task) {
+    this.tss = tss;
+
+    console.log(this.tss.name);
+    console.log(tss.name);
   }
 
   selectColoursUser(x) {
@@ -928,12 +996,19 @@ export class MapTaskComponent {
   }
 
   viewDateTasks(testPeriod, checkPeriod) {
+    let projCollection = this.myDocument.collection('projects');
+
     // this.viewTasks = this.afs.collection('Users').doc(this.userId).collection('tasks', ref => { return ref.where(testPeriod, '==', checkPeriod) }).snapshotChanges().pipe(
     let viewTasksRef = this.afs.collection('Users').doc(this.userId);
     this.viewTasks = viewTasksRef.collection('tasks', ref => { return ref.where(testPeriod, '==', checkPeriod) }).snapshotChanges().pipe(
       map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as Task;
+        let data = a.payload.doc.data() as Task;
         const id = a.payload.doc.id;
+        if (data.projectName === '' && data.projectId !== '') {
+          projCollection.doc(data.projectId).ref.get().then(function (prj) {
+            data.projectName = prj.data().name;
+          })
+        }
         return { id, ...data };
       }))
     );
@@ -941,6 +1016,7 @@ export class MapTaskComponent {
   }
 
   mviewDateTasks(testPeriod, checkPeriod, year) {
+    let projCollection = this.myDocument.collection('projects');
 
     let viewTasksRef = this.afs.collection('Users').doc(this.userId);
     this.viewTasks = viewTasksRef.collection('tasks', ref => ref
@@ -948,8 +1024,13 @@ export class MapTaskComponent {
       .where('startYear', '==', year))
       .snapshotChanges().pipe(
         map(actions => actions.map(a => {
-          const data = a.payload.doc.data() as Task;
+          let data = a.payload.doc.data() as Task;
           const id = a.payload.doc.id;
+          if (data.projectName === '' && data.projectId !== '') {
+            projCollection.doc(data.projectId).ref.get().then(function (prj) {
+              data.projectName = prj.data().name;
+            })
+          }
           return { id, ...data };
         }))
       );

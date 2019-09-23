@@ -28,7 +28,7 @@ let misc: any = {
     navbar_menu_visible: 0,
     active_collapse: true,
     disabled_collapse_init: 0,
-}
+};
 
 @Component({
     moduleId: module.id,
@@ -141,6 +141,7 @@ export class NavbarComponent implements OnInit {
         this.chartdata = false;
         this.page2 = false;
         this.page1 = true;
+        this.playIntoAudio();
         this.applicant = {
             company: is.initCompwithRoles(), department: is.getDeptInit(), dataId: "",
             email: "", bus_email: "", id: "", name: "", phoneNumber: "",
@@ -268,17 +269,16 @@ export class NavbarComponent implements OnInit {
         this.userProfile.subscribe(userData => {
             console.log(userData);
             let myData = {
-                name: this.user.displayName,
+                name: userData.name,
                 email: this.user.email,
                 bus_email: userData.bus_email,
                 id: this.user.uid,
                 phoneNumber: userData.phoneNumber,
                 photoURL: this.user.photoURL,
                 address: userData.address,
+                nationality: userData.nationality,
                 nationalId: userData.nationalId,
-                nationality: userData.nationality
             }
-
             if (userData.address == "" || userData.address == null || userData.address == undefined || userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined || userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined || 
                 userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined || userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
                 this.showNotification('dataNotify', 'top', 'right');                                        
@@ -2018,7 +2018,11 @@ export class NavbarComponent implements OnInit {
 
     public openModal(template: TemplateRef<any>,) {
         
-        this.modalRef = this.ngModalService.show(template);
+        this.modalRef = this.ngModalService.show(template); 
+        this.myDocument.ref.get().then(() =>{
+            this.playAudio();
+        })
+        
     }
 
     openBackDropCustomClass(content) {
@@ -2185,7 +2189,14 @@ export class NavbarComponent implements OnInit {
 
     playAudio() {
         let audio = new Audio();
-        audio.src = "../../../assets/audio/Spaceline.ogg";
+        audio.src = "../../../assets/audio/nfl.mp3";
+        audio.load();
+        audio.play();
+    }
+
+    playIntoAudio() {
+        let audio = new Audio();
+        audio.src = "../../../assets/audio/lg.mp3";
         audio.load();
         audio.play();
     }
@@ -2214,7 +2225,7 @@ export class NavbarComponent implements OnInit {
                         // if (this.timedstamp % 60 === 0) {
                         if (this.nMin % 30 === 0 && this.nSecs === 0) {
                             this.playAudio();
-                            // this.playAudio();
+                            // this.playAudio.sound.play1();
                             this.openModal(this.template2);
                             this.BtnPopClicked = false;
                             this.unattendedModal();
@@ -2248,6 +2259,7 @@ export class NavbarComponent implements OnInit {
         let fullTym = tHours +':'+ tMinutes;
 
         console.log(" theTime is" + fullTym);
+        this.playAudio();
         setTimeout(() => {
             this.modalRef.hide();
             let work = {

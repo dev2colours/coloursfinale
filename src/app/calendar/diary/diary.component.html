@@ -62,13 +62,14 @@
                   </div>
                   <ng-template #showNonChampField>
                     <div class="row">
-                      <div class="col-md-9 text-info">
+                    <span class="label text-warning card-category col-md-3" style="width: 20em;padding-left: 2em">{{ item.start }}</span>
+                      <div class="col-md-6 text-info">
                         {{ item.name }}
                       </div>
                       <div class="col-md-3" style="padding-top: 5px;">
                         <input class="card-category col-form-label" type="checkbox" (change)="updateAction($event, item)">
                       </div>
-                    </div>
+                    </div><hr>
                   </ng-template>
                 </li>
               </ol>
@@ -92,7 +93,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-7">
+          <!-- <div class="col-md-7">
             <ngx-charts-pie-chart *ngIf = "chartdata"
               [view]="view"
               [scheme]="colorScheme"
@@ -102,8 +103,40 @@
               [labels]="showLabels"
               [doughnut]="doughnut"
               (select)="onSelect($event)">
-            </ngx-charts-pie-chart><!-- [labels]="showLabels" -->
-          </div>
+            </ngx-charts-pie-chart>
+          </div> -->
+          <div class="col-md-7">
+              <div class="row">
+                <ngx-charts-pie-chart *ngIf = "chartdata"
+                  [view]="view"
+                  [scheme]="colorScheme"
+                  [results]="workItemData"
+                  [legend]="showLegend"
+                  [explodeSlices]="explodeSlices"
+                  [labels]="showLabels"
+                  [doughnut]="doughnut"
+                  (select)="onSelect($event)">
+                </ngx-charts-pie-chart>
+              </div>
+              <div class="row">
+                <ngx-charts-line-chart
+                  [view]="view"
+                  [scheme]="colorScheme"
+                  [results]="multi"
+                  [gradient]="gradient"
+                  [xAxis]="showXAxis"
+                  [yAxis]="showYAxis"
+                  [legend]="showLegend"
+                  [showXAxisLabel]="showXAxisLabel"
+                  [showYAxisLabel]="showYAxisLabel"
+                  [xAxisLabel]="xAxisLabel"
+                  [yAxisLabel]="yAxisLabel"
+                  [autoScale]="autoScale"
+                  (select)="onSelect($event)">
+                </ngx-charts-line-chart>
+              </div>
+    
+            </div>
         </div>
         <div class="row">
           <div class="col-md-10 ml-auto mr-auto" *ngIf="actNumber == 0">

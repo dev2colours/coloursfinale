@@ -31,7 +31,7 @@ import { EnterpriseRptsComponent } from 'app/enterprise-rpts/enterprise-rpts.com
     declarations: [CompanyComponent,
         JoinEnterpriseComponent, 
         EnterpriseViewComponent,
-         EnterpriseProfileComponent,
+        EnterpriseProfileComponent,
         SetupComponent, CreateComponent, 
         CreateEnterpriseComponent,
         EnterpriseRptsComponent,

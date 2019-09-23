@@ -8,8 +8,8 @@
                             <ul id="tabs" class="nav nav-tabs" role="tablist">
                                 <!-- <li class="nav-item">
                                     <a class="nav-link active" data-toggle="tab" href="#project" role="tab" aria-expanded="true">Projects</a>
-                                </li> -->
-                                <!-- <li class="nav-item">
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link" data-toggle="tab" href="#company" role="tab" aria-expanded="false">Enterprise</a>
                                 </li> -->
                                 <li class="nav-item">
@@ -35,7 +35,8 @@
                                     <div *ngIf="pSecondPage" class="col-md-12">
                                         <div class="card-header ">
                                             <div class="row">
-                                                <h5 class="title na-am">{{ project.name }} <br> <small>Add Project Description</small></h5>
+                                                <h5 class="title na-am">{{ project.name }} <br> <small>Add Project
+                                                        Description</small></h5>
                                             </div>
                                         </div>
                                     </div>
@@ -44,7 +45,8 @@
                                             <div class="row">
                                                 <label class="col-md-3 col-form-label">Project Name</label>
                                                 <div class="col-md-9">
-                                            <p *ngIf="projectNameFieldStatus" class="category text-danger" style="margin-top:-1em; cursor: pointer;">Name Required</p>
+                                                    <p *ngIf="projectNameFieldStatus" class="category text-danger"
+                                                        style="margin-top:-1em; cursor: pointer;">Name Required</p>
                                                     <div class="form-group">
                                                         <input type="text" [(ngModel)]="project.name" name="enterprise_name"
                                                             class="form-control" placeholder="e.g..Bob Corp">
@@ -54,7 +56,8 @@
                                             <div class="row">
                                                 <label class="col-md-3 col-form-label">Industry Sector</label>
                                                 <div class="col-md-9">
-                                                    <p *ngIf="projectSectorFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Sector Required</p>
+                                                    <p *ngIf="projectSectorFieldStatus" class="category text-danger"
+                                                        style="margin-bottom:0em; cursor: pointer;">Sector Required</p>
                                                     <div class="form-group">
                                                         <input type="text" [(ngModel)]="project.sector" class="form-control"
                                                             placeholder="e.g..Transport">
@@ -64,7 +67,8 @@
                                             <div class="row">
                                                 <label class="col-md-3 col-form-label">Location</label>
                                                 <div class="col-md-9">
-                                                    <p *ngIf="projectLocationFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Location Required</p>
+                                                    <p *ngIf="projectLocationFieldStatus" class="category text-danger"
+                                                        style="margin-bottom:0em; cursor: pointer;">Location Required</p>
                                                     <div class="form-group">
                                                         <input type="text" [(ngModel)]="project.location" name="enterprise_location"
                                                             class="form-control" placeholder="e.g..Mutare">
@@ -74,10 +78,12 @@
                                             <div class="row">
                                                 <label class="col-md-3 col-form-label">Project Type</label>
                                                 <div class="col-md-9">
-                                                <p *ngIf="projectTypeFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Type Required</p>
+                                                    <p *ngIf="projectTypeFieldStatus" class="category text-danger"
+                                                        style="margin-bottom:0em; cursor: pointer;">Type Required</p>
                                                     <div class="form-group">
-                                                        <ng-select [items]="projectType" title="Select Project Type" bindLabel="name" name="ptype" placeholder="Project Type" (change)="checkType(typeSet)"
-                                                            [(ngModel)]="typeSet">
+                                                        <ng-select [items]="projectType" title="Select Project Type"
+                                                            bindLabel="name" name="ptype" placeholder="Project Type"
+                                                            (change)="checkType(typeSet)" [(ngModel)]="typeSet">
                                                         </ng-select>
                                                     </div>
                                                 </div>
@@ -85,10 +91,12 @@
                                             <div class="row" *ngIf="showComp">
                                                 <label class="col-md-3 col-form-label">Select Company</label>
                                                 <div class="col-md-9">
-                                                    <p *ngIf="projectCompanyFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Company Required</p>
+                                                    <p *ngIf="projectCompanyFieldStatus" class="category text-danger"
+                                                        style="margin-bottom:0em; cursor: pointer;">Company Required</p>
                                                     <div class="form-group">
-                                                        <ng-select [items]="myEnterprises | async" title="Select Company" bindLabel="name" name="pCompany" placeholder="Company" (change)="showCompanyTeam(setCompany)"
-                                                            [(ngModel)]="setCompany">
+                                                        <ng-select [items]="myEnterprises | async" title="Select Company"
+                                                            bindLabel="name" name="pCompany" placeholder="Company"
+                                                            (change)="showCompanyTeam(setCompany)" [(ngModel)]="setCompany">
                                                         </ng-select>
                                                     </div>
                                                 </div>
@@ -96,19 +104,21 @@
                                             <div class="row" *ngIf="showComp">
                                                 <label class="col-md-3 col-form-label">Select Champion</label>
                                                 <div class="col-md-9">
-                                                    <p *ngIf="projectCompCampFieldStatus" class="category text-danger" style="margin-bottom:0em; cursor: pointer;">Champ Required</p>
+                                                    <p *ngIf="projectCompCampFieldStatus" class="category text-danger"
+                                                        style="margin-bottom:0em; cursor: pointer;">Champ Required</p>
                                                     <div class="form-group">
-                                                        <ng-select [items]="comWorkers | async" title="Select Company" bindLabel="name" name="pChampion" placeholder="Champion" (change)="setNext(setChampion)"
-                                                            [(ngModel)]="setChampion">
+                                                        <ng-select [items]="comWorkers | async" title="Select Company"
+                                                            bindLabel="name" name="pChampion" placeholder="Champion"
+                                                            (change)="setNext(setChampion)" [(ngModel)]="setChampion">
                                                         </ng-select>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row" *ngIf="showComp">
-                                            <label class="col-md-3 col-form-label">Roles</label>
-                                            <div class="col-md-9">
-                                                <tag-input [(ngModel)]='roles' theme='minimal'></tag-input>
-                                            </div>
+                                                <label class="col-md-3 col-form-label">Roles</label>
+                                                <div class="col-md-9">
+                                                    <tag-input [(ngModel)]='roles' theme='minimal'></tag-input>
+                                                </div>
                                             </div>
                                             <div class="card-footer" *ngIf="showNext">
                                                 <div class="row">
@@ -117,7 +127,7 @@
                                                     </div>
                                                     <div class="col-md-1 mr-auto">
                                                         <button type="submit" (click)="testProjectFilds(project, typeSet, setCompany, setChampion)"
-                                                         name="enterprise_sector" class="btn-link">Next</button>
+                                                            name="enterprise_sector" class="btn-link">Save</button>
                                                     </div><!-- (click)="saveProject()" -->
                                                 </div>
                                             </div>
@@ -132,18 +142,19 @@
                                                         <span class="col-md-4">{{ xsection.no }}</span>
                                                         <span class="col-md-8"> {{ xsection.name }}</span>
                                                         <span>
-                                                            <button class="btn-link" (click)="deleteSection(xsection)"><i class="fa fa-times"></i></button>
+                                                            <button class="btn-link" (click)="deleteSection(xsection)"><i
+                                                                    class="fa fa-times"></i></button>
                                                         </span><br>
                                                     </p>
                                                 </div>
                                             </div>
-                                            <p>Create Sections for the Project</p>   
+                                            <p>Create Sections for the Project</p>
                                             <div class="row" rel="tooltip" title="Section No">
                                                 <label class="col-md-3 col-form-label">No</label>
                                                 <div class="col-md-9">
                                                     <div class="form-group">
-                                                        <input type="number" [(ngModel)]="section.no" name="enterprise_location" class="form-control"
-                                                            placeholder="e.g   1,2,3....">
+                                                        <input type="number" [(ngModel)]="section.no" name="enterprise_location"
+                                                            class="form-control" placeholder="e.g   1,2,3....">
                                                     </div>
                                                 </div>
                                             </div>
@@ -151,8 +162,8 @@
                                                 <label class="col-md-3 col-form-label">Name</label>
                                                 <div class="col-md-9">
                                                     <div class="form-group">
-                                                        <input type="text" [(ngModel)]="section.name" name="enterprise_location" class="form-control"
-                                                            placeholder="e.g. Section Name">
+                                                        <input type="text" [(ngModel)]="section.name" name="enterprise_location"
+                                                            class="form-control" placeholder="e.g. Section Name">
                                                     </div>
                                                 </div>
                                             </div>
@@ -167,8 +178,9 @@
                                                     <div class="col-md-3">
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <button type="submit" name="nextBtn" (click)="pBckPage()" class="btn-link text-info">Dismiss</button>                                                    
-                                                        <button type="submit" (click)="finish()" name="enterprise_sector" class="btn-link">Save</button>
+                                                        <button type="submit" name="nextBtn" (click)="pBckPage()" class="btn-link text-info">Dismiss</button>
+                                                        <button type="submit" (click)="finish()" name="enterprise_sector"
+                                                            class="btn-link">Save</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -177,7 +189,8 @@
                                     <div class="col-md-12">
                                         <div class="card-footer ">
                                             <div class="row">
-                                                <h5 class="title na-am">Or Join Existing Project <a routerLink="/join-project"> <small> click to join </small></a></h5>
+                                                <h5 class="title na-am">Or Join Existing Project <a routerLink="/join-project">
+                                                        <small> click to join </small></a></h5>
                                             </div>
                                         </div>
                                     </div>
@@ -202,13 +215,12 @@
                                     <div *ngIf="firstPage" class="col-md-10 ml-auto mr-auto">
                                         <div class="card-body">
                                             <div class="row">
-                                                <label class="col-md-3 col-form-label">Enterprise Name</label>
+                                                <label class="col-md-3 col-form-label">Company Name</label>
                                                 <div class="col-md-9">
                                                     <div class="form-group">
                                                         <input type="text" [(ngModel)]="newEnterprise.name" name="enterprise_name"
                                                             class="form-control" placeholder="e.g..Bob Corp">
                                                     </div>
-                                                    <p *ngIf="entName" class="category text-danger pull-right"><small>Enterprise name required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -218,7 +230,6 @@
                                                         <input type="text" [(ngModel)]="newEnterprise.location" name="enterprise_location"
                                                             class="form-control" placeholder="e.g..Mutare">
                                                     </div>
-                                                <p *ngIf="entLocation" class="category text-danger"><small>Locarion required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -228,7 +239,6 @@
                                                         <input type="text" [(ngModel)]="newEnterprise.sector" class="form-control"
                                                             placeholder="e.g..Transport">
                                                     </div>
-                                                    <p *ngIf="entSector" class="category text-danger"><small>Sector required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -236,14 +246,13 @@
                                                 <div class="col-md-9">
                                                     <tag-input [(ngModel)]='serviceTags' theme='minimal'></tag-input>
                                                 </div>
-                                                <p *ngIf="entServices" class="category text-danger"><small>Services required</small></p>
                                             </div>
                                         </div>
                                         <div class="card-footer ">
                                             <div class="row">
                                                 <label class="col-md-3"></label>
                                                 <div class="col-md-9">
-                                                    <button type="submit" name="nextBtn" (click)="nxtPage()" class="btn-link text-info" >Next</button>
+                                                    <button type="submit" name="nextBtn" (click)="nxtPage()" class="btn-link text-info">Next</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -257,7 +266,6 @@
                                                         <input type="text" [(ngModel)]="newEnterprise.telephone" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. 06 66666666">
                                                     </div>
-                                                    <p *ngIf="telMsg" class="category text-danger pull-right"><small>Telephone required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -267,7 +275,6 @@
                                                         <input type="text" [(ngModel)]="compUser.phoneNumber" name="enterprise_location" class="form-control"
                                                             placeholder="e.g. +263778880000">
                                                     </div>
-                                                    <p *ngIf="mobileMsg" class="category text-danger"><small>Your Mobile required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -277,7 +284,6 @@
                                                         <input type="text" [(ngModel)]="newEnterprise.address" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. House#, street, location ,Town">
                                                     </div>
-                                                    <p *ngIf="addressMsg" class="category text-danger"><small>Address required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -287,7 +293,6 @@
                                                         <input type="email" [(ngModel)]="compUser.bus_email" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. name@bus_email.com">
                                                     </div>
-                                                    <p *ngIf="emailMsg" class="category text-danger"><small>Email required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -297,7 +302,6 @@
                                                         <input type="text" [(ngModel)]="compUser.nationality" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. Zimbabwe">
                                                     </div>
-                                                    <p *ngIf="countryMsg" class="category text-danger"><small>Country required</small></p>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -307,10 +311,8 @@
                                                         <input type="text" [(ngModel)]="compUser.nationalId" name="enterprise_location"
                                                             class="form-control" placeholder="e.g. 08-1112389 N13">
                                                     </div>
-                                                    <p *ngIf="nidMsg" class="category text-danger pull-right"><small>National ID required</small></p>
                                                 </div>
                                             </div>
-
                                             <!-- <div class="row">
                                                 <label class="col-md-3 col-form-label">Tax Clearance Doc</label>
                                                 <div class="col-md-9">
@@ -325,7 +327,7 @@
                                                 <div class="col-md-3">
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <button type="submit" name="nextBtn" (click)="bckPage()" class="btn-link text-info">Back</button>                                                    
+                                                    <button type="submit" name="nextBtn" (click)="bckPage()" class="btn-link text-info">Back</button>
                                                     <!-- <button type="submit" (click)="saveEnterprise()" name="enterprise_sector" class="btn-link text-info">Save company</button> -->
                                                     <button type="submit" (click)="testFileds()" name="enterprise_sector" class="btn-link text-info">Save company</button>
                                                 </div>
@@ -336,9 +338,10 @@
                                         <div class="card-footer ">
                                             <div class="row">
                                                 <!-- <div class="col-md-8 ml-auto mr-auto"> -->
-                                                    <h5 class="title na-am">Or Join an existing Company <small><span>
-                                                        <button class="btn-link" routerLink="/enterprises/join-enterprise">click here</button></span></small>
-                                                    </h5>
+                                                <h5 class="title na-am">Or Join an existing Company <small><span>
+                                                            <button class="btn-link" routerLink="/enterprises/join-enterprise">click
+                                                                here</button></span></small>
+                                                </h5>
                                                 <!-- </div>
                                                 <div class="col-md-4 mr-auto ml-auto" style="margin-right:0em">
                                                     <button type="submit" style="padding-right:0em" class="pull-left primary btn-link" routerLink="/enterprises/join-enterprise">Join existing Enterprise</button>
@@ -412,7 +415,8 @@
             <div class="modal-body">
                 <div class="row">
                     <p *ngFor="let xsection of theSections | async">
-                        <span class="col-md-4">{{ xsection.no }}</span><span class="col-md-8"> {{ xsection.name }}</span><span><button class="btn-link" (click)="deleteSection(xsection)"><i class="fa fa-times"></i></button></span><br>
+                        <span class="col-md-4">{{ xsection.no }}</span><span class="col-md-8"> {{ xsection.name }}</span><span><button
+                                class="btn-link" (click)="deleteSection(xsection)"><i class="fa fa-times"></i></button></span><br>
                     </p>
                 </div>
                 <p>Create Sections for the Project</p>
@@ -420,17 +424,17 @@
                     <label class="col-md-3 col-form-label">No</label>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <input type="number" [(ngModel)]="section.no" name="enterprise_location"
-                                class="form-control" placeholder="e.g   1,2,3....">
+                            <input type="number" [(ngModel)]="section.no" name="enterprise_location" class="form-control"
+                                placeholder="e.g   1,2,3....">
                         </div>
                     </div>
                 </div>
-                <div class="row"  rel="tooltip" title="Section Nameo">
+                <div class="row" rel="tooltip" title="Section Nameo">
                     <label class="col-md-3 col-form-label">Name</label>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <input type="text" [(ngModel)]="section.name" name="enterprise_location"
-                                class="form-control" placeholder="e.g. Section Name">
+                            <input type="text" [(ngModel)]="section.name" name="enterprise_location" class="form-control"
+                                placeholder="e.g. Section Name">
                         </div>
                     </div>
                 </div>

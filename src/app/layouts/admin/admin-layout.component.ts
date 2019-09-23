@@ -6,6 +6,8 @@ import { Location, LocationStrategy, PathLocationStrategy, PopStateEvent, Platfo
 import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import PerfectScrollbar from 'perfect-scrollbar';
 
+declare var $: any;
+
 @Component({
     selector: 'app-layout',
     templateUrl: './admin-layout.component.html'
@@ -24,7 +26,18 @@ export class AdminLayoutComponent implements OnInit {
       this.location = location;
     }
 
+    // checkFullPageBackgroundImage() {
+    //     var $page = $('.full-page');
+    //     var image_src = $page.data('image');
+
+    //     if (image_src !== undefined) {
+    //         var image_container = '<div class="full-page-background" style="background-image: url(' + image_src + ') "/>'
+    //         $page.append(image_container);
+    //     }
+    // };
+
     ngOnInit() {
+    //   this.checkFullPageBackgroundImage();
       const elemMainPanel = <HTMLElement>document.querySelector('.main-panel');
       const elemSidebar = <HTMLElement>document.querySelector('.sidebar .sidebar-wrapper');
       this.location.subscribe((ev:PopStateEvent) => {

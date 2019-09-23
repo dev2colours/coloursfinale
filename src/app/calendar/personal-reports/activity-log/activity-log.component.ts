@@ -102,17 +102,13 @@ export class ActivityLogComponent implements OnInit {
 
 
         let myActs = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(element.id).collection<workItem>('actionItems');
-        this.viewPeriodTimeSheets = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(element.id).collection<rpt>('actionItems').snapshotChanges().pipe(
+        this.viewPeriodTimeSheets = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(element.id).collection<rpt>('actionItems', ref => ref.orderBy('actualStart', 'desc')).snapshotChanges().pipe(
           map(b => b.map(a => {
             let data = a.payload.doc.data() as rpt;
             const id = a.payload.doc.id;
             let workStatus = 0;
             let mlapsdata: number;
             const strtTym = data.actualStart;
-            
-
-            // let mlapsdata
-            // data.Hours = String(moment(moment(data.actualStart).diff(moment(data.actualEnd))).format('hh:mm:ss'));
 
             if (data.name !== 'Lapsed') {
 
@@ -122,8 +118,6 @@ export class ActivityLogComponent implements OnInit {
               data.actualEnd = String(moment(data.actualEnd).format('MMMM Do YYYY, h:mm:ss a'));
 
               console.log('end,', data.actualEnd);
-              // myActs.doc(id).update({ 'actualStart': data.actualStart });
-              // myActs.doc(id).update({ 'actualEnd': data.actualEnd });
               let tot = 0;
               if (data.workHours !== null) {
                 data.workHours.forEach(element => {
@@ -132,11 +126,8 @@ export class ActivityLogComponent implements OnInit {
               } else {
 
               }
-              // tot = data.workHours.length
               console.log(tot);
               console.log(moment(strtTym).add(tot, 'h'));
-
-              // data.Hours = String(moment(moment(data.actualStart).diff(moment(data.actualEnd))).format('hh'));
               data.Hours = String(moment(strtTym).add(tot, 'h').format('hh'));
               console.log(data.Hours);
             }
@@ -221,7 +212,7 @@ export class ActivityLogComponent implements OnInit {
     this.ActionArrayAll = []
     this.actionItemsTotals.subscribe(dateSheets => {
       dateSheets.forEach(element => {
-
+         
 
         let myLapses = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(element.id).collection<workItem>('actionItems');
         this.viewPeriodTimeSheets = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(element.id).collection<rpt>('actionItems').snapshotChanges().pipe(
