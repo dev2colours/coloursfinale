@@ -81,10 +81,42 @@
                             <td class="text-left tab-cell">{{ enterprise.sector }}</td>
                             <td class="text-left tab-cell">{{ enterprise.location }}</td>
                             <td class="text-center">
-                              <button class="success btn-link join" rel="tooltip" title="Connect to {{enterprise.name}}"
+                              
+                              <!-- <button class="success btn-link join" rel="tooltip" title="Connect to {{enterprise.name}}"
                                 (click)="selectCompany(enterprise)" data-toggle="modal" data-target="#deptModal">
                                 <font size=2>select</font>
+                              </button> -->
+                              <button hidden  style=" 
+                              padding-top: 2px;
+                              padding-bottom: 2px;
+                              padding-left: 13px;
+                              padding-right: 13px;"
+                              class="btn btn-outline-primary btn-round" rel="tooltip" title="Connect to {{enterprise.name}}"
+                              (click)="selectCompany(enterprise)" data-toggle="modal" data-target="#deptModal">
+                              <small><b>Join</b></small>
                               </button>
+
+                              <button style=" 
+                              white-space: nowrap;
+                              padding-top: 2px;
+                              padding-bottom: 2px;
+                              padding-left: 13px;
+                              padding-right: 13px;"
+                              class="btn btn-outline-primary btn-round" rel="tooltip" title="Connect to {{enterprise.name}}"
+                              (click)="selectCompany(enterprise)" data-toggle="modal" data-target="#deptModal">
+                              <small><b>Request Sent</b></small>
+                              </button>
+
+                              <button hidden  style=" 
+                              padding-top: 2px;
+                              padding-bottom: 2px;
+                              padding-left: 13px;
+                              padding-right: 13px;"
+                              class="btn btn-outline-primary btn-round" rel="tooltip" title="Connect to {{enterprise.name}}"
+                              (click)="selectCompany(enterprise)" data-toggle="modal" data-target="#deptModal">
+                              <small><b>Member</b></small>
+                              </button>
+                            <!-- </td> -->
                           </tr>
                         </tbody>
                       </table>

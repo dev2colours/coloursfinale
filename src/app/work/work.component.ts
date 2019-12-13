@@ -107,20 +107,25 @@ export class WorkComponent implements OnInit {
   // public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'photo' });
   // public uploader: FileUploader = new FileUploader({});
 
-  constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private es: EnterpriseService, private authService: AuthService, private ps: ProjectService, private afs: AngularFirestore) {
+  constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private es: EnterpriseService,
+    private authService: AuthService, private ps: ProjectService, private afs: AngularFirestore) {
+
     this.project = is.getSelectedProject();
     this.section = is.getSectionInit();
     this.initArray = [];
-    this.initService = { display: "", value: "" }
+    this.initService = { display: '', value: "" }
     this.serviceTags = null;
     // this.newEnterprise = is.getnewEnterprise();
-    this.newEnterprise = { name: "", by: "", byId: "", createdOn: "", updatedStatus: false, id: "", location: "", bus_email: "", sector: "", participants: null, champion: this.userChampion, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
+    this.newEnterprise = {name: '', IndustrialSectorDocument: '', createdOn: '', updatedStatus: false, id: '', bus_email: '', location: '',
+    participants: null, champion: null, address: '', telephone: '', services: null, taxDocument: '', HnSDocument: '', by: '', byId: '',
+    targetMonthlyIncome: '', actualMonthlyIncome: '', balanceSheet: '', actualAnnualIncome: '', targetAnnualIncome: '', sector: ''};
     this.taxDocument = null;
     // this.newEnterprise.services = [null];
     console.log('init newCompany services' + this.newEnterprise.services);
 
-    this.compUser = { bus_email: "", nationality: "", nationalId: "", phoneNumber: "" };
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
+    this.compUser = { bus_email: '', nationality: '', nationalId: '', phoneNumber: "" };
+    this.userChampion = { name: '', id: '', email: '', bus_email: '', phoneNumber: '', photoURL: '', address: '', nationalId: '',
+    nationality: '' };
 
     console.log(this.afAuth.user);
 
@@ -449,7 +454,7 @@ export class WorkComponent implements OnInit {
     }).then(() => {
       nrouter.navigate(['projects/', project.id]);
     });
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+    this.project = { name: '', type: '', by: '', byId: '', companyName: '', companyId: '', champion: null, createdOn: '', id: '', location: '', sector: '', completion: "" };
     this.setProject(project);
     // this.pNxtPage();
   }
@@ -483,24 +488,33 @@ export class WorkComponent implements OnInit {
     // this.setCompany = this.is.getSelectedCompany();
     // this.savedProject = this.is.getSelectedProject();
     // this.project = this.is.getSelectedProject();
-    this.typeSet = { id: "", name: "" };
-    this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
-    this.setCompany = { name: "", by: "", byId: "", createdOn: "", updatedStatus: false, id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
-    this.setChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
+    this.typeSet = { id: '', name: '' };
+    this.savedProject = { name: '', type: '', by: '', byId: '', companyName: '', companyId: '', champion: null, createdOn: '', id: '',
+    location: '', sector: '', completion: '' };
+    this.project = { name: '', type: '', by: '', byId: '', companyName: '', companyId: '', champion: null, createdOn: '', id: '',
+     location: '', sector: '', completion: '' };
+    this.setCompany = {name: '', IndustrialSectorDocument: '', createdOn: '', updatedStatus: false, id: '', bus_email: '', location: '',
+    participants: null, champion: null, address: '', telephone: '', services: null, taxDocument: '', HnSDocument: '', by: '', byId: '',
+    targetMonthlyIncome: '', actualMonthlyIncome: '', balanceSheet: '', actualAnnualIncome: '', targetAnnualIncome: '', sector: ''};
+    this.setChampion = { name: '', id: '', email: '', bus_email: '', phoneNumber: '', photoURL: '', address: '', nationalId: '',
+    nationality: '' };
   }
 
   clear() {
     this.roles = null;
-    this.typeSet = { id: "", name: "" };
+    this.typeSet = { id: '', name: '' };
     this.setChampion = null;
-    this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
-    this.setCompany = { name: "", by: "", byId: "", createdOn: "", updatedStatus: false, id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
+    this.savedProject = { name: '', type: '', by: '', byId: '', companyName: '', companyId: '', champion: null, createdOn: '', id: '',
+     location: '', sector: '', completion: '' };
+    this.project = { name: '', type: '', by: '', byId: '', companyName: '', companyId: '', champion: null, createdOn: '', id: '',
+    location: '', sector: '', completion: '' };
+    this.setCompany = { name: '', IndustrialSectorDocument: '', createdOn: '', updatedStatus: false, id: '', bus_email: '', location: '',
+    participants: null, champion: null, address: '', telephone: '', services: null, taxDocument: '', HnSDocument: '', by: '', byId: '',
+    targetMonthlyIncome: '', actualMonthlyIncome: '', balanceSheet: '', actualAnnualIncome: '', targetAnnualIncome: '', sector: ''};
   }
 
   checkType(data) {
-    if (data.id == "Enterprise") {
+    if (data.id === "Enterprise") {
       this.showComp = true;
       this.showNext = false;
     } else {
@@ -508,8 +522,11 @@ export class WorkComponent implements OnInit {
       this.showComp = false;
       this.setChampion = this.myData;
 
-      this.setCompany = { name: "", by: "", byId: "", createdOn: "", updatedStatus: false, id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
-      catchError;
+
+    this.setCompany = { name: '', IndustrialSectorDocument: '', createdOn: '', updatedStatus: false, id: '', bus_email: '', location: '',
+     participants: null, champion: null, address: '', telephone: '', services: null, taxDocument: '', HnSDocument: '', by: '', byId: '',
+     targetMonthlyIncome: '', actualMonthlyIncome: '', balanceSheet: '', actualAnnualIncome: '', targetAnnualIncome: '', sector: ''};
+      // catchError;
     }
   }
 
@@ -520,7 +537,7 @@ export class WorkComponent implements OnInit {
       this.showNext = true;
     } else {
       this.showNext = false;
-      catchError;
+      // catchError;
     }
   }
 
@@ -569,7 +586,7 @@ export class WorkComponent implements OnInit {
       }
     }).then(() => {
 
-      this.section = { id: "", type: "", no: 0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills: null }
+      this.section = { id: '', type: '', no: 0, name: '', projectId: '', projectName: '', companyId: '', companyName: '', Bills: null }
       this.theSections = this.ps.getProjectSections(this.savedProject.id);
       this.newProjectSections = myProRef.valueChanges();
 
@@ -784,7 +801,7 @@ export class WorkComponent implements OnInit {
     }));
 
     this.userProfile.subscribe(userData => {
-      console.log(userData);
+      // console.log(userData);;
       let myData = {
         name: userData.name,
         email: this.user.email,

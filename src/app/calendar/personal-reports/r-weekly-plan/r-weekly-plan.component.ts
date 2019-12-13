@@ -8,13 +8,11 @@ import { ReportsService } from '../../../services/reports.service';
 })
 
 export class RWeeklyPlanComponent implements OnInit {
- 
-	constructor(public rService: ReportsService){}
-  
-  ngOnInit() {
-    
-    this.rService.rOnInit("UserP4","startdateP4","")
 
+  constructor(public rService: ReportsService) {}
+
+  ngOnInit() {
+    this.rService.rOnInit('UserP4', 'startdateP4', '')
   }
 
 }

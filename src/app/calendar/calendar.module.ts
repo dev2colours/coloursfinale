@@ -5,14 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TagInputModule } from 'ngx-chips';
 
-//Ngx-Charts
+// Ngx-Charts
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import { CalendarComponent } from './calendar.component';
 import { CalendarRoutes } from './calendar.routing';
 import { MapTaskComponent } from './map-task/map-task.component';
-import { ImplementationComponent } from './implementation/implementation.component';
-// import { TimesheetComponent } from './timesheet/timesheet.component';
 import { PopupComponent } from './popup/popup.component';
 
 import { TotalsActionItemsComponent } from './personal-reports/totals-action-items/totals-action-items.component';
@@ -32,6 +30,12 @@ import { PersonalRdashboardComponent } from './personal-reports/personal-reports
 import { RTimeBudgetComponent } from './personal-reports/r-time-budget/r-time-budget.component';
 // Added 28-June-19 by VJ Sibanda
 import { RTimeActualComponent } from './personal-reports/r-time-actual/r-time-actual.component';
+import { IndividualComponent } from './individual/individual.component';
+import { SetUpComponent } from './set-up/set-up.component';
+import { PlanningComponent } from './planning/planning.component';
+import { StandardsComponent } from './standards/standards.component';
+import { ImplementationComponent } from './implementation/implementation.component';
+import { ImplementComponent } from './implement/implement.component';
 
 @NgModule({
     imports: [
@@ -40,11 +44,12 @@ import { RTimeActualComponent } from './personal-reports/r-time-actual/r-time-ac
         FormsModule, NgSelectModule, NgxChartsModule, TagInputModule
     ],
     declarations: [
-        CalendarComponent, MapTaskComponent, ImplementationComponent, DiaryComponent,
+        CalendarComponent, MapTaskComponent, ImplementationComponent, DiaryComponent, IndividualComponent,
+        PlanningComponent, SetUpComponent, StandardsComponent, ImplementComponent,
         // TimesheetComponent,
         PopupComponent, TotalsActionItemsComponent, ActivityLogComponent, RTimeBudgetComponent, RTimeActualComponent,
         ClassificationTimesheetComponent, PersonalRdashboardComponent, RActivityLogComponent, RTimeSpentComponent,
-        PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent]
+        PersonalInfoReportComponent, ROsTasksComponent, RDailyPlanComponent, RWeeklyPlanComponent ]
 })
 
 export class CalendarModule {}

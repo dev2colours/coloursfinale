@@ -5,11 +5,10 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Router, ActivatedRoute, NavigationEnd, NavigationStart } from '@angular/router';
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
-// import { Observable } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { EnterpriseService } from '../../services/enterprise.service';
 import { ProjectService } from '../../services/project.service';
-import { Enterprise, ParticipantData, companyChampion, Department, service, projectRole } from '../../models/enterprise-model';
+import { Enterprise, ParticipantData, companyChampion, Department, service, projectRole, Labour } from '../../models/enterprise-model';
 import { Project, workItem } from '../../models/project-model';
 import { Task, actualData, actionActualData } from '../../models/task-model';
 import { PersonalService } from '../../services/personal.service';
@@ -21,10 +20,13 @@ import * as moment from 'moment';
 import { Observable } from 'rxjs/Rx';
 import * as firebase from 'firebase';
 import { ReportsService } from 'app/services/reports.service';
+import { TaskService } from '../../services/task.service';
+import { NotificationService } from '../../services/notification.service';
+import { DiaryService } from 'app/services/diary.service';
 
 declare var $: any;
 
-let misc: any = {
+const misc: any = {
     navbar_menu_visible: 0,
     active_collapse: true,
     disabled_collapse_init: 0,
@@ -33,6 +35,7 @@ let misc: any = {
 @Component({
     moduleId: module.id,
     selector: 'app-navbar',
+    styleUrls: ['navbar.component.css'],
     templateUrl: 'navbar.component.html'
 })
 
@@ -60,7 +63,7 @@ export class NavbarComponent implements OnInit {
     projects: Observable<any[]>;
     classifications: Observable<any[]>;
     company: Enterprise;
-
+    taskSent: Task;
     tes: any;
     selectedProject: Observable<Project>;
 
@@ -71,6 +74,8 @@ export class NavbarComponent implements OnInit {
     compRequests: Observable<Applicant[]>;
     projInvitations: Observable<Applicant[]>;
     projRequests: Observable<Applicant[]>;
+    taskNotices: Observable<Task[]>;
+
     notificationNo: boolean;
     applicant: Applicant;
     userId: string;
@@ -102,12 +107,11 @@ export class NavbarComponent implements OnInit {
     nSecs: number;
     nHrs: number;
     nMin: number;
-    viewActions: Observable<workItem[]>;
+    viewActions: Observable<any[]>;
     myActionItems: workItem[];
 
     workItemCount = [];
     workItemData = [];
-    actionNo: number;
     showActions: boolean;
     chartdata: boolean;
     page2: boolean;
@@ -126,13 +130,28 @@ export class NavbarComponent implements OnInit {
     actiondsNo: number;
     public modalRef: BsModalRef; // {1}
     coloursReq: Applicant;
+    stdArray: any[];
 
     enterpriseInvited: Applicant;
     reqName: string;
-    BtnPopClicked: boolean = false;
-    constructor(private ngModalService: BsModalService, private modalService: NgbModal, private afAuth: AngularFireAuth, public rp: ReportsService,
-        private afs: AngularFirestore, public pns: PersonalService, public is: InitialiseService, public es: EnterpriseService,
-        location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private ps: ProjectService) {
+    BtnPopClicked = false;
+    modalRef2: any;
+    stdWorks: any[];
+    standards: Observable<any[]>;
+    actNumber: number;
+    stdNo: number;
+    actionNo: number;
+    stdWorks2: any[];
+    selfChamp: {
+        name: string; email: string; bus_email: string; id: string; phoneNumber: string; photoURL: string; address: string;
+        nationality: string; nationalId: string;
+    };
+    cloakTime: string;
+    constructor(private ngModalService: BsModalService, private modalService: NgbModal, private afAuth: AngularFireAuth,
+        public rp: ReportsService, private afs: AngularFirestore, public pns: PersonalService, public is: InitialiseService,
+        public es: EnterpriseService, location: Location, private renderer: Renderer, private element: ElementRef,
+        private router: Router, private ps: ProjectService, private ts: TaskService, public ns: NotificationService,
+        private ds: DiaryService) {
         this.location = location;
         this.nativeElement = element.nativeElement;
         this.sidebarVisible = false;
@@ -142,36 +161,34 @@ export class NavbarComponent implements OnInit {
         this.page2 = false;
         this.page1 = true;
         this.playIntoAudio();
+        this.taskSent = is.getSelectedTask();
+        this.stdWorks2 = [];
+        this.stdWorks = [];
         this.applicant = {
-            company: is.initCompwithRoles(), department: is.getDeptInit(), dataId: "",
-            email: "", bus_email: "", id: "", name: "", phoneNumber: "",
-            project: is.getSelectedProject(), photoURL: "", address: "", nationalId: "", nationality: ""
+            company: is.initCompwithRoles(), department: is.getDeptInit(), dataId: '',
+            email: '', bus_email: '', id: '', name: '', phoneNumber: '',
+            project: is.getSelectedProject(), photoURL: '', address: '', nationalId: '', nationality: ''
         };
         this.appUser = {
-            company: is.initCompwithRoles(), department: is.getDeptInit(), dataId: "", email: "",
-            bus_email: "", id: "", name: "", phoneNumber: "",
-            project: is.getSelectedProject(), photoURL: "", address: "", nationalId: "", nationality: ""
+            company: is.initCompwithRoles(), department: is.getDeptInit(), dataId: '', email: '',
+            bus_email: '', id: '', name: '', phoneNumber: '',
+            project: is.getSelectedProject(), photoURL: '', address: '', nationalId: '', nationality: ''
         };
         this.coloursReq = {
-            company: is.initCompwithRoles(), department: is.getDeptInit(), dataId: "", email: "",
-            bus_email: "", id: "", name: "", phoneNumber: "",
-            project: is.getSelectedProject(), photoURL: "", address: "", nationalId: "", nationality: ""
+            company: is.initCompwithRoles(), department: is.getDeptInit(), dataId: '', email: '',
+            bus_email: '', id: '', name: '', phoneNumber: '',
+            project: is.getSelectedProject(), photoURL: '', address: '', nationalId: '', nationality: ''
         };
 
         this.enterpriseInvited = {
-            company: is.initCompwithRoles(), department: is.getDeptInit(), dataId: "", email: "",
-            bus_email: "", id: "", name: "", phoneNumber: "",
-            project: is.getSelectedProject(), photoURL: "", address: "", nationalId: "", nationality: ""
+            company: is.initCompwithRoles(), department: is.getDeptInit(), dataId: '', email: '',
+            bus_email: '', id: '', name: '', phoneNumber: '',
+            project: is.getSelectedProject(), photoURL: '', address: '', nationalId: '', nationality: ''
         };
         console.log('test hours n minutes');
-        
-        // let tHours = (moment().hours()).toLocaleString();
-        // let tMinutes = (moment().hours().toLocaleString());
+        console.log(' theTime is', (moment().hours()) + ':' + (moment().minutes()));
+        console.log('2. theTime is', (moment().format('HH:mm')) + ':' + (moment().format('HH:mm')));
 
-        // let fullTym = tHours + ':' + tMinutes;
-        console.log(" theTime is", (moment().hours()) + ':' + (moment().minutes()));
-        console.log("2. theTime is", (moment().format('HH:mm')) + ':' + (moment().format('HH:mm')));
-        
         this.userProject = is.getSelectedProject();
         this.connectingProject = is.getSelectedProject();
         this.connectingCompany = is.initCompwithRoles();
@@ -182,84 +199,37 @@ export class NavbarComponent implements OnInit {
         //     this.showModal();
         // }, 5000);
         this.actiondsNo = 0;
-        this.dmData = { updateTime: "", qty: 0 }
+        this.dmData = { updateTime: '', qty: 0 }
         this.selectedAction = is.getActionItem();
-        this.actualData = { name: "", time: "", actionId: "", id: "", actuals: null };
-        this.actionData = { name: "", time: "", actionId: "", id: "", actuals: null };
+        this.actualData = { name: '', time: '', actionId: '', id: '', actuals: null };
+        this.actionData = { name: '', time: '', actionId: '', id: '', actuals: null };
         this.item = is.getActionItem();
         this.timedstamp = 0;
+        // this.myActionItems = this.stdArray = [];
 
-        let timesheetworktime = String(moment(new Date().getTime()));
+        const timesheetworktime = String(moment(new Date().getTime()));
         console.log(moment(timesheetworktime).week());
-        
+
         afAuth.user.subscribe(user => {
             this.userId = user.uid;
             this.user = user;
             this.coloursUsername = user.displayName;
-            console.log(this.userId);
-            console.log(this.user);
             this.companies = es.getCompanies(user.uid);
             this.projects = es.getProjects(user.uid);
             this.myprojects = es.getPersonalProjects(user.uid);
             this.classifications = pns.getClassifications(user.uid);
             this.dataCall(user.uid);
-        })
+        });
+    }
+
+    setTaskSent(task) {
+        this.taskSent = task;
     }
 
     dataCall(userId: string) {
+        const timeId = String(moment(new Date()).format('DD-MM-YYYY'));
         this.bckPage();
         this.myDocument = this.afs.collection('Users').doc(userId);
-        let currentDate = moment(new Date()).format('L');
-        let today = moment(new Date(), 'YYYY-MM-DD');
-        console.log(currentDate);
-        let userDocRef = this.myDocument;
-        this.viewActions = userDocRef.collection<workItem>('WeeklyActions', ref => ref
-            // .orderBy('start')
-            // .where("startDate", '===', currentDate)
-            // .limit(4)
-            .orderBy('start', 'asc')
-        ).snapshotChanges().pipe(
-            map(actions => actions.map(a => {
-                const data = a.payload.doc.data() as workItem;
-                const id = a.payload.doc.id;
-                return { id, ...data };
-            }))
-        );
-
-        this.viewActions.subscribe((actions) => {
-            this.myActionItems = [];
-            this.actiondsNo = 0;
-            actions.forEach(data => {
-                let element = data;
-                // let index = String(new Date().getTime());
-                // element.uid = index;
-                // if (element.selectedWeekWork == true) {
-                if (moment(element.startDate).isSameOrBefore(today) && element.complete === false) {
-                        // if (element.selectedWork === true) {
-                    if (element.selectedWeekWork == true && element.selectedWork === true) {    
-                            this.myActionItems.push(element);
-                            console.log(this.myActionItems);
-                            this.chartdata = true;
-                            this.processData(this.myActionItems);
-                        // }
-                    }
-                }
-                console.log(this.myActionItems.length);
-                this.actiondsNo = this.myActionItems.length;
-            })
-            // this.myActionItems = actions;
-            // console.log(actions.length);
-            // console.log(actions);
-            this.actionNo = actions.length;
-        })
-
-        if (this.actionNo === 0) {
-            this.showActions = false;
-        } else {
-            this.showActions = true;
-        }
-
-        this.notificationNo = true;
         this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
             const data = a.payload.data() as coloursUser;
             const id = a.payload.id;
@@ -267,8 +237,8 @@ export class NavbarComponent implements OnInit {
         }));
 
         this.userProfile.subscribe(userData => {
-            console.log(userData);
-            let myData = {
+            // console.log(userData);;
+            const myData = {
                 name: userData.name,
                 email: this.user.email,
                 bus_email: userData.bus_email,
@@ -279,46 +249,87 @@ export class NavbarComponent implements OnInit {
                 nationality: userData.nationality,
                 nationalId: userData.nationalId,
             }
-            if (userData.address == "" || userData.address == null || userData.address == undefined || userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined || userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined || 
-                userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined || userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
-                this.showNotification('dataNotify', 'top', 'right');                                        
-            } else {
 
-            }
-
-            if (userData.address == "" || userData.address == null || userData.address == undefined) {
-                userData.address = ""
-            } else {
-
-            }
-
-            if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
-                userData.phoneNumber = ""
-            } else {
-
-            }
-
-            if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
-                userData.bus_email = ""
-            } else {
-
-            }
-
-            if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
-                userData.nationalId = ""
-            } else {
-
-            }
-
-            if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
-                userData.nationality = ""
-            } else {
-
-            }
-
+            this.selfChamp = myData;
+            if (userData.address === '' || userData.address === null || userData.address === undefined || userData.phoneNumber === ''
+                || userData.phoneNumber === null || userData.phoneNumber === undefined || userData.bus_email === '' ||
+                userData.bus_email === null || userData.bus_email === undefined || userData.nationalId === '' ||
+                userData.nationalId === null || userData.nationalId === undefined || userData.nationality === '' ||
+                userData.nationality === null || userData.nationality === undefined) {
+                this.ns.showNotification('dataNotify', 'top', 'right', '');
+            } else {}
+            if (userData.address === '' || userData.address === null || userData.address === undefined) {
+                userData.address = ''
+            } else {}
+            if (userData.phoneNumber === '' || userData.phoneNumber === null || userData.phoneNumber === undefined) {
+                userData.phoneNumber = ''
+            } else {}
+            if (userData.bus_email === '' || userData.bus_email === null || userData.bus_email === undefined) {
+                userData.bus_email = ''
+            } else {}
+            if (userData.nationalId === '' || userData.nationalId === null || userData.nationalId === undefined) {
+                userData.nationalId = ''
+            } else {}
+            if (userData.nationality === '' || userData.nationality === null || userData.nationality === undefined) {
+                userData.nationality = ''
+            } else {}
             this.myData = myData;
             this.userData = userData;
+        });
+        const today = moment(new Date(), 'YYYY-MM-DD');
+        let myActionItems = [];
+        this.standards = this.myDocument.collection('myStandards').snapshotChanges().pipe(map(b => b.map(a => {
+            const data = a.payload.doc.data() as any;
+            const id = a.payload.doc.id; data.tag = 'std'; data.champion = this.selfChamp;
+            data.startDate = moment(data.startDate, 'MM-DD-YYYY').format('LL');
+            data.endDate = moment(data.endDate, 'MM-DD-YYYY').format('LL');
+            return { id, ...data };
+        })));
+        
+        let stdArray = [];
+        this.standards.subscribe((actions) => {
+            this.stdArray = stdArray = [];
+            actions.forEach(element => { if (element.selectedWork === true) { stdArray.push(element); } });
+            this.stdNo = actions.length;
+            this.stdArray = stdArray;
+        });
+
+        this.viewActions = this.myDocument.collection('DayActions').doc(timeId).collection('WeeklyActions').snapshotChanges().pipe(
+            map(actions => actions.map(a => {
+              const data = a.payload.doc.data() as workItem; const id = a.payload.doc.id;
+              return { id, ...data };
+            })
+        ));
+        this.viewActions.subscribe((actions) => {
+        this.actNumber = 0
+        this.myActionItems = this.myActionItems = []; myActionItems = [];
+        actions.forEach(data => {
+            const element = data;
+            if (element.selectedWork && element.complete === false) {
+            this.myActionItems.push(element);
+            } 
         })
+        Promise.all(this.myActionItems).then(values => {
+            Promise.all(this.stdArray).then(ata => {
+            this.stdWorks = this.myActionItems.concat(this.stdArray);
+            this.stdWorks.sort((a: workItem, b: workItem) => a.start.localeCompare(b.start));
+            this.actionNo = this.stdWorks.length;
+            this.stdWorks2 = this.stdWorks;
+            });
+        });
+        })
+        
+        this.notificationNo = true;
+
+        this.taskNotices = this.myDocument.collection('taskNotification').snapshotChanges().pipe(
+            map(b => b.map(a => {
+                const data = a.payload.doc.data() as Task;
+                // data.id  = a.payload.doc.id;
+                const id = a.payload.doc.id;
+                return { id, ...data };
+            }))
+        );
+
 
         this.projRequests = this.afs.collection('Users').doc(userId).collection<Applicant>('ProjectRequests').snapshotChanges().pipe(
             map(b => b.map(a => {
@@ -351,13 +362,17 @@ export class NavbarComponent implements OnInit {
         this.projRequests.subscribe(proReqArr => {
             this.projInvitations.subscribe(proInvArr => {
                 this.compRequests.subscribe(dataArr => {
-                    if (proReqArr.length === 0) {
-                        if (proInvArr.length === 0) {
-                            if (dataArr.length === 0) {
-                                this.notificationNo = false;
+                    this.taskNotices.subscribe(taskAaa => {
+                        if (proReqArr.length === 0) {
+                            if (proInvArr.length === 0) {
+                                if (dataArr.length === 0) {
+                                    if (taskAaa.length === 0) {
+                                        this.notificationNo = false;
+                                    } else { this.notificationNo = true }
+                                } else { this.notificationNo = true }
                             } else { this.notificationNo = true }
                         } else { this.notificationNo = true }
-                    } else { this.notificationNo = true }
+                    })
                 })
             })
         })
@@ -368,23 +383,24 @@ export class NavbarComponent implements OnInit {
     }
 
     processData(entries: workItem[]) {
-        this.workItemCount = [];
-        this.workItemData = [];
-
-        entries.forEach(element => {
+        this.workItemCount = this.workItemData = this.stdWorks = [];
+        this.stdWorks = entries.concat(this.stdArray);
+        this.stdWorks.forEach(element => {
             if (this.workItemCount[element.name]) {
                 this.workItemCount[element.name] += 1;
             } else {
                 this.workItemCount[element.name] = 1;
             }
         });
-        for (var key in this.workItemCount) {
-            let singleentry = {
-                // id: key,
-                name: key,
-                value: this.workItemCount[key]
+        for (const key in this.workItemCount) {
+            if (this.workItemCount.hasOwnProperty(key)) {
+                const singleentry = {
+                    name: key,
+                    value: this.workItemCount[key]
+                }
+                this.workItemData.push(singleentry);
+                // console.log(this.workItemData);
             }
-            this.workItemData.push(singleentry);
         }
     }
 
@@ -392,28 +408,24 @@ export class NavbarComponent implements OnInit {
         console.log(man);
         console.log('for company');
         this.applicant = man;
-
-        // this.appUser = man;
-        // this.connectingProject = man.project;
-        // this.connectingCompany = man.company;
     }
 
     selectUserP(man: Applicant) {
         console.log(man);
-        console.log('for Project'); 
+        console.log('for Project');
         this.reqName = man.name;
         console.log(this.reqName);
-        
+
         console.log(man.name);
         this.coloursReq = man;
         console.log(this.coloursReq);
-    
+
         this.connectingProject = man.project;
         this.connectingCompany = man.company;
         console.log(this.connectingProject.name);
         // console.log(this.connectingCompany.name);
         console.log(man.project);
-           
+
     }
 
     selectUserPIC(man: Applicant) {
@@ -429,21 +441,95 @@ export class NavbarComponent implements OnInit {
 
     resetForm() {
         this.applicant = {
-            company: this.is.initCompwithRoles(), department: this.is.getDeptInit(), dataId: "", email: "",
-            bus_email: "", id: "", name: "", phoneNumber: "", project: this.is.getSelectedProject(), photoURL: "", address: "", nationalId: "", nationality: ""
+            company: this.is.initCompwithRoles(), department: this.is.getDeptInit(), dataId: '', email: '',
+            bus_email: '', id: '', name: '', phoneNumber: '', project: this.is.getSelectedProject(), photoURL: '', address: '',
+            nationalId: '', nationality: ''
         };
         this.company = {
-            name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null,
-            champion: null, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "", updatedStatus: false
+            name: '', by: '', byId: '', createdOn: '', id: '', bus_email: '', location: '', sector: '', participants: null,
+            champion: null, address: '', telephone: '', services: null, taxDocument: '', HnSDocument: '', IndustrialSectorDocument: '',
+            updatedStatus: false, targetMonthlyIncome: '', actualMonthlyIncome: '', balanceSheet: '', actualAnnualIncome: '',
+            targetAnnualIncome: ''
         }
     }
 
+    declineTask() {
+        this.myDocument.collection('taskNotification').doc(this.taskSent.id).delete().then(() => {
+            this.taskSent = this.is.getSelectedTask();
+        });
+        this.ns.showNotification('declineTask', 'top', 'right', '');
+    }
+
+    acceptTask() {
+        console.log(this.taskSent.name);
+        console.log(this.taskSent);
+        console.log(this.selectedProject);
+        if (this.taskSent.byId !== this.taskSent.champion.id) {
+            if (this.taskSent.departmentId !== '') {
+                console.log('selectedDepartment' + ' ' + this.taskSent.department);
+                if (this.taskSent.champion.id !== '') {
+                    console.log('Champion' + ' ' + this.taskSent.champion.name);
+                    if (this.taskSent.projectId !== '') {
+                        console.log('Project selected' + ' ' + this.taskSent.projectName);
+                        this.myDocument.collection('taskNotification').doc(this.taskSent.id).delete().then(() => {
+                            this.taskSent = this.is.getSelectedTask();
+                        });
+                        this.ns.showNotification('acceptTask', 'top', 'right', this.taskSent);
+                    } else {
+                        console.log('No project selected');
+                        // create company Task without any Project selected
+                        this.myDocument.collection('taskNotification').doc(this.taskSent.id).delete().then(() => {
+                            this.taskSent = this.is.getSelectedTask();
+                        });
+                        this.ns.showNotification('acceptTask', 'top', 'right', this.taskSent)
+                    }
+                } else {
+                    console.log('No Champion selected');
+                    this.taskSent.champion = this.myData;
+                }
+            } else {
+                console.log('No Department selected');
+                // what happens if projectID is personal
+            }
+        } else { }
+    }
+
+    personalTask() {
+        console.log('task created' + this.taskSent);
+        let createdTask;
+        createdTask = this.taskSent;
+        createdTask.classification = this.classification;
+        const userRef = this.afs.collection('Users').doc(this.userId).collection('tasks');
+        const userClassRef = this.afs.collection('Users').doc(this.userId).collection('classifications').doc(this.classification.id)
+            .collection('tasks');
+        const champRef = this.afs.collection('Users').doc(this.taskSent.champion.id).collection('tasks');
+        // set task under a user
+        userRef.add(createdTask).then(function (Ref) {
+            const newTaskId = Ref.id;
+            console.log(Ref);
+            // set task under a champion
+            champRef.doc(newTaskId).set(createdTask);
+            // update id for user
+            userRef.doc(newTaskId).update({ 'id': newTaskId });
+            // set task under user classifications
+            userClassRef.doc(newTaskId).set(createdTask);
+
+            // update id for user
+            userClassRef.doc(newTaskId).update({ 'id': newTaskId });
+
+            // update id for champion
+            champRef.doc(newTaskId).update({ 'id': newTaskId }).then(() => {
+                this.ns.showNotification('accepTask', 'top', 'right', this.taskSent);
+            });
+        });
+    }
+
     acceptRequest() {
-        let companyId = this.applicant.company.id;
-        let deptId = this.applicant.department.id;
+        const companyId = this.applicant.company.id;
+        const deptId = this.applicant.department.id;
         console.log(this.applicant);
 
-        let man = {
+        const man = {
             name: this.applicant.name,
             email: this.applicant.email,
             departmentId: this.applicant.department.id,
@@ -453,12 +539,12 @@ export class NavbarComponent implements OnInit {
             phoneNumber: this.applicant.phoneNumber,
             address: this.applicant.address,
             photoURL: this.applicant.photoURL,
-            nationalId: this.applicant.nationalId, 
+            nationalId: this.applicant.nationalId,
             nationality: this.applicant.nationality
         }
 
         console.log(man);
-        
+
         console.log(companyId);
 
         this.company = this.applicant.company;
@@ -469,11 +555,11 @@ export class NavbarComponent implements OnInit {
         console.log(companyId);
         this.company.participants.push(man);
         console.log('check participants array,if updated');
-        let userDoc = this.afs.collection('Users').doc(partId);
+        const userDoc = this.afs.collection('Users').doc(partId);
         userDoc.collection('myenterprises').doc(companyId).set(this.company);
         console.log('company set under User Doc');
-        
-        let compReff = this.afs.collection('Enterprises').doc(companyId);
+
+        const compReff = this.afs.collection('Enterprises').doc(companyId);
         compReff.update(this.company);
         console.log('company set under compReff Doc');
         console.log('company deptId ==>' + deptId)
@@ -491,16 +577,19 @@ export class NavbarComponent implements OnInit {
     acceptProjectRequest() {
 
         // enterpriseInvited
-        let scompanyId = this.enterpriseInvited.company.id;
-        let projectId = this.enterpriseInvited.project.id;
-        let man = { email: this.enterpriseInvited.email, id: this.enterpriseInvited.id, name: this.enterpriseInvited.name, phoneNumber: this.enterpriseInvited.phoneNumber }
+        const scompanyId = this.enterpriseInvited.company.id;
+        const projectId = this.enterpriseInvited.project.id;
+        const man = {
+            email: this.enterpriseInvited.email, id: this.enterpriseInvited.id, name: this.enterpriseInvited.name,
+            phoneNumber: this.enterpriseInvited.phoneNumber
+        }
         // let man = this.enterpriseInvited;
-        let croles = this.roles;
+        const croles = this.roles;
         let company;
         let project;
         // let champId = this.userId;
         company = this.enterpriseInvited.company;
-        let dataId = this.enterpriseInvited.dataId;
+        const dataId = this.enterpriseInvited.dataId;
         company.roles = croles;
         company.champion = man;
         project = this.enterpriseInvited.project;
@@ -508,14 +597,14 @@ export class NavbarComponent implements OnInit {
         console.log(projectId)
         project.companyName = this.enterpriseInvited.company.name;
         project.companyId = this.enterpriseInvited.company.id;
-        let projectsRef = this.afs.collection('Projects');
-        let companysRef = this.afs.collection('Enterprises');
+        const projectsRef = this.afs.collection('Projects');
+        const companysRef = this.afs.collection('Enterprises');
         companysRef.doc(scompanyId).collection('projects').doc(projectId).set(project);
-        let allMyProjectsRef = this.afs.collection('Users').doc(this.userId).collection<Project>('projects').doc(projectId);
+        const allMyProjectsRef = this.afs.collection('Users').doc(this.userId).collection<Project>('projects').doc(projectId);
         // point to project doc
         allMyProjectsRef.set(project);  // set the project
 
-        let setCompany = projectsRef.doc(projectId).collection('enterprises').doc(scompanyId)
+        const setCompany = projectsRef.doc(projectId).collection('enterprises').doc(scompanyId)
         setCompany.set(company);
         setCompany.collection('labour').doc(man.id).set(man);
         projectsRef.doc(projectId).collection('Participants').doc(man.id).set(man);
@@ -523,7 +612,7 @@ export class NavbarComponent implements OnInit {
 
         this.afs.collection('Users').doc(this.userId).collection('ProjectRequests').doc(dataId).delete();
         this.afs.collection('Enterprises').doc(scompanyId).collection('ProjectRequests').doc(dataId).delete();
-        
+
 
         this.afs.collection('Users').doc(this.userId).collection('projectInvitations').doc(dataId).delete();
         companysRef.doc(scompanyId).collection('projectInvitations').doc(dataId).delete();        // this.bckPage()
@@ -531,18 +620,21 @@ export class NavbarComponent implements OnInit {
 
     acceptProjectInvitation() {
 
-        let scompanyId = this.coloursReq.company.id;
-        let projectId = this.coloursReq.project.id;
-        let man = { email: this.coloursReq.email, id: this.coloursReq.id, name: this.coloursReq.name, phoneNumber: this.coloursReq.phoneNumber }
+        const scompanyId = this.coloursReq.company.id;
+        const projectId = this.coloursReq.project.id;
+        const man = {
+            email: this.coloursReq.email, id: this.coloursReq.id, name: this.coloursReq.name,
+            phoneNumber: this.coloursReq.phoneNumber
+        }
         // let man = this.coloursReq;
         // console.log(this.coloursReq.roles);
-        
+
         // let croles = this.coloursReq.roles;
         let company;
         let project;
-        let champId = this.userId;
+        const champId = this.userId;
         company = this.coloursReq.company;
-        let dataId = this.coloursReq.dataId;
+        const dataId = this.coloursReq.dataId;
         // company.roles = croles;
         company.champion = man;
         project = this.coloursReq.project;
@@ -551,14 +643,14 @@ export class NavbarComponent implements OnInit {
         console.log(projectId)
         project.companyName = this.coloursReq.company.name;
         project.companyId = this.coloursReq.company.id;
-        let projectsRef = this.afs.collection('Projects');
-        let companysRef = this.afs.collection('Enterprises');
+        const projectsRef = this.afs.collection('Projects');
+        const companysRef = this.afs.collection('Enterprises');
         companysRef.doc(scompanyId).collection('projects').doc(projectId).set(project);
-        let allMyProjectsRef = this.afs.collection('Users').doc(man.id).collection<Project>('projects').doc(projectId);
+        const allMyProjectsRef = this.afs.collection('Users').doc(man.id).collection<Project>('projects').doc(projectId);
         // point to project doc
         allMyProjectsRef.set(project);  // set the project
 
-        let setCompany = projectsRef.doc(projectId).collection('enterprises').doc(scompanyId)
+        const setCompany = projectsRef.doc(projectId).collection('enterprises').doc(scompanyId)
         setCompany.set(company);
         setCompany.collection('labour').doc(man.id).set(man);
         projectsRef.doc(projectId).collection('Participants').doc(man.id).set(man);
@@ -571,13 +663,14 @@ export class NavbarComponent implements OnInit {
         this.afs.collection('Users').doc(this.userId).collection<Applicant>('ProjectRequests').doc(dataId).delete().then(() => {
             console.log('Accepted');
             // this.dataCall(this.userId);
-            this.projRequests = this.afs.collection('Users').doc(this.userId).collection<Applicant>('ProjectRequests').snapshotChanges().pipe(
-                map(b => b.map(a => {
-                    const data = a.payload.doc.data() as Applicant;
-                    const id = a.payload.doc.id;
-                    return { id, ...data };
-                }))
-            );
+            this.projRequests = this.afs.collection('Users').doc(this.userId).collection<Applicant>('ProjectRequests')
+                .snapshotChanges().pipe(
+                    map(b => b.map(a => {
+                        const data = a.payload.doc.data() as Applicant;
+                        const id = a.payload.doc.id;
+                        return { id, ...data };
+                    }))
+                );
         });
 
         // this.bckPage();
@@ -585,8 +678,8 @@ export class NavbarComponent implements OnInit {
     }
 
     declineRequest() {
-        let companyId = this.applicant.company.id;
-        let partId = this.applicant.id;
+        const companyId = this.applicant.company.id;
+        const partId = this.applicant.id;
 
         this.afs.collection('Users').doc(partId).collection('enterprisesRequested').doc(companyId).delete();
         this.afs.collection('Enterprises').doc(companyId).collection('Requests').doc(partId).delete();
@@ -597,12 +690,12 @@ export class NavbarComponent implements OnInit {
 
     declineProjectRequest() {
 
-        let scompanyId = this.coloursReq.company.id;
-        let champId = this.userId;
-        let dataId = this.coloursReq.dataId;
-        let projectId = this.coloursReq.project.id;
-        console.log(dataId);       
-        
+        const scompanyId = this.coloursReq.company.id;
+        const champId = this.userId;
+        const dataId = this.coloursReq.dataId;
+        const projectId = this.coloursReq.project.id;
+        console.log(dataId);
+
         this.afs.collection('Users').doc(this.userId).collection('ProjectRequests').doc(dataId).delete();
         this.afs.collection('Enterprises').doc(scompanyId).collection('ProjectRequests').doc(dataId).delete();
         this.afs.collection('Projects').doc(projectId).collection('ProjectRequests').doc(dataId).delete();
@@ -610,15 +703,15 @@ export class NavbarComponent implements OnInit {
             console.log('Deleted');
             this.dataCall(this.userId);
         });
-        
+
     }
 
     declineCompProjectRequest() {
 
-        let scompanyId = this.enterpriseInvited.company.id;
-        let champId = this.userId;
-        let dataId = this.enterpriseInvited.dataId;
-        console.log(dataId);       
+        const scompanyId = this.enterpriseInvited.company.id;
+        const champId = this.userId;
+        const dataId = this.enterpriseInvited.dataId;
+        console.log(dataId);
 
         this.afs.collection('Users').doc(champId).collection('ProjectRequests').doc(dataId).delete();
         this.afs.collection('Enterprises').doc(scompanyId).collection('ProjectRequests').doc(dataId).delete();
@@ -632,9 +725,9 @@ export class NavbarComponent implements OnInit {
 
     declineProjectRequest2() {
 
-        let scompanyId = this.coloursReq.company.id;
-        let champId = this.userId;
-        let dataId = this.coloursReq.dataId;
+        const scompanyId = this.coloursReq.company.id;
+        const champId = this.userId;
+        const dataId = this.coloursReq.dataId;
         this.afs.collection('Users').doc(champId).collection('projectInvitations').doc(dataId).delete();
         this.afs.collection('Enterprises').doc(scompanyId).collection('projectInvitations').doc(dataId).delete();
         console.log('Deleted');
@@ -652,8 +745,8 @@ export class NavbarComponent implements OnInit {
     }
 
     acceptProjectRequest22() {
-        let companyId = this.appUser.company.id;
-        let man = { email: this.appUser.email, id: this.appUser.id, name: this.appUser.name, phoneNumber: this.appUser.phoneNumber }
+        const companyId = this.appUser.company.id;
+        const man = { email: this.appUser.email, id: this.appUser.id, name: this.appUser.name, phoneNumber: this.appUser.phoneNumber }
 
         console.log(companyId);
         let company;
@@ -677,19 +770,19 @@ export class NavbarComponent implements OnInit {
         me.company = company;
         me = this.myData;
 
-        let projectId = this.appUser.project.id;
+        const projectId = this.appUser.project.id;
         console.log(projectId)
-        let scompanyId = this.appUser.company.id;
+        const scompanyId = this.appUser.company.id;
         project.companyName = this.appUser.company.name;
         project.companyId = this.appUser.company.id;
-        let projectsRef = this.afs.collection('Projects');
-        let companysRef = this.afs.collection('Enterprises');
+        const projectsRef = this.afs.collection('Projects');
+        const companysRef = this.afs.collection('Enterprises');
         companysRef.doc(scompanyId).collection('projects').doc(projectId).set(project);
-        let allMyProjectsRef = this.afs.collection('Users').doc(this.userId).collection<Project>('projects').doc(projectId);
+        const allMyProjectsRef = this.afs.collection('Users').doc(this.userId).collection<Project>('projects').doc(projectId);
         // point to project doc
         allMyProjectsRef.set(project);  // set the project
 
-        let setCompany = projectsRef.doc(projectId).collection('enterprises').doc(scompanyId)
+        const setCompany = projectsRef.doc(projectId).collection('enterprises').doc(scompanyId)
         setCompany.set(company);
         setCompany.collection('labour').doc(this.userId).set(me);
         projectsRef.doc(projectId).collection('Participants').doc(this.userId).set(me);
@@ -726,24 +819,23 @@ export class NavbarComponent implements OnInit {
     selectAction(item: workItem) {
         this.selectedAction = item;
         this.selectedTest = this.selectedAction;
-        console.log(this.selectedAction);
+        // console.log(this.selectedAction);
     }
 
     checkTest(actual: actualData) {
-        let item = this.selectedAction;
-        let champId = this.selectedAction.champion.id;
+        const item = this.selectedAction;
+        const champId = this.selectedAction.champion.id;
         // let itamName: string;
-        let dataId = item.id + moment().format('DDDDYYYY');
+        const dataId = item.id + moment().format('DDDDYYYY');
 
         this.afs.collection('Users').doc(champId).collection<workItem>('actionItems').doc(item.id)
             .collection<workItem>('actionActuals').doc(dataId).update({})
             .then(() => {
-                // update successful (document exists)
+
             })
             .catch((error) => {
                 // console.log('Error updating user', error); // (document does not exists)
                 // this.afs.doc(`users/${result.uid}`)
-                // .set({ data });
             });
     }
 
@@ -760,280 +852,362 @@ export class NavbarComponent implements OnInit {
         console.log(this.dmData);
         // let value: actionActualData;
         // let classId;
-        let champId = this.selectedAction.champion.id;
-        let cleaningTime = this.aclear();
-        // let notify = this.showNotification('Task', 'top', 'right');
-        let item = this.selectedAction;
+        const champId = this.selectedAction.champion.id;
+        const cleaningTime = this.aclear();
+        // let notify = this.ns.showNotification('Task', 'top', 'right');
+        let item;
+        item = this.selectedAction;
 
         this.actionData.name = item.name;
         this.actionData.actionId = item.id;
         this.actionData.time = new Date().toISOString();
         console.log(item);
-
-        let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY')); // dd/mm/yyyy
+        const timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY')); // dd/mm/yyyy
         console.log(timesheetDocId);
-        let timesheetworktime = String(moment(new Date().getTime()));
-        let work = {
-            WorkingTime: moment().toString(),
-            name: item.name,
-            id: item.id,
+        const timesheetworktime = String(moment(new Date().getTime()));
+        const work = {
+            WorkingTime: moment().toString(), name: item.name, id: item.id,
         }
-
-        let dataId = item.id + moment().format('DDDDYYYY');
+        const dataId = item.id + moment().format('DDDDYYYY');
         console.log(dataId);
-        this.actionData.actuals = [actual];
-        console.log(this.actionData.actuals.length);
 
-        if (item.companyId) {
-            console.log('Testing CompanyId passed');
-
-            let allMyActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection<workItem>('actionItems').doc(item.id)
-                .collection('actionActuals').doc(dataId);
-            let allWeekActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection<workItem>('WeeklyActions')
-                .doc(item.id).collection('actionActuals').doc(dataId);
-            let myTaskActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection('tasks').doc(item.taskId)
-                .collection<workItem>('actionItems').doc(item.id).collection('actionActuals').doc(dataId);
-            let champProjectCompWeeklyRef = this.afs.collection('Enterprises').doc(item.companyId).collection('Participants')
-                .doc(this.userId).collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
-            let champTimeSheetRef = this.afs.collection('Enterprises').doc(item.companyId).collection('Participants').doc(this.userId)
-                .collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
-
-            champTimeSheetRef.update({
-                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-            }).then(() => {
-                console.log('update successful (document exists)');
-            }).catch((error) => {
-                champTimeSheetRef.set(this.actionData);
-            });
-            allMyActionsRef.update({
-                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-            }).then(() => {
-                console.log('update successful (document exists)');
-            }).catch((error) => {
-                allMyActionsRef.set(this.actionData);
-            });
-            allWeekActionsRef.update({
-                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-            }).then(() => {
-                console.log('update successful (document exists)');
-            }).catch((error) => {
-                allWeekActionsRef.set(this.actionData);
-            });
-            myTaskActionsRef.update({
-                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-            }).then(() => {
-                console.log('update successful (document exists)');
-            }).catch((error) => {
-                myTaskActionsRef.set(this.actionData);
-            });
-            champProjectCompWeeklyRef.update({
-                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-            }).then(() => {
-                console.log('update successful (document exists)');
-            }).catch((error) => {
-                champProjectCompWeeklyRef.set(this.actionData);
-            });
-
-            if (item.projectId !== "") {
-
-                let weeklyRef = this.afs.collection('Enterprises').doc(item.companyId).collection('projects').doc(item.projectId)
-                    .collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
-                let prjectWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection<workItem>('WeeklyActions')
-                    .doc(item.id).collection('actionActuals').doc(dataId);
-                let prjectCompWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
-                    .doc(item.companyId).collection<workItem>('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
-                let champProjectCompWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
-                    .doc(item.companyId).collection('labour').doc(this.userId).collection('WeeklyActions').doc(item.id)
-                    .collection('actionActuals').doc(dataId)
-                let champTimeSheetRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
-                    .collection('labour').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems')
-                    .doc(item.id);
-                weeklyRef.update({
-                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-                }).then(() => {
-                    console.log('Update successful, document exists');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating user, document does not exists', error);
-                    // (document does not exists)
-                    weeklyRef.set(this.actionData);
-
-                });
-                champTimeSheetRef.update({
-                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-                }).then(() => {
-                    console.log('Update successful, document exists');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating user, document does not exists', error);
-                    // .set({ data });
-                    champTimeSheetRef.set(this.actionData);
-                });
-                prjectWeeklyRef.update({
-                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-                }).then(() => {
-                    console.log('Update successful, document exists');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating user, document does not exists', error);
-                    // .set({ data });
-                    prjectWeeklyRef.set(this.actionData);
-                });
-                prjectCompWeeklyRef.update({
-                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-                }).then(() => {
-                    console.log('Update successful, document exists');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating user, document does not exists', error);
-                    // .set({ data });
-                    prjectCompWeeklyRef.set(this.actionData);
-                });
-                champProjectCompWeeklyRef.update({
-                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-                }).then(() => {
-                    console.log('Update successful, document exists');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating user, document does not exists', error);
-                    // .set({ data });
-                    champProjectCompWeeklyRef.set(this.actionData);
-                });
-            }
-        };
-
-
-        let championTimeSheetRef = this.afs.collection('Users').doc(champId).collection('actionTimeSheets').doc(item.id);
-        let championTimeSheetRef2 = this.afs.collection('Users').doc(champId).collection('TimeSheets').doc(timesheetDocId)
+        const championTimeSheetRef = this.afs.collection('Users').doc(champId).collection('actionTimeSheets').doc(item.id);
+        const championTimeSheetRef2 = this.afs.collection('Users').doc(champId).collection('TimeSheets').doc(timesheetDocId)
             .collection<workItem>('actionItems').doc(item.id);
-        if (item.taskId !== "") {
-            let championRef2 = this.afs.collection('Users').doc(champId).collection('tasks').doc(item.taskId)
-                .collection<workItem>('actionItems').doc(item.id).collection<workItem>('actionActuals').doc(dataId);
-
-            championRef2.set(this.actionData);
-            // championRef2.collection('actuals').add(actual);
-        }
-        let weeklyRef = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions').doc(item.id)
-            .collection<workItem>('actionActuals').doc(dataId);
-        let allMyActionsRef = this.afs.collection('Users').doc(champId).collection<workItem>('actionItems').doc(item.id)
-            .collection<workItem>('actionActuals').doc(dataId);
         championTimeSheetRef.set(item);
         championTimeSheetRef2.set(item);
         championTimeSheetRef.collection('workTime').doc(timesheetworktime).set(work);
         championTimeSheetRef.collection('actionActuals').doc(timesheetworktime).set(work);
-
         championTimeSheetRef2.collection('workTime').doc(timesheetworktime).set(work);
         championTimeSheetRef2.collection('actionActuals').doc(timesheetworktime).set(work);
 
-        weeklyRef.update({
-            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-        }).then(() => {
-            console.log('Update successful, document exists');
-            // update successful (document exists)
-        }).catch((error) => {
-            console.log('Error updating user, document does not exists', error);
-            // .set({ data });
-            weeklyRef.set(this.actionData);
-        });
-        allMyActionsRef.update({
-            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-        }).then(() => {
-            console.log('Update successful, document exists');
-            // update successful (document exists)
-        }).catch((error) => {
-            console.log('Error updating user, document does not exists', error);
-            // .set({ data });
-            allMyActionsRef.set(this.actionData);
-        });
 
-        if (item.companyId !== "") {
-            let championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(item.companyId)
-                .collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
-            // championRef.collection('actuals').add(actual);
-
-            championRef.update({
+        if (item.tag === 'sub') {
+            const cweeklyRef = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions').doc(item.id)
+                .collection<workItem>('actionActuals').doc(dataId);
+            cweeklyRef.update({
                 actuals: firebase.firestore.FieldValue.arrayUnion(actual)
             }).then(() => {
-                console.log('Update successful, document exists');
-                // notify;
-                // update successful (document exists)
+                /* Same pool to all tasks in their parent nondes */
+
+                /* --------------------------personal Node---------------------------*/
+
+                const cweeklyRef2 = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
+                const allMyActionsRef = this.afs.collection('Users').doc(champId).collection<workItem>('actionItems').doc(item.id)
+                    .collection<workItem>('actionActuals').doc(dataId);
+                this.afs.collection('Users').doc(champId).collection('actionItems').doc(item.id).update({
+                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                }).then(() => {
+                    console.log('Update successful');
+
+                }).catch((error) => {
+                    console.log('Error updating user, document does not exists', error);
+                    this.afs.collection('Users').doc(champId).collection('actionItems').doc(item.id).set(this.actionData).then(() => {
+                        console.log('Update successful');
+                        this.afs.collection('Users').doc(champId).collection('actionItems').doc(item.id).update({
+                            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                        })
+                    })
+                });
+
+                cweeklyRef2.update({
+                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                }).then(() => {
+                    console.log('Update successful'); /* update successful (document exists) */
+                }).catch((error) => {
+                    console.log('Error updating user, document does not exists', error);
+                    cweeklyRef2.set(this.actionData).then(() => {
+                        console.log('Update successful');
+                        cweeklyRef2.update({
+                            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                        })
+                    })
+                });
+
+                allMyActionsRef.update({
+                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                }).then(() => {
+                    console.log('Update successful'); /* update successful (document exists) */
+                }).catch((error) => {
+                    console.log('Error updating user, document does not exists', error);
+                    allMyActionsRef.set(this.actionData);
+                });
+
+                /*----------------- task Node ----------------*/
+
+                if (item.taskId !== '') {
+                    const championRef2 = this.afs.collection('Users').doc(champId).collection('tasks').doc(item.taskId)
+                        .collection('actionItems').doc(item.id).collection<workItem>('actionActuals').doc(dataId);
+                    championRef2.set(this.actionData);
+                    // championRef2.collection('actuals').add(actual);
+                }
+
+                /* --------------- End task Node---------------*/
+
+                /* -------------------------- End Personal Node---------------------------*/
+
+                /* -------------------------- Enterprise Node---------------------------*/
+
+                if (item.companyId) {
+                    console.log('Testing CompanyId passed');
+
+                    const allMyActionsRef2 = this.afs.collection('Enterprises').doc(item.companyId).collection('actionItems').doc(item.id);
+                    const allMyActionsRef3 = this.afs.collection('Enterprises').doc(item.companyId).collection('actionItems').doc(item.id)
+                        .collection('actionActuals').doc(dataId);
+                    const allWeekActionsRef2 = this.afs.collection('Enterprises').doc(item.companyId).collection('WeeklyActions')
+                        .doc(item.id);
+                    const allWeekActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection('WeeklyActions')
+                        .doc(item.id).collection('actionActuals').doc(dataId);
+                    const myTaskActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection('tasks').doc(item.taskId)
+                        .collection('actionItems').doc(item.id).collection('actionActuals').doc(dataId);
+                    const champProjectCompWeeklyRef = this.afs.collection('Enterprises').doc(item.companyId).collection('Participants')
+                        .doc(this.userId).collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
+                    const champTimeSheetRef = this.afs.collection('Enterprises').doc(item.companyId).collection('Participants')
+                        .doc(this.userId)
+                        .collection('TimeSheets').doc(timesheetDocId).collection('actionItems').doc(item.id);
+                    const championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(item.companyId)
+                        .collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
+
+                    championRef.update({
+                        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                    }).then(() => { console.log('successful'); }).catch((error) => {
+                        console.log('Error updating user, document does not exists', error);
+                        championRef.set(this.actionData).then(ref => { });
+                    });
+
+                    champTimeSheetRef.update({
+                        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                    }).then(() => {
+                        console.log('champTimeSheetRef update successful (document exists)');
+                    }).catch((error) => {
+                        champTimeSheetRef.set(this.actionData).then(() => {
+                            champTimeSheetRef.update({
+                                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                            })
+                        })
+                    });
+                    allWeekActionsRef2.update({
+                        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                    }).then(() => {
+                        console.log('update successful (document exists)');
+                    }).catch((error) => { allWeekActionsRef2.set(this.actionData); });
+                    allMyActionsRef2.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) }).then(() => {
+                        console.log(' allWeekActionsRef2 update successful (document exists)');
+                    }).catch((error) => {
+                        allMyActionsRef2.set(this.actionData).then(() => {
+                            allMyActionsRef2.update({
+                                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                            })
+                        })
+                    });
+                    allMyActionsRef3.update({
+                        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                    }).then(() => {
+                        console.log('allMyActionsRef3 update successful (document exists)');
+                    }).catch((error) => {
+                        allMyActionsRef3.set(this.actionData).then(() => {
+                            allMyActionsRef3.update({
+                                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                            })
+                        })
+                    });
+                    allWeekActionsRef.update({
+                        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                    }).then(() => {
+                        console.log('allWeekActionsRef update successful (document exists)');
+                    }).catch((error) => {
+                        allWeekActionsRef.set(this.actionData).then(() => {
+                            allWeekActionsRef.update({
+                                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                            })
+                        })
+                    });
+                    myTaskActionsRef.update({
+                        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                    }).then(() => {
+                        console.log('myTaskActionsRef update successful (document exists)');
+                    }).catch((error) => { myTaskActionsRef.set(this.actionData); });
+                    champProjectCompWeeklyRef.update({
+                        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                    }).then(() => {
+                        console.log('champProjectCompWeeklyRef update successful (document exists)');
+                    }).catch((error) => { champProjectCompWeeklyRef.set(this.actionData); });
+
+                    if (item.projectId !== '') {
+                        const eprjectWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection<workItem>('WeeklyActions')
+                            .doc(item.id).collection('actionActuals').doc(dataId);
+                        const eprjectCompWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
+                            .doc(item.companyId).collection<workItem>('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
+                        const echampProjectCompWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
+                            .doc(item.companyId).collection('labour').doc(this.userId).collection('WeeklyActions').doc(item.id)
+                            .collection('actionActuals').doc(dataId)
+                        const dUser = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+                            .collection('labour').doc(this.userId);
+                        let dates: [string];
+                        dUser.ref.get().then(ls => {
+                            if (ls.data().activeTime !== undefined) {
+                                dates = ls.data().activeTime;
+                                const i = dates.findIndex(s => s === (moment().format('L')));
+                                console.log(i);
+                                if (i > -1) {
+                                    console.log('already Logged');
+                                } else {
+                                    dUser.update({ activeTime: firebase.firestore.FieldValue.arrayUnion(moment().format('L')) })
+                                        .catch((error) => { console.log('Error updating user Active Time', error); });
+                                }
+                            } else {
+                                dUser.update({
+                                    activeTime: firebase.firestore.FieldValue.arrayUnion(moment().format('L'))
+                                }).catch((error) => { console.log('Error updating user Active Time', error); });
+                            }
+                        })
+                        const echampTimeSheetRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
+                            .doc(item.companyId).collection('labour').doc(this.userId).collection('TimeSheets').doc(timesheetDocId)
+                            .collection('actionItems').doc(item.id);
+                        const echampRef2 = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+                            .collection('labour').doc(this.userId).collection('WeeklyActions').doc(item.id);
+                        const weeksProAct = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
+                            .doc(item.companyId).collection('WeeklyActions').doc(item.id);
+                        const proWeek = this.afs.collection('Projects').doc(item.projectId).collection('WeeklyActions').doc(item.id);
+                        proWeek.update({
+                            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                        }).then(() => {
+                            console.log('Update successful');
+
+                        }).catch((error) => {
+                            console.log('Error updating user, document does not exists', error);
+                            // (document does not exists)
+                            proWeek.set(this.actionData).then(() => {
+                                console.log('Update successful');
+                                weeksProAct.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) })
+                            })
+                        });
+                        weeksProAct.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) }).then(() => {
+                            console.log('Update successful');
+
+                        }).catch((error) => {
+                            console.log('Error updating user, document does not exists', error);
+                            // (document does not exists)
+                            weeksProAct.set(this.actionData).then(() => {
+                                console.log('Update successful'); weeksProAct.update({
+                                    actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+                                })
+                            })
+                        });
+                        echampRef2.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) }).then(() => {
+                            console.log('Update successful');
+                        }).catch((error) => {
+                            console.log('Error updating user, document does not exists', error);
+                            echampRef2.set(this.actionData).then(() => {
+                                console.log('Update successful');
+                                echampRef2.update({ actualData: firebase.firestore.FieldValue.arrayUnion(actual) })
+                            })
+                        });
+                        echampTimeSheetRef.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) }).then(() => {
+                            console.log('Update successful');
+                        }).catch((error) => {
+                            console.log('Error updating user, document does not exists', error);
+                            champTimeSheetRef.set(this.actionData).then(() => {
+                                console.log('Update successful');
+                                champTimeSheetRef.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) })
+                            })
+                        });
+                        eprjectWeeklyRef.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) }).then(() => {
+                            console.log('Update successful');
+                        }).catch((error) => {
+                            console.log('Error updating user, document does not exists', error);
+                            eprjectWeeklyRef.set(this.actionData).then(() => {
+                                console.log('Update successful');
+                                eprjectWeeklyRef.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) })
+                            })
+                        });
+                        eprjectCompWeeklyRef.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) }).then(() => {
+                            console.log('Update successful');
+                        }).catch((error) => {
+                            console.log('Error updating user, document does not exists', error);
+                            eprjectCompWeeklyRef.set(this.actionData).then(() => {
+                                console.log('Update successful');
+                                eprjectCompWeeklyRef.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) })
+                            })
+                        });
+                        echampProjectCompWeeklyRef.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) }).then(() => {
+                            console.log('Update successful');
+                        }).catch((error) => {
+                            console.log('Error updating user, document does not exists', error);
+                            echampProjectCompWeeklyRef.set(this.actionData).then(() => {
+                                console.log('Update successful');
+                                echampProjectCompWeeklyRef.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) })
+                            })
+                        });
+                    }
+                };
+                /* -------------------------- End Enterprise Node---------------------------*/
+
+                console.log('Update successful');
+            }).then(() => {
+                this.aclear();
+                console.log('Update Complete');
             }).catch((error) => {
                 console.log('Error updating user, document does not exists', error);
-                // .set({ data });
-                championRef.set(this.actionData).then(ref => {
-
-                    // notify;
-                });
+                cweeklyRef.set(this.actionData)
             });
-        } else {
-            cleaningTime;
-            // notify;
+        } else if (item.tag === 'std') {
+            console.log(item.tag);
+            const standards = this.afs.collection('Users').doc(champId).collection('myStandards').doc(item.id);
+            standards.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) }).then(() => {
+                console.log('Standard update successful,'); /* update successful (document exists) */
+            }).catch((error) => {
+                console.log('Error updating user, document does not exists', error);
+                standards.set(this.actionData).then(() => {
+                    console.log('Standard update successful');
+                    standards.update({ actuals: firebase.firestore.FieldValue.arrayUnion(actual) })
+                })
+            });
         }
 
     }
 
-//     if(workAction.taskId !== "") {
-//     if (workAction.companyId !== "") {
-//         if (workAction.projectId !== "") {
-
-//         } else {
-
-//         }
-//     } else {
-
-//     }
-
-// } else {
-
-// }
-
-    upDateTime(workAction: workItem) {
-
-
+    upDateTime(workAction: any) {
         this.BtnPopClicked = true;
         console.log('ActionItem' + ' ' + workAction.name + ' ' + 'updated');
         workAction.UpdatedOn = moment().toString();
-        console.log("2. theTime is", (moment().format('HH:mm')));
+        console.log('2. theTime is', (moment().format('HH:mm')));
 
-        let tHours = (moment(new Date(), 'HH:mm').hours()).toLocaleString();
-        let tMinutes = (moment(new Date(), 'HH:mm').minutes()).toLocaleString()
+        const tHours = (moment(new Date(), 'HH:mm').hours()).toLocaleString();
+        const tMinutes = (moment(new Date(), 'HH:mm').minutes()).toLocaleString()
 
-        // let fullTym = tHours + ':' + tMinutes;
-        let fullTym = moment().format('HH:mm');
-        let actionSet = workAction;
+        const fullTym = moment().format('HH:mm');
+        const actionSet = workAction;
 
         console.log(workAction);
-        let champId = this.userId
-        let cleaningTime = this.aclear();
-        
-
-        if (workAction.actualStart == "" || workAction.actualStart == undefined || workAction.actualStart == null) {
+        const champId = this.userId
+        const cleaningTime = this.aclear();
+        if (workAction.actualStart === '' || workAction.actualStart === undefined || workAction.actualStart === null) {
             workAction.actualStart = String(moment().toString());
             workAction.actualEnd = String(moment().add(1, 'h').toString());
         }
         if (String(moment(actionSet.actualStart, 'DD-MM-YYYY')) !== moment().format('DD-MM-YYYY')) {
             actionSet.actualStart = String(moment().toString());
             actionSet.actualEnd = String(moment().add(1, 'h').toString());
-        }
-        else {
+        } else {
             workAction.actualEnd = moment().add(1, 'h').toString();
         }
-        let item = workAction;
+        const item = workAction;
         console.log(item);
 
-        let dataId = item.id + moment().format('dd');
+        const dataId = item.id + moment().format('dd');
         console.log(dataId);
 
         /* classification reports */
 
         let classWorkReps;
-        let newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: "", actualTime: "", Varience: "" };
-            // classWorkReps.Hours = null;
+        const newClassification = {
+            name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: '', actualTime: '',
+            Varience: ''
+        };
+        // classWorkReps.Hours = null;
         classWorkReps = actionSet.classification;
-
-
-
-        let work = {
+        const work = {
             id: fullTym,
             name: 'responded',
             action: item.name,
@@ -1043,489 +1217,359 @@ export class NavbarComponent implements OnInit {
             time: moment().toString(),
             hours: 0.5
         }
-        
 
-        let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
-        let timeData = {
+        const timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
+        const timeData = {
             name: timesheetDocId,
             id: timesheetDocId,
         }
+        const championTimeSheetRef = this.myDocument.collection('actionTimeSheets').doc(item.id);
+        const championTimeSheetRef2 = this.myDocument.collection('TimeSheets').doc(timesheetDocId).collection('actionItems').doc(item.id);
+        const weeklyRef = this.myDocument.collection('WeeklyActions').doc(item.id);
+        const allMyActionsRef = this.myDocument.collection('actionItems').doc(item.id);
+        const timesheetworktime = String(moment(new Date().getTime()));
 
-
-        /* TimeSheet collection Report doc set */
-
-
-        // let championTimeSheetRef = this.afs.collection('Users').doc(champId).collection('actionTimeSheets').doc(item.id);
-        let championTimeSheetRef = this.myDocument.collection('actionTimeSheets').doc(item.id);
-        let championTimeSheetRef2 = this.myDocument.collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
-        let weeklyRef = this.myDocument.collection<workItem>('WeeklyActions').doc(item.id);
-        let allMyActionsRef = this.myDocument.collection<workItem>('actionItems').doc(item.id);
-
-        let championRef2;
-        if (item.taskId !== "") {
-            championRef2 = this.myDocument.collection('tasks').doc(item.taskId).collection<workItem>
-                ('actionItems').doc(item.id);
-        }
-        
-        if (workAction.type === "unPlanned") {
-
-            this.myDocument.collection('TimeSheets').doc(timesheetDocId).set(timeData)
-            let timesheetworktime = String(moment(new Date().getTime()));
-
+        this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).set(timeData).then(() => {
             /* TimeSheet collection Report doc set */
-
             championTimeSheetRef.set(actionSet).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
-                championTimeSheetRef.update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                })
+                console.log('Class Report updated successful');
+                championTimeSheetRef.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
             }).catch((error) => {
                 console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
             });
-
             championTimeSheetRef2.set(actionSet).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
-                championTimeSheetRef2.update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                })
-            }).catch((error) => {
-                console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
-            });
-            championTimeSheetRef.collection('workTime').doc(timesheetworktime).set(work);
-            championTimeSheetRef.collection('actionActuals').doc(timesheetworktime).set(work);
-
-            championTimeSheetRef2.collection('workTime').doc(timesheetworktime).set(work);
-            championTimeSheetRef2.collection('actionActuals').doc(timesheetworktime).set(work);
-
-            /* End  */
-
-
-            weeklyRef.update({
-                workHours: firebase.firestore.FieldValue.arrayUnion(work),
-                'actualStart': item.actualStart
-            }).then(() => {
-                console.log('Update successful, document exists');
-                // update successful (document exists)
-            }).catch((error) => {
-                console.log('Error updating Enterprises/projects, document does not exists', error);
-                // .set({ data });
-                weeklyRef.set(item);
-                weeklyRef.update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                })
-            });
-
-            allMyActionsRef.update({
-                workHours: firebase.firestore.FieldValue.arrayUnion(work),
-                'actualStart': item.actualStart
-
-            }).then(() => {
-                console.log('Update successful, document exists');
-                // update successful (document exists)
-            }).catch((error) => {
-                console.log('Error updating Enterprises/projects, document does not exists', error);
-                // .set({ data });
-                allMyActionsRef.set(item);
-                allMyActionsRef.update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                })
-            });
-
-        } else {
-
-
-            // if (workAction.classificationName !== "") {
-            //     if (workAction.classificationName === 'Work') {
-            //         workAction.classification = newClassification;
-
-            //         workAction.classificationName = 'Work';
-            //         workAction.classificationId = newClassification.id;
-
-            //         classWorkReps = newClassification;
-            //         this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classification': newClassification });
-            //         this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classification': newClassification });
-            //     } else if (workAction.classification !== null || workAction.classification !== undefined) {
-
-            //         if (workAction.classification.name === 'Work') {
-            //             workAction.classificationName = 'Work';
-            //             workAction.classificationId = newClassification.id;
-
-            //             this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationName': newClassification.name });
-            //             this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationName': newClassification.name });
-
-            //             this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationId': newClassification.id });
-            //             this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationId': newClassification.id });
-            //         }
-            //     }
-            // }
-
-            // if (workAction.classification.name === 'Work') {
-
-            //     workAction.classificationName = 'Work';
-            //     workAction.classificationId = newClassification.id;
-
-            //     this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationName': newClassification.name });
-            //     this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationName': newClassification.name });
-
-            //     this.myDocument.collection<workItem>('WeeklyActions').doc(item.id).update({ 'classificationId': newClassification.id });
-            //     this.myDocument.collection<workItem>('actionItems').doc(item.id).update({ 'classificationId': newClassification.id });
-
-            // }
-
-            this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).set(timeData)
-            let timesheetworktime = String(moment(new Date().getTime()));
-
-            championTimeSheetRef.set(actionSet).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
-                championTimeSheetRef.update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                })
-            }).catch((error) => {
-                console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
-            });
-
-            championTimeSheetRef2.set(actionSet).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
-                championTimeSheetRef2.update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                })
-            }).catch((error) => {
-                console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
-            });
+                console.log('Class Report updated successful');
+                championTimeSheetRef2.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+            }).catch((error) => { console.log('Error ClassReport, documentdidnt exists Hence Report has been set', error); });
 
             championTimeSheetRef.collection('workTime').doc(timesheetworktime).set(work);
             championTimeSheetRef.collection('actionActuals').doc(timesheetworktime).set(work);
-
             championTimeSheetRef2.collection('workTime').doc(timesheetworktime).set(work);
             championTimeSheetRef2.collection('actionActuals').doc(timesheetworktime).set(work);
-
             /* End  */
 
+            /* ----------------update for every other node--------------------- */
 
-            let classReport = this.afs.collection('Users').doc(this.userId).collection('ClassTimeSheets').doc(timesheetworktime);
-            let classReport2 = this.afs.collection('Users').doc(this.userId).collection('ClassTimeSheetsSum').doc(timesheetDocId);
-            let myClassWrkRpt = classReport2.collection('classifications').doc(classWorkReps.id);
+            if (item.tag === 'sub') {
+                let championRef2;
+                if (item.taskId !== '') {
+                    championRef2 = this.myDocument.collection('tasks').doc(item.taskId).collection<workItem>
+                        ('actionItems').doc(item.id);
+                }
+                if (workAction.type === 'unPlanned') {
+                    weeklyRef.update({
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                    }).then(() => { console.log('Update successful'); }).catch((error) => {
+                        console.log('Error updating Enterprises/projects, document does not exists', error);
+                        weeklyRef.set(item).then(() => { weeklyRef.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) }) })
+                    });
+                    allMyActionsRef.update({
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                    }).then(() => { console.log('Update successful'); }).catch((error) => {
+                        console.log('Error updating Enterprises/projects, document does not exists', error); allMyActionsRef.set(item)
+                            .then(() => { allMyActionsRef.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) }) })
+                    });
 
-            classReport2.update(timeData).catch((error) => {
-                console.log('timeData not set', error);
-                // .set({ data });
-            });
-            classReport.update(classWorkReps).catch((error) => {
-                console.log('ClassReport not set', error);
-                // .set({ data });
-            });
+                } else {
 
-            classReport.update({
-                workHours: firebase.firestore.FieldValue.arrayUnion(work)
-            }).then(() => {
-                console.log('Update successful, document exists');
-                console.log('The biggest man on earth fall on  april 25');
-                // update successful (document exists)
-            }).catch((error) => {
-                console.log('Error updating ClassReport, document does not exists', error);
-                // .set({ data });
-                classReport.set(classWorkReps).then(() => {
-                    console.log('Class Report updated successful, document exists');
-                    // update successful (document exists)
-                    classReport.update({
-                        workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                    })
-                }).catch((error) => {
-                    console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
-                });
-            });
+                    const classReport = this.afs.collection('Users').doc(this.userId).collection('ClassTimeSheets').doc(timesheetworktime);
+                    const classReport2 = this.afs.collection('Users').doc(this.userId).collection('ClassTimeSheetsSum').doc(timesheetDocId);
+                    const myClassWrkRpt = classReport2.collection('classifications').doc(classWorkReps.id);
+                    classReport2.update(timeData).catch((error) => { console.log('timeData not set', error); });
+                    classReport.update(classWorkReps).catch((error) => { console.log('ClassReport not set', error); });
 
-            classReport2.collection('classifications').doc(classWorkReps.id).set(classWorkReps).catch((error) => {
-                console.log('ClassReport not set', error);
-                // .set({ data });
-            });
-            classReport2.collection('classifications').doc(classWorkReps.id).update({
-                Hours: firebase.firestore.FieldValue.arrayUnion(work)
-            }).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
-            }).catch((error) => {
-                console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
-                // .set({ data });
-                classReport2.collection('classifications').doc(classWorkReps.id).set(classWorkReps).then(() => {
-                    console.log('Class Report updated successful, document exists');
-
+                    classReport.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) }).then(() => {
+                        console.log('Update successful');
+                    }).catch((error) => {
+                        console.log('Error updating ClassReport, document does not exists', error);
+                        classReport.set(classWorkReps).then(() => {
+                            console.log('Class Report updated successful');
+                            classReport.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                        }).catch((error1) => {
+                            console.log('Error updating ClassReport, document does not exists Hence Report has been set', error1);
+                        });
+                    });
+                    classReport2.collection('classifications').doc(classWorkReps.id).set(classWorkReps).catch((error) => {
+                        console.log('ClassReport not set', error);
+                    });
                     classReport2.collection('classifications').doc(classWorkReps.id).update({
                         Hours: firebase.firestore.FieldValue.arrayUnion(work)
                     })
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
-                });
-            });
-
-            myClassWrkRpt.collection('woukHours').doc(fullTym).set(work).catch((error) => {
-                console.log('Error updating ClassworkHours, document does not exists', error);
-            })
-
-            classReport2.update({
-                workHours: firebase.firestore.FieldValue.arrayUnion(work)
-            }).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
-            }).catch((error) => {
-                console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
-                // .set({ data });
-                classReport2.set(classWorkReps).then(() => {
-                    console.log('Class Report updated successful, document exists');
-                    // update successful (document exists)
+                        .then(() => { console.log('Class Report updated successful') }).catch((error) => {
+                            console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
+                            classReport2.collection('classifications').doc(classWorkReps.id).set(classWorkReps).then(() => {
+                                console.log('Class Report updated successful');
+                                classReport2.collection('classifications').doc(classWorkReps.id).update({
+                                    Hours: firebase.firestore.FieldValue.arrayUnion(work)
+                                })
+                            }).catch((error2) => {
+                                console.log('Error updating ClassReport, document does not exists Hence Report has been set', error2);
+                            });
+                        });
+                    myClassWrkRpt.collection('woukHours').doc(fullTym).set(work).catch((error) => {
+                        console.log('Error updating ClassworkHours, document does not exists', error);
+                    })
                     classReport2.update({
-                        Hours: firebase.firestore.FieldValue.arrayUnion(work)
-                    })
-                });
-            });
-
-            myClassWrkRpt.update({
-                workHours: firebase.firestore.FieldValue.arrayUnion(work)
-            }).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
-            }).catch((error) => {
-                console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
-                // .set({ data });
-                myClassWrkRpt.set(classWorkReps).then(() => {
-                    console.log('Class Report updated successful, document exists');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                    }).then(() => {
+                        console.log('Class Report updated successful');
+                    }).catch((error) => {
+                        console.log('Error ClassReport', error); classReport2.set(classWorkReps).then(() => {
+                            console.log('Class Report updated successful');
+                            classReport2.update({ Hours: firebase.firestore.FieldValue.arrayUnion(work) })
+                        });
+                    });
                     myClassWrkRpt.update({
-                        Hours: firebase.firestore.FieldValue.arrayUnion(work)
-                    })
-                });
-            });
-
-
-            // }
-
-            classReport2.collection('classifications').doc(classWorkReps.id).set(classWorkReps).catch((error) => {
-                console.log('ClassReport not set', error);
-                // .set({ data });
-            });
-
-            classReport2.update({
-                workHours: firebase.firestore.FieldValue.arrayUnion(work)
-            }).then(() => {
-                console.log('Update successful, document exists');
-                console.log('The biggest man on earth fall on  april 25');
-                // update successful (document exists)
-            }).catch((error) => {
-                console.log('Error updating ClassReport, document does not exists', error);
-                // .set({ data });
-                classReport.set(classWorkReps).then(() => {
-                    console.log('Update successful, document exists');
-                    console.log('The biggest man on earth fall on  april 25');
-                    // update successful (document exists)
-
-                    classReport.update({
                         workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                    })
-                }).catch((error) => {
-                    console.log('Error updating ClassReport, document does not exists', error);
-                });
-            });
-
-            if (item.taskId !== "") {
-                championRef2.update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work),
-                    'actualStart': item.actualStart
-                }).then(() => {
-                    console.log('Update successful, document exists');
-                    console.log('The biggest man on earth fall on  april 25');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating Enterprises/projects, document does not exists', error);
-                    // .set({ data });
-                    championRef2.set(item).then(() => {
-                        console.log('Update successful, document exists');
-                        console.log('The biggest man on earth fall on  april 25');
-                        // update successful (document exists)
+                    }).then(() => { console.log('Class Report updated successful'); }).catch((error) => {
+                        console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
+                        myClassWrkRpt.set(classWorkReps).then(() => {
+                            console.log('Class Report updated successful');
+                        }).catch((error3) => {
+                            console.log('Error ClassReport, ', error3);
+                            myClassWrkRpt.update({ Hours: firebase.firestore.FieldValue.arrayUnion(work) })
+                        });
+                    });
+                    classReport2.collection('classifications').doc(classWorkReps.id).set(classWorkReps).catch((error) => {
+                        console.log('ClassReport not set', error);
+                    });
+                    classReport2.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) }).then(() => {
+                        console.log('Update successful');
                     }).catch((error) => {
-                        console.log('Error updating Enterprises/projects, document does not exists', error);
+                        console.log('Error updating ClassReport, document does not exists', error);
+                        classReport.set(classWorkReps).then(() => {
+                            console.log('Update successful');
+                            classReport.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                        }).catch((error1) => {
+                            console.log('Error updating ClassReport, document does not exists', error1);
+                        });
+                    });
+
+                    if (item.taskId !== '') {
                         championRef2.update({
-                            workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                        })
-                    });
-                });
-            }
-            weeklyRef.update({
-                workHours: firebase.firestore.FieldValue.arrayUnion(work),
-                'actualStart': item.actualStart
-            }).then(() => {
-                console.log('Update successful, document exists');
-                // update successful (document exists)
-            }).catch((error) => {
-                console.log('Error updating Enterprises/projects, document does not exists', error);
-                // .set({ data });
-                weeklyRef.set(item).then(() => {
-                    console.log('Update successful, document exists');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating Enterprises/projects, document does not exists', error);
+                            workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                        }).then(() => { console.log('Update successful'); }).catch((error) => {
+                            console.log('Error updating Enterprises/projects, document does not exists', error);
+                            championRef2.set(item).then(() => { console.log('Update successful'); }).catch((error1) => {
+                                console.log('Error updating Enterprises/projects, document does not exists', error1);
+                                championRef2.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                            });
+                        });
+                    }
                     weeklyRef.update({
-                        workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                    })
-                });
-            });
-
-            allMyActionsRef.update({
-                workHours: firebase.firestore.FieldValue.arrayUnion(work),
-                'actualStart': item.actualStart
-
-            }).then(() => {
-                console.log('Update successful, document exists');
-                // update successful (document exists)
-            }).catch((error) => {
-                console.log('Error updating Enterprises/projects, document does not exists', error);
-                // .set({ data });
-                allMyActionsRef.set(item).then(() => {
-                    console.log('Update successful, document exists');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating Enterprises/projects, document does not exists', error);
-                    allMyActionsRef.update({
-                        workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                    })
-                });
-            });
-
-            if (item.companyId !== "") {
-
-                let champCompTimeSheet = this.afs.collection('Enterprises').doc(item.companyId)
-                    .collection('Participants').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems')
-                    .doc(item.id);
-                let championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(item.companyId);
-
-
-                champCompTimeSheet.update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work),
-                    'actualStart': item.actualStart
-
-                }).then(() => {
-                    console.log('Update successful, document exists');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating Enterprises/projects, document does not exists', error);
-                    // .set({ data });
-                    champCompTimeSheet.set(item).then(() => {
-                        console.log('Update successful, document exists');
-                        // update successful (document exists)
-                        
-                        champCompTimeSheet.update({
-                            workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                        })
-                    })
-                });
-
-                championRef.collection('WeeklyActions').doc(item.id).update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work),
-                    'actualStart': item.actualStart
-
-                }).then(() => {
-                    console.log('Update successful, document exists');
-                    // update successful (document exists)
-                }).catch((error) => {
-                    console.log('Error updating Enterprises/projects, document does not exists', error);
-                    // .set({ data });
-                    championRef.collection('WeeklyActions').doc(item.id).set(item).then(() => {
-                        console.log('Update successful, document exists');
-                        // update successful (document exists)
-
-                        championRef.collection('WeeklyActions').doc(item.id).update({
-                            workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                        })
-                    })
-                });
-
-                if (item.projectId !== "") {
-
-                    let cmpProjectDoc = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
-                        .collection('labour').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
-                    let weeklyRef = this.afs.collection('Enterprises').doc(item.companyId).collection('projects').doc(item.projectId)
-                        .collection('labour').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
-
-                    let champTimeSheetRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
-                        .collection('labour').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems')
-                        .doc(item.id);
-
-                    champTimeSheetRef.update({
-                        workHours: firebase.firestore.FieldValue.arrayUnion(work),
-                        'actualStart': item.actualStart
-
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
                     }).then(() => {
-                        console.log('Update successful, document exists');
-                        // update successful (document exists)~
-                    }).catch((error) => {
-                        console.log('Error updating Projects/enterprises/user, document does not exists', error);
-                        // .set({ data });
-                        champTimeSheetRef.set(item).then(() => {
-                            console.log('Update successful, document exists');
-                            // update successful (document exists)
-
-                            champTimeSheetRef.update({
-                                workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                            })
-                        })
-                    });
-
-                    cmpProjectDoc.update({
-                        workHours: firebase.firestore.FieldValue.arrayUnion(work),
-                        'actualStart': item.actualStart
-                    }).then(() => {
-                        console.log('Update successful, document exists');
-                        // update successful (document exists)
-                    }).catch((error) => {
-                        console.log('Error updating Projects/enterprises, document does not exists', error);
-                        // .set({ data });
-                        cmpProjectDoc.set(item).then(() => {
-                            console.log('Update successful, document exists');
-                            // update successful (document exists)
-
-                            cmpProjectDoc.update({
-                                workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                            })
-                        })
-                    });
-
-                    weeklyRef.update({
-                        workHours: firebase.firestore.FieldValue.arrayUnion(work),
-                        'actualStart': item.actualStart
-                    }).then(() => {
-                        console.log('Update successful, document exists');
-                        // update successful (document exists)
+                        console.log('Update successful');
                     }).catch((error) => {
                         console.log('Error updating Enterprises/projects, document does not exists', error);
-                        // .set({ data });
-                        weeklyRef.set(item).then(() => {
-                            console.log('Update successful, document exists');
-                            // update successful (document exists)
+                        weeklyRef.set(item).then(() => { console.log('Update successful'); }).catch((error1) => {
+                            console.log('Error updating Enterprises/projects, document does not exists', error1);
+                            weeklyRef.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                        });
+                    });
 
-                            weeklyRef.update({
-                                workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                    allMyActionsRef.update({
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                    }).then(() => { console.log('Update successful'); }).catch((error) => {
+                        console.log('Error updating Enterprises/projects, document does not exists', error);
+                        allMyActionsRef.set(item).then(() => {
+                            console.log('Update successful');
+                        }).catch((error1) => {
+                            console.log('Error updating Enterprises/projects, document does not exists', error1);
+                            allMyActionsRef.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                        });
+                    });
+
+                    if (item.companyId !== '') {
+                        const champCompTimeSheet = this.afs.collection('Enterprises').doc(item.companyId)
+                            .collection('Participants').doc(this.userId).collection('TimeSheets').doc(timesheetDocId)
+                            .collection('actionItems').doc(item.id);
+                        const championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(item.companyId);
+                        if (workAction.workHours === null) {
+                            workAction.workHours = [];
+                            champCompTimeSheet.set(workAction).then(() => {
+                                champCompTimeSheet.update({
+                                    workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                                }).then(() => { console.log('Update successful'); }).catch((error) => {
+                                    console.log('Error updating Enterprises/projects, document does not exists', error);
+                                    champCompTimeSheet.set(item).then(() => {
+                                        console.log('Update successful');
+                                        champCompTimeSheet.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                                    })
+                                });
+                            });
+                            championRef.set(workAction).then(() => {
+                                championRef.collection('WeeklyActions').doc(item.id).update({
+                                    workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                                }).then(() => { console.log('Update successful'); }).catch((error) => {
+                                    console.log('Error updating Enterprises/projects, document does not exists', error);
+                                    championRef.collection('WeeklyActions').doc(item.id).set(item).then(() => {
+                                        console.log('Update successful'); championRef.collection('WeeklyActions').doc(item.id).update({
+                                            workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                                        })
+                                    })
+                                });
                             })
+                        } else {
+                            champCompTimeSheet.update({
+                                workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                            }).then(() => { console.log('Update successful'); }).catch((error) => {
+                                console.log('Error updating Enterprises/projects, document does not exists', error);
+                                champCompTimeSheet.set(item).then(() => {
+                                    console.log('Update successful');
+                                    champCompTimeSheet.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                                })
+                            });
+                            championRef.collection('WeeklyActions').doc(item.id).update({
+                                workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                            }).then(() => { console.log('Update successful'); }).catch((error) => {
+                                console.log('Error updating Enterprises/projects, document does not exists', error);
+                                championRef.collection('WeeklyActions').doc(item.id).set(item).then(() => {
+                                    console.log('Update successful');
+                                    championRef.collection('WeeklyActions').doc(item.id).update({
+                                        workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                                    })
+                                })
+                            });
+                        }
+                        if (item.projectId !== '') {
+                            const cmpProjectDoc = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
+                                .doc(item.companyId).collection('labour').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
+                            const weeklyRef1 = this.afs.collection('Enterprises').doc(item.companyId).collection('projects')
+                            .doc(item.projectId).collection('labour').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
+                            const champTimeSheetRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
+                                .doc(item.companyId).collection('labour').doc(this.userId).collection('TimeSheets').doc(timesheetDocId)
+                                .collection('actionItems')
+                                .doc(item.id);
+                            const dUser = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+                                .collection('labour').doc(this.userId);
+                            let dates: [string];
+                            dUser.ref.get().then(ls => {
+                                if (ls.data().activeTime !== undefined || ls.data().activeTime !== null) {
+                                    dates = ls.data().activeTime;
+                                    const i = dates.findIndex(s => s === (moment().format('L')));
+                                    console.log(i);
+                                    if (i > -1) {
+                                        console.log('already Logged');
+                                    } else {
+                                        dUser.update({
+                                            activeTime: firebase.firestore.FieldValue.arrayUnion(moment().format('L'))
+                                        }).catch((error) => { console.log('Error updating user Active Time', error); });
+                                    }
+                                } else {
+                                    dUser.update({
+                                        activeTime: firebase.firestore.FieldValue.arrayUnion(moment().format('L'))
+                                    }).catch((error) => { console.log('Error updating user Active Time', error); });
+                                }
+                            })
+                            if (workAction.workHours === null) {
+                                workAction.workHours = [];
+                                champTimeSheetRef.set(workAction).then(() => {
+                                    champTimeSheetRef.update({
+                                        workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                                    }).then(() => { console.log('Update successful'); }).catch((error) => {
+                                        console.log('Error updating Projects/enterprises/user, document does not exists', error);
+                                        champTimeSheetRef.set(item).then(() => {
+                                            console.log('Update successful');
+                                            champTimeSheetRef.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                                        })
+                                    });
+                                });
+                                cmpProjectDoc.set(workAction).then(() => {
+                                    cmpProjectDoc.update({
+                                        workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                                    }).then(() => {
+                                        console.log('Update successful Munashe Report');
+                                    }).catch((error) => {
+                                        console.log('Error updating Projects/enterprises, document does not exists', error);
+                                        cmpProjectDoc.set(item).then(() => {
+                                            console.log('Update successful');
+                                            cmpProjectDoc.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                                        })
+                                    });
+                                });
+                                weeklyRef1.set(workAction).then(() => {
+                                    weeklyRef1.update({
+                                        workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                                    }).then(() => { console.log('Update successful') }).catch((error) => {
+                                        console.log('Error updating Enterprises/projects, document does not exists', error);
+                                        weeklyRef1.set(item).then(() => {
+                                            console.log('Update successful');
+                                            weeklyRef1.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                                        })
+                                    });
+                                });
+                            } else {
+                                champTimeSheetRef.update({
+                                    workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                                }).then(() => { console.log('Update successful'); }).catch((error) => {
+                                    console.log('Error updating Projects/enterprises/user, document does not exists', error);
+                                    champTimeSheetRef.set(item).then(() => {
+                                        console.log('Update successful');
+                                        champTimeSheetRef.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                                    })
+                                });
+                                cmpProjectDoc.update({
+                                    workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                                }).then(() => { console.log('Update successful Munashe Report') }).catch((error) => {
+                                    console.log('Error updating Projects/enterprises, document does not exists', error);
+                                    cmpProjectDoc.set(item).then(() => {
+                                        console.log('Update successful');
+                                        cmpProjectDoc.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                                    })
+                                });
+                                weeklyRef1.update({
+                                    workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                                }).then(() => { console.log('Update successful') }).catch((error) => {
+                                    console.log('Error updating Enterprises/projects, document does not exists', error);
+                                    weeklyRef1.set(item).then(() => {
+                                        console.log('Update successful');
+                                        weeklyRef1.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                                    })
+                                });
+                            }
+                        }
+                    }
+                }
+            } else if (item.tag === 'std') {
+                console.log(item.tag);
+                const standards = this.afs.collection('Users').doc(champId).collection('myStandards').doc(item.id);
+                if (workAction.workHours === null || workAction.workHours === undefined) {
+                    workAction.workHours = [];
+                    standards.set(workAction).then(() => {
+                        standards.update({
+                            workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                        }).then(() => { console.log('standards Update successful') }).catch((error) => {
+                            console.log('Error updating standards, document does not exists', error);
+                            standards.set(item).then(() => {
+                                console.log('standards Update successful');
+                                standards.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
+                            })
+                        });
+                    });
+                } else {
+                    standards.update({
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work), 'actualStart': item.actualStart
+                    }).then(() => { console.log('standardsUpdate successful') }).catch((error) => {
+                        console.log('Error updating standardss, document does not exists', error);
+                        standards.set(item).then(() => {
+                            console.log('standards Update successful');
+                            standards.update({ workHours: firebase.firestore.FieldValue.arrayUnion(work) })
                         })
                     });
                 }
-
-                // notify;
             }
-        }
+
+            /* ---------------- End --------------------- */
+
+        }).then(() => { this.aclear(); })
 
 
-        cleaningTime;
+        // cleaningTime;
 
     }
 
     updateAction(e, workAction: workItem) {
-
         if (e.target.checked) {
 
             console.log('ActionItem' + ' ' + workAction.name + ' ' + 'updated');
@@ -1535,135 +1579,113 @@ export class NavbarComponent implements OnInit {
             workAction.UpdatedOn = moment().toString();
 
             console.log(workAction);
-            let champId = this.userId
-            let cleaningTime = this.aclear();
-            let notify = this.showNotification('Task', 'top', 'right');
-            let item = workAction;
+            const champId = this.userId
+            const cleaningTime = this.aclear();
+            const notify = this.ns.showNotification('Task', 'top', 'right', workAction);
+            const item = workAction;
             console.log(item);
-
-
-            let dataId = item.id + moment().format('dd');
+            const dataId = item.id + moment().format('dd');
             console.log(dataId);
 
-            let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
-            let timesheetworktime = String(moment(new Date().getTime()));
-            let work = {
+            const timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
+            const timesheetworktime = String(moment(new Date().getTime()));
+            const work = {
                 WorkingTime: moment().toString(),
                 name: item.name,
                 id: item.id,
             }
-            let championTimeSheetRef = this.afs.collection('Users').doc(champId).collection('actionTimeSheets').doc(item.id);
-            let championTimeSheetRef2 = this.afs.collection('Users').doc(champId).collection('TimeSheets').doc(timesheetDocId)
+            const championTimeSheetRef = this.afs.collection('Users').doc(champId).collection('actionTimeSheets').doc(item.id);
+            const championTimeSheetRef2 = this.afs.collection('Users').doc(champId).collection('TimeSheets').doc(timesheetDocId)
                 .collection<workItem>('actionItems').doc(item.id);
-            let championRef2 = this.afs.collection('Users').doc(champId).collection('tasks').doc(item.taskId).collection<workItem>
+            const championRef2 = this.afs.collection('Users').doc(champId).collection('tasks').doc(item.taskId).collection<workItem>
                 ('actionItems').doc(item.id);
-            let weeklyRef = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
-            let allMyActionsRef = this.afs.collection('Users').doc(champId).collection<workItem>('actionItems').doc(item.id);
+            const weeklyRef = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
+            const allMyActionsRef = this.afs.collection('Users').doc(champId).collection<workItem>('actionItems').doc(item.id);
 
             championRef2.update({ 'UpdatedOn': workAction.UpdatedOn });
             weeklyRef.update({ 'UpdatedOn': workAction.UpdatedOn });
             allMyActionsRef.update({ 'UpdatedOn': workAction.UpdatedOn });
             championTimeSheetRef.set(item).then(() => {
-                console.log('Update successful, document exists');
-                // update successful (document exists)
+                console.log('Update successful');
+
             }).catch((error) => {
                 console.log('Error updating user, document does not exists', error);
             });
-            
+
             championTimeSheetRef2.set(item).then(() => {
-                console.log('Update successful, document exists');
-                // update successful (document exists)
+                console.log('Update successful');
+
             }).catch((error) => {
                 console.log('Error updating user, document does not exists', error);
             });
 
             championTimeSheetRef.collection('workTime').doc(timesheetworktime).set(work).then(() => {
-                console.log('Update successful, document exists');
-                // update successful (document exists)
+                console.log('Update successful');
+
             }).catch((error) => {
                 console.log('Error updating user, document does not exists', error);
             });
 
             championTimeSheetRef.collection('actionActuals').doc(timesheetworktime).set(work).then(() => {
-                console.log('Update successful, document exists');
-                // update successful (document exists)
+                console.log('Update successful');
+
             }).catch((error) => {
                 console.log('Error updating user, document does not exists', error);
             });
-
             championTimeSheetRef2.collection('workTime').doc(timesheetworktime).set(work).then(() => {
-                console.log('Update successful, document exists');
-                // update successful (document exists)
+                console.log('Update successful');
             }).catch((error) => {
                 console.log('Error updating user, document does not exists', error);
             });
             championTimeSheetRef2.collection('actionActuals').doc(timesheetworktime).set(work).then(() => {
-                console.log('Update successful, document exists');
-                // update successful (document exists)
+                console.log('Update successful');
             }).catch((error) => {
                 console.log('Error updating user, document does not exists', error);
             });
 
-            if (item.companyId !== "") {
-                let championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(item.companyId);
+            if (item.companyId !== '') {
+                const championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(item.companyId);
                 championRef.collection('WeeklyActions').doc(item.id).update({ 'UpdatedOn': workAction.UpdatedOn }).then(ref => {
                     championRef.collection('TimeSheets').doc(item.id)
-                    cleaningTime;
-                    notify;
+                    this.aclear();
+                    this.ns.showNotification('Task', 'top', 'right', workAction);
                 });
-                if (item.projectId !== "") {
-
-                    let cmpProjectDoc = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+                if (item.projectId !== '') {
+                    const cmpProjectDoc = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
                         .collection('labour').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
-                    let weeklyRef = this.afs.collection('Enterprises').doc(item.companyId).collection('projects').doc(item.projectId).
+                    const weeklyRef3 = this.afs.collection('Enterprises').doc(item.companyId).collection('projects').doc(item.projectId).
                         collection('labour').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
-
-                    let champTimeSheetRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
+                    const champTimeSheetRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
                         .doc(item.companyId).collection('labour').doc(this.userId).collection('TimeSheets').doc(timesheetDocId)
                         .collection<workItem>('actionItems').doc(item.id);
-
                     champTimeSheetRef.update({
                         actuals: firebase.firestore.FieldValue.arrayUnion(work)
                     }).then(() => {
-                        console.log('Update successful, document exists');
-                        // update successful (document exists)
+                        console.log('Update successful');
                     }).catch((error) => {
                         console.log('Error updating user, document does not exists', error);
-                        // .set({ data });
                         champTimeSheetRef.set(this.actionData).then(() => {
-                            console.log('Update successful, document exists');
-                            // update successful (document exists)
-
+                            console.log('Update successful');
                             champTimeSheetRef.update({
                                 actuals: firebase.firestore.FieldValue.arrayUnion(work)
                             })
                         })
                     });
-
                     cmpProjectDoc.update({ 'UpdatedOn': workAction.UpdatedOn }).then(() => {
-                        console.log('Update successful, document exists');
-                        // update successful (document exists)
+                        console.log('Update successful');
                     }).catch((error) => {
                         console.log('Error updating user, document does not exists', error);
-                        // .set({ data });
                         cmpProjectDoc.set(this.actionData).then(() => {
-                            console.log('Update successful, document exists');
-                            // update successful (document exists)
-
+                            console.log('Update successful');
                             cmpProjectDoc.update({ 'UpdatedOn': workAction.UpdatedOn })
                         })
                     });
-
-                    weeklyRef.update({ 'UpdatedOn': workAction.UpdatedOn }).then(() => {
-                        console.log('Update successful, document exists');
-                        // update successful (document exists)
+                    weeklyRef3.update({ 'UpdatedOn': workAction.UpdatedOn }).then(() => {
+                        console.log('Update successful');
                     }).catch((error) => {
                         console.log('Error updating user, document does not exists', error);
-                        // .set({ data });
                         weeklyRef.set(this.actionData).then(() => {
-                            console.log('Update successful, document exists');
-                            // update successful (document exists)
-
+                            console.log('Update successful');
                             weeklyRef.update({ 'UpdatedOn': workAction.UpdatedOn })
                         })
                     });
@@ -1676,17 +1698,15 @@ export class NavbarComponent implements OnInit {
 
     unPlannedTAskPopUp(unplannedTask) {
         console.log('unPlannedTAskPopUp');
-        
+
         this.modalRef.hide();
-        let champId = this.userId;
-        let selectedWork = true;
-
-        let tHours = (moment(new Date(), 'HH:mm').hours()).toLocaleString();
-        let tMinutes = (moment(new Date(), 'HH:mm').minutes()).toLocaleString()
-
-        let fullTym = moment().format('HH:mm');
-        let actionSet = unplannedTask;
-        let work = {
+        const champId = this.userId;
+        const selectedWork = true;
+        const tHours = (moment(new Date(), 'HH:mm').hours()).toLocaleString();
+        const tMinutes = (moment(new Date(), 'HH:mm').minutes()).toLocaleString()
+        const fullTym = moment().format('HH:mm');
+        const actionSet = unplannedTask;
+        const work = {
             id: fullTym,
             name: 'responded',
             action: actionSet.name,
@@ -1696,7 +1716,6 @@ export class NavbarComponent implements OnInit {
             time: moment().toString(),
             hours: 0.5
         }
-
         console.log(unplannedTask);
         unplannedTask.selectedWork = selectedWork;
         unplannedTask.startDate = moment(new Date(), 'MM-DD-YYYY').format('L');
@@ -1704,74 +1723,64 @@ export class NavbarComponent implements OnInit {
         unplannedTask.startDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
         unplannedTask.endDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
         unplannedTask.start = moment().format('HH:mm');
-        unplannedTask.end = "";
+        unplannedTask.end = '';
         unplannedTask.type = 'unPlanned';
         unplannedTask.champion = this.myData;
         unplannedTask.createdOn = new Date().toString();
-
-        unplannedTask.unit = "items";
+        unplannedTask.unit = 'items';
         unplannedTask.selectedWeekly = true;
         unplannedTask.selectedWeekWork = true;
 
-        let weeklyRef = this.myDocument.collection('WeeklyActions');
-        let allMyActionsRef = this.myDocument.collection('actionItems');
+        const weeklyRef = this.myDocument.collection('WeeklyActions');
+        const allMyActionsRef = this.myDocument.collection('actionItems');
 
-
-        // let championTimeSheetRef = this.myDocument.collection('actionTimeSheets').doc(item.id);
-        // let championTimeSheetRef2 = this.myDocument.collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
-
-        let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
-        let timeData = {
+        const timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
+        const timeData = {
             name: timesheetDocId,
             id: timesheetDocId,
         }
-
         /* TimeSheet collection Report doc set */
-
-
         this.myDocument.collection('TimeSheets').doc(timesheetDocId).set(timeData)
-        let timesheetworktime = String(moment(new Date().getTime()));
-
-        let championTimeSheetRef = this.myDocument.collection('actionTimeSheets');
-        let championTimeSheetRef2 = this.myDocument.collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems');
+        const timesheetworktime = String(moment(new Date().getTime()));
+        const championTimeSheetRef = this.myDocument.collection('actionTimeSheets');
+        const championTimeSheetRef2 = this.myDocument.collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems');
 
         weeklyRef.add(unplannedTask).then(function (Ref) {
-            let newActionId = Ref.id;
+            const newActionId = Ref.id;
             unplannedTask.id = Ref.id;
             work.actionId = Ref.id;
-
             // console.log(Ref);
             weeklyRef.doc(newActionId).update({
                 'id': newActionId,
                 workHours: firebase.firestore.FieldValue.arrayUnion(work),
                 'actualStart': unplannedTask.actualStart
             }).then(() => {
-                console.log('WeeklyActions coll pdate successful, document exists');
-                // update successful (document exists)
+                console.log('WeeklyActions coll pdate successful');
+
             }).catch((error) => {
                 console.log('Error updating WeeklyActions coll, document does not exists', error);
-                // .set({ data });
                 weeklyRef.doc(newActionId).set(unplannedTask);
                 weeklyRef.doc(newActionId).update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                    'id': newActionId,
+                    workHours: firebase.firestore.FieldValue.arrayUnion(work),
+                    'actualStart': unplannedTask.actualStart
                 })
             });
 
             allMyActionsRef.doc(newActionId).set(unplannedTask).then(function () {
                 allMyActionsRef.doc(newActionId).update({
-                    // 'id': newActionId,
+                    'id': newActionId,
                     workHours: firebase.firestore.FieldValue.arrayUnion(work),
                     'actualStart': unplannedTask.actualStart
-
                 }).then(() => {
-                    console.log('actionItems coll update successful, document exists');
-                    // update successful (document exists)
+                    console.log('actionItems coll update successful');
                 }).catch((error) => {
                     console.log('Error updating actionItems coll, document does not exists', error);
-                    // .set({ data });
                     allMyActionsRef.doc(newActionId).set(unplannedTask).then(function () {
                         allMyActionsRef.doc(newActionId).update({
-                            workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                            'id': newActionId,
+                            workHours: firebase.firestore.FieldValue.arrayUnion(work),
+                            'actualStart': unplannedTask.actualStart
                         })
                     })
                 })
@@ -1780,10 +1789,12 @@ export class NavbarComponent implements OnInit {
             /* TimeSheet collection Report doc set */
 
             championTimeSheetRef.doc(newActionId).set(unplannedTask).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
+                console.log('Class Report updated successful');
+
                 championTimeSheetRef.doc(newActionId).update({
-                    workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                    'id': newActionId,
+                    workHours: firebase.firestore.FieldValue.arrayUnion(work),
+                    'actualStart': unplannedTask.actualStart
                 });
 
                 championTimeSheetRef.doc(newActionId).collection('workTime').doc(timesheetworktime).set(work);
@@ -1791,18 +1802,21 @@ export class NavbarComponent implements OnInit {
             }).catch((error) => {
                 console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
                 championTimeSheetRef.doc(newActionId).set(unplannedTask).then(() => {
-                    console.log('Class Report updated successful, document exists');
-                    // update successful (document exists)
+                    console.log('Class Report updated successful');
+
                     championTimeSheetRef.doc(newActionId).update({
-                        workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                        'id': newActionId,
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work),
+                        'actualStart': unplannedTask.actualStart
                     })
-                })                
+                })
             });
 
             championTimeSheetRef2.doc(newActionId).set(unplannedTask).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
+                console.log('Class Report updated successful');
+
                 championTimeSheetRef2.doc(newActionId).update({
+                    'id': newActionId,
                     workHours: firebase.firestore.FieldValue.arrayUnion(work)
                 });
 
@@ -1811,56 +1825,39 @@ export class NavbarComponent implements OnInit {
             }).catch((error) => {
                 console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
                 championTimeSheetRef2.doc(newActionId).set(unplannedTask).then(() => {
-                    console.log('Class Report updated successful, document exists');
-                    // update successful (document exists)
+                    console.log('Class Report updated successful');
+
                     championTimeSheetRef2.doc(newActionId).update({
-                        workHours: firebase.firestore.FieldValue.arrayUnion(work)
+                        'id': newActionId,
+                        workHours: firebase.firestore.FieldValue.arrayUnion(work),
+                        'actualStart': unplannedTask.actualStart
                     })
                 })
             });
 
+            /* End  */
+        }).then(() => {
+            console.log(unplannedTask);
+            this.modalRef.hide();
+            this.item = {
+                uid: '', id: '', name: '', unit: '', quantity: 0, targetQty: 0, rate: 0, workHours: null,
+                amount: 0, by: '', byId: '', type: '', champion: null, classification: null, participants: null,
+                departmentName: '', departmentId: '', billID: '', billName: '', projectId: '', projectName: '', createdOn: '',
+                UpdatedOn: '', actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: '',
+                startDay: '', startDate: '', endDay: '', endDate: '', endWeek: '', taskName: '', taskId: '', companyId: '',
+                selectedWeekly: false, companyName: '', classificationName: '', classificationId: '', selectedWork: false,
+                section: this.is.getSectionInit(), selectedWeekWork: false, actualStart: '', actualEnd: '', Hours: '',
+                championName: '', championId: '', description: ''
+            };
+        })
 
-        /* End  */
-        });
-
-        console.log(unplannedTask);
-        this.modalRef.hide();
-
-        // let item = unplannedTask;
-        
-       
-
-
-        this.item = {
-            uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null,
-            amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null,
-            departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "",
-            UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "",
-            startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", selectedWeekly: false,
-            companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), selectedWeekWork: false,
-            actualStart: "", actualEnd: "", Hours: "", championName: "", championId: ""
-        };
     }
 
     unPlannedTAsk(unplannedTask) {
-        let champId = this.userId;
-        let selectedWork = true;
-
-        let tHours = (moment(new Date(), 'HH:mm').hours()).toLocaleString();
-        let tMinutes = (moment(new Date(), 'HH:mm').minutes()).toLocaleString()
-
-        // let fullTym = tHours + ':' + tMinutes;
-        // let actionSet = unplannedTask;
-        // let work = {
-        //     id: fullTym,
-        //     name: 'responded',
-        //     action: actionSet.name,
-        //     actionId: '',
-        //     tHours: tHours,
-        //     tMinutes: tMinutes,
-        //     time: moment().toString(),
-        //     hours: 0.5
-        // }
+        const champId = this.userId;
+        const selectedWork = true;
+        const tHours = (moment(new Date(), 'HH:mm').hours()).toLocaleString();
+        const tMinutes = (moment(new Date(), 'HH:mm').minutes()).toLocaleString()
 
         console.log(unplannedTask);
         unplannedTask.selectedWork = selectedWork;
@@ -1869,122 +1866,73 @@ export class NavbarComponent implements OnInit {
         unplannedTask.startDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
         unplannedTask.endDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
         unplannedTask.start = moment().format('HH:mm');
-        unplannedTask.end = "";
+        unplannedTask.end = '';
         unplannedTask.type = 'unPlanned';
         unplannedTask.champion = this.myData;
         unplannedTask.createdOn = new Date().toString();
-
-        unplannedTask.unit = "items";
+        unplannedTask.unit = 'items';
         unplannedTask.selectedWeekly = true;
         unplannedTask.selectedWeekWork = true;
 
-        let weeklyRef = this.myDocument.collection('WeeklyActions');
-        let allMyActionsRef = this.myDocument.collection('actionItems');
-
-
-        // let championTimeSheetRef = this.myDocument.collection('actionTimeSheets').doc(item.id);
-        // let championTimeSheetRef2 = this.myDocument.collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
-
-        let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
-        let timeData = {
+        const weeklyRef = this.myDocument.collection('WeeklyActions');
+        const allMyActionsRef = this.myDocument.collection('actionItems');
+        const timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
+        const timeData = {
             name: timesheetDocId,
             id: timesheetDocId,
         }
 
         /* TimeSheet collection Report doc set */
-
-
         this.myDocument.collection('TimeSheets').doc(timesheetDocId).set(timeData)
-        let timesheetworktime = String(moment(new Date().getTime()));
+        const timesheetworktime = String(moment(new Date().getTime()));
 
-        let championTimeSheetRef = this.myDocument.collection('actionTimeSheets');
-        let championTimeSheetRef2 = this.myDocument.collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems');
+        const championTimeSheetRef = this.myDocument.collection('actionTimeSheets');
+        const championTimeSheetRef2 = this.myDocument.collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems');
 
         weeklyRef.add(unplannedTask).then(function (Ref) {
-            let newActionId = Ref.id;
+            const newActionId = Ref.id;
             unplannedTask.id = Ref.id;
-            // work.actionId = Ref.id;
-
-            // console.log(Ref);
             weeklyRef.doc(newActionId).update({
                 'id': newActionId,
-                // workHours: firebase.firestore.FieldValue.arrayUnion(work),
                 'actualStart': unplannedTask.actualStart
             }).then(() => {
-                console.log('WeeklyActions coll pdate successful, document exists');
-                // update successful (document exists)
+                console.log('WeeklyActions coll pdate successful');
+
             }).catch((error) => {
                 console.log('Error updating WeeklyActions coll, document does not exists', error);
-                // .set({ data });
                 weeklyRef.doc(newActionId).set(unplannedTask);
-                // weeklyRef.doc(newActionId).update({
-                //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                // })
             });
 
             allMyActionsRef.doc(newActionId).set(unplannedTask).then(function () {
                 allMyActionsRef.doc(newActionId).update({
-                    // 'id': newActionId,
-                    // workHours: firebase.firestore.FieldValue.arrayUnion(work),
                     'actualStart': unplannedTask.actualStart
-
                 }).then(() => {
-                    console.log('actionItems coll update successful, document exists');
-                    // update successful (document exists)
+                    console.log('actionItems coll update successful');
                 }).catch((error) => {
                     console.log('Error updating actionItems coll, document does not exists', error);
-                    // .set({ data });
                     allMyActionsRef.doc(newActionId).set(unplannedTask).then(function () {
-                        // allMyActionsRef.doc(newActionId).update({
-                        //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                        // })
                     })
                 })
             });
 
             /* TimeSheet collection Report doc set */
-
             championTimeSheetRef.doc(newActionId).set(unplannedTask).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
-                // championTimeSheetRef.doc(newActionId).update({
-                //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                // });
-
-                // championTimeSheetRef.doc(newActionId).collection('workTime').doc(timesheetworktime).set(work);
-                // championTimeSheetRef.doc(newActionId).collection('actionActuals').doc(timesheetworktime).set(work);
+                console.log('Class Report updated successful');
             }).catch((error) => {
                 console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
                 championTimeSheetRef.doc(newActionId).set(unplannedTask).then(() => {
-                    console.log('Class Report updated successful, document exists');
-                    // update successful (document exists)
-                    // championTimeSheetRef.doc(newActionId).update({
-                    //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                    // })
+                    console.log('Class Report updated successful');
                 })
             });
 
             championTimeSheetRef2.doc(newActionId).set(unplannedTask).then(() => {
-                console.log('Class Report updated successful, document exists');
-                // update successful (document exists)
-                // championTimeSheetRef2.doc(newActionId).update({
-                //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                // });
-
-                // championTimeSheetRef2.doc(newActionId).collection('workTime').doc(timesheetworktime).set(work);
-                // championTimeSheetRef2.doc(newActionId).collection('actionActuals').doc(timesheetworktime).set(work);
+                console.log('Class Report updated successful');
             }).catch((error) => {
                 console.log('Error updating ClassReport, document does not exists Hence Report has been set', error);
                 championTimeSheetRef2.doc(newActionId).set(unplannedTask).then(() => {
-                    console.log('Class Report updated successful, document exists');
-                    // update successful (document exists)
-                    // championTimeSheetRef2.doc(newActionId).update({
-                    //     workHours: firebase.firestore.FieldValue.arrayUnion(work)
-                    // })
+                    console.log('Class Report updated successful');
                 })
             });
-
-
             /* End  */
         });
 
@@ -1992,23 +1940,21 @@ export class NavbarComponent implements OnInit {
 
         // let item = unplannedTask;
 
-
-
-
         this.item = {
-            uid: "", id: "", name: "", unit: "", quantity: 0, targetQty: 0, rate: 0, workHours: null,
-            amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null,
-            departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "",
-            UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "",
-            startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", selectedWeekly: false,
-            companyName: "", classificationName: "", classificationId: "", selectedWork: false, section: this.is.getSectionInit(), selectedWeekWork: false,
-            actualStart: "", actualEnd: "", Hours: "", championName: "", championId: ""
+            uid: '', id: '', name: '', unit: '', quantity: 0, targetQty: 0, rate: 0, workHours: null,
+            amount: 0, by: '', byId: '', type: '', champion: null, classification: null, participants: null,
+            departmentName: '', departmentId: '', billID: '', billName: '', projectId: '', projectName: '', createdOn: '',
+            UpdatedOn: '', actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: '',
+            startDay: '', startDate: '', endDay: '', endDate: '', endWeek: '', taskName: '', taskId: '', companyId: '',
+            selectedWeekly: false, companyName: '', classificationName: '', classificationId: '', selectedWork: false,
+            section: this.is.getSectionInit(), selectedWeekWork: false, actualStart: '', actualEnd: '', Hours: '',
+            championName: '', championId: '', description: ''
         };
     }
 
     aclear() {
-        this.dmData = { updateTime: "", qty: 0 }
-        this.actualData = { name: "", time: "", actionId: "", id: "", actuals: null };
+        this.dmData = { updateTime: '', qty: 0 }
+        this.actualData = { name: '', time: '', actionId: '', id: '', actuals: null };
         // this.selectedAction = this.is.getActionItem();
     }
 
@@ -2016,13 +1962,26 @@ export class NavbarComponent implements OnInit {
         this.popData = false
     }
 
-    public openModal(template: TemplateRef<any>,) {
-        
-        this.modalRef = this.ngModalService.show(template); 
-        this.myDocument.ref.get().then(() =>{
+    public openModal(template: TemplateRef<any>) {
+        this.modalRef = this.ngModalService.show(template);
+        this.myDocument.ref.get().then(() => {
             this.playAudio();
         })
-        
+    }
+
+    openModal2(template: TemplateRef<any>) {
+        this.modalRef = this.ngModalService.show(template);
+        this.myDocument.ref.get().then(() => {
+            this.playAudio();
+        })
+    }
+    openLgg(template: TemplateRef<any>) {
+        this.modalRef2 = this.modalService.open(template, { size: 'lg' })
+        // this.modalRef = this.ngModalService.open(template, { size: 'lg' });
+        // this.modalRef = this.ngModalService.show(template);
+        this.myDocument.ref.get().then(() => {
+            this.playAudio();
+        })
     }
 
     openBackDropCustomClass(content) {
@@ -2068,47 +2027,38 @@ export class NavbarComponent implements OnInit {
     }
 
     showNotification(data, from, align) {
-        // var type = ["", 'info', 'success', 'warning', 'danger'];
-        let type = ["", 'info', 'success', 'warning', 'danger'];
-
-        let color = Math.floor((Math.random() * 4) + 1);
+        // var type = ['', 'info', 'success', 'warning', 'danger'];
+        const type = ['', 'info', 'success', 'warning', 'danger'];
+        const color = Math.floor((Math.random() * 4) + 1);
         if (data === 'dataNotify') {
             $.notify({
-                icon: "ti-gift",
-                message: "Please update your profile information to<br> enhance your public profile display !!!.  "
+                icon: 'ti-gift',
+                message: 'Please update your profile information to<br> enhance your public profile display !!!.'
             }, {
-                    type: type[color],
-                    timer: 4000,
-                    placement: {
-                        from: from,
-                        align: align
-                    },
-                    template: 
-                    '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert">' + 
-                        '<div class="row">' +
-                            '<button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i style="padding-top:10px" class="nc-icon nc-simple-remove"></i></button>' +
-                            // '<span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <a (click)="profileInfo()"  routerLink="./pages/user" style="cursor:pointer" data-notify="message">{2}</a>' +
-                            '<span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <a class="btn btn-link" click="profileInfo()" style="cursor:pointer; color:orange" data-notify="message">{2}</a>' +
-                            // '<div class="row">' +
-                                // '<div class="footer">' +
-                                // '</div>' +
-                            // '</div>' +
-                        '</div>'+
-                        // '<a type="button" class="close" data-notify="dismiss">Profile</a>' +
-                        '<div class="row">' +
-                            '<div class="progress" data-notify="progressbar">'+ 
-                                '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
-                            '</div>'+
-                            '<a href="{3}" target="{4}" data-notify="url"></a>' +
-                        '</div>' +
-                        
-                        // '<div class="footer row>'+
-                        //     '<div class="col-md-3">'+
-                        //         '<span style="padding-top:5px"><button type="button" class="close" aria-hidden="true" data-notify="dismiss">Profile</button></span>'+
-                        //     '</div>'+
-                        // '</div>'+
+                type: type[color],
+                timer: 4000,
+                placement: {
+                    from: from,
+                    align: align
+                },
+                template:
+                    '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert">' +
+                    '<div class="row">' +
+                    '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">' +
+                    '<i style="padding-top:10px" class="nc-icon nc-simple-remove"></i></button>' +
+                    '<span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> ' +
+                    '<a class="btn btn-link" click="profileInfo()" style="cursor:pointer;' +
+                    'color:orange" data-notify="message">{2}</a>' +
+                    '</div>' +
+                    '<div class="row">' +
+                    '<div class="progress" data-notify="progressbar">' +
+                    '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" ' +
+                    'aria-valuemax="100" style="width: 0%;"></div>' +
+                    '</div>' +
+                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                    '</div>' +
                     '</div>'
-                });
+            });
         }
 
         if (data === 'project') {
@@ -2116,42 +2066,99 @@ export class NavbarComponent implements OnInit {
                 icon: 'ti-gift',
                 message: 'A new project has been created <br> check colours projects dropdown.'
             }, {
-                    type: type[color],
-                    timer: 4000,
-                    placement: {
-                        from: from,
-                        align: align
-                    },
-                    template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove" ></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span><span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
-                });
+                type: type[color],
+                timer: 4000,
+                placement: {
+                    from: from,
+                    align: align
+                },
+                template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"> ' +
+                    '<button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove">' +
+                    '</i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span><span data-notify="title">{1}</span>' +
+                    '<span data-notify="message">{2}</span><div class="progress" data-notify="progressbar">' +
+                    '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0"' +
+                    'aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+            });
         }
+
+        if (data === 'declineTask') {
+            $.notify({
+                icon: 'ti-gift',
+                message: 'Task ' + ' ' + this.taskSent.name + ' Declined'
+            }, {
+                type: type[color],
+                timer: 4000,
+                placement: {
+                    from: from,
+                    align: align
+                },
+                template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert">' +
+                    '<button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove">' +
+                    '</i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span>' +
+                    '<span data-notify="message">{2}</span><div class="progress" data-notify="progressbar">' +
+                    '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0"' +
+                    'aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+            });
+        }
+
         if (data === 'Task') {
             $.notify({
                 icon: 'ti-gift',
-                message: 'Task has been updated.'
+                message: 'Task has been updated'
             }, {
-                    type: type[color],
-                    timer: 4000,
-                    placement: {
-                        from: from,
-                        align: align
-                    },
-                    template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove"></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
-                });
+                type: type[color],
+                timer: 4000,
+                placement: {
+                    from: from,
+                    align: align
+                },
+                template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert">' +
+                    '<button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove">' +
+                    '</i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span>' +
+                    '<span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar ' +
+                    'progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">' +
+                    '</div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+            });
         }
+
+        if (data === 'acceptTask') {
+            $.notify({
+                icon: 'ti-gift',
+                message: 'Task' + ' ' + this.taskSent.name + ' added'
+            }, {
+                type: type[color],
+                timer: 4000,
+                placement: {
+                    from: from,
+                    align: align
+                },
+                template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert">' +
+                    '<button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove">' +
+                    '</i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span>' +
+                    '<span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar' +
+                    'progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">' +
+                    '</div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+            });
+        }
+
         if (data === 'comp') {
             $.notify({
                 icon: 'ti-gift',
                 message: 'A new enterprise has been created <b> check colours enterprise dropdown.'
             }, {
-                    type: type[color],
-                    timer: 4000,
-                    placement: {
-                        from: from,
-                        align: align
-                    },
-                    template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove"></i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span> <span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
-                });
+                type: type[color],
+                timer: 4000,
+                placement: {
+                    from: from,
+                    align: align
+                },
+                template: '<div data-notify="container" class="col-11 col-md-4 alert alert-{0} alert-with-icon" role="alert">' +
+                    '<button type="button" aria-hidden="true" class="close" data-notify="dismiss"><i class="nc-icon nc-simple-remove">' +
+                    '</i></button><span data-notify="icon" class="nc-icon nc-bell-55"></span> <span data-notify="title">{1}</span>' +
+                    '<span data-notify="message">{2}</span><div class="progress" data-notify="progressbar"><div class="progress-bar' +
+                    'progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">' +
+                    '</div></div><a href="{3}" target="{4}" data-notify="url"></a></div>'
+            });
         }
 
     }
@@ -2161,26 +2168,16 @@ export class NavbarComponent implements OnInit {
         this.mytime = new Date().getTime()
         this.future = new Date();
 
-        let days, hours, minutes, seconds;
-        days = Math.floor(t / 86400);
-        t -= days * 86400;
-        hours = Math.floor(t / 3600) % 24;
-        t -= hours * 3600;
-        minutes = Math.floor(t / 60) % 60;
-        t -= minutes * 60;
-        seconds = t % 60;
         this.timedstamp += 1;
-        // console.log(this.timedstamp);
-        // console.log(moment().format('MMMM Do YYYY, h:mm:ss a'));
-
+        
+        const d = new Date();
+        const nHrs = Math.floor(d.getHours());
+        const nMin = Math.floor(d.getMinutes());
+        const nSecs = Math.floor( d.getSeconds());
         this.mygetTime();
 
-        return [
-            // days + 'd',
-            hours + 'h',
-            minutes + 'm',
-            seconds + 's'
-        ].join(' ');
+        return [ nHrs + ':',nMin + ':', nSecs ].join(' ');
+
     }
 
     closeModal() {
@@ -2188,120 +2185,112 @@ export class NavbarComponent implements OnInit {
     }
 
     playAudio() {
-        let audio = new Audio();
-        audio.src = "../../../assets/audio/nfl.mp3";
+        const audio = new Audio();
+        audio.src = '../../../assets/audio/nfl.mp3';
         audio.load();
         audio.play();
     }
 
     playIntoAudio() {
-        let audio = new Audio();
-        audio.src = "../../../assets/audio/lg.mp3";
+        const audio = new Audio();
+        audio.src = '../../../assets/audio/lg.mp3';
         audio.load();
         audio.play();
     }
 
-    pause(){
+    pause() {
         this.BtnPopClicked = true;
     }
 
     async mygetTime() {
-        // let template = "";
-        let NoItems = this.actiondsNo;
-        let d = new Date();
-        let nHrs = d.getHours();
-        let nMin = d.getMinutes();
-        let nSecs = d.getSeconds();
+        const NoItems = this.actiondsNo;
+        const d = new Date();
+        const nHrs = d.getHours();
+        const nMin = d.getMinutes();
+        const nSecs = d.getSeconds();
         this.nSecs = Math.floor(nSecs);
         this.nHrs = Math.floor(nHrs);
         this.nMin = Math.floor(nMin);
-
+        this.cloakTime = [ this.nHrs + ':', this.nMin + ':', this.nSecs ].join(' ');
         this.afAuth.authState.subscribe(user => {
             if (user !== null) {
                 if (this.timedstamp > 0) {
-                    // if (NoItems !== 0) {
-                        let i = 5;
-                        // if (NoItems % 5 === 0) {
-                        // if (this.timedstamp % 60 === 0) {
-                        if (this.nMin % 30 === 0 && this.nSecs === 0) {
-                            this.playAudio();
-                            // this.playAudio.sound.play1();
-                            this.openModal(this.template2);
-                            this.BtnPopClicked = false;
-                            this.unattendedModal();
-                            // setTimeout(() => {
-                            //     this.modalRef.hide()
-                            // }, 5);
-                        };
-                    // }
+                    const i = 5;
+                    // if (this.nMin % 2 === 0 && this.nSecs === 0) {
+                    if (this.nMin % 30 === 0 && this.nSecs === 0) {
+                        this.playAudio();
+                        this.openModal(this.template2);
+                        this.BtnPopClicked = false;
+                        this.unattendedModal();
+                    };
                 }
-
                 if (this.nMin === 30 && this.nSecs === 0) {
-                    if ((this.userData.address == "" || this.userData.address == null || this.userData.address == undefined) || (this.userData.phoneNumber == "" || this.userData.phoneNumber == null || this.userData.phoneNumber == undefined) || (this.userData.bus_email == "" || this.userData.bus_email == null || this.userData.bus_email == undefined) ||
-                        (this.userData.nationalId == "" || this.userData.nationalId == null || this.userData.nationalId == undefined) || (this.userData.nationality == "" || this.userData.nationality == null || this.userData.nationality == undefined)) {
-                        this.showNotification('dataNotify', 'top', 'right');                        
+                    if ((this.userData.address === '' || this.userData.address === null || this.userData.address === undefined) ||
+                      (this.userData.phoneNumber === '' || this.userData.phoneNumber === null || this.userData.phoneNumber === undefined)
+                      || (this.userData.bus_email === '' || this.userData.bus_email === null || this.userData.bus_email === undefined) ||
+                      (this.userData.nationalId === '' || this.userData.nationalId === null || this.userData.nationalId === undefined) ||
+                      (this.userData.nationality === '' || this.userData.nationality === null || this.userData.nationality === undefined)) {
+                        this.ns.showNotification('dataNotify', 'top', 'right', '');
                     }
-                    // this.showNotification('dataNotify', 'top', 'right');
                 }
             }
         })
+        return this.cloakTime;
     }
 
     unattendedModal() {
 
 
-        let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
-        let intWorkItem = this.is.getWorkItem();
+        const timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY'));
+        const intWorkItem = this.is.getWorkItem();
 
-        let tHours = (moment(new Date, 'HH:mm').hours()).toLocaleString();
-        let tMinutes = (moment(new Date, 'HH:mm').minutes()).toLocaleString();
+        const tHours = (moment(new Date, 'HH:mm').hours()).toLocaleString();
+        const tMinutes = (moment(new Date, 'HH:mm').minutes()).toLocaleString();
 
-        let fullTym = tHours +':'+ tMinutes;
+        const fullTym = tHours + ' : ' + tMinutes;
 
-        console.log(" theTime is" + fullTym);
+        console.log('theTime is' + ' ' + fullTym);
         this.playAudio();
         setTimeout(() => {
             this.modalRef.hide();
-            let work = {
-                name: 'Lapsed '+ ' ' + fullTym, id: fullTym, tHours: tHours, tMinutes: tMinutes, time: moment().toString(), reason: 'Lapsed', hours: 0.5
+            const work = {
+                name: 'Lapsed ' + ' ' + fullTym, id: fullTym, tHours: tHours, tMinutes: tMinutes, time: moment().toString(),
+                reason: 'Lapsed', hours: 0.5
             }
+            if (this.BtnPopClicked = false) {
+                const lapsedWork = intWorkItem; lapsedWork.name = 'Lapsed'; lapsedWork.id = 'lapsed';
 
-            if(this.BtnPopClicked = false){
-                let lapsedWork = intWorkItem; lapsedWork.name = 'Lapsed'; lapsedWork.id = 'lapsed';
-
-                let dmData = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc('lapsed')
+                const dmData = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId)
+                    .collection('actionItems').doc('lapsed')
                 // dmData.set(lapsedWork);
                 console.log('lapsedWork set');
                 dmData.collection('lapses').doc(fullTym).set(work).catch((error) => {
                     console.log('Error updating lapsedWork, document does not exists', error);
                 })
-                dmData.set(lapsedWork).then(() => { 
-                    
+                dmData.set(lapsedWork).then(() => {
                 }).catch((error) => {
                     console.log('Error updating lapsedWork, document does not exists', error);
                     dmData.update({
                         workHours: firebase.firestore.FieldValue.arrayUnion(work)
                     })
                 });
-
                 dmData.update({
                     workHours: firebase.firestore.FieldValue.arrayUnion(work)
                 }).then(() => {
-                    console.log('lapsedWork update successful, document exists');
-                    // update successful (document exists)
+                    console.log('lapsedWork update successful');
                 }).catch((error) => {
                     console.log('Error updating lapsedWork, document does not exists', error);
-                    // .set({ data });
                     dmData.set(lapsedWork);
                     dmData.update({
                         workHours: firebase.firestore.FieldValue.arrayUnion(work)
                     })
                 });
-                let newClassification = { name: 'Unresponded', createdOn: fullTym, id: 'unresponded', plannedTime: "", actualTime: "", Varience: "" };
-
-
-                let classReport2 = this.afs.collection('Users').doc(this.userId).collection('ClassTimeSheetsSum').doc(timesheetDocId);
-                let myClassWrkRpt = classReport2.collection('classifications').doc('unresponded');
+                const newClassification = {
+                    name: 'Unresponded', createdOn: fullTym, id: 'unresponded', plannedTime: '',
+                    actualTime: '', Varience: ''
+                };
+                const classReport2 = this.afs.collection('Users').doc(this.userId).collection('ClassTimeSheetsSum').doc(timesheetDocId);
+                const myClassWrkRpt = classReport2.collection('classifications').doc('unresponded');
                 myClassWrkRpt.set(newClassification);
                 // myClassWrkRpt.collection('lapses').doc('lapsed').set(lapsedWork);
                 myClassWrkRpt.collection('woukHours').doc(fullTym).set(work)
@@ -2323,18 +2312,17 @@ export class NavbarComponent implements OnInit {
         });
 
         this.subscription = this.counter$.subscribe((x) => this.message = this.dhms(x));
-
-
+        console.log(this.message);
         this.listTitles = ROUTES.filter(listTitle => listTitle);
 
-        let navbar: HTMLElement = this.element.nativeElement;
-        let body = document.getElementsByTagName('body')[0];
+        const navbar: HTMLElement = this.element.nativeElement;
+        const body = document.getElementsByTagName('body')[0];
         this.toggleButton = navbar.getElementsByClassName('navbar-toggler')[0];
         if (body.classList.contains('sidebar-mini')) {
             misc.sidebar_mini_active = true;
         }
         this._router = this.router.events.filter(event => event instanceof NavigationEnd).subscribe((event: NavigationEnd) => {
-            let $layer = document.getElementsByClassName('close-layer')[0];
+            const $layer = document.getElementsByClassName('close-layer')[0];
             if ($layer) {
                 $layer.remove();
             }
@@ -2342,7 +2330,7 @@ export class NavbarComponent implements OnInit {
     }
 
     minimizeSidebar() {
-        let body = document.getElementsByTagName('body')[0];
+        const body = document.getElementsByTagName('body')[0];
 
         if (misc.sidebar_mini_active === true) {
             body.classList.remove('sidebar-mini');
@@ -2357,7 +2345,7 @@ export class NavbarComponent implements OnInit {
         }
 
         // we simulate the window Resize so the charts will get updated in realtime.
-        let simulateWindowResize = setInterval(function () {
+        const simulateWindowResize = setInterval(function () {
             window.dispatchEvent(new Event('resize'));
         }, 180);
 
@@ -2375,12 +2363,12 @@ export class NavbarComponent implements OnInit {
     }
 
     sidebarOpen() {
-        let toggleButton = this.toggleButton;
-        let html = document.getElementsByTagName('html')[0];
+        const toggleButton = this.toggleButton;
+        const html = document.getElementsByTagName('html')[0];
         setTimeout(function () {
             toggleButton.classList.add('toggled');
         }, 500);
-        let mainPanel = <HTMLElement>document.getElementsByClassName('main-panel')[0];
+        const mainPanel = <HTMLElement>document.getElementsByClassName('main-panel')[0];
         if (window.innerWidth < 991) {
             mainPanel.style.position = 'fixed';
         }
@@ -2389,15 +2377,15 @@ export class NavbarComponent implements OnInit {
     }
 
     sidebarClose() {
-        let html = document.getElementsByTagName('html')[0];
+        const html = document.getElementsByTagName('html')[0];
         this.toggleButton.classList.remove('toggled');
         this.sidebarVisible = false;
         html.classList.remove('nav-open');
-        let mainPanel = <HTMLElement>document.getElementsByClassName('main-panel')[0];
+        const mainPanel = <HTMLElement>document.getElementsByClassName('main-panel')[0];
 
         if (window.innerWidth < 991) {
             setTimeout(function () {
-                mainPanel.style.position = "";
+                mainPanel.style.position = '';
             }, 500);
         }
     }
@@ -2420,11 +2408,11 @@ export class NavbarComponent implements OnInit {
             titlee = titlee.slice(2);
         }
         for (let item = 0; item < this.listTitles.length; item++) {
-            let parent = this.listTitles[item];
+            const parent = this.listTitles[item];
             if (parent.path === titlee) {
                 return parent.title;
             } else if (parent.children) {
-                let children_from_url = titlee.split('/')[2];
+                const children_from_url = titlee.split('/')[2];
                 for (let current = 0; current < parent.children.length; current++) {
                     if (parent.children[current].path === children_from_url) {
                         return parent.children[current].title;
@@ -2439,5 +2427,4 @@ export class NavbarComponent implements OnInit {
         // console.log(this.location);
         return this.location.prepareExternalUrl(this.location.path());
     }
-
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from "angularfire2/firestore";
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { auth } from 'firebase';
 import { AuthService } from '../../services/auth.service';
 import { TagInputModule } from 'ngx-chips';
@@ -65,39 +65,39 @@ export class CreateComponent implements OnInit {
   myDocument: AngularFirestoreDocument<{}>;
   userData: coloursUser;
 
-  public projectNameFieldStatus: boolean = false;
-  public projectTypeFieldStatus: boolean = false;
-  public projectSectorFieldStatus: boolean = false;
-  public projectLocationFieldStatus: boolean = false;
-  public projectCompanyFieldStatus: boolean = false;
-  public projectCompCampFieldStatus: boolean = false;
-  public showComp: boolean = false;
-  public showNext: boolean = false;
-  public firstPageBtn: boolean = false;
+  public projectNameFieldStatus = false;
+  public projectTypeFieldStatus = false;
+  public projectSectorFieldStatus = false;
+  public projectLocationFieldStatus = false;
+  public projectCompanyFieldStatus = false;
+  public projectCompCampFieldStatus = false;
+  public showComp = false;
+  public showNext = false;
+  public firstPageBtn = false;
 
-  public entName: boolean = false;
-  public entSector: boolean = false;
-  public entServices: boolean = false;
-  public entLocation: boolean = false;
+  public entName = false;
+  public entSector = false;
+  public entServices = false;
+  public entLocation = false;
 
-  public telMsg: boolean = false;
-  public mobileMsg: boolean = false;
-  public addressMsg: boolean = false;
-  public emailMsg: boolean = false;
-  public countryMsg: boolean = false;
-  public nidMsg: boolean = false;
+  public telMsg = false;
+  public mobileMsg = false;
+  public addressMsg = false;
+  public emailMsg = false;
+  public countryMsg = false;
+  public nidMsg = false;
 
-  public firstPage: boolean = true;
-  public secondPage: boolean = false;
-  public pfirstPageBtn: boolean = false;
-  public pfirstPage: boolean = true;
-  public pSecondPage: boolean = false;
+  public firstPage = true;
+  public secondPage = false;
+  public pfirstPageBtn = false;
+  public pfirstPage = true;
+  public pSecondPage = false;
   myEnterprises: Observable<Enterprise[]>;
   theSections: Observable<Section[]>;
   serviceTags: [service];
   roles: [service];
-  showAddDoc: boolean = true;
-  showDoc: boolean = true;
+  showAddDoc = true;
+  showDoc = true;
   taxDocument: any;
   mdats: Promise<string>;
   comWorkers: Observable<ParticipantData[]>;
@@ -108,20 +108,25 @@ export class CreateComponent implements OnInit {
   // public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'photo' });
   // public uploader: FileUploader = new FileUploader({});
 
-  constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private es: EnterpriseService, private authService: AuthService, private ps: ProjectService, private afs: AngularFirestore) {
+  constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private es: EnterpriseService,
+    private authService: AuthService, private ps: ProjectService, private afs: AngularFirestore) {
     this.project = is.getSelectedProject();
     this.section = is.getSectionInit();
     this.initArray = [];
-    this.initService = { display: "", value: "" }
+    this.initService = { display: '', value: '' }
     this.serviceTags = null;
     // this.newEnterprise = is.getnewEnterprise();
-    this.newEnterprise = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", bus_email: "", sector: "", participants: null, champion: this.userChampion, updatedStatus: false, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
+    this.newEnterprise = { name: '', by: '', byId: '', createdOn: '', updatedStatus: false, id: '', bus_email: '', location: '',
+      sector: '', participants: null, champion: null, address: '', telephone: '', services: null, taxDocument: '', HnSDocument: '',
+      IndustrialSectorDocument: '', targetMonthlyIncome: '', actualMonthlyIncome: '', balanceSheet: '', actualAnnualIncome: '',
+      targetAnnualIncome: '' };
     this.taxDocument = null;
     // this.newEnterprise.services = [null];
     // console.log('init newCompany services' + this.newEnterprise.services);
 
-    this.compUser = { bus_email: "", nationality: "", nationalId: "", phoneNumber: "" };
-    this.userChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: ""  };
+    this.compUser = { bus_email: '', nationality: '', nationalId: '', phoneNumber: '' };
+    this.userChampion = { name: '', id: '', email: '', bus_email: '', phoneNumber: '', photoURL: '', address: '', nationalId: '',
+      nationality: ''  };
 
     console.log(this.afAuth.user);
 
@@ -169,7 +174,7 @@ export class CreateComponent implements OnInit {
             this.projectSectorFieldStatus = false;
             this.projectLocationFieldStatus = false;
 
-            if (typeSet.id == 'Enterprise') {
+            if (typeSet.id === 'Enterprise') {
               console.log(company.id);
               if (company.id) {
 
@@ -188,7 +193,7 @@ export class CreateComponent implements OnInit {
                   this.projectCompanyFieldStatus = false;
                   this.projectCompCampFieldStatus = false;
                   this.saveProject();
-                  // this.showNext = true;                  
+                  // this.showNext = true;
 
                 } else {
                   this.projectCompCampFieldStatus = true;
@@ -237,26 +242,26 @@ export class CreateComponent implements OnInit {
   }
 
   testFileds() {
-    if (this.newEnterprise.telephone != "") {
+    if (this.newEnterprise.telephone !== '') {
       this.telMsg = false;
       console.log('telephone available');
 
-      if (this.compUser.phoneNumber != "") {
+      if (this.compUser.phoneNumber !== '') {
         this.mobileMsg = false;
         console.log('mobile available')
-        if (this.newEnterprise.address != "") {
+        if (this.newEnterprise.address !== '') {
           this.addressMsg = false;
           console.log('bus_address available');
 
-          if (this.compUser.bus_email != "") {
+          if (this.compUser.bus_email !== '') {
             this.emailMsg = false;
             console.log('user_email available');
 
-            if (this.compUser.nationality != "") {
+            if (this.compUser.nationality !== '') {
               this.countryMsg = false;
               console.log('userNaitionality available');
 
-              if (this.compUser.nationalId != "") {
+              if (this.compUser.nationalId !== '') {
                 console.log('userNationalId available');
                 this.nidMsg = false;
 
@@ -301,19 +306,19 @@ export class CreateComponent implements OnInit {
   nxtPage() {
     console.log('Test fields');
 
-    // if (this.newEnterprise.name != "" || this.newEnterprise.location != "") {}
+    // if (this.newEnterprise.name !== '' || this.newEnterprise.location !== '') {}
 
-    if (this.newEnterprise.name != "") {
+    if (this.newEnterprise.name !== '') {
       this.entName = false;
       console.log('Name available');
-      if (this.newEnterprise.location != "") {
+      if (this.newEnterprise.location !== '') {
         this.entLocation = false;
         console.log('Location available');
-        if (this.newEnterprise.sector != "") {
+        if (this.newEnterprise.sector !== '') {
           this.entSector = false;
           console.log('Sector available');
-          // if (this.newEnterprise.services != null) {
-          if (this.serviceTags != null) {
+          // if (this.newEnterprise.services !== null) {
+          if (this.serviceTags !== null) {
             console.log('Sevices available' + this.serviceTags);
 
             // this.entName = false;
@@ -400,7 +405,7 @@ export class CreateComponent implements OnInit {
     this.project.type = this.typeSet.id;
     console.log(this.project);
 
-    if (this.setChampion.id == "") {
+    if (this.setChampion.id == '') {
       this.project.champion = pUser;
     } else {
       this.project.champion = this.setChampion;
@@ -414,14 +419,14 @@ export class CreateComponent implements OnInit {
     console.log(this.setCompany);
     console.log(this.roles);
 
-    if (this.setCompany.id != "") {
+    if (this.setCompany.id !== '') {
       company.roles = this.roles;
     }
 
 
     // this.ps.addProject(pUser, project, company);
     let championId = this.project.champion.id;
-    let projectId: string = "";
+    let projectId: string = '';
     let dref = this.afs.collection('Projects')
     let entRef = this.afs.collection('Enterprises').doc(company.id).collection('projects');
     let myProRef = this.afs.collection('/Users').doc(this.userId).collection('projects');
@@ -446,7 +451,8 @@ export class CreateComponent implements OnInit {
       }
       project.id = projectId;
     });
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
+    this.project = { name: '', type: '', by: '', byId: '', companyName: '', companyId: '', champion: null, createdOn: '', id: '', location: '',
+     sector: '', completion: '' };
     this.setProject(project);
     this.pNxtPage();
   }
@@ -480,39 +486,50 @@ export class CreateComponent implements OnInit {
     // this.setCompany = this.is.getSelectedCompany();
     // this.savedProject = this.is.getSelectedProject();
     // this.project = this.is.getSelectedProject();
-    this.typeSet = { id: "", name: "" };
-    this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
-    this.setCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, updatedStatus: false, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
-    this.setChampion = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: ""  };
+    this.typeSet = { id: '', name: '' };
+    this.savedProject = { name: '', type: '', by: '', byId: '', companyName: '', companyId: '', champion: null, createdOn: '',
+    id: '', location: '', sector: '', completion: '' };
+    this.project = { name: '', type: '', by: '', byId: '', companyName: '', companyId: '', champion: null, createdOn: '',
+    id: '', location: '', sector: '', completion: '' };
+    this.setCompany = { name: '', by: '', byId: '', createdOn: '', updatedStatus: false, id: '', bus_email: '', location: '',
+    sector: '', participants: null, champion: null, address: '', telephone: '', services: null, taxDocument: '', HnSDocument: '',
+    IndustrialSectorDocument: '', targetMonthlyIncome: '', actualMonthlyIncome: '', balanceSheet: '', actualAnnualIncome: '',
+    targetAnnualIncome: '' };
+    this.setChampion = { name: '', id: '', email: '', bus_email: '', phoneNumber: '', photoURL: '', address: '', nationalId: '',
+    nationality: ''  };
   }
 
   clear() {
     this.roles = null;
-    this.typeSet = { id: "", name: "" };
+    this.typeSet = { id: '', name: '' };
     this.setChampion = null;
-    this.savedProject = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
-    this.project = { name: "", type: "", by: "", byId: "", companyName: "", companyId: "", champion: null, createdOn: "", id: "", location: "", sector: "", completion: "" };
-    this.setCompany = { name: "", by: "", byId: "", createdOn: "", id: "", bus_email: "", location: "", sector: "", participants: null, champion: null, updatedStatus: false, address: "", telephone: "", services: null, taxDocument: "", HnSDocument: "", IndustrialSectorDocument: "" };
+    this.savedProject = { name: '', type: '', by: '', byId: '', companyName: '', companyId: '', champion: null, createdOn: '',
+    id: '', location: '', sector: '', completion: '' };
+    this.project = { name: '', type: '', by: '', byId: '', companyName: '', companyId: '', champion: null, createdOn: '',
+    id: '', location: '', sector: '', completion: '' };
+    this.setCompany = { name: '', by: '', byId: '', createdOn: '', updatedStatus: false, id: '', bus_email: '', location: '',
+    sector: '', participants: null, champion: null, address: '', telephone: '', services: null, taxDocument: '', HnSDocument: '',
+    IndustrialSectorDocument: '', targetMonthlyIncome: '', actualMonthlyIncome: '', balanceSheet: '', actualAnnualIncome: '',
+    targetAnnualIncome: '' };
   }
 
   checkType(data) {
-    if (data.id == "Enterprise") {
+    if (data.id == 'Enterprise') {
       this.showComp = true;
     } else {
       this.showComp = false;
-      catchError;
+      
     }
   }
 
   setNext(data: ParticipantData) {
     console.log(data);
     console.log(data.id);
-    if (data.id != "") {
+    if (data.id !== '') {
       this.showNext = true;
     } else {
       this.showNext = false;
-      catchError;
+      
     }
   }
 
@@ -557,7 +574,7 @@ export class CreateComponent implements OnInit {
       }
     });
 
-    this.section = { id: "", type: "", no: 0, name: "", projectId: "", projectName: "", companyId: "", companyName: "", Bills: null }
+    this.section = { id: '', type: '', no: 0, name: '', projectId: '', projectName: '', companyId: '', companyName: '', Bills: null }
     this.theSections = this.ps.getProjectSections(this.savedProject.id);
     this.newProjectSections = myProRef.valueChanges();
   }
@@ -677,7 +694,7 @@ export class CreateComponent implements OnInit {
 
     /* UserData updated collection('Users/userID).update */
 
-    if (this.userData.phoneNumber == "" || this.userData.phoneNumber == null) {
+    if (this.userData.phoneNumber == '' || this.userData.phoneNumber == null) {
       this.myDocument.update({ 'phoneNumber': this.compUser.phoneNumber }).then(() => {
         console.log('update successful (document exists)');
       }).catch((error) => {
@@ -697,7 +714,7 @@ export class CreateComponent implements OnInit {
       });
     }
 
-    if (this.userData.nationality == "" || this.userData.nationality == null) {
+    if (this.userData.nationality == '' || this.userData.nationality == null) {
       this.myDocument.update({ 'nationality': this.compUser.nationality }).then(() => {
         console.log('update successful (document exists)');
       }).catch((error) => {
@@ -705,7 +722,7 @@ export class CreateComponent implements OnInit {
       });
     }
 
-    if (this.userData.nationalId == "" || this.userData.nationalId == null) {
+    if (this.userData.nationalId == '' || this.userData.nationalId == null) {
       this.myDocument.update({ 'nationalId': this.compUser.nationalId }).then(() => {
         console.log('update successful (document exists)');
       }).catch((error) => {
@@ -713,7 +730,7 @@ export class CreateComponent implements OnInit {
       });
     }
 
-    if (this.userData.bus_email == "" || this.userData.bus_email == null) {
+    if (this.userData.bus_email == '' || this.userData.bus_email == null) {
       this.myDocument.update({ 'bus_email': this.compUser.bus_email }).then(() => {
         console.log('update successful (document exists)');
       }).catch((error) => {
@@ -769,7 +786,7 @@ export class CreateComponent implements OnInit {
     }));
 
     this.userProfile.subscribe(userData => {
-      console.log(userData);
+      // console.log(userData);;
       let myData = {
         name: userData.name,
         email: this.user.email,
@@ -781,32 +798,32 @@ export class CreateComponent implements OnInit {
         nationality: userData.nationality,
         nationalId: userData.nationalId,
       }
-      if (userData.address == "" || userData.address == null || userData.address == undefined) {
-        userData.address = ""
+      if (userData.address == '' || userData.address == null || userData.address == undefined) {
+        userData.address = ''
       } else {
 
       }
 
-      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
-        userData.phoneNumber = ""
+      if (userData.phoneNumber == '' || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ''
       } else {
 
       }
 
-      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
-        userData.bus_email = ""
+      if (userData.bus_email == '' || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ''
       } else {
 
       }
 
-      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
-        userData.nationalId = ""
+      if (userData.nationalId == '' || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ''
       } else {
 
       }
 
-      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
-        userData.nationality = ""
+      if (userData.nationality == '' || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ''
       } else {
 
       }
@@ -814,13 +831,13 @@ export class CreateComponent implements OnInit {
       this.myData = myData;
       this.userData = userData;
 
-      if (userData.bus_email != "") {
+      if (userData.bus_email !== '') {
         this.compUser.bus_email = this.userData.bus_email;
-      } if (userData.nationality != "") {
+      } if (userData.nationality !== '') {
         this.compUser.nationality = this.userData.nationality;
-      } if (userData.phoneNumber != "") {
+      } if (userData.phoneNumber !== '') {
         this.compUser.phoneNumber = this.userData.phoneNumber;
-      } if (userData.nationalId != "") {
+      } if (userData.nationalId !== '') {
         this.compUser.nationalId = this.userData.nationalId;
       }
     })
@@ -847,7 +864,7 @@ export class CreateComponent implements OnInit {
 
     var tagClass = $('.tagsinput').data('color');
 
-    if ($(".tagsinput").length != 0) {
+    if ($(".tagsinput").length !== 0) {
       $('.tagsinput').tagsinput();
     }
 
@@ -867,7 +884,7 @@ export class CreateComponent implements OnInit {
     this.typeProjectValidation = this.is.getSelectedProject();
   }
 
-  save(model: Enterprise, isValid: boolean) {
+  save(model: Enterprise, isValid) {
     // call API to save customer
     if (isValid) {
       console.log(model, isValid);
@@ -875,13 +892,13 @@ export class CreateComponent implements OnInit {
       this.saveEnterprise()
     }
   }
-  // save1(model: User, isValid: boolean) {
+  // save1(model: User, isValid) {
   //   // call API to save customer
   //   if (isValid) {
   //     console.log(model, isValid);
   //   }
   // }
-  save2(model: Project, isValid: boolean) {
+  save2(model: Project, isValid) {
     // call API to save customer
     if (isValid) {
       console.log(model, isValid);

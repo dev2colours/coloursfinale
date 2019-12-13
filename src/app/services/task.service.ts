@@ -1,6 +1,6 @@
 import { Injectable, OnInit } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from "angularfire2/firestore";
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { auth } from 'firebase';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
@@ -8,16 +8,16 @@ import { Observable, Observer } from 'rxjs';
 import { map, timestamp } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
-import { Enterprise, ParticipantData, companyChampion, Department } from "../models/enterprise-model";
-import { Project, workItem } from "../models/project-model";
-import { Task, MomentTask, completeTask } from "../models/task-model";
+import { Enterprise, ParticipantData, companyChampion, Department } from '../models/enterprise-model';
+import { Project, workItem } from '../models/project-model';
+import { Task, MomentTask, completeTask } from '../models/task-model';
 import { workReport } from 'app/models/user-model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  
+
   user: firebase.User;
   userId: any;
   projects: Observable<Project[]>;
@@ -48,26 +48,30 @@ export class TaskService {
   userstasks: Task[];
   userWeeklyTaskRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
 
-
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
     afAuth.authState.subscribe(user => {
-      console.log(user);
+      // console.log(user);
       this.user = user;
       this.userId = user.uid;
-      console.log('OOh snap Tasks services');
-
-      this.userTaskCol = this.afs.collection('Users').doc(this.userId).collection<completeTask>('tasks').valueChanges()
+      // console.log('OOh snap Tasks services');
+      const uio = this.afs.collection('Users').doc(this.userId).collection('tasks');
+      this.userTaskCol = this.afs.collection('Users').doc(this.userId).collection('tasks').snapshotChanges().pipe(
+        map(b => b.map(a => {
+          const data = a.payload.doc.data() as completeTask;
+          const id = a.payload.doc.id;
+          uio.doc(id).update({'id': id})
+          return { id, ...data };
+        }))
+      );
       this.userTaskRef = this.afs.collection('Users').doc(this.userId).collection('tasks');
       this.userWeeklyTaskRef = this.afs.collection('Users').doc(this.userId).collection('WeeklyTasks');
       this.ArcSortCompleteTasks();
       this.sortCompleteTasks();
-      // this.setUserTaskCollection();
-      
     });
 
   }
 
-  setCurrentProject(Ref){
+  setCurrentProject(Ref) {
     // alert(Ref.name);
     this.currentProject = Ref
   }
@@ -83,54 +87,54 @@ export class TaskService {
     return this.projects;
   }
 
-  addToDepatment(task: Task, dpt: Department){
+  addToDepatment(task: Task, dpt: Department) {
 
-    console.log('the task--->' + task.name + " " + task.id);
-    console.log('the task company--->' + " " + task.companyName);
-    console.log('the task companyId--->' + " " + task.companyId);
-    console.log('the department-->' + dpt.name + " "  + dpt.id);
-    
-    let deptDoc = this.afs.collection('Enterprises').doc(task.companyId).collection<Department>('departments').doc(dpt.id);
+    // console.log('the task--->' + task.name + ' ' + task.id);
+    // console.log('the task company--->' + ' ' + task.companyName);
+    // console.log('the task companyId--->' + ' ' + task.companyId);
+    // console.log('the department-->' + dpt.name + ' '  + dpt.id);
+
+    const deptDoc = this.afs.collection('Enterprises').doc(task.companyId).collection<Department>('departments').doc(dpt.id);
     deptDoc.collection('tasks').doc(task.id).set(task);
     deptDoc.collection('tasks').doc(task.id).update({  'department': dpt.name, 'departmentId': dpt.id });
 
   }
 
-  removeFromDpt(task, dpt){
-    let deptDoc = this.afs.collection('Enterprises').doc(task.companyId).collection<Department>('departments').doc(task.departmentId);
-    deptDoc.collection('tasks').doc(task.id).delete();
+  removeFromDpt(task, dpt) {
+    this.afs.collection('Enterprises').doc(task.companyId).collection<Department>('departments').doc(task.departmentId)
+    .collection('tasks').doc(task.id).delete();
   }
 
   // project view | profile
 
   addToCompany(task, company) {
-    console.log('the task--->' + task.name + " " + task.id);
-    console.log('the company-->' + company.name + " " + company.id);
-    let compProjectsDoc = this.afs.collection('Enterprises').doc(company.id).collection<Project>('projects').doc(task.projectId);
-    let projectEntDoc = this.afs.collection('Projects').doc(task.projectId).collection<Enterprise>('enterprises').doc(company.id);
-    compProjectsDoc.collection('tasks').doc(task.id).set(task);
-    projectEntDoc.collection('tasks').doc(task.id).set(task);
+    // console.log('the task--->' + task.name + ' ' + task.id);
+    // console.log('the company-->' + company.name + ' ' + company.id);
+    this.afs.collection('Enterprises').doc(company.id).collection<Project>('projects').doc(task.projectId)
+    .collection('tasks').doc(task.id).set(task);
+    this.afs.collection('Projects').doc(task.projectId).collection<Enterprise>('enterprises').doc(company.id)
+    .collection('tasks').doc(task.id).set(task);
   }
 
   allocateTask(task: Task, staff: ParticipantData) {
-    console.log('the task--->' + task.name + " " + task.id);
-    console.log('the staff-->' + staff.name + " " + staff.id);
-    let projRef = this.afs.collection('Projects').doc(task.projectId)
+    // console.log('the task--->' + task.name + ' ' + task.id);
+    // console.log('the staff-->' + staff.name + ' ' + staff.id);
+    const projRef = this.afs.collection('Projects').doc(task.projectId)
 
 
-    if (task.champion.id != "") {
-      let exChampId = task.champion.id
-      let exChampRef = this.afs.collection('Users').doc(exChampId).collection('tasks');
-      let exChampProjectEntDoc = projRef.collection<Enterprise>('enterprises').doc(task.companyId);
+    if (task.champion.id !== '') {
+      const exChampId = task.champion.id
+      const exChampRef = this.afs.collection('Users').doc(exChampId).collection('tasks');
+      const exChampProjectEntDoc = projRef.collection<Enterprise>('enterprises').doc(task.companyId);
       exChampProjectEntDoc.collection('tasks').doc(task.id).delete();
       exChampRef.doc(task.id).delete();
     }
-    
+
     task.champion = staff;
     // let userRef = this.afs.collection('Users').doc(this.userId).collection('tasks');
-    let newChampRef = this.afs.collection('Users').doc(staff.id).collection('tasks');
-    let compProjectsDoc = this.afs.collection('Users').doc(staff.id).collection<Project>('projects').doc(task.projectId);
-    let projectEntDoc = projRef.collection<Enterprise>('enterprises').doc(task.companyId);
+    const newChampRef = this.afs.collection('Users').doc(staff.id).collection('tasks');
+    const compProjectsDoc = this.afs.collection('Users').doc(staff.id).collection<Project>('projects').doc(task.projectId);
+    const projectEntDoc = projRef.collection<Enterprise>('enterprises').doc(task.companyId);
     compProjectsDoc.collection('tasks').doc(task.id).set(task);
     projectEntDoc.collection('tasks').doc(task.id).set(task);
     projRef.collection('tasks').doc(task.id).set(task);
@@ -138,9 +142,9 @@ export class TaskService {
     // userRef.doc(task.id).set(task);
   }
 
-  getEntepriseTasks(compId, projectId){
-    let compProjectsDoc = this.afs.collection('Enterprises').doc(compId).collection<Project>('projects').doc(projectId);
-    let projectEntDoc = this.afs.collection('Projects').doc(projectId).collection<Enterprise>('enterprises').doc(compId);
+  getEntepriseTasks(compId, projectId) {
+    const compProjectsDoc = this.afs.collection('Enterprises').doc(compId).collection<Project>('projects').doc(projectId);
+    const projectEntDoc = this.afs.collection('Projects').doc(projectId).collection<Enterprise>('enterprises').doc(compId);
     // compProjectsDoc.collection<Task>('tasks');
     this.companyTasks = compProjectsDoc.collection<Task>('tasks').snapshotChanges().pipe(
       map(b => b.map(a => {
@@ -156,14 +160,15 @@ export class TaskService {
 
   // add to weekly tasks
   add2WeekPlan(task, userKey) {
-    console.log('the task--->' + task.name + " " + task.id);
-    console.log('the userKey-->' + " " + userKey);
-    let userRef = this.afs.collection('Users').doc(userKey).collection<Task>('WeeklyTasks');
-    userRef.doc(task.id).set(task);
+    // console.log('the task--->' + task.name + ' ' + task.id);
+    // console.log('the userKey-->' + ' ' + userKey);
+    this.afs.collection('Users').doc(userKey).collection<Task>('WeeklyTasks').doc(task.id).set(task);
   }
 
-  getWeeklyTasks(userID){
-    let userRef = this.afs.collection('Users').doc(userID).collection<Task>('WeeklyTasks', ref => ref.where('champion.id', '==', userID ));
+  getWeeklyTasks(userID) {
+    const userRef = this.afs.collection('Users').doc(userID).collection<Task>('WeeklyTasks', ref => ref
+    .where('champion.id', '==', userID )
+    .where('complete', '==', false ));
     this.weeklyTasks = userRef.snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Task;
@@ -174,151 +179,397 @@ export class TaskService {
     return this.weeklyTasks
   }
 
-  addProjectTask(task :Task, company) {
-    let newClassification = { name: "Work", createdOn: new Date().toISOString(), id: "colourWorkId", plannedTime: "", actualTime: "", Varience: "" };
+  addProjectTask(task: Task, company) {
+    const newClassification = { name: 'Work', createdOn: new Date().toISOString(), id: 'colourWorkId', plannedTime: '', actualTime: '',
+     Varience: '' };
     task.classification = newClassification;
-    console.log('task created' + task.name)
-    let oop = company.id;
-    let createdTask = task;
-    let tasksRef = this.afs.collection('tasks');
-    
-    let userRefCheck = this.afs.collection('Users').doc(task.byId);
-    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
-
-    let userProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
-    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
-    let userClassRef = this.afs.collection('Users').doc(task.champion.id).collection('classifications').doc(newClassification.id).collection('tasks');
-    let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
-
-    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
-    let entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
-    let entPartRef = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
-
-    let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
-    let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
-    let projectCompany1Ref = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
-    let projectCompany2Ref = this.afs.collection('Projects').doc(task.projectId).collection('Participants').doc(task.champion.id).collection('tasks');
-
-
-    //set task under a user
-    let newTaskId 
+    // console.log('task created' + task.name)
+    const oop = company.id;
+    const createdTask = task;
+    const tasksRef = this.afs.collection('tasks');
+    const userRefCheck = this.afs.collection('Users').doc(task.byId);
+    const userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    const userProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+    const champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    const userClassRef = this.afs.collection('Users').doc(task.champion.id).collection('classifications').doc(newClassification.id)
+      .collection('tasks');
+    const champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+    const entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+    const entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
+    const entPartRef = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    const projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
+    const projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
+    const projComp1Ref = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('labour')
+      .doc(task.champion.id).collection('tasks');
+    const projectCompany2Ref = this.afs.collection('Projects').doc(task.projectId).collection('labour').doc(task.champion.id)
+      .collection('tasks');
+    const compSett = this.afs.collection<Enterprise>('Enterprises').doc(task.companyId);
+    const ddfm = compSett.collection('Participants').doc(task.champion.id);
+    // set task under a user
+    let newTaskId;
     userRef.add(createdTask).then(function (Ref) {
       newTaskId = Ref.id;
       createdTask.id = Ref.id;
-    // }).then(() => {
+    }).then(() => {
+      ddfm.ref.get().then(function (man) {
+        // console.log('department', man.data().department + ' ' + man.data().departmentId );
+        // this.empData = man.data();
+        // createdTask.department = man.data().department;
+        // createdTask.departmentId = man.data().departmentId;
+        compSett.collection('departments').doc(man.data().departmentId).collection('Participants').doc(man.data().id).collection('tasks')
+          .doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to departments\participants');
+          // update id for task under a tasks
+          compSett.collection('departments').doc(man.data().departmentId).collection('Participants').doc(man.data().id).collection('tasks')
+            .doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+          })
+        }).catch((error) => {
+          // console.log('Error on creating', error);
+        }).then(() => {
+          compSett.collection('departments').doc(man.data().departmentId).collection('Participants').doc(man.data().id).collection('tasks')
+          .doc(newTaskId).set(createdTask).then(() => {
+            // update id for task under a tasks
+          compSett.collection('departments').doc(man.data().departmentId).collection('Participants').doc(man.data().id).collection('tasks')
+            .doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Failed create the Task on 2nd attempt', error);
+          })
+        });
+        compSett.collection('departments').doc(man.data().departmentId).collection('tasks').doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to under departments');
+          // update id for task under a tasks
+          compSett.collection('departments').doc(man.data().departmentId).collection('tasks').doc(newTaskId).update({
+             'id': newTaskId,
+             'department': '',
+             'departmentId': ''
+            }).catch((error) => {
+            // console.log('Failed update Task', error);
+          })
+        }).catch((error) => {
+          // console.log('Error on creating', error);
+        }).then(() => {
+          compSett.collection('departments').doc(man.data().departmentId).collection('tasks').doc(newTaskId).set(createdTask).then(() => {
+            // update id for task under a tasks
+            compSett.collection('departments').doc(man.data().departmentId).collection('tasks').doc(newTaskId).update({ 'id': newTaskId })
+              .catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Failed create the Task on 2nd attempt', error);
+          })
+        });
+        userRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+          // console.log('Error on update', error);
+        }).then(() => {
+          userRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+            // console.log('Failed id the Task on 2nd attempt', error);
+          })
+        });
+        userClassRef.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to userClassRef');
+          // update id for task under a tasks
+          userClassRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+            // console.log('Failed update Task', error);
+          })
+        }).catch((error) => {
+          // console.log('Error on creating', error);
+        }).then(() => {
+          userClassRef.doc(newTaskId).set(createdTask).then(() => {
+            // update id for task under a tasks
+            userClassRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Failed create the Task on 2nd attempt', error);
+          })
+        });
+        // set task under a tasks
+        tasksRef.doc(newTaskId).set(createdTask).then(() => {
+          // update id for task under a tasks
+          tasksRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+            // console.log('Failed update Task', error);
+          })
+        }).catch((error) => {
+          // console.log('Error on creating', error);
+        }).then(() => {
+          tasksRef.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to tasksRef');
+          // update id for task under a tasks
+            tasksRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Failed create the Task on 2nd attempt', error);
+          })
+        });
+      // set task under a company
+        if (task.projectType === 'Enterprise') {
+          // set task under a champion
+          champRef.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to champRef');
+          // update id for task under a tasks
+            champRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Error on creating', error);
+          }).then(() => {
+            champRef.doc(newTaskId).set(createdTask).then(() => {
+              // update id for task under a tasks
+              champRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+                // console.log('Failed update Task', error);
+              })
+            }).catch((error) => {
+              // console.log('Failed create the Task on 2nd attempt', error);
+            })
+          });
+          champProjRef.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to champProjRef');
+          // update id for task under a tasks
+            champProjRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Error on creating', error);
+          }).then(() => {
+            champProjRef.doc(newTaskId).set(createdTask).then(() => {
+              // update id for task under a tasks
+              champProjRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+                // console.log('Failed update Task', error);
+              })
+            }).catch((error) => {
+              // console.log('Failed create the Task on 2nd attempt', error);
+            })
+          });
+          // set task in user project tasks
+          userProjRef.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to userProjRef');
+          // update id for task under a tasks
+            userProjRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Error on creating', error);
+          }).then(() => {
+            userProjRef.doc(newTaskId).set(createdTask).then(() => {
+              // update id for task under a tasks
+              userProjRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+                // console.log('Failed update Task', error);
+              })
+            }).catch((error) => {
+              // console.log('Failed create the Task on 2nd attempt', error);
+            })
+          });
+          // set task under a project
+          projectsRef.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to projectsRef');
+          // update id for task under a tasks
+            projectsRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Error on creating', error);
+          }).then(() => {
+            projectsRef.doc(newTaskId).set(createdTask).then(() => {
+              // update id for task under a tasks
+              projectsRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+                // console.log('Failed update Task', error);
+              })
+            }).catch((error) => {
+              // console.log('Failed create the Task on 2nd attempt', error);
+            })
+          });
+          entPartRef.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to entPartRef');
+          // update id for task under a tasks
+            entPartRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Error on creating', error);
+          }).then(() => {
+            entPartRef.doc(newTaskId).set(createdTask).then(() => {
+              // update id for task under a tasks
+              entPartRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+                // console.log('Failed update Task', error);
+              })
+            }).catch((error) => {
+              // console.log('Failed create the Task on 2nd attempt', error);
+            })
+          });
+          projComp1Ref.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to projComp1Ref');
+          // update id for task under a tasks
+            projComp1Ref.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Error on creating', error);
+          }).then(() => {
+            projComp1Ref.doc(newTaskId).set(createdTask).then(() => {
+              // update id for task under a tasks
+              projComp1Ref.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+                // console.log('Failed update Task', error);
+              })
+            }).catch((error) => {
+              // console.log('Failed create the Task on 2nd attempt', error);
+            })
+          });
+          projectCompany2Ref.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to projectCompany2Ref');
+          // update id for task under a tasks
+            projectCompany2Ref.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Error on creating', error);
+          }).then(() => {
+            projectCompany2Ref.doc(newTaskId).set(createdTask).then(() => {
+              // update id for task under a tasks
+              projectCompany2Ref.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+                // console.log('Failed update Task', error);
+              })
+            }).catch((error) => {
+              // console.log('Failed create the Task on 2nd attempt', error);
+            })
+          });
 
-      userRef.doc(newTaskId).update({ 'id': newTaskId });
-      userClassRef.doc(newTaskId).set(createdTask);
-      //set task under a tasks
-      tasksRef.doc(newTaskId).set(createdTask);
-      //update id for task under a tasks
-      tasksRef.doc(newTaskId).update({ 'id': newTaskId });
-
-      //set task under a company                        
-      ;
-
-      if (task.projectType === 'Enterprise') {
-        //set task under a champion
-        champRef.doc(newTaskId).set(createdTask);
-        champProjRef.doc(newTaskId).set(createdTask);
-        // set task in user project tasks
-        userProjRef.doc(newTaskId).set(createdTask);
-        //set task under a project
-        projectsRef.doc(newTaskId).set(createdTask);
-        entPartRef.doc(newTaskId).set(createdTask);
-        projectCompany1Ref.doc(newTaskId).set(createdTask);
-        projectCompany2Ref.doc(newTaskId).set(createdTask);
-
-        //set task under a company                
-        entProjRef.doc(newTaskId).set(createdTask);
-        entRef.doc(newTaskId).set(createdTask);
-        //set task under a projectCompanyRef
-        projectCompanyRef.doc(newTaskId).set(createdTask);
-        //update task id under a company
-        entProjRef.doc(newTaskId).update({ 'id': newTaskId });
-        // update id for task in user project tasks
-        userProjRef.doc(newTaskId).update({ 'id': newTaskId });
-        // update id for champion
-        champRef.doc(newTaskId).update({ 'id': newTaskId });
-        champProjRef.doc(newTaskId).update({ 'id': newTaskId });
-        //update id for task under a project
-        projectsRef.doc(newTaskId).update({ 'id': newTaskId });
-        projectCompanyRef.doc(newTaskId).update({ 'id': newTaskId });
-        entPartRef.doc(newTaskId).update({ 'id': newTaskId });
-        projectCompany1Ref.doc(newTaskId).update({ 'id': newTaskId });
-        projectCompany2Ref.doc(newTaskId).update({ 'id': newTaskId });
-
-      };
+          // set task under a company
+          entProjRef.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to entProjRef');
+          // update id for task under a tasks
+            entProjRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Error on creating', error);
+          }).then(() => {
+            entProjRef.doc(newTaskId).set(createdTask).then(() => {
+              // update id for task under a tasks
+              entProjRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+                // console.log('Failed update Task', error);
+              })
+            }).catch((error) => {
+              // console.log('Failed create the Task on 2nd attempt', error);
+            })
+          });
+          entRef.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to entRef');
+          // update id for task under a tasks
+            entRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Error on creating', error);
+          }).then(() => {
+            entRef.doc(newTaskId).set(createdTask).then(() => {
+              // update id for task under a tasks
+              entRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+                // console.log('Failed update Task', error);
+              })
+            }).catch((error) => {
+              // console.log('Failed create the Task on 2nd attempt', error);
+            })
+          });
+          // set task under a projectCompanyRef
+          projectCompanyRef.doc(newTaskId).set(createdTask).then(() => {
+          // console.log('Set the Task to projectCompanyRef');
+          alert('Task setting complete');
+          // update id for task under a tasks
+            projectCompanyRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+              // console.log('Failed update Task', error);
+            })
+          }).catch((error) => {
+            // console.log('Error on creating', error);
+          }).then(() => {
+            projectCompanyRef.doc(newTaskId).set(createdTask).then(() => {
+              // update id for task under a tasks
+              projectCompanyRef.doc(newTaskId).update({ 'id': newTaskId }).catch((error) => {
+                // console.log('Failed update Task', error);
+              })
+            }).catch((error) => {
+              // console.log('Failed create the Task on 2nd attempt', error);
+            })
+          });
+        };
+      });
+      // let gdgdh = ddfm.ref.get().data();
     });
     return userRefCheck.ref.get();
   }
 
-  addTask( task, company){
-    console.log('Company' + ' ' + company.name)
-    console.log('task created' + ' ' + task.name)
-    let oop = company.id;
-    let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>; 
+  addTask( task, company) {
+    // console.log('Company' + ' ' + company.name)
+    // console.log('task created' + ' ' + task.name)
+    // console.log('task champ' + ' ' + task.champion)
+    const oop = company.id;
+    const championId = task.championId;
+    let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
     let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData> ;
-    let createdTask = task;
-    let tasksRef = this.afs.collection('tasks');
-    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
-    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
-    let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
-    let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
-    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
-    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
-    let entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
-    let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
-    let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
+    const createdTask = task;
+    const tasksRef = this.afs.collection('tasks');
+    const userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    const champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    const userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
+    const champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+    const entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    const entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+    const entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
+    const projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
+    const projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
+    this.afs.collection('Users').doc(createdTask.champion.id).collection('taskNotification').add(task).then( dt => {
 
-    if (task.departmentId !="") {
-      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');      
-      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
-      .doc(task.champion.id).collection('tasks');      
+    if (createdTask.departmentId !== '') {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(createdTask.departmentId)
+        .collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(createdTask.departmentId)
+      .collection('Participants').doc(createdTask.champion.id).collection('tasks');
     }
 
-    //set task under a user
-    let newTaskId
+    // set task under a user
+    let newTaskId;
     userRef.add(createdTask).then(function (Ref) {
       newTaskId = Ref.id;
       createdTask.id = Ref.id;
-
     }).then(function (Ref) {
       userRef.doc(newTaskId).update({ 'id': newTaskId });
 
-      //set champ task under a enterprise
+      // set champ task under a enterprise
       entTaskChamp.doc(newTaskId).set(createdTask);
-      //update id for champ task under a enterprise
+      // update id for champ task under a enterprise
       entTaskChamp.doc(newTaskId).update({ 'id': newTaskId });
 
-      //set task under a tasks
+      // set task under a tasks
       tasksRef.doc(newTaskId).set(createdTask);
-      //update id for task under a tasks
+      // update id for task under a tasks
       tasksRef.doc(newTaskId).update({ 'id': newTaskId });
 
-      //set task under a company                        
+      // set task under a company
       entRef.doc(newTaskId).set(createdTask);
 
-      //update id for task under a company
+      // update id for task under a company
       entRef.doc(newTaskId).update({ 'id': newTaskId });
-      
-      if (task.departmentId !== "") {
 
-        //set task under a enterprise dept
+      if (task.departmentId !== '') {
+
+        // set task under a enterprise dept
         entDeptRef.doc(newTaskId).set(createdTask);
-        //update id for task under a enterprise dept
+        // update id for task under a enterprise dept
         entDeptRef.doc(newTaskId).update({ 'id': newTaskId });
 
-        //set champ task under a enterprise dept
+        // set champ task under a enterprise dept
         entDepStafftRef.doc(newTaskId).set(createdTask);
-        //update id for champ task under a enterprise dept
+        // update id for champ task under a enterprise dept
         entDepStafftRef.doc(newTaskId).update({ 'id': newTaskId });
 
       }
 
       if (task.projectType === 'Enterprise') {
-          console.log(Ref);
-          //set task under a champion
+          // console.log(Ref);
+          // set task under a champion
           champRef.doc(newTaskId).set(createdTask);
           champProjRef.doc(newTaskId).set(createdTask);
 
@@ -328,299 +579,336 @@ export class TaskService {
 
           // set task in user project tasks
           userProjRef.doc(newTaskId).set(createdTask);
-          
+
           // update id for task in user project tasks
           userProjRef.doc(newTaskId).update({ 'id': newTaskId });
 
-          //set task under a project
+          // set task under a project
           projectsRef.doc(newTaskId).set(createdTask);
-          //set task under a company                
+          // set task under a company
           entProjRef.doc(newTaskId).set(createdTask);
-          //set task under a projectCompanyRef
+          // set task under a projectCompanyRef
           projectCompanyRef.doc(newTaskId).set(createdTask);
-          //update task id under a company
+          // update task id under a company
           entProjRef.doc(newTaskId).update({ 'id': newTaskId });
-          //update id for task under a project
+          // update id for task under a project
           projectsRef.doc(newTaskId).update({ 'id': newTaskId });
           projectCompanyRef.doc(newTaskId).update({ 'id': newTaskId });
       };
-    });    
+    }).then(() => {
+      this.afs.collection('Users').doc(championId).collection('taskNotification').doc(newTaskId).set(createdTask).then( () => {
+        // console.log('The task has been sent to' + ' ' + task.champion.name);
+        }).catch( err => {
+          // console.log('Error logged: Task sending failed', err);
+        }).then(() => {
+          this.afs.collection('Users').doc(championId).collection('taskNotification').doc(newTaskId).set(createdTask).then( () => {
+            // console.log('The task has been sent to' + ' ' + createdTask.champion.name + ' ' + ' on 2nd attempt');
+          }).catch( err => {
+            // console.log('Error logged: Task sending failed on 2nd attempt', err);
+          })
+        })
+      })
+    })
   }
 
   updateTask(task, company, dept) {
-    console.log('Company' + ' ' + company.name)
-    console.log('task created' + ' ' + task.name)
-    let oop = company.id;
+    // console.log('Company' + ' ' + company.name)
+    // console.log('task created' + ' ' + task.name)
+    const oop = company.id;
     let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
     let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
-    let createdTask = task;
-    let tasksRef = this.afs.collection('tasks');
-    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
-    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
-    let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
-    let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
-    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
-    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
-    let entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
-    let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
-    let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
+    const createdTask = task;
+    const tasksRef = this.afs.collection('tasks');
+    const userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    const champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    const userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
+    const champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+    const entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    const entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+    const entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
+    const projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
+    const projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
 
-    if (task.departmentId != "") {
-      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');
-      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
+    if (task.departmentId !== '') {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId)
+        .collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId)
+        .collection('Participants')
         .doc(task.champion.id).collection('tasks');
     }
 
-    let newTaskId = task.id;
+    const newTaskId = task.id;
 
-    //set task under a user
+    // set task under a user
     userRef.doc(newTaskId).update(createdTask);
-      //set champ task under a enterprise
+      // set champ task under a enterprise
       entTaskChamp.doc(newTaskId).update(createdTask);
-      //update id for champ task under a enterprise
-      //set task under a tasks
+      // update id for champ task under a enterprise
+      // set task under a tasks
       tasksRef.doc(newTaskId).update(createdTask);
-      //set task under a company                        
+      // set task under a company
       entRef.doc(newTaskId).update(createdTask);
 
-      if (task.departmentId != "") {
+      if (task.departmentId !== '') {
 
-        //set task under a enterprise dept
+        // set task under a enterprise dept
         entDeptRef.doc(newTaskId).update(createdTask);
-        //update id for task under a enterprise dept
-        //set champ task under a enterprise dept
+        // update id for task under a enterprise dept
+        // set champ task under a enterprise dept
         entDepStafftRef.doc(newTaskId).update(createdTask);
-        //update id for champ task under a enterprise dept
+        // update id for champ task under a enterprise dept
       }
 
       if (task.projectType === 'Enterprise') {
-        // console.log(Ref);
-        //set task under a champion
+        // // console.log(Ref);
+        // set task under a champion
         champRef.doc(newTaskId).update(createdTask);
         champProjRef.doc(newTaskId).update(createdTask);
         // set task in user project tasks
         userProjRef.doc(newTaskId).update(createdTask);
-        //set task under a project
+        // set task under a project
         projectsRef.doc(newTaskId).update(createdTask);
-        //set task under a company                
+        // set task under a company
         entProjRef.doc(newTaskId).update(createdTask);
-        //set task under a projectCompanyRef
-        projectCompanyRef.doc(newTaskId).update(createdTask);;
+        // set task under a projectCompanyRef
+        projectCompanyRef.doc(newTaskId).update(createdTask);
       };
     // });
   }
 
   updateTask2(task) {
-    console.log('CompanyId' + ' ' + task.companyId)
-    console.log('task created' + ' ' + task.name)
-    let oop = task.companyId;
+    // console.log('CompanyId' + ' ' + task.companyId)
+    // console.log('task created' + ' ' + task.name)
+    const oop = task.companyId;
     let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
     let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
-    let createdTask = task;
-    let tasksRef = this.afs.collection('tasks');
-    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
-    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
-    let userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
-    let champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
-    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
-    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
-    let entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
-    let projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
-    let projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
+    const createdTask = task;
+    const tasksRef = this.afs.collection('tasks');
+    const userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    const champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    const userProjRef = this.afs.collection('Users').doc(task.byId).collection('projects').doc(task.projectId).collection('tasks');
+    const champProjRef = this.afs.collection('Users').doc(task.champion.id).collection('projects').doc(task.projectId).collection('tasks');
+    const entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    const entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+    const entProjRef = this.afs.collection('Enterprises').doc(oop).collection('projects').doc(task.projectId).collection('tasks');
+    const projectsRef = this.afs.collection('Projects').doc(task.projectId).collection('tasks');
+    const projectCompanyRef = this.afs.collection('Projects').doc(task.projectId).collection('enterprises').doc(oop).collection('tasks');
 
-    if (task.departmentId != "") {
-      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');
-      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
+    if (task.departmentId !== '') {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId)
+        .collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId)
+        .collection('Participants')
         .doc(task.champion.id).collection('tasks');
     }
 
-    let newTaskId = task.id;
+    const newTaskId = task.id;
 
-    //set task under a user
+    // set task under a user
     userRef.doc(newTaskId).update(createdTask);
-    //set champ task under a enterprise
+    // set champ task under a enterprise
     entTaskChamp.doc(newTaskId).update(createdTask);
-    //update id for champ task under a enterprise
-    //set task under a tasks
+    // update id for champ task under a enterprise
+    // set task under a tasks
     tasksRef.doc(newTaskId).update(createdTask);
-    //set task under a company                        
+    // set task under a company
     entRef.doc(newTaskId).update(createdTask);
 
-    if (task.departmentId != "") {
+    if (task.departmentId !== '') {
 
-      //set task under a enterprise dept
+      // set task under a enterprise dept
       entDeptRef.doc(newTaskId).update(createdTask);
-      //update id for task under a enterprise dept
-      //set champ task under a enterprise dept
+      // update id for task under a enterprise dept
+      // set champ task under a enterprise dept
       entDepStafftRef.doc(newTaskId).update(createdTask);
-      //update id for champ task under a enterprise dept
+      // update id for champ task under a enterprise dept
     }
 
     if (task.projectType === 'Enterprise') {
-      // console.log(Ref);
-      //set task under a champion
+      // // console.log(Ref);
+      // set task under a champion
       champRef.doc(newTaskId).update(createdTask);
       champProjRef.doc(newTaskId).update(createdTask);
       // set task in user project tasks
       userProjRef.doc(newTaskId).update(createdTask);
-      //set task under a project
+      // set task under a project
       projectsRef.doc(newTaskId).update(createdTask);
-      //set task under a company                
+      // set task under a company
       entProjRef.doc(newTaskId).update(createdTask);
-      //set task under a projectCompanyRef
-      projectCompanyRef.doc(newTaskId).update(createdTask);;
+      // set task under a projectCompanyRef
+      projectCompanyRef.doc(newTaskId).update(createdTask);
     };
     // });
   }
 
+
   addplainCompTask(task: Task, company: Enterprise, dept: Department) {
-    console.log('Company' + ' ' + company.name)
-    console.log('task created' + ' ' + task.name)
-    let oop = company.id;
+    // console.log('Company' + ' ' + company.name)
+    // console.log('task created' + ' ' + task.name)
+    const oop = company.id;
     let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
     let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
-    let createdTask = task;
-    let tasksRef = this.afs.collection('tasks');
-    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
-    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
-    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
-    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
-
-    if (dept.id != "") {
-      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');
-      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
-        .doc(task.champion.id).collection('tasks');
+    const createdTask = task;
+    const tasksRef = this.afs.collection('tasks');
+    const userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    const champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    const entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    const entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+    const championId = createdTask.champion.id;
+    if (dept.id !== '') {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection('departments').doc(task.departmentId).collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection('departments').doc(task.departmentId)
+      .collection('Participants').doc(task.champion.id).collection('tasks');
     }
-
-    //set task under a user
+    let newTaskId;
+    // set task under a user
     userRef.add(createdTask).then(function (Ref) {
-      let newTaskId = Ref.id;
+      newTaskId = Ref.id;
+      createdTask.id =  Ref.id;
+
+    }).then( function (Ref) {
+
       userRef.doc(newTaskId).update({ 'id': newTaskId });
 
-      //set task under a champion
+      // set task under a champion
       champRef.doc(newTaskId).set(createdTask);
 
       // update id for champion
       champRef.doc(newTaskId).update({ 'id': newTaskId });
 
-      //set champ task under a enterprise
+      // set champ task under a enterprise
       entTaskChamp.doc(newTaskId).set(createdTask);
-      //update id for champ task under a enterprise
+      // update id for champ task under a enterprise
       entTaskChamp.doc(newTaskId).update({ 'id': newTaskId });
 
-      //set task under a tasks
+      // set task under a tasks
       tasksRef.doc(newTaskId).set(createdTask);
-      //update id for task under a tasks
+      // update id for task under a tasks
       tasksRef.doc(newTaskId).update({ 'id': newTaskId });
 
-      //set task under a company                        
+      // set task under a company
       entRef.doc(newTaskId).set(createdTask);
 
-      //update id for task under a company
+      // update id for task under a company
       entRef.doc(newTaskId).update({ 'id': newTaskId });
 
-      if (task.departmentId != "") {
+      if (task.departmentId !== '') {
 
-        //set task under a enterprise dept
+        // set task under a enterprise dept
         entDeptRef.doc(newTaskId).set(createdTask);
-        //update id for task under a enterprise dept
+        // update id for task under a enterprise dept
         entDeptRef.doc(newTaskId).update({ 'id': newTaskId });
 
-        //set champ task under a enterprise dept
+        // set champ task under a enterprise dept
         entDepStafftRef.doc(newTaskId).set(createdTask);
-        //update id for champ task under a enterprise dept
+        // update id for champ task under a enterprise dept
         entDepStafftRef.doc(newTaskId).update({ 'id': newTaskId });
-
       }
-    });
+    }).then(() => {
+      if (createdTask.byId !== createdTask.champion.id) {
+        this.afs.collection('Users').doc(championId).collection('taskNotification').doc(newTaskId).set(createdTask).then( () => {
+          // console.log('The task has been sent to' + ' ' + createdTask.champion.name);
+        }).catch( err => {
+          // console.log('Error logged: Task sending failed', err);
+        }).then(() => {
+          this.afs.collection('Users').doc(championId).collection('taskNotification').doc(newTaskId).set(createdTask).then( () => {
+            // console.log('The task has been sent to' + ' ' + createdTask.champion.name + ' ' + ' on 2nd attempt');
+          }).catch( err => {
+            // console.log('Error logged: Task sending failed on 2nd attempt', err);
+          })
+        })
+      }
+    })
   }
 
   update2plainCompTask(task: Task) {
-    console.log('CompanyId' + ' ' + task.companyId)
-    console.log('task created' + ' ' + task.name)
-    let oop = task.companyId;
+    // console.log('CompanyId' + ' ' + task.companyId)
+    // console.log('task created' + ' ' + task.name)
+    const oop = task.companyId;
     let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
     let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
-    let createdTask = task;
-    let tasksRef = this.afs.collection('tasks');
-    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
-    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
-    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
-    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+    const createdTask = task;
+    const tasksRef = this.afs.collection('tasks');
+    const userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    const champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    const entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    const entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
 
-    if (task.departmentId != "") {
-      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');
-      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
-        .doc(task.champion.id).collection('tasks');
+    if (task.departmentId !== '') {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId)
+        .collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId)
+        .collection('Participants').doc(task.champion.id).collection('tasks');
     }
-    let newTaskId = task.id;
+    const newTaskId = task.id;
 
-    //set task under a user
+    // set task under a user
     userRef.doc(newTaskId).update(createdTask);
-    //set task under a champion
+    // set task under a champion
     champRef.doc(newTaskId).update(createdTask);
-    //set champ task under a enterprise
+    // set champ task under a enterprise
     entTaskChamp.doc(newTaskId).update(createdTask);
-    //set task under a tasks
+    // set task under a tasks
     tasksRef.doc(newTaskId).update(createdTask);
 
-    //set task under a company                        
+    // set task under a company
     entRef.doc(newTaskId).update(createdTask);
 
-    if (task.departmentId != "") {
+    if (task.departmentId !== '') {
 
-      //set task under a enterprise dept
+      // set task under a enterprise dept
       entDeptRef.doc(newTaskId).update(createdTask);
-      //set champ task under a enterprise dept
+      // set champ task under a enterprise dept
       entDepStafftRef.doc(newTaskId).update(createdTask);
     }
     // });
   }
 
   updateCompTask(task: Task, company: Enterprise, dept: Department) {
-    console.log('Company' + ' ' + company.name)
-    console.log('task created' + ' ' + task.name)
-    let oop = company.id;
+    // console.log('Company' + ' ' + company.name)
+    // console.log('task created' + ' ' + task.name)
+    const oop = company.id;
     let entDepStafftRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
     let entDeptRef: AngularFirestoreCollection<firebase.firestore.DocumentData>;
-    let createdTask = task;
-    let tasksRef = this.afs.collection('tasks');
-    let userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
-    let champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
-    let entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
-    let entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
+    const createdTask = task;
+    const tasksRef = this.afs.collection('tasks');
+    const userRef = this.afs.collection('Users').doc(task.byId).collection('tasks');
+    const champRef = this.afs.collection('Users').doc(task.champion.id).collection('tasks');
+    const entTaskChamp = this.afs.collection('Enterprises').doc(oop).collection('Participants').doc(task.champion.id).collection('tasks');
+    const entRef = this.afs.collection('Enterprises').doc(oop).collection('tasks');
 
-    if (dept.id != "") {
-      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('tasks');
-      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId).collection('Participants')
+    if (dept.id !== '') {
+      entDeptRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId)
+        .collection('tasks');
+      entDepStafftRef = this.afs.collection('Enterprises').doc(oop).collection<Department>('departments').doc(task.departmentId)
+        .collection('Participants')
         .doc(task.champion.id).collection('tasks');
     }
-    let newTaskId = task.id;
+    const newTaskId = task.id;
 
-    //set task under a user
+    // set task under a user
     userRef.doc(newTaskId).update(createdTask);
-      //set task under a champion
+      // set task under a champion
     champRef.doc(newTaskId).update(createdTask);
-      //set champ task under a enterprise
+      // set champ task under a enterprise
     entTaskChamp.doc(newTaskId).update(createdTask);
-      //set task under a tasks
+      // set task under a tasks
     tasksRef.doc(newTaskId).update(createdTask);
 
-      //set task under a company                        
+      // set task under a company
     entRef.doc(newTaskId).update(createdTask);
 
-    if (task.departmentId != "") {
+    if (task.departmentId !== '') {
 
-      //set task under a enterprise dept
+      // set task under a enterprise dept
       entDeptRef.doc(newTaskId).update(createdTask);
-      //set champ task under a enterprise dept
+      // set champ task under a enterprise dept
       entDepStafftRef.doc(newTaskId).update(createdTask);
     }
     // });
   }
 
   getMyTasks(myUserId) {
-    // this.myCompanyTasks = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref.where('byId', '==', myUserId) }).snapshotChanges().pipe(
     this.Tasks = this.afs.collection<Task>('tasks', ref => { return ref.where('byId', '==', myUserId ) }).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Task;
@@ -631,16 +919,16 @@ export class TaskService {
     return this.Tasks;
   }
 
-  getOutstandingTAsks(object, id) {
-    console.log("from" + " " + object + " companyID==> " + id);
-    this.tasks = this.afs.collection(object).doc(id).collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
+  getOutstandingTAsks(object, idd) {
+    // console.log('from' + ' ' + object + ' companyID ==> ' + idd);
+    this.tasks = this.afs.collection(object).doc(idd).collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
         this.myTaskData = data;
-        this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
-        this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
-        let today = moment(new Date(), "YYYY-MM-DD");
+        this.myTaskData.when = moment(data.start, 'YYYY-MM-DD').fromNow().toString();
+        this.myTaskData.then = moment(data.finish, 'YYYY-MM-DD').fromNow().toString();
+        const today = moment(new Date(), 'YYYY-MM-DD');
 
         // outstanding tasks
         if (moment(data.finish).isBefore(today)) {
@@ -652,18 +940,18 @@ export class TaskService {
     return this.OutstandingTasks
   }
 
-  getCurrentTAsks(object,id) {
-    console.log("from" + " " + object + " companyID==> " + id);
-    
+  getCurrentTAsks(object, idd) {
+    // console.log('from' + ' ' + object + ' companyID==> ' + idd);
+
     this.tasks = this.afs.collection(object)
-    .doc(id).collection('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
+    .doc(idd).collection('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
         this.myTaskData = data;
-        this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
-        this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
-        let today = moment(new Date(), "YYYY-MM-DD");
+        this.myTaskData.when = moment(data.start, 'YYYY-MM-DD').fromNow().toString();
+        this.myTaskData.then = moment(data.finish, 'YYYY-MM-DD').fromNow().toString();
+        const today = moment(new Date(), 'YYYY-MM-DD');
 
         if (moment(data.start).isSameOrBefore(today) && moment(data.finish).isSameOrAfter(today)) {
 
@@ -675,21 +963,20 @@ export class TaskService {
     return this.CurrentTAsks;
   }
 
-  getShortTemTAsks(object, id) {
-    console.log("from" + " " + object + " companyID==> " + id);
-
-    this.tasks = this.afs.collection(object).doc(id).collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
+  getShortTemTAsks(object, idd) {
+    // console.log('from' + ' ' + object + ' companyID==> ' + idd);
+    this.tasks = this.afs.collection(object).doc(idd).collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
         this.myTaskData = data;
-        this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
-        this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
-        let today = moment(new Date(), "YYYY-MM-DD");
+        this.myTaskData.when = moment(data.start, 'YYYY-MM-DD').fromNow().toString();
+        this.myTaskData.then = moment(data.finish, 'YYYY-MM-DD').fromNow().toString();
+        const today = moment(new Date(), 'YYYY-MM-DD');
 
         if (moment(data.start).isAfter(today)) {
           this.UpcomingTAsks.push(data);
-          if (moment(data.start).isBefore(today.add(3, "month"))) {
+          if (moment(data.start).isBefore(today.add(3, 'month'))) {
             this.ShortTermTAsks.push(data);
           }
         };
@@ -699,21 +986,20 @@ export class TaskService {
     return this.ShortTermTAsks;
   }
 
-  getMediumTermTAsks(object, id) {
-    console.log("from" + " " + object + " companyID==> " + id);
-
-    this.tasks = this.afs.collection(object).doc(id).collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
+  getMediumTermTAsks(object, idd) {
+    // console.log('from' + ' ' + object + ' companyID ==> ' + idd);
+    this.tasks = this.afs.collection(object).doc(idd).collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
         this.myTaskData = data;
-        this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
-        this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
-        let today = moment(new Date(), "YYYY-MM-DD");
+        this.myTaskData.when = moment(data.start, 'YYYY-MM-DD').fromNow().toString();
+        this.myTaskData.then = moment(data.finish, 'YYYY-MM-DD').fromNow().toString();
+        const today = moment(new Date(), 'YYYY-MM-DD');
 
         if (moment(data.start).isAfter(today)) {
           this.UpcomingTAsks.push(data);
-          if (moment(data.start).isAfter(today.add(6, "month"))) {
+          if (moment(data.start).isAfter(today.add(6, 'month'))) {
             this.MediumTermTAsks.push(data);
           }
         };
@@ -723,21 +1009,21 @@ export class TaskService {
     return this.MediumTermTAsks;
   }
 
-  getLongTermTAsks(object, id) {
-    console.log("from" + " " + object + " companyID==> " + id);
+  getLongTermTAsks(object, idd) {
+    // console.log('from' + ' ' + object + ' companyID==> ' + idd);
 
-    this.tasks = this.afs.collection(object).doc(id).collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
+    this.tasks = this.afs.collection(object).doc(idd).collection<Task>('tasks', ref => ref.orderBy('start')).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
         this.myTaskData = data;
-        this.myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
-        this.myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
-        let today = moment(new Date(), "YYYY-MM-DD");
+        this.myTaskData.when = moment(data.start, 'YYYY-MM-DD').fromNow().toString();
+        this.myTaskData.then = moment(data.finish, 'YYYY-MM-DD').fromNow().toString();
+        const today = moment(new Date(), 'YYYY-MM-DD');
 
         if (moment(data.start).isAfter(today)) {
           this.UpcomingTAsks.push(data);
-          if (moment(data.start).isAfter(today.add(12, "month"))) {
+          if (moment(data.start).isAfter(today.add(12, ))) {
             this.LongTermTAsks.push(data)
           }
         };
@@ -760,7 +1046,8 @@ export class TaskService {
   }
 
   getTasksImChamp(myUserId) {
-    this.tasksImChampion = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref.where('champion.id', '==', myUserId) }).snapshotChanges().pipe(
+    this.tasksImChampion = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref
+      .where('champion.id', '==', myUserId) }).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Task;
         const id = a.payload.doc.id;
@@ -771,7 +1058,7 @@ export class TaskService {
   }
 
   getSelectedTask(ref) {
-    console.log(ref);
+    // console.log(ref);
   }
 
   ArcSortCompleteTasks() {
@@ -780,19 +1067,19 @@ export class TaskService {
     this.userTaskCol.subscribe(usersRef => {
       this.usersData = usersRef;
       this.usersData.forEach(element => {
-        // console.log(element.name);
+        // // console.log(element.name);
         this.userTaskCollection = this.afs.collection('Users').doc(element.id).collection<Task>('tasks').valueChanges();
         this.userTaskColRef = this.afs.collection('Users').doc(element.id).collection('tasks');
         // this.clipTasks(this.userTaskCollection, this.userTaskColRef);
         this.userTaskCollection.subscribe(userstasks => {
           userstasks.forEach(item => {
-            console.log(item.name);
+            // console.log(item.name);
 
-            if (item.name === "") {
-              console.log(item.id);
+            if (item.name === '') {
+              // console.log(item.id);
 
               this.userTaskColRef.doc(item.id).delete();
-              console.log('Task id' + item.id + ' ' + "Has no name, wasn't properly created. It has been erased");
+              // console.log('Task id' + item.id + ' ' + 'Has no name, wasn\'t properly created. It has been erased');
                this.clipTasks(item);
 
             } else {
@@ -806,179 +1093,191 @@ export class TaskService {
 
   }
 
-  clipTasks(item){
-    console.log(item.id);
-    if (item.companyId !== "") {
+  clipTasks(item) {
+    // console.log(item.id);
+    if (item.companyId !== '') {
       this.afs.collection('Enterprises').doc(item.companyId).collection<Task>('tasks').doc(item.id).delete();
-      this.afs.collection('Enterprises').doc(item.companyId).collection('Participants').doc(item.champion.id).collection<Task>('tasks').doc(item.id).delete();
-      if (item.departmentId !== "") {
-        this.afs.collection('Enterprises').doc(item.companyId).collection('departments').doc(item.departmentId).collection<Task>('tasks').doc(item.id).delete();
-        this.afs.collection('Enterprises').doc(item.companyId).collection('departments').doc(item.departmentId).collection('Participants').doc(item.champion.id).collection<Task>('tasks').doc(item.id).delete();
+      this.afs.collection('Enterprises').doc(item.companyId).collection('Participants').doc(item.champion.id).collection<Task>('tasks')
+        .doc(item.id).delete();
+      if (item.departmentId !== '') {
+        this.afs.collection('Enterprises').doc(item.companyId).collection('departments').doc(item.departmentId).collection<Task>('tasks')
+          .doc(item.id).delete();
+        this.afs.collection('Enterprises').doc(item.companyId).collection('departments').doc(item.departmentId).collection('Participants')
+          .doc(item.champion.id).collection<Task>('tasks').doc(item.id).delete();
       } else {
 
       }
     } else {
-      
+
     }
 
-    if (item.projectId !== "") {
+    if (item.projectId !== '') {
       this.afs.collection('Projects').doc(item.projectId).collection<Task>('tasks').doc(item.id).delete();
-      this.afs.collection('Projects').doc(item.projectId).collection('Participants').doc(item.champion.id).collection<Task>('tasks').doc(item.id).delete();
-      if (item.companyId !== "") {
-        this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId).collection<Task>('tasks').doc(item.id).delete();
-        this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId).collection('labour').doc(item.champion.id).collection<Task>('tasks').doc(item.id).delete();
+      this.afs.collection('Projects').doc(item.projectId).collection('Participants').doc(item.champion.id).
+        collection<Task>('tasks').doc(item.id).delete();
+      if (item.companyId !== '') {
+        this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId).
+          collection('tasks').doc(item.id).delete();
+        this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId).collection('labour').
+          doc(item.champion.id).collection('tasks').doc(item.id).delete();
       } else {
 
       }
     } else {
 
     }
-    
   }
 
   sortCompleteTasks() {
-    let userTaskColRef = this.afs.collection('Users').doc(this.userId).collection('tasks');
+    const userTaskColRef = this.afs.collection('Users').doc(this.userId).collection('tasks');
     // let userTaskColRef = this.afs.collection('Users').doc(this.userId).collection('WeeklyTasks');
     let dmElement;
+    const dmElem = [];
+    const dElem = [];
     this.userTaskCol.subscribe(usersRef => {
       this.usersData = usersRef;
-      
       this.usersData.forEach(element => {
-        // console.log(element.name);
+        // // console.log(element.name);
         dmElement = element;
-
-        if (element.name === "" || element.name === null || element.name === undefined) {
+        if (element.name === '' || element.name === null || element.name === undefined) {
           userTaskColRef.doc(element.id).delete().then(() => {
-            console.log('Task id' + element.id + ' ' + "Has no name, wasn't properly created. It has been erased");
-            console.log('passed this function snd(------)');
+            // // console.log('Task id' + element.id + ' ' + 'Has no name, was not properly created. It has been erased');
+            // // console.log('passed this function snd(------)');
           })
         } else {
-          console.log(element.name);
-          userTaskColRef.doc(element.id).collection<workItem>('actionItems', ref => ref.where('complete', '==', true)).valueChanges().subscribe(dm => { 
-            console.log('task Actions complete', 'No', dm.length);
-            const allcomplet = dm.length;
-
+          // // console.log(element.name);
+          userTaskColRef.doc(element.id).collection<workItem>('actionItems', ref => ref.where('complete', '==', true))
+          .valueChanges().subscribe(dm => {
+            dm.forEach(elem => {
+              if (elem.champion.id = this.userId) {
+                dmElem.push(elem)
+              }
+            })
+            // // console.log('task Actions complete', 'No', dmElem.length);
+            const allcomplet = dmElem.length;
             userTaskColRef.doc(element.id).collection<workItem>('actionItems').valueChanges().subscribe(d => {
-              console.log('task Actions', 'No', d.length);
-              const total = d.length;
+              d.forEach(elem => {
+                if (elem.champion.id = this.userId) {
+                  dElem.push(elem)
+                }
+              })
+              // // console.log('task Actions', 'No', dElem.length);
+              const total = dElem.length;
               if (allcomplet === total) {
-                console.log(true);
+                // // console.log(true);
                 if (total !== 0) {
-                  this.correctStatus(element);                  
+                  this.correctStatus(element);
                 }
               } else {
-                console.log(false);
+                // // console.log(false);
               }
             });
           });
-
-          // this.snd(element);
-          // this.sndCheck(element);
         }
       })
     })
   }
 
-  correctStatus(nemesis : Task){
+  correctStatus(nemesis: Task) {
     // let task = this.task;
-    let task = nemesis;
-    let usrId =  this.userId;
-    let taskDoc = this.userTaskRef.doc(task.id);
-    let taskdoc2 = this.userWeeklyTaskRef.doc(task.id);
-    let taskEntDoc, taskEntUserDoc, taskEntDptDoc, taskEntDptUserDoc, taskProjectDoc, taskProjectUserDoc, taskProjectCompDoc, taskProjectCompUserDoc;
-    if (task.companyId !== "") {
-
+    const task = nemesis;
+    const usrId =  this.userId;
+    const taskDoc = this.userTaskRef.doc(task.id);
+    const taskdoc2 = this.userWeeklyTaskRef.doc(task.id);
+    let taskEntDoc, taskEntUserDoc, taskEntDptDoc, taskEntDptUserDoc, taskProjectDoc, taskProjectUserDoc,
+      taskProjectCompDoc, taskProjectCompUserDoc;
+    if (task.companyId !== '') {
       taskEntDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('tasks').doc(task.id);
-      taskEntUserDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('Participants').doc(usrId).collection('tasks').doc(task.id);
-      taskEntDptDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('departments').doc(task.departmentId).collection('tasks').doc(task.id);
-      taskEntDptUserDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('departments').doc(task.departmentId).collection('Participants').doc(usrId).collection('tasks').doc(task.id);
-
+      taskEntUserDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('Participants').doc(usrId)
+        .collection('tasks').doc(task.id);
+        taskEntDptDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('departments').doc(task.departmentId)
+        .collection('tasks').doc(task.id);
+      taskEntDptUserDoc = this.afs.collection('Enterprises').doc(task.companyId).collection('departments').doc(task.departmentId)
+        .collection('Participants').doc(usrId).collection('tasks').doc(task.id);
     } else {
 
     }
-    if (task.projectId !== "") {
+    if (task.projectId !== '') {
 
       taskProjectDoc = this.afs.collection('Projects').doc(task.projectId).collection('tasks').doc(task.id);
-      taskProjectUserDoc = this.afs.collection('Projects').doc(task.companyId).collection('Participants').doc(usrId).collection('tasks').doc(task.id);
-      taskProjectCompDoc = this.afs.collection('Projects').doc(task.companyId).collection('enterprise').doc(task.companyId).collection('tasks').doc(task.id);
-      taskProjectCompUserDoc = this.afs.collection('Projects').doc(task.companyId).collection('enterprise').doc(task.companyId).collection('Participants').doc(usrId).collection('tasks').doc(task.id);
+      taskProjectUserDoc = this.afs.collection('Projects').doc(task.companyId).collection('Participants').doc(usrId)
+        .collection('tasks').doc(task.id);
+      taskProjectCompDoc = this.afs.collection('Projects').doc(task.companyId).collection('enterprise').doc(task.companyId)
+        .collection('tasks').doc(task.id);
+      taskProjectCompUserDoc = this.afs.collection('Projects').doc(task.companyId).collection('enterprise').doc(task.companyId)
+        .collection('Participants').doc(usrId).collection('tasks').doc(task.id);
 
     } else {
 
     }
-    let taskRootDoc = this.afs.collection('tasks').doc(task.id)
+    const taskRootDoc = this.afs.collection('tasks').doc(task.id)
 
       if (task.complete === false) {
-        taskDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
-          console.log('user/tasks updated');
+        taskDoc.update({ 'complete': true, ' update' : new Date().toISOString() }).then(() => {
+          // console.log('user/tasks updated');
         }).catch((error) => {
           console.error(error);
         });
         taskdoc2.update({ 'complete': true, ' update': new Date().toISOString() }).then(() => {
-          console.log('user/weeklytasks updated');
+          // console.log('user/weeklytasks updated');
         }).catch((error) => {
           console.error(error);
         });
-        if (task.companyId !== "") {
-          console.log('Processing Company Tasks');
+        if (task.companyId !== '') {
+          // console.log('Processing Company Tasks');
 
-          taskEntDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
-            console.log('Ent/tasks updated');
+          taskEntDoc.update({ 'complete': true, ' update' : new Date().toISOString() }).then(() => {
+            // console.log('Ent/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskEntUserDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
-            console.log('Ent/Part/tasks updated');
+          taskEntUserDoc.update({ 'complete': true, ' update' : new Date().toISOString() }).then(() => {
+            // console.log('Ent/Part/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskEntDptDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
-            console.log('Ent/Dpt/tasks updated');
+          taskEntDptDoc.update({ 'complete': true, ' update' : new Date().toISOString() }).then(() => {
+            // console.log('Ent/Dpt/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskEntDptUserDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
-            console.log('Ent/Dpt/Part/tasks updated');
+          taskEntDptUserDoc.update({ 'complete': true, ' update' : new Date().toISOString() }).then(() => {
+            // console.log('Ent/Dpt/Part/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
 
         }
-        if (task.projectId !== "") {
-          console.log('Processing Project Tasks');
-          taskProjectDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
-            console.log('Projects/tasks updated');
+        if (task.projectId !== '') {
+          // console.log('Processing Project Tasks');
+          taskProjectDoc.update({ 'complete': true, ' update' : new Date().toISOString() }).then(() => {
+            // console.log('Projects/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskProjectUserDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
-            console.log('Projects/Participants/tasks updated');
+          taskProjectUserDoc.update({ 'complete': true, ' update' : new Date().toISOString() }).then(() => {
+            // console.log('Projects/Participants/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskProjectCompDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
-            console.log('Projects/enterprise/tasks updated');
+          taskProjectCompDoc.update({ 'complete': true, ' update' : new Date().toISOString() }).then(() => {
+            // console.log('Projects/enterprise/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
-          taskProjectCompUserDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
-            console.log('Projects/enterprise/Participants/tasks updated');
+          taskProjectCompUserDoc.update({ 'complete': true, ' update' : new Date().toISOString() }).then(() => {
+            // console.log('Projects/enterprise/Participants/tasks updated');
           }).catch((error) => {
             console.error(error);
           });
         }
-        taskRootDoc.update({ 'complete': true,' update' : new Date().toISOString() }).then(() => {
-          console.log('root/tasks updated');
+        taskRootDoc.update({ 'complete': true, ' update' : new Date().toISOString() }).then(() => {
+          // console.log('root/tasks updated');
         }).catch((error) => {
           console.error(error);
         });
       } else {
-        console.log('Task complete')
+        // console.log('Task complete')
       }
-
-
-    // } else {
-
-    // } 
   }
 }

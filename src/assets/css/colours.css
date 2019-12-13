@@ -377,6 +377,42 @@
   min-width: 28em;
   max-width: inherit;
   /* height: inherit; */
+  /* overflow: auto;   */
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* overscroll-behavior: */
+  white-space: nowrap;
+}
+
+.scroll-diary {
+  /* width: 330px; */
+  width: inherit;
+  height: 18em;
+  /* height: inherit; */
+  /* overflow: auto;   */
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* overscroll-behavior: */
+  white-space: nowrap;
+}
+
+.scroll-modalSub {
+  /* width: 330px; */
+  width: inherit;
+  height: 500px;
+  /* height: inherit; */
+  /* overflow: auto; */
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* overscroll-behavior: */
+  white-space: nowrap;
+}
+
+.scroll-task {
+  /* width: 350px; */
+  min-width: 350px;
+  height: 200px;
+  /* overflow: auto; */
   overflow-y: auto;
   overflow-x: hidden;
   /* overscroll-behavior: */
@@ -384,16 +420,26 @@
 
 }
 
-.scroll-task {
-  /* width: 350px; */
-  min-width: 350px;
-  height: 200px;
-  /* overflow-y: auto;
-  overflow-x: hidden; */
-  overflow: auto;
-  /* overscroll-behavior: */
-  white-space: nowrap;
+/* scroll bar */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
 
+/* Track */
+::-webkit-scrollbar-track {
+  /* background: #0000;  */
+  opacity: 0.2;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(170, 173, 180, 0.548); 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(193, 193, 199, 0.363); 
 }
 
 div.scrollmenu {
@@ -408,6 +454,14 @@ div.scrollmenu {
   max-height: 420px;
 }
 
+.impl-flow2 {
+  /* background-color: #333; */
+  overflow-y: auto;
+  max-height: 420px;
+  overflow: hidden
+}
+
+
 .impl-dpt-flow {
   /* background-color: #333; */
   overflow-y: auto;
@@ -417,4 +471,106 @@ div.scrollmenu {
 .strikethrough {
   text-decoration: line-through;
   color: red;
+}
+
+span.nameCol,
+a.nameCol {
+  color: #333366;
+  white-space: nowrap; 
+  /* width: 14em;  */
+  min-width: 14em!important;
+  max-width: 16em!important;
+  overflow: hidden;
+  /* text-overflow: "----";  */
+  text-overflow: ellipsis; 
+  border: none
+}
+
+a.sName,
+span.sName {
+  color: #333366;
+  white-space: nowrap; 
+  /* width: 14em;  */
+  min-width: 7em!important;
+  max-width: 10em!important;
+  overflow: hidden;
+  /* text-overflow: "----";  */
+  text-overflow: ellipsis; 
+  border: none
+}
+
+a.scard,
+span.scard {
+  color: #333366;
+  white-space: nowrap; 
+  /* width: 14em;  */
+  min-width: 7em!important;
+  max-width: 50em!important;
+  overflow: hidden;
+  /* text-overflow: "----";  */
+  text-overflow: ellipsis; 
+  border: none
+}
+div.sdiary,
+a.sdiary,
+span.sdiary {
+  color: #333366;
+  overflow: hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  min-width:150px;
+  max-width:300px!important;
+  display:inline-block;
+}
+span.ppop,
+a.ppop {
+  color: #333366;
+  white-space: nowrap; 
+  /* width: 14em;  */
+  min-width: 14em;
+  max-width: 16em;
+  overflow: hidden;
+  /* text-overflow: "----";  */
+  text-overflow: ellipsis; 
+  border: none
+}
+
+.tmColor {
+  color: #333366;
+}
+
+.dash{
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.vl {
+  border-left: 6px solid slategrey;    
+  height: auto;
+  position: absolute;
+  left: 50%;
+  margin-left: -3px;
+  top: 0;
+}
+
+.vl2 {
+  border-left: 6px solid slategrey;
+  /* border-left: 6px solid green; */
+  height: inherit;
+}
+
+.vl3 {
+  border-bottom: 6px slategrey;
+  border-bottom-style: dashed;
+  border-width: 2px;
+  /* border-left: 6px solid green; */
+  /* height: 500px; */
+}
+
+.vl4 {
+  border-bottom: 6px slategrey;
+  border-bottom-style: groove;
+  border-width: 2px;
+  /* border-left: 6px solid green; */
+  /* height: 500px; */
 }

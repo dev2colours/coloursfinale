@@ -457,7 +457,7 @@ export class ProjectsComponent {
                 phoneNumber: coloursUser.phoneNumber,
                 LastTimeLogin: new Date().toISOString()
             }
-            console.log(userData);
+            // console.log(userData);;
             if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
                 this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
                 console.log("userData is set");

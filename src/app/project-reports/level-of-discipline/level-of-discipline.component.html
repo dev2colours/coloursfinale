@@ -1,0 +1,40 @@
+
+<div class="row">
+  <div class="col-md-10 ml-auto">
+    <div class="card-header clrs-h1-font text-center">Total hours spent per task </div>
+    <br>
+    <div flex-gt-sm="50">
+      <div class="pad ">
+        <div [style.height.px]="250">
+        <ngx-charts-bar-vertical
+            [results]="allDaywork"
+            [view]=[800,600]
+            [scheme]="{ domain: [ '#30E07B ', '#E75691', '#00C0FF', '#5D6A75','#D2B75F' ] }"
+            [barPadding]="10"
+            [gradient]="true"
+            [xAxis]="true"
+            [yAxis]="true"
+            [legend]="true"
+            [legendTitle]="'Task'"
+            [xAxisLabel]="'Weekly-Task'"
+            [yAxisLabel]="'hours'"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true">
+          </ngx-charts-bar-vertical>
+       </div>
+     </div>
+   </div>
+  </div>
+</div>
+
+<!-- 
+ <div>
+    <ol>
+    <!- <li *ngFor="let user of users | async"> ->
+    <li *ngFor="let user of arrUsers ">/
+
+      <span *ngIf="user.name !== ''">"{{ user.name }}" "{{ user.dob }}"  today    date "{{ user.age }}" diff "{{ user.ageNum }}"</span>
+      
+    </li>
+  </ol>
+</div> -->

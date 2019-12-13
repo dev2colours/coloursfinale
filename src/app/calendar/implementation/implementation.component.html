@@ -1,604 +1,654 @@
-<!-- <div class="main-content"> -->
-<div class="">
-  <div class="card-body nav-hor-tabs" style="margin-top: -20px">
-    <div class="nav-tabs-navigation">
-      <div class="nav-tabs-wrapper">
-        <ul id="tabs" class="nav nav-tabs" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link nav-colors active" data-toggle="tab" href="#intray" role="tab" aria-expanded="true">
-              Things To Do In Tray</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link nav-colors" data-toggle="tab" href="#weekly" role="tab" aria-expanded="true">
-              Weekly Calendar</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link nav-colors" data-toggle="tab" href="#diary" role="tab"
-              aria-expanded="false">Daily Diary</a> <!--  (click)="initDiary()" -->
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div id="my-tab-content" class="tab-content text-center">
-      <div class="tab-pane active" id="intray" role="tabpanel" aria-expanded="true">
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
         <div class="row">
-          <div class="col-md-6 ml-auto mr-auto">
-            <div class="card" style="height: 495px;">
-              <div class="card-body text-center" style="padding-top:0px">
-                <div class="card-category clrs-h4-font text-left">
-                  <p class="pull-left clrs-h1-font">Things To Do In Tray</p>
-                  <p class="category pull-left" style="margin-top:-1em">
-                    Click on a Task to add to your Weekly To Do.
-                  </p>
-                </div>
-              </div>
-              <div class="card-body text-center" style="padding-top:0px">
-                <div class="card-body" style="padding-left: 0px;padding-right: 0px;padding-top: 0px;">
-                  <div id="accordionTsk" role="tablist" aria-multiselectable="true" class="card-collapse">
-                    <div class="card card-plain">
-                      <div class="card-header text-left" role="tab" id="headingOutstanding" style="padding-top: 0px;">
-                        <a data-toggle="collapse" href="#OutstandingTray" aria-expanded="true" aria-controls="OutstandingTray" title="Click to see Tasks in your In Tray"> <!--  (click)="dataCALL()" -->
-                          Outstanding Tasks
-                          <i class="nc-icon nc-minimal-down"></i>
-                        </a>
-                      </div>
-                      <div id="OutstandingTray" class="collapse show" role="tabpanel" aria-labelledby="headingOutstanding" data-parent="#accordionTsk">
-                        <div class="card-body" style="padding-left: 0px;padding-right: 0px;">
-                          <div class="content container scroll-task" style="padding-left: 0px;">
-                            <ol *ngFor="let tss of OutstandingTasks"> 
-                              <li *ngIf="tss.complete !== true"  style="list-style-type:none;color:steelblue">
-                                <!-- <div class="row"> -->
-                                  <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:slategrey;padding-left: 0px;padding-bottom: 0px">
-                                    <!-- <span  [ngClass]="{'text-success' : tss.selectedWeekly == true}">{{ tss.name }} </span> -->
-                                    <!-- <span  [ngClass]="{'text-success , strikethrough' : tss.selectedWeekly == true}">{{ tss.name }} </span> -->
-                                      <span  [ngClass]="{'strikethrough' : tss.selectedWeekly == true}"> {{ tss.name }} </span>
-                                      <span class="label text-warning" style="padding-left : 1em"> <small> {{ tss.when }} </small></span>
-                                    </button><br>
-                                    <span name="taskDetails">
-                                      <span *ngIf="tss.companyName !==''" class="category text-info"> {{ tss.companyName }}</span>
-                                      <span *ngIf="tss.projectName !==''" class="category text-warning">; {{ tss.projectName }}</span>
-                                      <span class="category text-left text-yellow" *ngIf="tss.companyName === '' && tss.projectName === ''"> {{ tss.classification.name }}</span>
-                                      <span class="text-left" *ngIf="tss.companyName !== '' || tss.projectName !== ''">.</span>
-                                    </span>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                      <button  *ngIf="tss.selectedWeekly == true; else wTkSelect" disabled class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal" data-target="#dptModal"
-                                       title="Add {{ tss.name }} to a week`s tasks">
-                                        Add to my Week's tasks
-                                      </button>
-                                      <ng-template #wTkSelect>
-                                        <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal" data-target="#dptModal"
-                                        title="Add {{ tss.name }} to a week`s tasks">
-                                          Add to my Week's tasks
-                                        </button> 
-                                      </ng-template>
-                                    </div>
-                                  </div>
-                                <!-- </div> -->
-                              </li>
-                            </ol>
-                            <p *ngIf="OutstandingTasks.length == 0">No Outstanding Tasks</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card card-plain">
-                      <div class="card-header text-left" role="tab" id="headingCurrent">
-                        <a class="collapsed" data-toggle="collapse" href="#currentTskTray" aria-expanded="false" aria-controls="currentTskTray" title="Click to see Tasks in your In Tray">
-                          Current Tasks
-                          <i class="nc-icon nc-minimal-down"></i>
-                        </a>
-                      </div>
-                      <div id="currentTskTray" class="collapse" aria-labelledby="headingCurrent" data-parent="#accordionTsk">
-                        <div class="card-body" style="padding-left: 0px;padding-right: 0px;">
-                          <div class="content container scroll-task" style="padding-left: 0px;">
-                            <ol *ngFor="let tss of CurrentTAsks">
-                              <li *ngIf="tss.complete !== true" class="" style="list-style-type:none;color:steelblue" >
-                                <!-- <div class="row"> -->
-                                  <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:slategrey;padding-left: 0px;padding-bottom: 0px">
-                                      <!-- <span [ngClass]="{'text-success' : tss.selectedWeekly == true}"> {{ tss.name }} </span> -->
-                                      <span [ngClass]="{'strikethrough' : tss.selectedWeekly == true}"> {{ tss.name }} </span>
-                                      <span class="label text-warning" style="padding-left : 1em"> <small> {{ tss.when }} </small></span>
-                                    </button><br>
-                                    <span name="taskDetails">
-                                      <span *ngIf="tss.companyName !==''" class="category text-info"> {{ tss.companyName }}</span>
-                                      <span *ngIf="tss.projectName !==''" class="category text-warning">; {{ tss.projectName }}</span>
-                                      <span class="category text-left text-yellow" *ngIf="tss.companyName === '' && tss.projectName === ''"> {{ tss.classification.name }}</span>
-                                      <span class="text-left" *ngIf="tss.companyName !== '' || tss.projectName !== ''">.</span>
-                                    </span>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                      <button *ngIf="tss.selectedWeekly == true; else wTkSelect" disabled class="dropdown-item primary btn-link" rel="tooltip"
-                                        (click)="add2WeeklyPlan(tss)" data-toggle="modal" data-target="#dptModal"
-                                        title="Add {{ tss.name }} to a week`s tasks">
-                                        Add to my Week's tasks
-                                      </button>
-                                      <ng-template #wTkSelect>
-                                        <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal"
-                                          data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">
-                                          Add to my Week's tasks
-                                        </button>
-                                      </ng-template>
-                                    </div>
-                                  </div>
-                                <!-- </div> -->
-                              </li>
-                            </ol>
-                            <p *ngIf="CurrentTAsks.length == 0">No Current Tasks</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card card-plain">
-                      <div class="card-header text-left" role="tab" id="headingUpcoming">
-                        <a class="collapsed" data-toggle="collapse" href="#upcoming" aria-expanded="false" aria-controls="upcoming" title="Click to see Tasks in your In Tray">
-                          Upcoming Tasks
-                          <i class="nc-icon nc-minimal-down"></i>
-                        </a>
-                      </div>
-                      <div id="upcoming" class="collapse" aria-labelledby="headingUpcoming" data-parent="#accordionTsk">
-                        <div class="card-body" style="padding-left: 0px;padding-right: 0px;">
-                          <div class="content container scroll-task" style="padding-left: 0px;">
-                            <!-- Short Term Tasks<br> -->
-                          <div class="card-header text-left"> Short Term Tasks</div><br>
-                            <ol *ngFor="let tss of ShortTermTAsks">
-                              <li class="" *ngIf="tss.complete !== true"  style="list-style-type:none;color:steelblue" >
-                                <!-- <div class="row"> -->
-                                  <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                      aria-expanded="false" style="color:slategrey;padding-left: 0px;padding-bottom: 0px">
-                                      <span [ngClass]="{'strikethrough' : tss.selectedWeekly == true}"> {{ tss.name }} </span>
-                                      <span class="label text-warning" style="padding-left : 1em"> <small> {{ tss.when }} </small></span>
-                                    </button><br>
-                                    <span name="taskDetails">
-                                      <span *ngIf="tss.companyName !==''" class="category text-info"> {{ tss.companyName }}</span>
-                                      <span *ngIf="tss.projectName !==''" class="category text-warning">; {{ tss.projectName }}</span>
-                                      <span class="category text-left text-yellow" *ngIf="tss.companyName === '' && tss.projectName === ''"> {{ tss.classification.name }}</span>
-                                      <span class="text-left" *ngIf="tss.companyName !== '' || tss.projectName !== ''">.</span>
-                                    </span>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                      <button *ngIf="tss.selectedWeekly == true; else wTkSelect" disabled class="dropdown-item primary btn-link" rel="tooltip"
-                                        (click)="add2WeeklyPlan(tss)" data-toggle="modal" data-target="#dptModal"
-                                        title="Add {{ tss.name }} to a week`s tasks">
-                                        Add to my Week's tasks
-                                      </button>
-                                      <ng-template #wTkSelect>
-                                        <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal"
-                                          data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">
-                                          Add to my Week's tasks
-                                        </button>
-                                      </ng-template>
-                                    </div>
-                                  </div>
-                                <!-- </div> -->
-                              </li>
-                            </ol>
-                            <!-- Medium Term Tasks<br> -->
-                          <div class="card-header text-left">Medium Term Tasks</div><br>
-                            <ol *ngFor="let tss of MediumTermTAsks">
-                              <li *ngIf="tss.complete !== true"  class="" style="list-style-type:none;color:steelblue">
-                                <!-- <div class="row"> -->
-                                  <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                      aria-expanded="false" style="color:slategrey;padding-left: 0px;padding-bottom: 0px">
-                                      <span [ngClass]="{'strikethrough' : tss.selectedWeekly == true}"> {{ tss.name }} </span>
-                                      <span class="label text-warning" style="padding-left : 1em"> <small> {{ tss.when }} </small></span>
-                                    </button><br>
-                                    <span name="taskDetails">
-                                      <span *ngIf="tss.companyName !==''" class="category text-info"> {{ tss.companyName }}</span>
-                                      <span *ngIf="tss.projectName !==''" class="category text-warning">; {{ tss.projectName }}</span>
-                                      <span class="category text-left text-yellow" *ngIf="tss.companyName === '' && tss.projectName === ''"> {{ tss.classification.name }}</span>
-                                      <span class="text-left" *ngIf="tss.companyName !== '' || tss.projectName !== ''">.</span>
-                                    </span>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                      <button *ngIf="tss.selectedWeekly == true; else wTkSelect" disabled class="dropdown-item primary btn-link" rel="tooltip"
-                                        (click)="add2WeeklyPlan(tss)" data-toggle="modal" data-target="#dptModal"
-                                        title="Add {{ tss.name }} to a week`s tasks">
-                                        Add to my Week's tasks
-                                      </button>
-                                      <ng-template #wTkSelect>
-                                        <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal"
-                                          data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">
-                                          Add to my Week's tasks
-                                        </button>
-                                      </ng-template>
-                                    </div>
-                                  </div>
-                                <!-- </div> -->
-                              </li>
-                            </ol>
-                            <!-- Long Term Tasks<br> -->
-                          <div class="card-header text-left">Long Term Tasks</div><br>                          
-                            <ol *ngFor="let tss of LongTermTAsks">
-                              <li *ngIf="tss.complete !== true ; else trueActions" class="" style="list-style-type:none;color:steelblue">
-                                <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                  <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false" style="color:slategrey;padding-bottom: 0px;padding-left: 0px;">
-                                    <span [ngClass]="{'strikethrough' : tss.selectedWeekly == true}"> {{ tss.name }} </span>
-                                    <span class="label text-warning" style="padding-left : 1em"> <small> {{ tss.when }} </small></span>
-                                  </button><br>
-                                  <span name="taskDetails">
-                                    <span *ngIf="tss.companyName !==''" class="category text-info"> {{ tss.companyName }}</span>
-                                    <span *ngIf="tss.projectName !==''" class="category text-warning">; {{ tss.projectName }}</span>
-                                    <span class="category text-left text-yellow" *ngIf="tss.companyName === '' && tss.projectName === ''"> {{ tss.classification.name }}</span>
-                                    <span class="text-left" *ngIf="tss.companyName !== '' || tss.projectName !== ''">.</span>
-                                  </span>
-                                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                    <button *ngIf="tss.selectedWeekly == true; else wTkSelect" disabled class="dropdown-item primary btn-link" rel="tooltip"
-                                      (click)="add2WeeklyPlan(tss)" data-toggle="modal" data-target="#dptModal"
-                                      title="Add {{ tss.name }} to a week`s tasks">
-                                      Add to my Week's tasks
-                                    </button>
-                                    <ng-template #wTkSelect>
-                                      <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal"
-                                        data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">
-                                        Add to my Week's tasks
-                                      </button>
-                                    </ng-template>
-                                  </div>
-                                </div>
-                              </li>
-                              <ng-template #trueActions>
-                                <li class="" style="list-style-type:none;color:steelblue">
-                                  <div class="col-sm-12 text-left" style="margin-right:-.5em">
-                                    <button class="dropdown-toggle btn-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                      aria-expanded="false" style="color:slategrey;padding-bottom: 0px;padding-left: 0px;">
-                                      <span [ngClass]="{'strikethrough' : tss.selectedWeekly == true}"> {{ tss.name }} </span>
-                                      <span class="label text-warning" style="padding-left : 1em"> <small> {{ tss.when }} </small></span>
-                                    </button><br>
-                                    <span name="taskDetails">
-                                      <span *ngIf="tss.companyName !==''" class="category text-info"> {{ tss.companyName }}</span>
-                                      <span *ngIf="tss.projectName !==''" class="category text-warning">; {{ tss.projectName }}</span>
-                                      <span class="category text-left text-yellow" *ngIf="tss.companyName === '' && tss.projectName === ''">
-                                        {{ tss.classification.name }}</span>
-                                      <span class="text-left" *ngIf="tss.companyName !== '' || tss.projectName !== ''">.</span>
-                                    </span>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                      <button *ngIf="tss.selectedWeekly == true; else wTkSelect" disabled class="dropdown-item primary btn-link"
-                                        rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal" data-target="#dptModal"
-                                        title="Add {{ tss.name }} to a week`s tasks">
-                                        Add to my Week's tasks
-                                      </button>
-                                      <ng-template #wTkSelect>
-                                        <button class="dropdown-item primary btn-link" rel="tooltip" (click)="add2WeeklyPlan(tss)" data-toggle="modal"
-                                          data-target="#dptModal" title="Add {{ tss.name }} to a week`s tasks">
-                                          Add to my Week's tasks
-                                        </button>
-                                      </ng-template>
-                                    </div>
-                                  </div>
-                                </li>
-                              </ng-template>
-                            </ol>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+          <div class="col-md-7">
+            <div class="card-header" *ngIf="afAuth.user | async as user" style=" margin-top: -2.5em;">
+              <h4 class="clrs-h1-font">
+                <span *ngIf=" myData?.name === null; else showmynaam">
+                  <span class="clrs-h4-font" style="color: #333366;">{{ user?.email }}</span>
+                </span>
+                <ng-template #showmynaam>
+                  <span *ngIf="myData.name !== ''; else showmyEmam" class="title card-category" style="color: #333366;">
+                    Hi {{ myData?.name }}
+                  </span>
+                  <ng-template #showmyEmam>
+                    <span class="clrs-h4-font" style="color: #333366;">{{ myData?.email }}</span>
+                  </ng-template>
+                </ng-template>
+              </h4>
+            </div>
+          </div>
+          <div *ngIf="getSearch" class="row col-md-5 pull-left" style="padding-top: 15px">
+            <div class="col-md-3">
+              <button class="btn-link btn-magnify" (click)="displayPt()">Cancel</button>
+            </div>
+            <div class="col-md-9">
+              <div class="input-group pull-left" [ngClass]="{'input-group-focus':focus===true}">
+                <input id="input" type="text" class="form-control  pull-left" placeholder="Search..."
+                  (keyup)="searchresult()" name="Inputinn" (focus)="focus=true" (blur)="focus=false"
+                  [(ngModel)]="value" />
+                <div class="input-group-append" type="button" style="height: 35px;">
+                  <span class="input-group-text" style="padding-bottom: 7px; padding-left: 10px;"
+                    (click)="searchresult()"><i class="nc-icon nc-zoom-split"></i></span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-md-6 ml-auto mr-auto">
-            <div class="card">
-              <div class="card-body text-center" style="padding-top:0px">
-                <div class="card-category clrs-h4-font text-left">
-                  <p class="pull-left">My Weekly To Do List</p>
-                  <p class="category pull-left" style="margin-top:-1em"> 
-                    Proceed Weekly Calendar to create sub-Tasks.
-                  </p>
+          <div *ngIf="!getSearch" class="col-md-5 ml-auto">
+            <button class="btn-link btn-magnify input-group-text pull-right"
+              style="padding-bottom: 7px; padding-left: 10px;" (click)="gotoSearch()"><i
+                class="nc-icon nc-zoom-split"></i></button>
+            <button hidden class="btn-link btn-magnify pull-right" (click)="update2()">Update</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="clrs-tabs">
+              <div class="nav-tabs-navigation vertical-navs">
+                <div class="nav-tabs-wrapper">
+                  <ul class="nav nav-tabs flex-column nav-stacked text-left" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link" routerLink="/tasks-24/7" role="tab" (click)="minimizeSidebar()"
+                        data-toggle="tab">Dashboard</a>
+                    </li><!--  href="#dash" -->
+                    <li class="nav-item">
+                      <a class="nav-link" routerLink="/standards" role="tab" (click)="minimizeSidebar()"
+                        data-toggle="tab">Standards</a>
+                    </li><!--  href="#standards" -->
+                    <li class="nav-item">
+                      <a class="nav-link" routerLink="/set-up" (click)="minimizeSidebar()" role="tab"
+                        data-toggle="tab">Setup</a>
+                    </li><!--  href="#setup" -->
+                    <li class="nav-item">
+                      <a class="nav-link" routerLink="/planning" (click)="minimizeSidebar()" role="tab"
+                        data-toggle="tab">Planning</a>
+                    </li><!--  href="#planning" -->
+                    <li class="nav-item">
+                      <a class="nav-link active" routerLink="/implementation" (click)="minimizeSidebar()" role="tab"
+                        data-toggle="tab">Implementation</a>
+                    </li><!--  href="#implem" -->
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="minimizeSidebar()" routerLink="/personal-r" role="tab"
+                        data-toggle="tab">Reporting</a>
+                      <!--a class="nav-link" href="#reports" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Reporting</a>-->
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-colors" href="#popups" (click)="minimizeSidebar();" role="tab"
+                        data-toggle="tab">Diary</a>
+                    </li>
+                  </ul>
                 </div>
               </div>
-              <div class="row impl-flow col-md-12">
-                <ol style="list-style-type:none;padding-left: 0px">
-                  <li *ngFor="let tss of weeklyTasks | async" style="color:slategray">
-                    <div *ngIf="tss.complete !== true" class="col-md-12 card-header text-left" role="tab">
-                      <span class="col-md-12">
-                        <a class="text-left" aria-current="false">{{ tss.name }}</a><br>
-                        <span name="taskDetails" style="padding-left:1em">
-                          <span *ngIf="tss.companyName !==''" class="category text-info"> {{ tss.companyName }}</span>
-                          <span *ngIf="tss.projectName !==''" class="category text-warning">; {{ tss.projectName }}</span>
-                          <span class="category text-left text-yellow" *ngIf="tss.companyName === '' && tss.projectName === ''"> {{ tss.classification.name }}</span>
-                          <span class="text-left" *ngIf="tss.companyName !== '' || tss.projectName !== ''">.</span>
-                        </span>
-                      </span>
-                    </div>
-                  </li>
-                </ol>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="tab-pane" id="weekly" role="tabpanel" aria-expanded="false">
-        <div class="col-md-12 col-sm-12 ml-auto mr-auto">
-          <p class="clrs-h4-font text-left" style="margin-top:-1em; color: darkslategrey">Calendar Weekly Activities.</p>
-          <p class="category text-left" style="margin-top:-1em">
-            These are task classification standard activities and work activities picked for this week's activities
-          </p>
-        </div>
-        <div class="row clrs-h4-font">
-          <div class="col-sm-5 text-left" style="padding-left: 29px;">Task List
-          </div>
-          <div class="col-sm-5" >
-            <div class="row">
-              <div class="col-sm-6 text-left ma-an">Details</div>
-            </div>
-          </div>
-          <div class="col-sm-2"></div>
-        </div>
-        <div class="card-body impl-flow">
-          <div id="accordionA" role="tablist" aria-multiselectable="true" class="card-collapse col-md-12">
-            <ol style="list-style-type:none;padding-left: 0px" *ngFor="let tss of weeklyTasks | async">
-              <li *ngIf="tss.complete !== true" style="color:slategray">
-                <div class="row">
-                  <div class="col-md-12 col-sm-10 text-left" style="padding-left: 0px;padding-right: 0px;">
-                    <div class="card card-plain">
-                      <div class="card-header" role="tab" id="heading2">
-                        <a class="collapsed" data-toggle="collapse" href="#{{  tss.id  }}" (click)="viewMyTaskActions(tss)" title="Click on Tasks in your In Tray" aria-expanded="false" aria-current="false">
-                          <!-- <div class="row"> -->
-                            <span class="text-left" style="width: 20em;">{{ tss.name }}</span>
-                            <span>
-                              <span class="text-left text-info" *ngIf="tss.projectName !== ''">, {{ tss.projectName }}</span>
-                              <span class="text-left text-warning" *ngIf="tss.companyName !== ''">, {{ tss.companyName }}</span>
-                              <span *ngIf="tss.companyName === '' && tss.projectName === ''">
-                                <span *ngIf="tss.classification.name !== ''" class="text-left text-yellow"> {{ tss.classification.name }}</span>
-                              </span>
-                            </span>
-                            <i class="nc-icon nc-minimal-down"></i>
-                          <!-- </div> -->
-                        </a>
-                      </div>
-                      <div id="{{  tss.id  }}" class="collapse" data-parent="#accordionA" role="tabpanel"
-                        aria-labelledby="heading2">
-                        <div class="row card-category clrs-h4-font">
-                          <div class="col-sm-3 col-md-3" style="padding-left: 55px;"> <font size= 2>Sub-task</font>
+            <div *ngIf="!getSearch" class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto"
+              style="padding-right: 0px;padding-left: 0px;">
+              <!--  dash-size  -->
+              <div class="tab-content" style="padding-left:0px">
+                <div class="tab-pane active" id="implem">
+                  <app-implement></app-implement>
+                </div>
+                <div class="tab-pane" id="reports">
+                  <p class="clrs-h1-font" style="margin-top:0em; color:darkslategray">Personal Report...</p>
+                  <div class="col-md-12">
+                    <div class="card">
+                      <!-- <div class="card-header">
+                        <h5>Horizontal Tabs</h5>
+                      </div> -->
+                      <div class="card-body" style="margin-top: -3em">
+                        <div class="nav-tabs-navigation">
+                          <div class="nav-tabs-wrapper">
+                            <ul id="tabs" class="nav nav-tabs" role="tablist">
+                              <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#personal" role="tab"
+                                  aria-expanded="true">Private</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#public" role="tab"
+                                  aria-expanded="false">Public</a>
+                              </li>
+                              <!-- <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#company" role="tab" aria-expanded="false">Preferences</a>
+                              </li> -->
+                            </ul>
                           </div>
-                          <div class="col-sm-6 col-md-7">
-                            <div class="row">
-                              <div class="col-sm-6 text-left na-an" style="padding-left: 35px;"><font size=2>Start Date</font></div>
-                              <div class="col-sm-6 text-left na-an" style="padding-left: 35px;"><font size=2>Finish Date</font></div>
-                            </div>
-                          </div>
-                          <div class="col-sm-2"></div>
                         </div>
-                        <div class="card-body">
-                          <ol style="list-style-type:none;padding-left: 0px;">
-                            <li *ngFor="let item of mytaskActions | async">
-                              <div class="row" style="color: darkslategrey">
-                                <div class="text-left">
-                                  <input style="margin-top: 4px;" name="nchkStd" class="pull-right col-form-label" *ngIf="item.selectedWeekWork == true; else wNCK2" type="checkbox" checked disabled
-                                    (change)="setWeekAction($event, item)">
-                                  <ng-template #wNCK2>
-                                    <input style="margin-top: 4px;" name="nchkStd2" class="pull-right col-form-label" type="checkbox" (change)="setWeekAction($event, item)">
-                                  </ng-template>
-                                </div>
-                                <div class="col-sm-3 pull-left" style="padding-left: 2em">
-                                  <!-- <span class="text-left" [ngClass]="{'text-success' : item.selectedWeekWork == true}" name="weekStdName" style="padding-top: 2px; padding-left: 10px; padding-right: 10px"> -->
-                                  <span class="text-left" [ngClass]="{'strikethrough' : item.selectedWeekWork == true}" name="weekStdName" style="padding-top: 2px; padding-left: 10px; padding-right: 10px">
-                                    <font size=2>{{ item.name }}</font>
-                                  </span>
-                                </div>
-                                <div class="col-sm-8">
-                                  <div class="row">
-                                    <div class="col-sm-5 text-left"><font size=2>{{ item.startDay }}, {{ item.startDate }}</font></div>
-                                    <div class="col-sm-5 text-left"><font size=2>{{ item.endDay }}, {{ item.endDate }}</font></div>
-                                    <button class="primary btn-link" (click)="selectEditAction(item)" data-toggle="modal" data-target="#editAction"
-                                      style=" padding-top: 0px; padding-bottom: 0px;">
-                                      Add date</button>
-                                  </div>
+                        <div id="my-tab-content" class="tab-content text-center">
+                          <!-- start Here -->
+                          <div class="tab-pane active" id="personal" role="tabpanel" aria-expanded="true">
+                            <!-- <code>personal</code> -->
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <p class="text-left title card-category" style="color: darkslategray">
+                                    Many other Reports and Metrics are coming up covering all corners of a project, an
+                                    enterprise and personal life
+                                  </p>
                                 </div>
                               </div>
-                            </li>
-                          </ol>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../PersonalWeeklyPlan-report">My Weekly Plan</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../PersonalDailyPlan-report">My Daily Plan</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../outstandingTask-report">Outstanding Tasks</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../timeSpent-report">Total time spent on an activity in a
+                                        period</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../activity-reportLog">Time sheet report in a
+                                        period</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../total-actions">My Time Sheet for each day</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../classification-log">My Summarized Time Sheet as @</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div> -->
+
+
+
+                          </div>
+                          <div class="tab-pane" id="public" role="tabpanel" aria-expanded="true">
+                            <!-- <code>public</code> -->
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <p class="text-left title card-category" style="color: darkslategray">
+                                    Many other Reports and Metrics are coming up covering all corners of a project, an
+                                    enterprise and personal life
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../PersonalWeeklyPlan-report">My Weekly Plan</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../PersonalDailyPlan-report">My Daily Plan</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../outstandingTask-report">Outstanding Tasks</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../timeSpent-report">Total time spent on an activity in a
+                                        period</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../activity-reportLog">Time sheet report in a
+                                        period</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../total-actions">My Time Sheet for each day</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- End Here -->
                         </div>
-                        <button class="btn-link btn-round primary" (click)="selectTask(tss)" data-toggle="modal"
-                          data-target="#newAction">
-                          <small>Add Sub-task</small>
-                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-              </li>
-            </ol>
-          </div>
-        </div>
-        <div class="row card-category">
-          <div class="col-md-12 col-sm-12">
-            <p class="category">Click Add date to add or edit the start and end date for the Sub-task</p>
-          </div>
-        </div>
-      </div>
-      <div class="tab-pane" id="diary" role="tabpanel" aria-expanded="false">
-        <div class="row card-category clrs-h4-font">
-          <div class="col-sm-3 text-left" style="padding-left: 40px;">
-            <a class="clrs-h1-font text-left">Daily Diary</a>
-          </div>
-          <div class="col-sm-2"></div>
-          <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol" (click)="changeDay('previous')">Previous</a></div>
-          <div class="col-sm-3 clrs-h4-font text-info">{{ workWeekDay }}, {{ workDay }}</div>
-          <div class="col-sm-2"><a class="btn btn-primary btn-link a-mycol" (click)="changeDay('next')">Next</a></div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4 card-header text-left" style="padding-left: 40px;"></div>
-          <div class="col-sm-2 card-header text-left" style="padding-left: 1em; padding-right: 0px;"><b>Target Qty</b></div>
-          <div class="col-sm-2 card-header text-left" style="padding-left: 0px; padding-right: 0px;"><b>Start time</b></div>
-          <div class="col-sm-2 card-header text-left" style="padding-left: 12px; padding-right: 0px;"><b>Finish time</b></div>
-          <div class="col-sm-2 card-header text-left"></div>
-        </div>
-        <div *ngIf="viewDayActions.length !== 0; else showProcessing" class="card-body impl-flow">
-          <ng-container>
-            <div class="col-sm-12">
-              <ul style="list-style-type:none;padding-left: 10px;">
-                <li *ngFor="let item of stdArray">
-                  <div class="row">
-                    <div class="text-left">
-                      <input style="margin-top: 4px;" class="pull-right col-form-label" *ngIf=" item.selectedWork == true; else UCK" type="checkbox" checked (change)="setDiary($event, item)">
-                      <ng-template #UCK>
-                        <input style="margin-top: 4px;" class="pull-right col-form-label" type="checkbox" (change)="setDiary($event, item)">
-                      </ng-template>
-                    </div>
-                    <div class="col-sm-4 text-left">
-                      <span class="text-left" [ngClass]="{'text-success' : item.selectedWork == true}" style="padding-top: 2px; padding-left: 10px; padding-right: 10px">
-                        <font size=2>{{ item.name }}</font>
-                      </span>
-                    </div>
-                    <div class="row col-md-8 col-sm-8">
-                      <div class="col-md-3 col-sm-3" style="padding-left: 5px; padding-right:5px">
-                        <div class="form-group">
-                          <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-                            <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                              placeholder="Enter" rel="tooltip" title="Click and enter todays'arget quantity"/>
-                            <div class="input-group-postpend">
-                              <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
-                                <small>{{ item.unit }}</small>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-sm-2" style="padding-left: 5px; padding-right:5px">
-                        <div class="form-group">
-                          <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start" style=" padding-left: 10px; padding-right: 10px; height:2em"
-                            rel="tooltip" title="Click, enter start time" placeholder="Time from" />
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-sm-2" style="padding-left: 5px; padding-right:5px">
-                        <div class="form-group">
-                          <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end" style=" padding-left: 10px; padding-right: 10px;  height:2em"
-                            rel="tooltip" title="Click, enter end time" placeholder="Time to" /> 
-                        </div>
-                      </div>
-                      <div class="col-md-3 col-sm-3" style="padding-left: 5px; padding-right:5px">
-                        <div class="btn-group btn-group-toggle">
-                          <button class="form-control panel-boader clrs-cell btn-link" style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
-                              rel="tooltip" title="Click to  update the activity" (click)="addClassActionTime(item)"><small>Save</small></button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li *ngFor="let item of viewDayActions">
-                  <div class="row">
-                    <div class="text-left">
-                      <input style="margin-top: 4px;" name="nchk" class="pull-right col-form-label" *ngIf="item.selectedWork == true; else NCK" type="checkbox" checked (change)="setDiaryAction($event, item)">
-                      <ng-template #NCK>
-                        <input style="margin-top: 4px;" name="nchk2" class="pull-right col-form-label" type="checkbox" (change)="setDiaryAction($event, item)">
-                      </ng-template>
-                    </div>
-                    <div *ngIf="item.name !==''" class="col-sm-4 text-left"> <!-- *ngIf="item.name !==''" -->
-                      <span *ngIf="item.projectName !==''; else showSpanDay" [ngClass]="{'text-success' : item.selectedWork == true}" title="Enterprise:{{ item.companyName }}. Project:{{ item.projectName }}">
-                        <span class="text-info" *ngIf="item.taskName !==''; else showSpan2"><font size=2>{{ item.taskName }},</font>
-                          <span class="category text-yellow"><font size=2> {{ item.name }},</font></span><br>
-                          <span class="category"><font size=2> {{ item.companyName }},</font></span>
-                          <span class="category"><font size=2> {{ item.projectName }}</font></span>
-                        </span>
-                      </span>
-                      <ng-template #showSpan2>
-                          <span class="category text-yellow"><font size=2> {{ item.name }},</font></span><br>
-                          <span class="category"><font size=2> {{ item.companyName }},</font></span>
-                          <span class="category"><font size=2> {{ item.projectName }}</font></span>
-                      </ng-template>
-                      <ng-template #showSpanDay>
-                        <span *ngIf="item.companyName !== ''; else showSpanD2" [ngClass]="{'text-success' : item.selectedWork == true}" title="Enterprise:{{ item.companyName.name }}. Department:{{ item.department }}">
-                          <span class="text-info" *ngIf="item.taskName !==''; else showSpan5"><font size=2>{{ item.taskName }},</font>
-                            <span class="category text-yellow"><font size=2> {{ item.name }},</font></span><br>
-                            <span class="category"><font size=2> {{ item.companyName }},</font></span>
-                          </span>
-                          <ng-template #showSpan5>
-                            <span class="category text-yellow"><font size=2> {{ item.name }},</font></span><br>
-                            <span class="category"><font> {{ item.companyName }},</font></span>
-                          </ng-template>
-                        </span>
-                        <ng-template #showSpanD2>
-                          <span title="Champion:{{ item.champion.name }}">
-                            <span class="text-info" *ngIf="item.taskName !==''; else showSpan3">{{ item.taskName }},
-                              <span class="category text-yellow"><font size=2> {{ item.name }},</font></span>
-                              <span class="category text-warning"><font size=2> {{ item.classification.name }}</font></span>
-                            </span>
-                            <ng-template #showSpan3>
-                              <span *ngIf="item.classification !== null ; else showSpan4" >
-                                <span class="text-info"><font size=2> {{ item.name }}, </font></span>
-                                <span *ngIf="item.classification.name !== null || item.classification.name !== ''" class="category text-warning">
-                                  <font size=2><span *ngIf="item.classification.name !== ''"> {{ item.classification.name }},</span></font>
-                                </span>
-                                <span class="category text-danger"><font size=2> {{ item.type }}</font></span>
-                              </span>
-                              <ng-template #showSpan4>
-                                <span class="text-info"><font size=2>{{ item.name }},</font></span>
-                                <span class="category text-danger"><font size=2> {{ item.type }}</font></span>
-                              </ng-template>
-                            </ng-template>
-                          </span>
+                <div class="tab-pane" id="popups">
+                  <app-diary></app-diary>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="getSearch" class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto"
+              style="padding-right: 0px;padding-left: 0px;">
+              <ng-container *ngIf="displayTaskList">
+                <div *ngIf="value !== ''" class="row">
+                  <ng-container *ngIf="results?.length === 0; else showresult">
+                    <!-- <ng-container *ngIf="!results ; else showresult"> -->
+                    <ng-container *ngIf="value !== '' ; else showresult2">
+                      Searching ...... <i class="fa fa-spinner fa-spin fa-2x fa-fw success"></i>
+                    </ng-container>
+                    <ng-template #showresult2>
+                      Tasks Found: {{ results?.length }}
+                    </ng-template>
+                  </ng-container>
+                  <ng-template #showresult>
+                    Tasks Found: {{ results?.length }}
+                  </ng-template>
+                  <table class="table table-striped category">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col" class="category"><small>Task</small> </th>
+                        <th scope="col" class="category"><small>Champion</small></th>
+                        <th scope="col" class="text-right category"><small>Project</small></th>
+                        <th scope="col" class="text-right category"><small>Enterprise</small></th>
+                        <th scope="col" class="text-right category"><small>Complete</small></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let workitem of results">
+                        <td class="table td-clrs"><a class="text-primary" (click)="selectTask(workitem)"
+                            style="cursor: pointer;">{{ workitem.name }}</a></td>
+                        <td class="table td-clrs">{{ workitem.champion.name }}</td>
+                        <td class="table td-clrs text-right">{{ workitem.projectName }}</td>
+                        <td class="table td-clrs text-right">{{ workitem.companyName }}</td>
+                        <ng-container *ngIf="workitem.complete ; else showPcnt">
+                          <td class="table td-clrs text-right">{{ workitem.complete }}</td>
+                        </ng-container>
+                        <ng-template #showPcnt>
+                          <td class="table td-clrs text-right">{{ workitem.progress }}%</td>
                         </ng-template>
-                      </ng-template>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="displaytaskActions">
+                <h4 *ngIf="setTask?.name" class="clrs-h4-font" style="margin-top: 0px;">
+                  <span style="border-bottom-style: ridge;">&nbsp;{{ setTask.name }} subtasks&nbsp;</span>
+                </h4>
+                <div class="row">
+                  <div class="col-md-9">
+                    <table class="table table-striped category">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th scope="col" class="category"><small>Sub task</small></th>
+                          <!-- <th scope="col" class="category"><small>Champion</small></th> -->
+                          <th scope="col" class="category"><small>Status</small></th>
+                          <th scope="col" class="text-right category"><small>Complete</small></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of mytaskActions | async">
+                          <ng-container *ngIf="item.description; else sname">
+                            <td class="table td-clrs">
+                              <a class="text-primary" style="cursor: pointer;"
+                                (click)="selectSub(item)">{{ item.description }}</a>
+                            </td>
+                          </ng-container>
+                          <ng-template #sname>
+                            <td class="table td-clrs">
+                              <a class="text-primary" style="cursor: pointer;"
+                                (click)="selectSub(item)">{{ item.name }}</a>
+                            </td>
+                          </ng-template>
+                          <td class="table td-clrs">{{ item.status }}</td>
+                          <td class="table td-clrs text-right">{{ item.complete }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card col-md-3 mr-auto ml-auto">
+                    <div class="card-body">
+                      <button class="btn-link" *ngIf="!setTask.projectId" data-toggle="modal" data-target="#newSub"><label>Add subtask</label></button><br>
+                      <button class="btn-link" (click)="backTask()"><label>Back</label></button><br>
                     </div>
-                    <div class="row col-md-8 col-sm-8">
-                      <div class="col-md-3 col-sm-3" style="padding-left: 5px; padding-right:5px">
-                        <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-                          <input type="text" class="form-control panel-boader" [(ngModel)]="item.targetQty"
-                            style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="Enter" />
-                          <div class="input-group-postpend">
-                            <span class="input-group-text" style=" padding-left: 10px; padding-right: 10px; height:28px">
-                              <small>{{ item.unit }}</small>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="displaySubtask">
+                <div class="row">
+                  <div class="col-md-9">
+                    <h4 class="clrs-h4-font" style="margin-top: 0px;"><span
+                        style="border-bottom-style: ridge;">&nbsp;Edit Subtask&nbsp;</span></h4>
+                    <div class="card-body text-left scroll-modalSub">
+                      <div class="form-group has-label">
+                        <label class="control-label" for="">Name:
+                          <span class="star">*</span>
+                        </label>
+                        <input type="text" class="form-control" name="sdescription" required [(ngModel)]="selectedSub.description">
+                      </div>
+                      <div class="form-group has-label">
+                        <label class="control-label" for="">Type of work:
+                          <span class="star">*</span>
+                        </label>
+                        <input disabled type="text" class="form-control" name="sname" required [(ngModel)]="selectedSub.name">
+                      </div>
+                      <div class="form-group has-label">
+                        <label for="" class="control-label">Task:
+                          <span class="star category">*
+                            <span *ngIf="!sameEntprise"> Task Does not belong to this Enterprise
+                              <span *ngIf="!selectedSub.companyName">{{ selectedSub.companyName }}</span>
                             </span>
+                            <span class="col-md-3 pull-right text-right">
+                              <a class="text-primary" (click)="revertEditSub()" style="cursor: pointer;">
+                                <font size=2>Revert</font>
+                              </a>
+                            </span>
+                          </span>
+                        </label>
+                        <ng-container *ngIf="!selectedSub.taskName || !selectedSub.taskId">
+                          <ng-select [items]="weeklyTasks3 | async" bindLabel="name" id="subTaskTask" name="sstask"
+                            placeholder="Select task" (change)="tagTask(edtSubSelectedTask)"
+                            [(ngModel)]="edtSubSelectedTask"></ng-select>
+                        </ng-container>
+                        <input *ngIf="selectedSub.taskName" disabled type="text" class="form-control" name="Task:"
+                          [(ngModel)]="selectedSub.taskName" required>
+                      </div>
+                      <ng-container *ngIf="selectedSub.classification.name === 'Work'; else NotWorkClass">
+                        <ng-container *ngIf="!edtSubSelectedTask">
+                          <div class="form-group has-label">
+                            <label for="" class="control-label">Company:
+                              <span class="star">*</span>
+                            </label>
+                            <ng-select *ngIf="!selectedSub.companyName" [items]="enterprises | async" bindLabel="name"
+                              placeholder="Select enterprise" [(ngModel)]="setComp" (change)="selectEnt(setComp)">
+                            </ng-select>
+                            <input *ngIf="selectedSub.companyName" type="text" disabled class="form-control"
+                              name="Company1" [(ngModel)]="selectedSub.companyName" required>
                           </div>
+                          <div class="form-group has-label">
+                            <label for="" class="control-label">Project:
+                              <span class="star">*</span>
+                            </label>
+                            <ng-select *ngIf="!selectedSub.projectName" [items]="projects | async" bindLabel="name"
+                              placeholder="Select project" [(ngModel)]="setPro" (change)="selectProj(setPro)">
+                            </ng-select>
+                            <input *ngIf="selectedSub.projectName" type="text" disabled class="form-control"
+                              name="Project3" [(ngModel)]="selectedSub.projectName" required>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="edtSubSelectedTask">
+                          <ng-container *ngIf="!selectedSub.companyName; else elseTemplate1">
+                            <div class="form-group has-label">
+                              <label for="" class="control-label">Company:
+                                <span class="star category">*</span>
+                              </label>
+                              <ng-select *ngIf="!edtSubSelectedTask.companyName" [items]="enterprises | async"
+                                bindLabel="name" placeholder="Select enterprise" [(ngModel)]="setComp"
+                                (change)="selectEnt(setComp)"></ng-select>
+                              <input *ngIf="edtSubSelectedTask.companyName" disabled type="text" class="form-control"
+                                name="Company2" [(ngModel)]="edtSubSelectedTask.companyName" required>
+                            </div>
+                          </ng-container>
+                          <ng-template #elseTemplate1>
+                            <div class="form-group has-label">
+                              <label for="" class="control-label">Company:
+                                <span class="star">*</span>
+                              </label>
+                              <ng-select *ngIf="!selectedSub.companyName" [items]="enterprises | async" bindLabel="name"
+                                placeholder="Select enterprise" [(ngModel)]="setComp" (change)="selectEnt(setComp)">
+                              </ng-select>
+                              <input *ngIf="selectedSub.companyName" type="text" disabled class="form-control"
+                                name="Company3" [(ngModel)]="selectedSub.companyName" required>
+                            </div>
+                          </ng-template>
+                          <ng-container *ngIf="!selectedSub.projectName; else elseTemplate2">
+                            <div class="form-group has-label">
+                              <label for="" class="control-label">Project:
+                                <span class="star">*</span>
+                              </label>
+                              <ng-select *ngIf="!edtSubSelectedTask.projectName" [items]="projects | async"
+                                bindLabel="name" placeholder="Select project" [(ngModel)]="setPro"
+                                (change)="selectProj(setPro)"></ng-select>
+                              <input *ngIf="edtSubSelectedTask.projectName" disabled type="text" class="form-control"
+                                name="Project1" [(ngModel)]="edtSubSelectedTask.projectName" required>
+                            </div>
+                          </ng-container>
+                          <ng-template #elseTemplate2>
+                            <div class="form-group has-label">
+                              <label for="" class="control-label">Project:
+                                <span class="star">*</span>
+                              </label>
+                              <ng-select *ngIf="!selectedSub.projectName" [items]="projects | async" bindLabel="name"
+                                placeholder="Select project" [(ngModel)]="setPro" (change)="selectProj(setPro)">
+                              </ng-select>
+                              <input *ngIf="selectedSub.projectName" type="text" disabled class="form-control"
+                                name="Project2" [(ngModel)]="selectedSub.projectName" required>
+                            </div>
+                          </ng-template>
+                        </ng-container>
+                      </ng-container>
+                      <ng-template #NotWorkClass>
+                        <div class="form-group has-label">
+                          <label for="" class="control-label">Classification:
+                            <span class="star">*</span>
+                          </label>
+                          <ng-select *ngIf="!selectedSub.classification" [items]="classifications | async"
+                            bindLabel="name" placeholder="Select enterprise" [(ngModel)]="selectedSub.classification">
+                          </ng-select><!-- classification -->
+                          <input *ngIf="selectedSub.classification" type="text" disabled class="form-control"
+                            name="Clased" [(ngModel)]="selectedSub.classification.name" required>
                         </div>
+                      </ng-template>
+                      <div class="form-group has-label">
+                        <label for="" class="control-label">Unit:
+                          <span class="star">*</span>
+                        </label>
+                        <ng-select [items]="SIunits" bindLabel="name" placeholder="{{ selectedSub.unit }}"
+                          [ngModelOptions]="{standalone: true}" [(ngModel)]="setUnit"></ng-select>
                       </div>
-                      <div class="col-md-3 col-sm-2" style="padding-left: 5px; padding-right:5px">
+                      <div class="form-group has-label">
+                        <label for="" class="control-label">Description:
+                          <span class="star">*</span>
+                          <textarea class="form-control" placeholder="Type Description" name="Description:" cols="70"
+                            rows="auto" [(ngModel)]="selectedSub.description" required></textarea>
+                        </label>
+                      </div>
+                      <div class="form-group has-label">
+                        <label for="" class="control-label">
+                          <span class="row">
+                            <span class="col-md-9">Start Date: <span class="star">*</span></span>
+                            <span class="col-md-3 pull-right text-right">
+                              <a class="text-primary" (click)="startdateToggle()" style="cursor: pointer;">
+                                <font size=2>Change</font>
+                              </a>
+                            </span>
+                          </span>
+                        </label>
+                        <ng-container *ngIf="!showstCal">
+                          <input type="date" class="form-control" name="ssDate:" [(ngModel)]="startDate">
+                        </ng-container>
+                        <ng-container *ngIf="showstCal">
+                          <input disabled type="text" class="form-control" name="Task:"
+                            [(ngModel)]="selectedSub.startDate" required>
+                        </ng-container>
+                      </div>
+                      <div class="form-group has-label">
+                        <label for="" class="control-label">
+                          <span class="row">
+                            <span class="col-md-9">Finish Date: <span class="star">*</span></span>
+                            <span class="col-md-3 pull-right text-right">
+                              <a class="text-primary" (click)="enddateToggle()" style="cursor: pointer;">
+                                <font size=2>Change</font>
+                              </a>
+                            </span>
+                          </span>
+                        </label>
+                        <ng-container *ngIf="!showfhCal">
+                          <input type="date" class="form-control" name="sfDate:" [(ngModel)]="endDate">
+                        </ng-container>
+                        <ng-container *ngIf="showfhCal">
+                          <input disabled type="text" class="form-control" name="Task:"
+                            [(ngModel)]="selectedSub.endDate" required>
+                        </ng-container>
+                      </div>
+                      <div class="category"> <span class="star">*</span>You are required to fill all fields</div>
+                    </div>
+                  </div>
+                  <div class="card col-md-3 mr-auto ml-auto">
+                    <div class="card-body">
+                      <button class="btn-link" (click)="seedSub(startDate,endDate)"><label>Save subtask</label></button><br>
+                      <button class="btn-link" (click)="dropSub()"><label>Delete subtask</label></button><br>
+                      <button class="btn-link" (click)="backActions()"><label>Back</label></button><br>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container>
+              </ng-container>
+              <ng-container *ngIf="displaytask">
+                <div class="row">
+                  <div class="card col-md-9 mr-auto ml-auto scroll-modalSub">
+                    <h4 *ngIf="setTask?.name" class="clrs-h4-font" style="margin-top: 0px;">
+                      <span style="border-bottom-style: ridge;">&nbsp;{{ setTask.name }}&nbsp;</span>
+                    </h4>
+                    <div class="card-body">
+                      <div class="form-group">
+                        <label>Task</label>
+                        <input type="text" class="form-control"
+                          style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="tname"
+                          [(ngModel)]="setTask.name" placeholder=" {{ setTask.name }}">
+                      </div>
+                      <ng-container *ngIf="setTask.classification.name === 'Work'; else elseTemplate">
                         <div class="form-group">
-                          <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.start"
-                            style=" padding-left: 10px; padding-right: 10px; height:2em" placeholder="Time from" />
+                          <label>Company</label>
+                          <input type="text" class="form-control" disabled
+                            style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="tcomp"
+                            [(ngModel)]="setTask.companyName" placeholder="{{ setTask.companyName }}">
                         </div>
-                      </div>
-                      <div class="col-md-3 col-sm-2" style="padding-left: 5px; padding-right:5px">
                         <div class="form-group">
-                          <input type="time" class="form-control panel-boader timepicker" [(ngModel)]="item.end"
-                            style=" padding-left: 10px; padding-right: 10px;  height:2em" placeholder="Time to" />
+                          <label>Project</label>
+                          <input type="text" class="form-control" disabled
+                            style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="tproj"
+                            [(ngModel)]="setTask.projectName" placeholder="{{ setTask.projectName }}">
                         </div>
+                        <div class="form-group">
+                          <label>Dept</label>
+                          <input type="text" class="form-control" disabled
+                            style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="tdept"
+                            [(ngModel)]="setTask.department" placeholder="{{ setTask.department }}">
+                        </div>
+                      </ng-container>
+                      <ng-template #elseTemplate>
+                      <div class="form-group">
+                        <label>Classification</label>
+                        <input type="text" class="form-control" disabled
+                          style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="tclassification"
+                          [(ngModel)]="setTask.classification.name" placeholder="{{ setTask.classification.name }}">
                       </div>
-                      <div class="col-md-3 col-ms-3" style="padding-left: 0px; padding-right:50px">
-                        <div class="btn-group btn-group-toggle">
-                          <button class="form-control panel-boader clrs-cell btn-link" rel="tooltip" title="Click to update the activity"
-                            style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em"
-                            (click)="addActionTime(item)"><small>Save</small></button>
-                          <button (click)="setAction(item)" class="form-control panel-boader clrs-cell btn-link"
-                            style="padding-top: 2px; padding-left: 10px; padding-right: 10px; height:2em" rel="tooltip"
-                            title="Click to confirm complete" data-toggle="modal" data-target="#actionClosure"><small>Complete</small></button>
+                      </ng-template>
+                      <div class="form-group">
+                        <label>Champion</label>
+                        <input type="text" class="form-control" disabled
+                          style="padding-top: 0px;padding-bottom: 0px; height: 32px;" name="tchamp"
+                          [(ngModel)]="setTask.champion.name" placeholder="{{ setTask.champion.name }}">
+                      </div>
+                      <div class="comments">
+                        <h4 *ngIf="setTask?.name" class="clrs-h4-font" style="margin-top: 0px;">
+                          <span style="border-bottom-style: ridge;">&nbsp;Comments&nbsp;</span>
+                        </h4>
+                        <div class="comments form-group">
+                          <textarea name="taskComment" id="comments" cols="75" rows="auto" placeholder="Write a comment ....."
+                            [(ngModel)]="commentData" (keyup.enter)="comment(commentData)" class="col-md-12 mr-auto ml-auto"></textarea><!--  style="width: 535px;" -->
+                        </div>
+                        <div *ngIf="setTaskComments">
+                          <div class="card-plain" *ngFor="let item of (setTaskComments | async)">
+                            <ng-container *ngIf="item.by.id === userId; else showOUser">
+                              <div class="row vl3 col-md-12">
+                                <label>{{ item.by.name }}</label>
+                                <p class="clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>
+                                  <font size=2>{{ item.comment }}.</font><br>
+                                </p>
+                                <hr>
+                              </div>
+                            </ng-container>
+                            <ng-template #showOUser>
+                              <div class="row col-md-12 vl3">
+                                <label class="text-right col-md-12">{{ item.by.name }}</label>
+                                  <p class="text-right clrs-h4-font col-md-12" style="margin-top:-1.5em;margin-bottom: 0px;"><br>
+                                    <font size=2>{{ item.comment }}.</font><br>
+                                  </p>
+                                  <hr>
+                                </div>
+                            </ng-template>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </li>
-              </ul>
-            </div>
-          </ng-container>
-          <ng-container *ngIf="viewDayActions.length === 0">
-            <h4 class="clrs-h4-font">
-              You have no activity planned Today
-            </h4>
-          </ng-container>
-        </div>
-        <ng-template #showProcessing>
-          <div class="spacer" style="height:3em"></div>
-          <div class="body center" style="height: 512px">
-            <i class="fa fa-spinner fa-spin fa-4x fa-fw"></i>
-            <p>Processing.....</p>
-          </div>
-        </ng-template>
-        <div class="card-footer">
-          <div class="row">
-            <div class="col-md-9 text-left">
-              <p class="category">To create new task under<b> Daily Diary </b>If the new activity does not belong to any
-                existing task Goto Planning & create the Task for your activity and remember to add the task to weekly Tasks</p>
-            </div>
-            <div class="col-md-3 text-right">
-              <button class="primary btn-link" data-toggle="modal" data-target="#newActionToday" rel="tooltip"
-                title="Create new Sub-task">
-                <!-- (click)="selectEditAction(item);showActionParticipants()"  -->
-                New Sub-task
-              </button>
+                  <div class="card col-md-3 mr-auto ml-auto">
+                    <div class="card-body" style="padding-left: 0px; padding-right: 0px; padding-top: 10px;">
+                      <button *ngIf="!setTask.projectId" class="btn-link" data-toggle="modal" data-target="#newSub">
+                        <label>Add subtask</label></button><br>
+                      <button class="btn-link" data-toggle="modal" data-target="#addWeekly">
+                        <label>Add to Weekly List</label></button><br>
+                      <button class="btn-link" (click)="viewTaskActions()"><label>View subtasks</label></button><br>
+                      <button class="btn-link" (click)="updateTask()"><label>Save</label></button><br>
+                      <button class="btn-link"><label>Delete</label></button><br>
+                      <button class="btn-link" (click)="viewList()"><label>Back</label></button><br>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
             </div>
           </div>
         </div>
@@ -606,222 +656,119 @@
     </div>
   </div>
 </div>
-<!-- </div> -->
-<div class="modal fade modal-primary" id="editUnits" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog"><!--  modal-sm -->
+<div class="modal fade" id="newSub" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header justify-content-center">
-        <div class="modal-profile ml-auto mr-auto">
-          <i class="nc-icon nc-bulb-63"></i>
+      <div class="card-body ">
+        <div class="header text-center">
+          <h4 *ngIf="selectedTask?.name" class="clrs-h4-font" style="margin-top: 0px;">
+            <span class="">Create a new sub-task for
+              <span style="border-bottom-style: ridge;">&nbsp;{{ selectedTask.name }}&nbsp;</span>
+            </span>
+          </h4>
         </div>
-      </div>
-      <div class="modal-body">
-        <p class="text-center">Edit Units for {{ selectEditWorkItem.name }}</p>
-        <div class="row">
-          <label class="col-md-4 col-form-label">Select Unit</label>
-          <div class="col-md-7">
-            <div class="form-group">
-              <!-- <ng-select [items]="SIunits" bindLabel="name" name="jyu" placeholder="Select unit of Measure" [(ngModel)]="selectEditWorkItem.unit"></ng-select> -->
-              <ng-select [items]="SIunits" bindLabel="name" id="sui1" name="jyu" placeholder="Select unit of Measure" [(ngModel)]="setSui">
-              </ng-select>
+        <hr>
+        <form class="form-horizontal">
+          <div class="col-md-11 ml-auto mr-auto">
+            <div class="form-group has-label">
+              <label for="" class="control-label">
+                  Name: <span class="star">*</span>
+              </label>
+              <textarea class="form-control" placeholder="Name....." name="Description:" cols="50" rows="auto"
+                [(ngModel)]="actionItem.description" required></textarea>
+            </div>
+            <div class="form-group has-label">
+              <label class="control-label" for="">Type of work:
+                <span class="star">*</span>
+              </label>
+              <input type="text" class="form-control" name="sname" required [(ngModel)]="actionItem.name" placeholder="Type of work....">
+            </div>
+            <div class="form-group has-label">
+              <!-- <label for="" class="control-label">Unit:
+                <span class="star">*</span>
+              </label> -->
+              <ng-select [items]="SIunits" bindLabel="name"  placeholder="Unit:*" [ngModelOptions]="{standalone: true}" [(ngModel)]="setUnit"></ng-select>
             </div>
           </div>
+        </form>
+        <div class="modal-footer" style="margin-bottom:0%">
+          <div class="left-side">
+            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Cancel</button>
+          </div>
+          <div class="divider"></div>
+          <div class="right-side">
+            <button *ngIf="actionItem.description" type="button" class="btn btn-success btn-link"
+              (click)="newSub(actionItem)" data-dismiss="modal" title="save activity">Save</button>
+            <button *ngIf="!actionItem.description" disabled class="btn btn-warning btn-link"
+              title="save activity">Waiting <i class="fa fa-spinner fa-spin fa-2x fa-fw"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="addWeekly" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="card-body ">
+        <div class="card-header text-center">
+          <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
+            <font size=4>{{ selectedTask.name }}</font>
+          </p>
+        </div>
+        <hr>
+        <div class="col-md-8 ml-auto mr-auto center">
+          <p>Press<span class="text-success"> confirm</span> to add <span
+              class="text-warning"><b>{{ selectedTask.name }}</b></span> to your weekly to do list.</p>
+        </div>
+        <br>
+        <div class="modal-footer" style="margin-bottom:0%">
+          <div class="left-side">
+            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Cancel</button>
+          </div>
+          <div class="divider"></div>
+          <div class="right-side">
+            <button type="button" class="btn btn-success btn-link" (click)="add2Weekly()" data-dismiss="modal"
+              title="save activity">Confirm</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <!--  modal-sm -->
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <div class="row">
+          <ng-template #showPrompt>
+            <div class="col-md-8 ml-auto mr-auto">
+              <p>Make comments on <b>{{ (selectedTask)?.name }}</b> task and submit</p>
+            </div>
+          </ng-template>
+        </div>
+        <ng-container>
+          <!-- *ngIf="showCompanyName; else showPrompt" -->
+          <p>Comment <b>{{ selectedTask.name }}</b> task.</p>
+        </ng-container>
+      </div>
+      <div class="modal-body">
+        <div class="">
+          <textarea name="taskComment" id="comments" cols="50" rows="auto" placeholder="Comment ....."
+            [(ngModel)]="comment"></textarea>
         </div>
       </div>
       <div class="modal-footer">
         <div class="left-side">
-          <button type="button" class="btn btn-link btn-link" data-dismiss="modal">Back</button>
+          <button type="button" class="btn btn-link btn-link" data-dismiss="modal" aria-hidden="true">Close</button>
         </div>
         <div class="divider"></div>
         <div class="right-side">
-          <button type="button" class="btn btn-link btn-link" (click)="addUnit()" data-dismiss="modal">Save</button>
+          <button type="button" class="btn btn-link btn-link" (click)="comment()" data-dismiss="modal">
+            Submit</button>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<div class="modal fade" id="newAction" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="card-body ">
-        <div class="card-header text-center">
-          <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-            <font size=4>New Sub-task for <br>{{ selectedTask.name }} task</font>
-          </p>
-        </div>
-        <!-- <a *ngIf="setUnit.id"> Selected Unit: <span></span><small> {{ (setUnit)?.id }}</small></a><br> -->
-        <hr>
-        <form class="form-horizontal">
-          <div class="row">
-            <label class="col-md-4 col-form-label">Sub-task</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <input type="text" [(ngModel)]="actionItem.name" name="taskName" class="form-control" placeholder="Name">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label class="col-md-4 col-form-label">Unit</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <ng-select [items]="SIunits" bindLabel="name"  id="sui12" name="jyu" placeholder="Select unit of Measure"
-                  [(ngModel)]="setUnit"></ng-select>
-              </div>  
-            </div>
-          </div>
-          <!-- <div class="row">
-            <label class="col-md-4 col-form-label">Start Date</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <input type="date" [(ngModel)]="actionItem.startDate" name="siu" class="form-control">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label class="col-md-4 col-form-label">End Date</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <input type="date" [(ngModel)]="actionItem.endDate" name="siu" class="form-control">
-              </div>
-            </div>
-          </div> -->
-        </form>
-
-        <div class="modal-footer" style="margin-bottom:0%">
-          <div class="left-side">
-            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
-          </div>
-          <div class="divider"></div>
-          <div class="right-side">
-            <button type="button" class="btn btn-success btn-link" (click)="newAction(actionItem)" data-dismiss="modal"
-              title="save activity">Enter</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="editAction" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="card-body ">
-        <div class="card-header text-center">
-          <p class="col-md-8 ml-auto mr-auto col-form-label info" style="color:steelblue">
-            <font size=4>Edit New Sub-task item <br> "{{ selectedAction.name }}"</font>
-          </p>
-        </div>
-        <hr>
-        <form class="form-horizontal">
-          <div class="row">
-            <label class="col-md-4 col-form-label">Start Date</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <input type="date" [(ngModel)]="startDate" name="startD" class="form-control">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label class="col-md-4 col-form-label">End Date</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <input type="date" [(ngModel)]="endDate" name="endD" class="form-control">
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <div class="modal-footer" style="margin-bottom:0%">
-          <div class="left-side">
-            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
-          </div>
-          <div class="divider"></div>
-          <div class="right-side">
-            <button type="button" class="btn btn-success btn-link" (click)="editAction(startDate,endDate)" data-dismiss="modal"
-              title="save activity">Enter</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="editClassActionItem" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="card-body ">
-        <div class="card-header text-center">
-          <p class="col-md-8 ml-auto mr-auto col-form-label clrs-h1-font info" style="color:steelblue">
-            <!-- <font size=4>Edit New Sub-task item <br> "{{ selectedClassAction.name }}"</font> -->
-            Edit New Sub-task item <br> "{{ selectedClassAction.name }}"
-          </p>
-        </div>
-        <hr>
-        <form class="form-horizontal">
-          <div class="row">
-            <label class="col-md-4 col-form-label">Start Date</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <input type="date" [(ngModel)]="startDate" name="start" class="form-control">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label class="col-md-4 col-form-label">End Date</label>
-            <div class="col-md-7">
-              <div class="form-group">
-                <input type="date" [(ngModel)]="endDate" name="end" class="form-control">
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <div class="modal-footer" style="margin-bottom:0%">
-          <div class="left-side">
-            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
-          </div>
-          <div class="divider"></div>
-          <div class="right-side">
-            <button type="button" class="btn btn-success btn-link" (click)="editClassAction(startDate,endDate)"
-              data-dismiss="modal" title="save activity">Enter</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- 00000000000000000000000000000000000000000  old Stuff  00000000000000000000000000000000000000000 -->
-<div class="modal fade" id="actionClosure" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-notice">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-          <i class="nc-icon nc-simple-remove"></i>
-        </button>
-        <h5 class="modal-title" id="myModalLabel">{{ actionSet.name }}</h5>
-      </div>
-      <div class="modal-body">
-        <div class="instruction">
-          <div class="row">
-            <div class="col-md-10 text-center">
-              <strong>Are you sure you have completed full quantites of this activity</strong>
-              <!-- <p class="description">The first step is to create an account at
-                <a href="https://www.creative-tim.com/">Creative Tim</a>. You can choose a social network or go for the
-                classic version, whatever works best for you.</p> -->
-            </div>
-          </div>
-          <br>
-          <p>If you have completed, Click Confirm to complete</p>
-        </div>
-        <div class="modal-footer justify-content-center">
-          <button type="button" class="btn btn-info btn-round" (click)="setComplete()"
-            data-dismiss="modal">Confirm</button>
-        </div>
-      </div>
-    </div>
-  </div>  
-</div>  

@@ -1,6 +1,6 @@
 import { Injectable, OnInit } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from "angularfire2/firestore";
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { auth } from 'firebase';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
@@ -8,9 +8,12 @@ import { Observable, Observer } from 'rxjs';
 import { map, timestamp } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
-import { Enterprise, ParticipantData, companyChampion, Department, asset, Subsidiary, employeeData, companyStaff, client } from "../models/enterprise-model";
-import { Project, workItem } from "../models/project-model";
-import { Task, MomentTask } from "../models/task-model";
+import {
+  Enterprise, ParticipantData, companyChampion, Department, asset, Subsidiary, employeeData, companyStaff, client,
+  stuffSalary
+} from '../models/enterprise-model';
+import { Project, workItem, StatusWork } from '../models/project-model';
+import { Task, MomentTask } from '../models/task-model';
 
 export interface ProjectCompanyChamp extends Project {
   companyChampion: Enterprise,
@@ -40,17 +43,18 @@ export class EnterpriseService {
   assets: Observable<any[]>;
   subsidiaries: Observable<any[]>;
   companyTasks: Observable<any[]>;
-  companyStaff: Observable<employeeData[]>;
+  companyStaff: Observable<stuffSalary[]>;
   clients: Observable<client[]>;
   currentCompanyId: any;
   deptTasks: Observable<MomentTask[]>;
   deptStaff: Observable<employeeData[]>;
   TaskActionsCollection: Observable<workItem[]>;
   actionItems: Observable<workItem[]>;
-  myTaskActionsCollection: Observable<workItem[]>;
+  myTaskActionsCollection: Observable<StatusWork[]>;
   showStaffTasks: Observable<MomentTask[]>;
   companyDptStaff: [ParticipantData];
-  compStaff: ({ id: number; name: string; email: string; phoneNumber: string; disabled?: undefined; } | { id: number; name: string;email: string; phoneNumber: string; disabled: boolean; })[];
+  compStaff: ({ id: number; name: string; email: string; phoneNumber: string; disabled?: undefined; } |
+  { id: number; name: string; email: string; phoneNumber: string; disabled: boolean; })[];
   // compStaffList: ({ ParticipantData; disabled?: undefined; } | { ParticipantData; disabled: boolean; })[];
   compStaffList = [];
 
@@ -58,15 +62,15 @@ export class EnterpriseService {
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
 
     afAuth.authState.subscribe(user => {
-      // console.log(user);
+      // // console.log(user);
       this.user = user;
       this.userId = user.uid;
     })
   }
 
-  compParams(companyId){
+  compParams(companyId) {
     this.currentCompanyId = companyId;
-    console.log(this.currentCompanyId);
+    // console.log(this.currentCompanyId);
   }
 
   addStaffToDepatment(companyId, dpt, staff) {
@@ -74,21 +78,22 @@ export class EnterpriseService {
     staff.departmentId = dpt.id;
     staff.department = dpt.name;
 
-    console.log('the department-->' + dpt.name + " "  + dpt.id);
-    console.log('the staff-->' + staff.name + " " + staff.id);
+    // console.log('the department-->' + dpt.name + ' ' + dpt.id);
+    // console.log('the staff-->' + staff.name + ' ' + staff.id);
 
-    let deptDoc = this.afs.collection('Enterprises').doc(companyId).collection<Department>('departments').doc(dpt.id);
+    const deptDoc = this.afs.collection('Enterprises').doc(companyId).collection<Department>('departments').doc(dpt.id);
     deptDoc.collection('Participants').doc(staff.id).set(staff);
-    this.afs.collection('Enterprises').doc(companyId).collection('Participants').doc(staff.id).update({ 'department': dpt.name, 'departmentId': dpt.id, });
-    deptDoc.collection('Participants').doc(staff.id).update({ 'department': dpt.name, 'departmentId': dpt.id,  });
+    this.afs.collection('Enterprises').doc(companyId).collection('Participants').doc(staff.id)
+      .update({ 'department': dpt.name, 'departmentId': dpt.id, });
+    deptDoc.collection('Participants').doc(staff.id).update({ 'department': dpt.name, 'departmentId': dpt.id, });
   }
 
   getDptTasks(companyId, dptID) {
 
-    console.log('comp Id -->' + ' ' + companyId);
-    console.log('dept Id -->' + ' ' + dptID);
+    // console.log('comp Id -->' + ' ' + companyId);
+    // console.log('dept Id -->' + ' ' + dptID);
     let myTaskData: MomentTask;
-    let dptRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection<Department>('departments');
+    const dptRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection<Department>('departments');
     this.deptTasks = dptRef.doc(dptID).collection<MomentTask>('tasks').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as MomentTask;
@@ -96,8 +101,8 @@ export class EnterpriseService {
         myTaskData = data;
 
 
-        myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
-        myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
+        myTaskData.when = moment(data.start, 'YYYY-MM-DD').fromNow().toString();
+        myTaskData.then = moment(data.finish, 'YYYY-MM-DD').fromNow().toString();
         return { id, ...data };
       }))
     );
@@ -106,21 +111,19 @@ export class EnterpriseService {
 
   getDptStaffTasks(companyId, dptID, staffId) {
 
-    console.log('comp Id -->' + ' ' + companyId);
-    console.log('dept Id -->' + ' ' + dptID);
-    console.log('staff Id -->' + ' ' + staffId);
+    // console.log('comp Id -->' + ' ' + companyId);
+    // console.log('dept Id -->' + ' ' + dptID);
+    // console.log('staff Id -->' + ' ' + staffId);
     let myTaskData: MomentTask;
-
-    let dptRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('departments').doc(dptID);
+    const dptRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('departments').doc(dptID);
     this.showStaffTasks = dptRef.collection('Participants').doc(staffId).collection<MomentTask>('tasks').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as MomentTask;
         const id = a.payload.doc.id;
         myTaskData = data;
 
-
-        myTaskData.when = moment(data.start, "YYYY-MM-DD").fromNow().toString();
-        myTaskData.then = moment(data.finish, "YYYY-MM-DD").fromNow().toString();
+        myTaskData.when = moment(data.start, 'YYYY-MM-DD').fromNow().toString();
+        myTaskData.then = moment(data.finish, 'YYYY-MM-DD').fromNow().toString();
         return { id, ...data };
       }))
     );
@@ -129,10 +132,10 @@ export class EnterpriseService {
 
   getDptStaff(companyId, dptID) {
 
-    console.log('comp Id -->' + ' ' + companyId);
-    console.log('dept Id -->' + ' ' + dptID);
+    // console.log('comp Id -->' + ' ' + companyId);
+    // console.log('dept Id -->' + ' ' + dptID);
 
-    let dptRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection<Department>('departments');
+    const dptRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection<Department>('departments');
     this.deptStaff = dptRef.doc(dptID).collection<employeeData>('Participants').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as employeeData;
@@ -145,10 +148,10 @@ export class EnterpriseService {
 
   getDptStaffArray(companyId, dptID) {
 
-    console.log('comp Id -->' + ' ' + companyId);
-    console.log('dept Id -->' + ' ' + dptID);
+    // console.log('comp Id -->' + ' ' + companyId);
+    // console.log('dept Id -->' + ' ' + dptID);
 
-    let dptRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection<Department>('departments');
+    const dptRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection<Department>('departments');
     dptRef.doc(dptID).collection<ParticipantData>('Participants').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as ParticipantData;
@@ -161,11 +164,11 @@ export class EnterpriseService {
   }
 
   getDptTasksActions(companyId, dptID, taskID) {
-    console.log('comp Id -->' + ' ' + companyId);
-    console.log('dept Id -->' + ' ' + dptID);
+    // console.log('comp Id -->' + ' ' + companyId);
+    // console.log('dept Id -->' + ' ' + dptID);
 
-    let dptRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection<Department>('departments');
-    let taskActions = dptRef.doc(dptID).collection<Task>('tasks').doc(taskID).collection<workItem>('actionItems');
+    const dptRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection<Department>('departments');
+    const taskActions = dptRef.doc(dptID).collection<Task>('tasks').doc(taskID).collection<workItem>('actionItems');
     this.TaskActionsCollection = taskActions.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as workItem;
@@ -175,16 +178,47 @@ export class EnterpriseService {
     );
     return this.TaskActionsCollection;
   }
-  
-  getMyTasksActions(userId, taskID) {
-    console.log('User Id -->' + ' ' + userId);
-    console.log('TAsk Id -->' + ' ' + taskID);
 
-    let myActionsRef = this.afs.collection<Enterprise>('Users').doc(userId).collection<Task>('tasks').doc(taskID).collection<workItem>('actionItems');
+  getMyTasksActions(userId, taskID) {
+    // console.log('User Id -->' + ' ' + userId);
+    // console.log('TAsk Id -->' + ' ' + taskID);
+    const today = moment(new Date(), 'YYYY-MM-DD');
+    const myActionsRef = this.afs.collection('Users').doc(userId).collection('tasks').doc(taskID).collection('actionItems');
     this.myTaskActionsCollection = myActionsRef.snapshotChanges().pipe(
       map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as workItem;
+        const data = a.payload.doc.data() as StatusWork;
         const id = a.payload.doc.id;
+
+        if (data.complete === false) {
+          if (data.startDate === '' && data.endDate === '') {
+            data.status = 'No Dates!!';
+          } else if (data.startDate !== '' && data.endDate === '') {
+            data.status = 'End Date!!';
+          } else if (data.startDate === '' && data.endDate !== '') {
+            data.status = 'Start Date!!';
+          } else if (data.startDate !== '' && data.endDate !== '') {
+            if (moment(data.startDate).isSameOrBefore(today) && moment(data.endDate).isSameOrAfter(today)) {
+              // currentWorkItems
+              data.status = 'Current';
+            };
+            // outstanding tasks
+            if (moment(data.endDate).isBefore(today)) {
+              data.status = 'Outstanding';
+            };
+            // Upcoming tasks
+            if (moment(data.startDate).isAfter(today)) {
+              if (moment(data.startDate).isSameOrBefore(today.add(3, 'month'))) {
+                data.status = 'Upcoming';
+              } else if (moment(data.startDate).isSameOrBefore(today.add(12, 'month'))) {
+                data.status = 'Upcoming';
+              } else if (moment(data.startDate).isAfter(today.add(12, 'month'))) {
+                data.status = 'Upcoming';
+              }
+            };
+          } else { }
+        } else {
+          data.status = 'Complete';
+        }
         return { id, ...data };
       }))
     );
@@ -192,17 +226,17 @@ export class EnterpriseService {
   }
 
   add2DptStaff(companyId, dptId, staff, task, action) {
-    console.log(task.id);
-    console.log('the departmentID-->' + " " + dptId);
-    console.log('the staff-->' + staff.name + " " + staff.id);
-    console.log('the action-->' + action.name + " " + action.id);
+    // console.log(task.id);
+    // console.log('the departmentID-->' + ' ' + dptId);
+    // console.log('the staff-->' + staff.name + ' ' + staff.id);
+    // console.log('the action-->' + action.name + ' ' + action.id);
     action.champion = staff;
-    let userRef = this.afs.collection('Users').doc(this.userId).collection('actionItems');
-    let staffRef = this.afs.collection('Users').doc(staff.id).collection('actionItems')
-    let compParticipant = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('Participants').doc(staff.id)
-    let userTaskRef = this.afs.collection('Users').doc(this.userId).collection('tasks').doc(task.id);
-    let staffTaskRef = this.afs.collection('Users').doc(staff.id).collection('tasks').doc(task.id);
-    let deptDoc = this.afs.collection('Enterprises').doc(companyId).collection<Department>('departments').doc(dptId);
+    const userRef = this.afs.collection('Users').doc(this.userId).collection('actionItems');
+    const staffRef = this.afs.collection('Users').doc(staff.id).collection('actionItems')
+    const compParticipant = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('Participants').doc(staff.id)
+    const userTaskRef = this.afs.collection('Users').doc(this.userId).collection('tasks').doc(task.id);
+    const staffTaskRef = this.afs.collection('Users').doc(staff.id).collection('tasks').doc(task.id);
+    const deptDoc = this.afs.collection('Enterprises').doc(companyId).collection<Department>('departments').doc(dptId);
     deptDoc.collection('Participants').doc(staff.id).collection('actionItems').doc(action.id).set(action);
     userRef.doc(action.id).set(action);
     staffRef.doc(action.id).set(action);
@@ -210,58 +244,68 @@ export class EnterpriseService {
     userTaskRef.collection('actionItems').doc(action.id).set(action);
     staffTaskRef.collection('actionItems').doc(action.id).set(action);
   }
-  
-  addTaskDptStaff(companyId: string, dptId: string, staff: companyStaff, task:Task) {
-    console.log(task.id);
-    console.log('the departmentID-->' + " " + dptId);
-    console.log('the staff-->' + staff.name + " " + staff.id);
-    console.log('the Task-->' + task.name + " " + task.id);
-    let markedUserId = task.champion.id;
+
+  addTaskDptStaff(companyId: string, dptId: string, staff: companyStaff, task: Task) {
+    // console.log(task.id);
+    // console.log('the departmentID-->' + ' ' + dptId);
+    // console.log('the staff-->' + staff.name + ' ' + staff.id);
+    // console.log('the Task-->' + task.name + ' ' + task.id);
+    const markedUserId = task.champion.id;
     // if (markedUserId != "") {
 
-      console.log('deleting old champ data');
-      task.selectedWeekly = false;
-      
-      let markedStaffRef = this.afs.collection('Users').doc(markedUserId);
-      let weeksStaffRef = this.afs.collection('Users').doc(markedUserId);
-      let cDPRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('departments').doc(dptId).collection('Participants').doc(markedUserId);
-      let markedStaffTaskRef = this.afs.collection('Users').doc(markedUserId).collection('myenterprises').doc(companyId);
-      let markedcompParticipant = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('Participants').doc(markedUserId);
-      let markedcompParticipant2 = this.afs.collection('Enterprises').doc(companyId).collection<Department>('departments').doc(dptId).collection('Participants').doc(staff.id);  //  ex-champion
-      markedStaffRef.collection('tasks').doc(task.id).delete();  //  ex-champion
-      markedStaffTaskRef.collection('tasks').doc(task.id).delete();  //  ex-champion
-      markedcompParticipant.collection('tasks').doc(task.id).delete();
-      cDPRef.collection('tasks').doc(task.id).delete();
-      markedcompParticipant2.collection('tasks').doc(task.id).delete();
-      weeksStaffRef.collection('WeeklyTasks').doc(task.id).delete();
-      task.champion = staff;      
-      markedStaffRef.collection('tasksArchive').doc(task.id).set(task);  //  ex-champion
-      markedStaffTaskRef.collection('tasksArchive').doc(task.id).set(task);  //  ex-champion
-      markedcompParticipant.collection('tasksArchive').doc(task.id).set(task);
-      cDPRef.collection('tasksArchive').doc(task.id).set(task);
-      markedcompParticipant2.collection('tasksArchive').doc(task.id).set(task);
+    // console.log('deleting old champ data');
+    task.selectedWeekly = false;
+
+    const markedStaffRef = this.afs.collection('Users').doc(markedUserId);
+    const weeksStaffRef = this.afs.collection('Users').doc(markedUserId);
+    const cDPRef = this.afs.collection('Enterprises').doc(companyId).collection('departments').doc(dptId)
+      .collection('Participants').doc(markedUserId);
+    const markedStaffTaskRef = this.afs.collection('Users').doc(markedUserId).collection('myenterprises').doc(companyId);
+    const markedcompParticipant = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('Participants')
+      .doc(markedUserId);
+    const markedcompParticipant2 = this.afs.collection('Enterprises').doc(companyId).collection('departments').doc(dptId)
+      .collection('Participants').doc(staff.id);  //  ex-champion
+    markedStaffRef.collection('tasks').doc(task.id).delete();  //  ex-champion
+    markedStaffTaskRef.collection('tasks').doc(task.id).delete();  //  ex-champion
+    markedcompParticipant.collection('tasks').doc(task.id).delete();
+    cDPRef.collection('tasks').doc(task.id).delete();
+    markedcompParticipant2.collection('tasks').doc(task.id).delete();
+    weeksStaffRef.collection('WeeklyTasks').doc(task.id).delete();
+    task.champion = staff;
+    markedStaffRef.collection('tasksArchive').doc(task.id).set(task);  //  ex-champion
+    markedStaffTaskRef.collection('tasksArchive').doc(task.id).set(task);  //  ex-champion
+    markedcompParticipant.collection('tasksArchive').doc(task.id).set(task);
+    cDPRef.collection('tasksArchive').doc(task.id).set(task);
+    markedcompParticipant2.collection('tasksArchive').doc(task.id).set(task);
     // }
 
-    let staffRef = this.afs.collection('Users').doc(staff.id).collection('tasks').doc(task.id);
-    let staffTaskRef = this.afs.collection('Users').doc(staff.id).collection('myenterprises').doc(companyId).collection('tasks').doc(task.id);
-    let compParticipant = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('Participants').doc(staff.id).collection('tasks').doc(task.id)
-    let deptDoc = this.afs.collection('Enterprises').doc(companyId).collection<Department>('departments').doc(dptId);
-    let newChampDPRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('departments').doc(dptId)
+    const staffRef = this.afs.collection('Users').doc(staff.id).collection('tasks').doc(task.id);
+    const staffTaskRef = this.afs.collection('Users').doc(staff.id).collection('myenterprises').doc(companyId).collection('tasks')
+      .doc(task.id);
+    const compParticipant = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('Participants').doc(staff.id)
+      .collection('tasks').doc(task.id)
+    const deptDoc = this.afs.collection('Enterprises').doc(companyId).collection<Department>('departments').doc(dptId);
+    const newChampDPRef = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('departments').doc(dptId)
       .collection('Participants').doc(staff.id).collection('tasks').doc(task.id);
 
     task.champion = staff;
 
-    deptDoc.collection('tasks').doc(task.id).set(task);
+    deptDoc.collection('tasks').doc(task.id).update({ 'champion': staff });
     deptDoc.collection('Participants').doc(staff.id).collection('tasks').doc(task.id).set(task);
     staffRef.set(task);
     compParticipant.set(task);
     staffTaskRef.set(task);
     newChampDPRef.set(task);
+    this.afs.collection('Enterprises').doc(companyId).collection('tasks').doc(task.id).update({
+      'departmentId': task.id,
+      'department': task.name,
+      'champion': staff
+    });
   }
 
-  getActionItems( staff ){
+  getActionItems(staff) {
     // let staffTaskRef = this.afs.collection('Users').doc(staff.id).collection('tasks').doc(task.id);
-    let staffTaskRef = this.afs.collection('Users').doc(staff.id);
+    const staffTaskRef = this.afs.collection('Users').doc(staff.id);
     this.actionItems = staffTaskRef.collection<workItem>('actionItems').snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as workItem;
@@ -273,7 +317,7 @@ export class EnterpriseService {
   }
 
   getCompanies(myid): Observable<Enterprise[]> {
-    // console.log(myid);
+    // // console.log(myid);
     const myRef = this.afs.collection('Users').doc(myid).collection('myenterprises', ref => ref.orderBy('name', 'asc'));
     this.enterprises = myRef.snapshotChanges().pipe(
       map(b => b.map(a => {
@@ -286,7 +330,7 @@ export class EnterpriseService {
   }
 
   getColoursCompanies(): Observable<Enterprise[]> {
-    // console.log(myid);
+    // // console.log(myid);
     const myRef = this.afs.collection('Enterprises');
     this.enterprises = myRef.snapshotChanges().pipe(
       map(b => b.map(a => {
@@ -298,14 +342,14 @@ export class EnterpriseService {
     return this.enterprises;
   }
 
-  getStaff(companyId){
+  getStaff(companyId) {
     this.companyStaff = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('Participants').snapshotChanges().pipe(
       map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as employeeData;
+        const data = a.payload.doc.data() as stuffSalary;
         const id = a.payload.doc.id;
         return { id, ...data };
       }))
-    ); 
+    );
     return this.companyStaff
   }
 
@@ -332,26 +376,27 @@ export class EnterpriseService {
     return this.clients
   }
 
-  setCurrentCompany(Ref){
+  setCurrentCompany(Ref) {
     // alert(Ref.name);
     this.currentCompany = Ref
   }
 
   getProjects(myUserId) {
-    this.projects = this.afs.collection('Users').doc(myUserId).collection('projects', ref => ref.orderBy('name', "asc")).snapshotChanges().pipe(
-      map(b => b.map(a => {
-        const data = a.payload.doc.data() as Project;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))
-    );
+    this.projects = this.afs.collection('Users').doc(myUserId).collection('projects', ref => ref
+      .orderBy('name', 'asc')).snapshotChanges().pipe(
+        map(b => b.map(a => {
+          const data = a.payload.doc.data() as Project;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
     return this.projects;
   }
   getPersonalProjects(myUserId) {
     this.myprojects = this.afs.collection('Users').doc(myUserId).collection('projects',
-    ref => ref
-    .orderBy('name', "asc")
-    .where('type','==', 'Personal')
+      ref => ref
+        .orderBy('name', 'asc')
+        .where('type', '==', 'Personal')
     ).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Project;
@@ -362,7 +407,7 @@ export class EnterpriseService {
     return this.myprojects;
   }
 
-  getAllEnterprisesProjects(){
+  getAllEnterprisesProjects() {
     this.enterpriseProjects = this.afs.collection('Projects').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as Project;
@@ -384,12 +429,14 @@ export class EnterpriseService {
   }
 
   getCompanyStaff(companyId) {
-    
+
   }
 
   getMyCompanyTasks(companyId: string, myUserId: string) {
-    // this.myCompanyTasks = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref.where('byId', '==', myUserId) }).snapshotChanges().pipe(
-    this.myCompanyTasks = this.afs.collection('Enterprises').doc(companyId).collection('tasks', ref => { return ref.where('byId', '==', myUserId ) }).snapshotChanges().pipe(
+    this.myCompanyTasks = this.afs.collection('Enterprises').doc(companyId).collection('tasks', ref => {
+      return ref.
+        where('byId', '==', myUserId)
+    }).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Task;
         const id = a.payload.doc.id;
@@ -400,19 +447,19 @@ export class EnterpriseService {
   }
 
   getTasksImChamp(companyId: string, myUserId: string) {
-    this.tasksImChampion = this.afs.collection('Users').doc(myUserId).collection('myenterprises').doc(companyId).collection('tasks', ref => { return ref.where('champion.id', '==', myUserId) }).snapshotChanges().pipe(
-      map(b => b.map(a => {
-        const data = a.payload.doc.data() as Task;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))
-    );
+    this.tasksImChampion = this.afs.collection('Users').doc(myUserId).collection('myenterprises').doc(companyId).collection('tasks',
+      ref => { return ref.where('champion.id', '==', myUserId) }).snapshotChanges().pipe(
+        map(b => b.map(a => {
+          const data = a.payload.doc.data() as Task;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
     return this.tasksImChampion;
   }
-  
 
-  getCompanyDepts(companyId){
-    this.departments = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection<Department>('departments').snapshotChanges().pipe(
+  getCompanyDepts(companyId) {
+    this.departments = this.afs.collection('Enterprises').doc(companyId).collection('departments').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as Department;
         const id = a.payload.doc.id;
@@ -423,19 +470,8 @@ export class EnterpriseService {
     return this.departments;
   }
 
-  // getCompanyDeptsArray(companyId) {
-  //   this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection<Department>('departments').snapshotChanges().pipe(
-  //     map(actions => actions.map(a => {
-  //       const data = a.payload.doc.data() as Department;
-  //       const id = a.payload.doc.id;
-  //       this.companyDpts.push(data);
-  //       return { id, ...data };
-  //     }))
-  //   );
-  //   return this.companyDpts;
-  // }
-  getCompanyAssets(companyId){
-    this.assets = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('assets').snapshotChanges().pipe(
+  getCompanyAssets(companyId) {
+    this.assets = this.afs.collection('Enterprises').doc(companyId).collection('assets').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as asset;
         const id = a.payload.doc.id;
@@ -445,7 +481,7 @@ export class EnterpriseService {
     return this.assets;
   }
   getCompanySubsidiaries(companyId) {
-    this.subsidiaries = this.afs.collection<Enterprise>('Enterprises').doc(companyId).collection('subsidiaries').snapshotChanges().pipe(
+    this.subsidiaries = this.afs.collection('Enterprises').doc(companyId).collection('subsidiaries').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as Subsidiary;
         const id = a.payload.doc.id;

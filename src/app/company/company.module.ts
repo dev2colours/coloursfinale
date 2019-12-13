@@ -27,15 +27,16 @@ import { EnterpriseRptsComponent } from 'app/enterprise-rpts/enterprise-rpts.com
         RouterModule.forChild(CompanyRoutes),
         FormsModule, JWBootstrapSwitchModule, NgbModule, TagInputModule, NgSelectModule,
     ],
-   
-    declarations: [CompanyComponent,
-        JoinEnterpriseComponent, 
+
+    declarations: [
+        CompanyComponent,
+        JoinEnterpriseComponent,
         EnterpriseViewComponent,
         EnterpriseProfileComponent,
-        SetupComponent, CreateComponent, 
+        SetupComponent, CreateComponent,
         CreateEnterpriseComponent,
         EnterpriseRptsComponent,
-        ]
+    ]
 })
 
-export class CompanyModule {}
+export class CompanyModule {};

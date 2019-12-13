@@ -1,17 +1,21 @@
-import { Enterprise, ParticipantData, companyChampion, Department } from "./enterprise-model";
-import { Time } from "@angular/common";
+import { Enterprise, ParticipantData, companyChampion, Department } from './enterprise-model';
+import { Time } from '@angular/common';
 import { Observable, of, bindCallback } from 'rxjs';
-import { Section } from "./project-model";
-import { classification } from "./user-model";
+import { Section } from './project-model';
+import { classification } from './user-model';
 
 export interface Task {
     id: string, name: string, update: string,
     companyId: string, companyName: string, department: string, departmentId: string, championName: string, championId: string,
-    champion: ParticipantData, participants: [ParticipantData], classification: classification, 
+    champion: ParticipantData, participants: [ParticipantData], classification: classification,
     start: string, startDay: string, startWeek: string, startMonth: string, startQuarter: string, startYear: string,
     finish: string, finishDay: string, finishWeek: string, finishMonth: string, finishQuarter: string, finishYear: string,
     by: string, createdOn: string, projectName: string, projectId: string, projectType: string, byId: string,
     trade: string, section: Section, complete: boolean, status: string, selectedWeekly: boolean
+}
+
+export interface ClassTask extends Task {
+    classification: classification;
 }
 
 export interface MomentTask extends Task {
@@ -19,6 +23,7 @@ export interface MomentTask extends Task {
     then: string
 }
 
+// tslint:disable-next-line: class-name
 export interface completeTask extends MomentTask {
     noAllActions: string,
     noCompleteActions: string
@@ -38,7 +43,7 @@ export interface ActionItem {
     targetQty: string,
     actualData: [actualData],
     workStatus: string,
-    complete : boolean,
+    complete: boolean,
     start: Time,
     end: Time,
     startWeek: string,
@@ -48,7 +53,7 @@ export interface ActionItem {
     endDate: string,
     endWeek: string,
     id: string,
-    taskId : string,
+    taskId: string,
     projectName: string,
     projectId: string,
     companyName: string,
@@ -56,18 +61,21 @@ export interface ActionItem {
     createdOn: string,
     by: string,
     byId: string,
-    champion: ParticipantData,   
-    classification: classification, 
+    champion: ParticipantData,
+    classification: classification,
 };
 
+// tslint:disable-next-line: class-name
 export interface actionActualData {
    time: string, name: string, actionId: string, id: string, actuals: [actualData]
 }
 
+// tslint:disable-next-line: class-name
 export interface actualData {
     updateTime: string, qty: number
 }
 
+// tslint:disable-next-line: class-name
 export interface rate {
     name: string;
     id: string;

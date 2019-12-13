@@ -1,6 +1,6 @@
 import { Injectable, OnInit } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from "angularfire2/firestore";
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { auth } from 'firebase';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
@@ -8,9 +8,9 @@ import { Observable, Observer } from 'rxjs';
 import { map, timestamp, catchError } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
-import { Enterprise, ParticipantData, companyChampion, Department } from "../models/enterprise-model";
-import { Project } from "../models/project-model";
-import { Task } from "../models/task-model";
+import { Enterprise, ParticipantData, companyChampion, Department } from '../models/enterprise-model';
+import { Project } from '../models/project-model';
+import { Task } from '../models/task-model';
 import { classification, coloursUser } from 'app/models/user-model';
 // import { coloursUser } from 'app/models/user-model';
 
@@ -31,7 +31,8 @@ export class PersonalService {
   classifications: Observable<classification[]>;
   tasks: Observable<Task[]>;
   myTasks: any;
-  tryTasks: Observable<{ name: string; type: string; by: string; byId: string; companyName: string; companyId: string; createdOn: string; location: string; sector: string; id: any; }[]>;
+  tryTasks: Observable<{ name: string; type: string; by: string; byId: string; companyName: string; companyId: string; createdOn: string;
+    location: string; sector: string; id: any; }[]>;
   myContacts: Observable<ParticipantData[]>;
   myChats: any;
   projectsTasks: Task[];
@@ -40,45 +41,95 @@ export class PersonalService {
   withoutWrkArray = [];
   newClassification = { name: 'Work', createdOn: new Date().toISOString() };
   clsNo: number;
-
+  userProfile: Observable<coloursUser>;
+  myDocument: AngularFirestoreDocument<{}>;
+  myData: ParticipantData;
+  userData: coloursUser;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
 
-    this.dataCall();
 
-  }
-
-  dataCall() {
-    
     this.afAuth.authState.subscribe(user => {
       if (user === null) {
         this.router.navigate(['/pages/login']);
-      }
-
-      else {
-        // console.log('wewtrtdtg')
+      } else {
         this.user = user;
         this.userId = user.uid;
-        // this.router.navigate(['/dashboard']);
+        this.dataCall();    
+      }
+    })
+  }
+
+  dataCall() {
+    this.myDocument = this.afs.collection('Users').doc(this.userId);
+    this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
+      const data = a.payload.data() as coloursUser;
+      const id = a.payload.id;
+      return { id, ...data };
+    }));
+
+    this.userProfile.subscribe(userData => {
+      // console.log(userData);;
+      const myData = {
+        name: userData.name,
+        email: this.user.email,
+        bus_email: userData.bus_email,
+        id: this.user.uid,
+        phoneNumber: userData.phoneNumber,
+        photoURL: this.user.photoURL,
+        address: userData.address,
+        nationality: userData.nationality,
+        nationalId: userData.nationalId,
+      }
+      if (userData.address === '' || userData.address === null || userData.address === undefined) {
+        userData.address = ''
+      } else {
+
       }
 
+      if (userData.phoneNumber === '' || userData.phoneNumber === null || userData.phoneNumber === undefined) {
+        userData.phoneNumber = ''
+      } else {
+
+      }
+
+      if (userData.bus_email === '' || userData.bus_email === null || userData.bus_email === undefined) {
+        userData.bus_email = ''
+      } else {
+
+      }
+
+      if (userData.nationalId === '' || userData.nationalId === null || userData.nationalId === undefined) {
+        userData.nationalId = ''
+      } else {
+
+      }
+
+      if (userData.nationality === '' || userData.nationality === null || userData.nationality === undefined) {
+        userData.nationality = ''
+      } else {
+
+      }
+
+      this.myData = myData;
+      this.userData = userData;
     })
 
   }
-  
-  getColoursUsers(){
+
+  getColoursUsers() {
     this.coloursUsers = this.afs.collection('Users').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as coloursUser;
         const id = a.payload.doc.id;
-        
+
         return { id, ...data };
       }))
     );
     return this.coloursUsers;
   }
 
-  getContacts(userId){
+  getContacts(userId) {
     this.myContacts = this.afs.collection('/Users').doc(userId).collection('contacts').snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as ParticipantData;
@@ -101,37 +152,35 @@ export class PersonalService {
   }
 
   getClassifications(myUserId) {
-    this.classifications = this.afs.collection('Users').doc(myUserId).collection('classifications', ref => ref.orderBy('name', 'asc')).snapshotChanges().pipe(
+    this.classifications = this.afs.collection('Users').doc(myUserId).collection('classifications', ref => ref
+    .orderBy('name', 'asc')).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as classification;
         const id = a.payload.doc.id;
         return { id, ...data };
       }))
-    ); 
+    );
     return this.classifications;
   }
-  
+
 
   async getTasks(myUserId) {
-    console.log(myUserId)
-    // this.tasks = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref.where('byId', '==', myUserId) }).snapshotChanges().pipe(
-    // this.tasks = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref.orderBy('start', 'asc').limit(5) }).snapshotChanges().pipe(
-    let taskRef = this.afs.collection('Users').doc(myUserId).collection('classifications');
+    const taskRef = this.afs.collection('Users').doc(myUserId).collection('classifications');
     this.tryTasks = taskRef.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as any;
         const id = a.payload.doc.id;
-        console.log(data);
+        // console.log(data);
         return { id, ...data };
       }))
     );
-    console.log(this.tasks)
+    // console.log(this.tasks)
     return this.tasks;
     // return this.tasks.push(taskData);;
   }
 
   addClassifications(myUserId, data) {
-    let setClass = this.afs.collection<Project>('Users').doc(myUserId).collection('classifications');
+    const setClass = this.afs.collection<Project>('Users').doc(myUserId).collection('classifications');
     setClass.add(data).then( function (ref) {
       const id = ref.id;
       setClass.doc(id).update({'id': id})
@@ -139,7 +188,8 @@ export class PersonalService {
   }
 
   getTasksImChamp(myUserId: string) {
-    this.tasksImChampion = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref.where('champion.id', '==', myUserId) }).snapshotChanges().pipe(
+    this.tasksImChampion = this.afs.collection('Users').doc(myUserId).collection('tasks', ref => { return ref
+      .where('champion.id', '==', myUserId) }).snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Task;
         const id = a.payload.doc.id;
@@ -150,9 +200,9 @@ export class PersonalService {
   }
 
   getProjectsTasks(myUserId: string) {
-    let withcompId = [], withoutCompID = [];
+    const withcompId = [], withoutCompID = [];
 
-    let projectsTasks = this.afs.collection('Users').doc(myUserId).collection('tasks').snapshotChanges().pipe(
+    const projectsTasks = this.afs.collection('Users').doc(myUserId).collection('tasks').snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Task;
         const id = a.payload.doc.id;
@@ -163,20 +213,19 @@ export class PersonalService {
     projectsTasks.subscribe(ref => {
       this.projectsTasks = [];
       ref.forEach(element => {
-        let task: Task = element;
+        const task: Task = element;
         if (task.companyId) {
           withcompId.push(task);
           this.projectsTasks.push(task);
-        }
-        else {
+        } else {
           withoutCompID.push(task);
         }
       });
     })
 
-    console.log('Tasks array with cid' + withcompId);
-    console.log('Tasks array without cid' + withoutCompID);
-    
+    // console.log('Tasks array with cid' + withcompId);
+    // console.log('Tasks array without cid' + withoutCompID);
+
 
     // projectsTasks.subscribe(ref =>{
     //   this.projectsTasks = [];
@@ -187,9 +236,9 @@ export class PersonalService {
 
   getEnterprisesTasks(myUserId: string) {
 
-    let withcompId = [], withoutCompID = [];
-    
-    let enterprisesTasks = this.afs.collection('Users').doc(myUserId).collection('tasks').snapshotChanges().pipe(
+    const withcompId = [], withoutCompID = [];
+
+    const enterprisesTasks = this.afs.collection('Users').doc(myUserId).collection('tasks').snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Task;
         const id = a.payload.doc.id;
@@ -200,23 +249,22 @@ export class PersonalService {
     enterprisesTasks.subscribe(ref => {
       this.enterprisesTasks = [];
       ref.forEach(element => {
-        let task: Task = element;
+        const task: Task = element;
         if (task.companyId) {
           withcompId.push(task);
-          this.enterprisesTasks.push(task);          
-        }
-        else { 
-          withoutCompID.push(task); 
+          this.enterprisesTasks.push(task);
+        } else {
+          withoutCompID.push(task);
         }
       });
     })
-    console.log('Tasks array with cid' + withcompId);
-    console.log('Tasks array without cid' + withoutCompID);
+    // console.log('Tasks array with cid' + withcompId);
+    // console.log('Tasks array without cid' + withoutCompID);
     return this.enterprisesTasks;
   }
 
   removeClass(myUserId, data) {
-    let classRef = this.afs.collection<Project>('Users').doc(myUserId).collection('classifications').doc(data.id);
+    const classRef = this.afs.collection<Project>('Users').doc(myUserId).collection('classifications').doc(data.id);
     classRef.delete();
   }
 }

@@ -9,19 +9,19 @@
         <button class="btn-link btn-magnify" (click)="rService.Back()">Back</button>
     </div> 
 
-<h3 id="org0" style="margin-top:-0.5em">Personal Reports</h3>
+<h3 id="org-oste" style="margin-top:-0.5em">Personal Reports</h3>
 
 <h3 style="margin-top:-0.5em">Participant: 
-<span><select id = "name-list0"></select></span>
+<span><select id = "name-list-oste"></select></span>
 <span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
 
 <h4 style="margin-top:-0.5em">Schedule of Outstanding Tasks as at <span>
 		<!-- placeholder will not work, so stuck with dd----yyyyy -->
-		<input type="date" id="startdate0">
-<button id="btn0" (click)="rService.rostasks_e()">View Oustanding Tasks for selected date</button>
+		<input type="date" id="startdate-oste"> &nbsp;
+<button id="btn-oste" (click)="rService.rostasks_e()">View Oustanding Tasks</button>
 </span></h4>
 <!-- Table rows and headings only -->
-<table id="TbId0">
+<table id="TbId-oste">
     <!-- headings -->
     <tr>
         <th>Task</th>

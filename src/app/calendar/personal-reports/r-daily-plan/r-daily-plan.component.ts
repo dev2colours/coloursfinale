@@ -10,7 +10,7 @@ export class RDailyPlanComponent implements OnInit {
 
   UserP3: any;
  
-	constructor(public rService: ReportsService){}
+	constructor(public rService: ReportsService) {}
 
   ngOnInit() {
   

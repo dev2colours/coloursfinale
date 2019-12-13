@@ -35,7 +35,6 @@ export class TimesheetComponent {
   userId: string;
   user: firebase.User;
   myData: ParticipantData;
-
   viewActions: Observable<workItem[]>;
   myActionItems: workItem[];
   updatedActionItems = [];
@@ -105,10 +104,10 @@ export class TimesheetComponent {
 
   constructor(public afAuth: AngularFireAuth, private is: InitialiseService, public router: Router, private authService: AuthService, private afs: AngularFirestore) {
     
-    this.dmData =  { updateTime: "", qty: 0 }
+    this.dmData =  { updateTime: '', qty: 0 }
     this.selectedAction = is.getActionItem();
-    this.actualData = { name: "", time: "", actionId:"", id: "", actuals: null };
-    this.actionData = { name: "", time:"", actionId: "", id: "", actuals: null };
+    this.actualData = { name: '', time: '', actionId:'', id: '', actuals: null };
+    this.actionData = { name: '', time:'', actionId: '', id: '', actuals: null };
     this.item = is.getActionItem();
     this.timedstamp = 0;
     this.single = [
@@ -173,13 +172,13 @@ export class TimesheetComponent {
     Object.assign(this, {single, multi})
   }
 
-  selectAction(item){
+  selectAction(item) {
     this.selectedAction = item;
     this.selectedTest = this.selectedAction;
     console.log(this.selectedAction);
   }
 
-  checkTest(actual: actualData){
+  checkTest(actual: actualData) {
     let item = this.selectedAction;
     let champId = this.selectedAction.champion.id;
     let itamName: string;
@@ -208,98 +207,156 @@ export class TimesheetComponent {
     this.dmData = actual;
     console.log(this.selectedAction);
     console.log(this.dmData);
-    let value: actionActualData;
-    let classId;
-    let champId = this.selectedAction.champion.id;
-    let cleaningTime = this.aclear();
-    // let notify = this.showNotification('Task', 'top', 'right');
-    let item = this.selectedAction;
+    // let value: actionActualData;
+    // let classId;
+    const champId = this.selectedAction.champion.id;
+    const cleaningTime = this.aclear();
+    // let notify = this.ns.showNotification('Task', 'top', 'right');
+    const item = this.selectedAction;
 
     this.actionData.name = item.name;
     this.actionData.actionId = item.id;
     this.actionData.time = new Date().toISOString();
     console.log(item);
-
-
-    let timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY')); //dd/mm/yyyy
+    const timesheetDocId = String(moment(new Date()).format('DD-MM-YYYY')); // dd/mm/yyyy
     console.log(timesheetDocId);
-
-    // let timesheetDocId = String(moment(new Date()));
-    let timesheetworktime = String(moment(new Date().getTime()));
-    let work = {
-      WorkingTime: moment().toString(),
-      name: item.name,
-      id: item.id,
+    const timesheetworktime = String(moment(new Date().getTime()));
+    const work = {
+      WorkingTime: moment().toString(), name: item.name, id: item.id,
     }
-
-    let dataId = item.id + moment().format('DDDDYYYY');
+    const dataId = item.id + moment().format('DDDDYYYY');
     console.log(dataId);
-    this.actionData.actuals = [actual];
-    console.log(this.actionData.actuals.length);
+    // this.actionData.actuals = [actual];
+    // console.log(this.actionData.actuals.length);
 
     if (item.companyId) {
       console.log('Testing CompanyId passed');
 
-      let allMyActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection<workItem>('actionItems').doc(item.id)
+      const allMyActionsRef2 = this.afs.collection('Enterprises').doc(item.companyId).collection('actionItems').doc(item.id);
+      const allMyActionsRef3 = this.afs.collection('Enterprises').doc(item.companyId).collection('actionItems').doc(item.id)
         .collection('actionActuals').doc(dataId);
-      let allWeekActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection<workItem>('WeeklyActions').doc(item.id)
-        .collection('actionActuals').doc(dataId);
-      let myTaskActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection('tasks').doc(item.taskId)
+      const allWeekActionsRef2 = this.afs.collection('Enterprises').doc(item.companyId).collection('WeeklyActions').doc(item.id);
+      const allWeekActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection('WeeklyActions')
+        .doc(item.id).collection('actionActuals').doc(dataId);
+      const myTaskActionsRef = this.afs.collection('Enterprises').doc(item.companyId).collection('tasks').doc(item.taskId)
         .collection<workItem>('actionItems').doc(item.id).collection('actionActuals').doc(dataId);
-      let champProjectCompWeeklyRef = this.afs.collection('Enterprises').doc(item.companyId)
-        .collection('Participants').doc(this.userId).collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
-      let champTimeSheetRef = this.afs.collection('Enterprises').doc(item.companyId)
-        .collection('Participants').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
+      const champProjectCompWeeklyRef = this.afs.collection('Enterprises').doc(item.companyId).collection('Participants')
+        .doc(this.userId).collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
+      const champTimeSheetRef = this.afs.collection('Enterprises').doc(item.companyId).collection('Participants').doc(this.userId)
+        .collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
 
       champTimeSheetRef.update({
         actuals: firebase.firestore.FieldValue.arrayUnion(actual)
       }).then(() => {
-        console.log('update successful (document exists)');
+        console.log('champTimeSheetRef update successful (document exists)');
       }).catch((error) => {
-        champTimeSheetRef.set(this.actionData);
+        champTimeSheetRef.set(this.actionData).then(() => {
+          // set action
+          champTimeSheetRef.update({
+            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+          })
+        })
       });
-      allMyActionsRef.update({
+      allWeekActionsRef2.update({
         actuals: firebase.firestore.FieldValue.arrayUnion(actual)
       }).then(() => {
         console.log('update successful (document exists)');
       }).catch((error) => {
-        allMyActionsRef.set(this.actionData);
+        allWeekActionsRef2.set(this.actionData);
+      });
+      allMyActionsRef2.update({
+        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+      }).then(() => {
+        console.log(' allWeekActionsRef2 update successful (document exists)');
+      }).catch((error) => {
+        allMyActionsRef2.set(this.actionData).then(() => {
+          // set action
+          allMyActionsRef2.update({
+            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+          })
+        })
+      });
+      allMyActionsRef3.update({
+        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+      }).then(() => {
+        console.log('allMyActionsRef3 update successful (document exists)');
+      }).catch((error) => {
+        allMyActionsRef3.set(this.actionData).then(() => {
+          // set action
+          allMyActionsRef3.update({
+            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+          })
+        })
       });
       allWeekActionsRef.update({
         actuals: firebase.firestore.FieldValue.arrayUnion(actual)
       }).then(() => {
-        console.log('update successful (document exists)');
+        console.log('allWeekActionsRef update successful (document exists)');
       }).catch((error) => {
-        allWeekActionsRef.set(this.actionData);
+        allWeekActionsRef.set(this.actionData).then(() => {
+          // set action
+          allWeekActionsRef.update({
+            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+          })
+        })
       });
       myTaskActionsRef.update({
         actuals: firebase.firestore.FieldValue.arrayUnion(actual)
       }).then(() => {
-        console.log('update successful (document exists)');
+        console.log('myTaskActionsRef update successful (document exists)');
       }).catch((error) => {
         myTaskActionsRef.set(this.actionData);
       });
       champProjectCompWeeklyRef.update({
         actuals: firebase.firestore.FieldValue.arrayUnion(actual)
       }).then(() => {
-        console.log('update successful (document exists)');
+        console.log('champProjectCompWeeklyRef update successful (document exists)');
       }).catch((error) => {
         champProjectCompWeeklyRef.set(this.actionData);
       });
 
-      if (item.projectId != "") {
-
-        let weeklyRef = this.afs.collection('Enterprises').doc(item.companyId).collection('projects').doc(item.projectId)
-          .collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
-        let prjectWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection<workItem>('WeeklyActions').doc(item.id)
-          .collection('actionActuals').doc(dataId);
-        let prjectCompWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
-          .collection<workItem>('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
-        let champProjectCompWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
-          .collection('labour').doc(this.userId).collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId)
-        let champTimeSheetRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
-          .collection('labour').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
-        weeklyRef.update({
+      if (item.projectId !== '') {
+        const eprjectWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection<workItem>('WeeklyActions')
+          .doc(item.id).collection('actionActuals').doc(dataId);
+        const eprjectCompWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
+          .doc(item.companyId).collection<workItem>('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
+        const echampProjectCompWeeklyRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises')
+          .doc(item.companyId).collection('labour').doc(this.userId).collection('WeeklyActions').doc(item.id)
+          .collection('actionActuals').doc(dataId)
+        const dUser = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+          .collection('labour').doc(this.userId);
+        let dates: [string];
+        dUser.ref.get().then(ls => {
+          if (ls.data().activeTime !== undefined) {
+            dates = ls.data().activeTime;
+            const i = dates.findIndex(s => s === (moment().format('L')));
+            console.log(i);
+            if (i > -1) {
+              console.log('already Logged');
+            } else {
+              dUser.update({
+                activeTime: firebase.firestore.FieldValue.arrayUnion(moment().format('L'))
+              }).catch((error) => {
+                console.log('Error updating user Active Time', error);
+              });
+            }
+          } else {
+            dUser.update({
+              activeTime: firebase.firestore.FieldValue.arrayUnion(moment().format('L'))
+            }).catch((error) => {
+              console.log('Error updating user Active Time', error);
+            });
+          }
+        })
+        const echampTimeSheetRef = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+          .collection('labour').doc(this.userId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems')
+          .doc(item.id);
+        const echampRef2 = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+          .collection('labour').doc(this.userId).collection('WeeklyActions').doc(item.id);
+        const weeksProAct = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId)
+          .collection('WeeklyActions').doc(item.id);
+        const proWeek = this.afs.collection('Projects').doc(item.projectId).collection<workItem>('WeeklyActions').doc(item.id);
+        proWeek.update({
           actuals: firebase.firestore.FieldValue.arrayUnion(actual)
         }).then(() => {
           console.log('Update successful, document exists');
@@ -307,10 +364,29 @@ export class TimesheetComponent {
         }).catch((error) => {
           console.log('Error updating user, document does not exists', error);
           // (document does not exists)
-          weeklyRef.set(this.actionData);
-
+          proWeek.set(this.actionData).then(() => {
+            console.log('Update successful, document exists');
+            weeksProAct.update({
+              actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+            })
+          })
         });
-        champTimeSheetRef.update({
+        weeksProAct.update({
+          actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+        }).then(() => {
+          console.log('Update successful, document exists');
+          // update successful (document exists)
+        }).catch((error) => {
+          console.log('Error updating user, document does not exists', error);
+          // (document does not exists)
+          weeksProAct.set(this.actionData).then(() => {
+            console.log('Update successful, document exists');
+            weeksProAct.update({
+              actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+            })
+          })
+        });
+        echampRef2.update({
           actuals: firebase.firestore.FieldValue.arrayUnion(actual)
         }).then(() => {
           console.log('Update successful, document exists');
@@ -318,9 +394,14 @@ export class TimesheetComponent {
         }).catch((error) => {
           console.log('Error updating user, document does not exists', error);
           // .set({ data });
-          champTimeSheetRef.set(this.actionData);
+          echampRef2.set(this.actionData).then(() => {
+            console.log('Update successful, document exists');
+            echampRef2.update({
+              actualData: firebase.firestore.FieldValue.arrayUnion(actual)
+            })
+          })
         });
-        prjectWeeklyRef.update({
+        echampTimeSheetRef.update({
           actuals: firebase.firestore.FieldValue.arrayUnion(actual)
         }).then(() => {
           console.log('Update successful, document exists');
@@ -328,9 +409,14 @@ export class TimesheetComponent {
         }).catch((error) => {
           console.log('Error updating user, document does not exists', error);
           // .set({ data });
-          prjectWeeklyRef.set(this.actionData);
+          champTimeSheetRef.set(this.actionData).then(() => {
+            console.log('Update successful, document exists');
+            champTimeSheetRef.update({
+              actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+            })
+          })
         });
-        prjectCompWeeklyRef.update({
+        eprjectWeeklyRef.update({
           actuals: firebase.firestore.FieldValue.arrayUnion(actual)
         }).then(() => {
           console.log('Update successful, document exists');
@@ -338,88 +424,130 @@ export class TimesheetComponent {
         }).catch((error) => {
           console.log('Error updating user, document does not exists', error);
           // .set({ data });
-          prjectCompWeeklyRef.set(this.actionData);
+          eprjectWeeklyRef.set(this.actionData).then(() => {
+            console.log('Update successful, document exists');
+            eprjectWeeklyRef.update({
+              actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+            })
+          })
         });
-        champProjectCompWeeklyRef.update({
-          actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-        }).then(() => {
-          console.log('Update successful, document exists');
-          // update successful (document exists)
-        }).catch((error) => {
-          console.log('Error updating user, document does not exists', error);
-          // .set({ data });
-          champProjectCompWeeklyRef.set(this.actionData);
-        });
-      }
-    };
-
-
-    let championTimeSheetRef = this.afs.collection('Users').doc(champId).collection('actionTimeSheets').doc(item.id);
-    let championTimeSheetRef2 = this.afs.collection('Users').doc(champId).collection('TimeSheets').doc(timesheetDocId).collection<workItem>('actionItems').doc(item.id);
-    if (item.taskId != '') {
-      let championRef2 = this.afs.collection('Users').doc(champId).collection('tasks').doc(item.taskId)
-        .collection<workItem>('actionItems').doc(item.id).collection<workItem>('actionActuals').doc(dataId);
-
+          eprjectCompWeeklyRef.update({
+            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+          }).then(() => {
+            console.log('Update successful, document exists');
+              // update successful (document exists)
+          }).catch((error) => {
+            console.log('Error updating user, document does not exists', error);
+            // .set({ data });
+            eprjectCompWeeklyRef.set(this.actionData).then(() => {
+              console.log('Update successful, document exists');
+              eprjectCompWeeklyRef.update({
+                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+              })
+            })
+          });
+          echampProjectCompWeeklyRef.update({
+            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+          }).then(() => {
+            console.log('Update successful, document exists');
+              // update successful (document exists)
+          }).catch((error) => {
+            console.log('Error updating user, document does not exists', error);
+            // .set({ data });
+            echampProjectCompWeeklyRef.set(this.actionData).then(() => {
+              console.log('Update successful, document exists');
+              echampProjectCompWeeklyRef.update({
+                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+              })
+            })
+          });
+        }
+      };
+    const championTimeSheetRef = this.afs.collection('Users').doc(champId).collection('actionTimeSheets').doc(item.id);
+    const championTimeSheetRef2 = this.afs.collection('Users').doc(champId).collection('TimeSheets').doc(timesheetDocId)
+      .collection<workItem>('actionItems').doc(item.id);
+    if (item.taskId !== '') {
+      const championRef2 = this.afs.collection('Users').doc(champId).collection('tasks').doc(item.taskId)
+        .collection('actionItems').doc(item.id).collection<workItem>('actionActuals').doc(dataId);
       championRef2.set(this.actionData);
       // championRef2.collection('actuals').add(actual);
     }
-    let weeklyRef = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions').doc(item.id)
+    const cweeklyRef2 = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions').doc(item.id)
+    const cweeklyRef = this.afs.collection('Users').doc(champId).collection<workItem>('WeeklyActions').doc(item.id)
       .collection<workItem>('actionActuals').doc(dataId);
-    let allMyActionsRef = this.afs.collection('Users').doc(champId).collection<workItem>('actionItems').doc(item.id)
+    const allMyActionsRef = this.afs.collection('Users').doc(champId).collection<workItem>('actionItems').doc(item.id)
       .collection<workItem>('actionActuals').doc(dataId);
+    this.afs.collection('Users').doc(champId).collection('actionItems').doc(item.id).update({
+      actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+    }).then(() => {
+      console.log('Update successful, document exists');
+    }).catch((error) => {
+      console.log('Error updating user, document does not exists', error);
+      this.afs.collection('Users').doc(champId).collection('actionItems').doc(item.id).set(this.actionData).then(() => {
+        console.log('Update successful, document exists');
+        this.afs.collection('Users').doc(champId).collection('actionItems').doc(item.id).update({
+          actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+        })
+      })
+    });
     championTimeSheetRef.set(item);
     championTimeSheetRef2.set(item);
     championTimeSheetRef.collection('workTime').doc(timesheetworktime).set(work);
     championTimeSheetRef.collection('actionActuals').doc(timesheetworktime).set(work);
-
     championTimeSheetRef2.collection('workTime').doc(timesheetworktime).set(work);
     championTimeSheetRef2.collection('actionActuals').doc(timesheetworktime).set(work);
-
-    weeklyRef.update({
-      actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-    }).then(() => {
-      console.log('Update successful, document exists');
-      // update successful (document exists)
-    }).catch((error) => {
-      console.log('Error updating user, document does not exists', error);
-      // .set({ data });
-      weeklyRef.set(this.actionData);
-    });
-    allMyActionsRef.update({
-      actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-    }).then(() => {
-      console.log('Update successful, document exists');
-      // update successful (document exists)
-    }).catch((error) => {
-      console.log('Error updating user, document does not exists', error);
-      // .set({ data });
-      allMyActionsRef.set(this.actionData);
-    });
-
-    if (item.companyId != "") {
-      let championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(item.companyId)
-        .collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
-      // championRef.collection('actuals').add(actual);
-
-      championRef.update({
+    cweeklyRef2.update({
         actuals: firebase.firestore.FieldValue.arrayUnion(actual)
-      }).then(() => {
+    }).then(() => {
         console.log('Update successful, document exists');
-        cleaningTime;
-        // notify;
         // update successful (document exists)
-      }).catch((error) => {
+    }).catch((error) => {
+        console.log('Error updating user, document does not exists', error);
+        cweeklyRef2.set(this.actionData).then(() => {
+            console.log('Update successful, document exists');
+            cweeklyRef2.update({
+                actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+            })
+        })
+    });
+    cweeklyRef.update({
+        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+    }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+    }).catch((error) => {
         console.log('Error updating user, document does not exists', error);
         // .set({ data });
-        championRef.set(this.actionData).then(ref => {
-          cleaningTime;
-          // notify;
+        cweeklyRef.set(this.actionData)
+    });
+    allMyActionsRef.update({
+        actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+    }).then(() => {
+        console.log('Update successful, document exists');
+        // update successful (document exists)
+    }).catch((error) => {
+        console.log('Error updating user, document does not exists', error);
+        // .set({ data });
+        allMyActionsRef.set(this.actionData);
+    });
+    if (item.companyId !== '') {
+        const championRef = this.afs.collection('Users').doc(champId).collection('myenterprises').doc(item.companyId)
+            .collection('WeeklyActions').doc(item.id).collection('actionActuals').doc(dataId);
+        // championRef.collection('actuals').add(actual);
+
+        championRef.update({
+            actuals: firebase.firestore.FieldValue.arrayUnion(actual)
+        }).then(() => {
+            console.log('Update successful, document exists');
+        }).catch((error) => {
+            console.log('Error updating user, document does not exists', error);
+            // .set({ data });
+            championRef.set(this.actionData).then(ref => {
+
+            });
         });
-      });
-    }
-    else {
-      cleaningTime;
-      // notify;
+    } else {
+        cleaningTime;
     }
   }
 
@@ -468,14 +596,14 @@ export class TimesheetComponent {
       championTimeSheetRef2.collection('workTime').doc(timesheetworktime).set(work);
       championTimeSheetRef2.collection('actionActuals').doc(timesheetworktime).set(work);
 
-      if (item.companyId != "") {
+      if (item.companyId != '') {
         let championRef = this.afs.collection('Users').doc(champId).collection('enterprises').doc(item.companyId);
         championRef.collection('WeeklyActions').doc(item.id).update({ 'UpdatedOn': workAction.UpdatedOn }).then(ref => {
           championRef.collection('TimeSheets').doc(item.id)
           cleaningTime;
           notify;
         });
-        if (item.projectId != "") {
+        if (item.projectId != '') {
 
           let cmpProjectDoc = this.afs.collection('Projects').doc(item.projectId).collection('enterprises').doc(item.companyId).collection('labour').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
           let weeklyRef = this.afs.collection('Enterprises').doc(item.companyId).collection('projects').doc(item.projectId).collection('labour').doc(champId).collection<workItem>('WeeklyActions').doc(item.id);
@@ -515,8 +643,8 @@ export class TimesheetComponent {
     // unplannedTask.endDate = moment(new Date(), 'MM-DD-YYYY').format('L');
     // unplannedTask.startDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
     // unplannedTask.endDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();  
-    // unplannedTask.start = "";
-    // unplannedTask.end = "";
+    // unplannedTask.start = '';
+    // unplannedTask.end = '';
     // unplannedTask.type = "unPlanned";
     // unplannedTask.by = this.myData.name;
     // unplannedTask.byId = champId;
@@ -559,7 +687,7 @@ export class TimesheetComponent {
     unplannedTask.startDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
     unplannedTask.endDay = moment(new Date(), 'MM-DD-YYYY').format('ddd').toString();
     unplannedTask.start = moment().format('HH:mm');
-    unplannedTask.end = "";
+    unplannedTask.end = '';
     unplannedTask.type = 'unPlanned';
     unplannedTask.champion = this.myData;
     unplannedTask.createdOn = new Date().toString();
@@ -679,12 +807,18 @@ export class TimesheetComponent {
     });
 
     console.log(unplannedTask);
-    this.item = { uid: "", id: "", name: "", unit: "", quantity: 0, selectedWork: false, targetQty: 0, rate: 0, workHours: null, amount: 0, by: "", byId: "", type: "", champion: null, classification: null, participants: null, departmentName: "", departmentId: "", billID: "", billName: "", projectId: "", projectName: "", createdOn: "", UpdatedOn: "", actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: "", startDay: "", startDate: "", endDay: "", endDate: "", endWeek: "", taskName: "", taskId: "", companyId: "", companyName: "", classificationName: "", classificationId: "", section: this.is.getSectionInit(), actualStart: "", actualEnd: "", Hours: "", selectedWeekWork: false, selectedWeekly: false, championName: "", championId: "" };
+    this.item = { uid: '', id: '', name: '', unit: '', description: '', quantity: 0, selectedWork: false, targetQty: 0, rate: 0,
+    workHours: null, amount: 0, by: '', byId: '', type: '', champion: null, classification: null, participants: null,
+    departmentName: '', departmentId: '', billID: '', billName: '', projectId: '', projectName: '', createdOn: '', UpdatedOn: '',
+    actualData: null, workStatus: null, complete: false, start: null, end: null, startWeek: '', startDay: '', startDate: '',
+    endDay: '', endDate: '', endWeek: '', taskName: '', taskId: '', companyId: '', companyName: '', classificationName: '',
+    classificationId: '', section: this.is.getSectionInit(), actualStart: '', actualEnd: '', Hours: '', selectedWeekWork: false,
+    selectedWeekly: false, championName: '', championId: '' };
   }
 
-  aclear(){
-    this.dmData = { updateTime: "", qty: 0 }
-    this.actualData = { name: "", time: "", actionId: "", id: "", actuals: null };
+  aclear() {
+    this.dmData = { updateTime: '', qty: 0 }
+    this.actualData = { name: '', time: '', actionId: '', id: '', actuals: null };
     // this.selectedAction = this.is.getActionItem();
   }
 
@@ -712,7 +846,7 @@ export class TimesheetComponent {
     }));
 
     this.userProfile.subscribe(userData => {
-      console.log(userData);
+      // console.log(userData);;
       let myData = {
         name: userData.name,
         email: this.user.email,
@@ -724,32 +858,32 @@ export class TimesheetComponent {
         nationality: userData.nationality,
         nationalId: userData.nationalId,
       }
-      if (userData.address == "" || userData.address == null || userData.address == undefined) {
-        userData.address = ""
+      if (userData.address == '' || userData.address == null || userData.address == undefined) {
+        userData.address = ''
       } else {
 
       }
 
-      if (userData.phoneNumber == "" || userData.phoneNumber == null || userData.phoneNumber == undefined) {
-        userData.phoneNumber = ""
+      if (userData.phoneNumber == '' || userData.phoneNumber == null || userData.phoneNumber == undefined) {
+        userData.phoneNumber = ''
       } else {
 
       }
 
-      if (userData.bus_email == "" || userData.bus_email == null || userData.bus_email == undefined) {
-        userData.bus_email = ""
+      if (userData.bus_email == '' || userData.bus_email == null || userData.bus_email == undefined) {
+        userData.bus_email = ''
       } else {
 
       }
 
-      if (userData.nationalId == "" || userData.nationalId == null || userData.nationalId == undefined) {
-        userData.nationalId = ""
+      if (userData.nationalId == '' || userData.nationalId == null || userData.nationalId == undefined) {
+        userData.nationalId = ''
       } else {
 
       }
 
-      if (userData.nationality == "" || userData.nationality == null || userData.nationality == undefined) {
-        userData.nationality = ""
+      if (userData.nationality == '' || userData.nationality == null || userData.nationality == undefined) {
+        userData.nationality = ''
       } else {
 
       }

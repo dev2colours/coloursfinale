@@ -10,6 +10,8 @@ import { LockComponent } from './lock/lock.component';
 import { LoginComponent } from './login/login.component';
 import { MomentDatesComponent } from './moment-dates/moment-dates.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { PhoneLoginComponent } from './phone-login/phone-login.component';
+import { MyCalendarComponent } from './my-calendar/my-calendar.component';
 
 @NgModule({
     imports: [
@@ -22,8 +24,10 @@ import { WelcomeComponent } from './welcome/welcome.component';
         LoginComponent,
         RegisterComponent,
         LockComponent,
+        MyCalendarComponent,
         MomentDatesComponent,
         WelcomeComponent,
+        PhoneLoginComponent,
     ]
 })
 

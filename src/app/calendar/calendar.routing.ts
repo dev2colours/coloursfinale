@@ -23,6 +23,12 @@ import { PersonalRdashboardComponent } from './personal-reports/personal-reports
 import { RTimeBudgetComponent } from './personal-reports/r-time-budget/r-time-budget.component';
 // Added 28-June-19 by VJ Sibanda
 import { RTimeActualComponent } from './personal-reports/r-time-actual/r-time-actual.component';
+import { IndividualComponent } from './individual/individual.component';
+import { TimesheetComponent } from './timesheet/timesheet.component';
+import { SetUpComponent } from './set-up/set-up.component';
+import { PlanningComponent } from './planning/planning.component';
+import { StandardsComponent } from './standards/standards.component';
+import { ImplementComponent } from './implement/implement.component';
 
 export const CalendarRoutes: Routes = [{
     path: '',
@@ -41,72 +47,70 @@ export const CalendarRoutes: Routes = [{
     }, {
         path: 'diary',
         component: DiaryComponent
-    },
-    //  {
-    //     path: 'timesheet',
-    //     component: TimesheetComponent
-    // },
-     {
+    }, {
+        path: 'individual',
+        component: IndividualComponent
+    }, {
         path: 'PersonalWeeklyPlan-report',
         component: RWeeklyPlanComponent
-    },
-    {
+    }, {
         path: 'PersonalDailyPlan-report',
         component: RDailyPlanComponent
-    },
-    {
+    }, {
         path: 'total-actions',
         component: TotalsActionItemsComponent
-    },
-    {
+    }, {
         path: 'activity-log',
         component: ActivityLogComponent
-    },
-    {
+    }, {
         path: 'classification-log',
         component: ClassificationTimesheetComponent
-    },
-    {
+    }, {
         path: 'activity-reportLog',
         component: RActivityLogComponent
-    },
-    {   path: 'tasks-24/7',
+    }, {
+         path: 'tasks-24/7',
         component: CalendarComponent
-    },
-    {   path: 'map-task',
+    }, {
+        path: 'map-task',
         component: MapTaskComponent
-    },
-    {
-        path: 'implementation',
-        component: ImplementationComponent},
-    {
+    }, {
+        path: 'implement',
+        component: ImplementComponent
+    }, {
         path: 'popup',
         component: PopupComponent
-    },
-    {
+    }, {
+        path: 'set-up',
+        component: SetUpComponent
+    }, {
         path: 'diary',
-        component: DiaryComponent},
-    {   path: 'PersonalWeeklyPlan-report',
+        component: DiaryComponent
+    }, {
+        path: 'planning',
+        component: PlanningComponent
+    }, {
+        path: 'standards',
+        component: StandardsComponent
+    }, {
+        path: 'PersonalWeeklyPlan-report',
         component: RWeeklyPlanComponent
-    }, 
-    {   path: 'PersonalDailyPlan-report',
+    }, {
+        path: 'PersonalDailyPlan-report',
         component: RDailyPlanComponent
-    },
-    {
+    }, {
         path: 'total-actions',
         component: TotalsActionItemsComponent
-    },
-    {
+    }, {
         path: 'activity-log',
-        component: ActivityLogComponent},
-    {
+        component: ActivityLogComponent
+    }, {
         path: 'classification-log',
-        component: ClassificationTimesheetComponent},
-    {
+        component: ClassificationTimesheetComponent
+    }, {
         path: 'activity-reportLog',
         component: RActivityLogComponent
-    },
-    {
+    }, {
         path: 'timeSpent-report',
         component: RTimeSpentComponent
     },
@@ -119,16 +123,13 @@ export const CalendarRoutes: Routes = [{
      {
         path: 'r-timeactual',
         component: RTimeActualComponent
-    },
-    {
+    }, {
         path: 'personalInfo-report',
         component: PersonalInfoReportComponent
-    },
-    {
+    }, {
         path: 'personal-r',
-        component: PersonalRdashboardComponent 
-    },
-    {
+        component: PersonalRdashboardComponent
+    }, {
         path: 'outstandingTask-report',
         component: ROsTasksComponent
     }]

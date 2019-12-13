@@ -52,7 +52,7 @@ export class AuthService {
   async googleSign() {
     // const provider = new auth.GoogleAuthProvider();
     // this.afAuth.auth.signInWithPopup(provider).then(ref => {
-    //   console.log("Check User collection for doc");
+    //   // console.log("Check User collection for doc");
     //   this.coloursUserDetails = ref;
 
     //   let coloursUser = ref.user;
@@ -65,15 +65,15 @@ export class AuthService {
     //     LastTimeLogin: new Date().toString()
     //   }
 
-    //   console.log(userData);
+    //   // // console.log(userData);;
     //   if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
     //     this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-    //     console.log("userData is set");
+    //     // console.log("userData is set");
 
     //   }
     //   else {
     //     this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-    //     console.log("userData is updated");
+    //     // console.log("userData is updated");
     //   }
     //   this.router.navigateByUrl('dashboard');
     // });
@@ -91,7 +91,7 @@ export class AuthService {
       orderBy: 'startTime'
     })
 
-    console.log(events)
+    // console.log(events)
 
     this.calendarItems = events.result.items;
 
@@ -130,7 +130,7 @@ export class AuthService {
         return { id, ...data };
       }));
       this.userProfile.subscribe(userData => {
-        console.log(userData);
+        // // console.log(userData);;
         let myData = {
           name: userData.name,
           email: this.user.email,

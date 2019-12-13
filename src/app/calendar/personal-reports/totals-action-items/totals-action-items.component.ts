@@ -41,7 +41,7 @@ export class TotalsActionItemsComponent implements OnInit {
   mlapsdata: number;
 
   constructor(public auth: AuthService, private pns: PersonalService, public afAuth: AngularFireAuth, public es: EnterpriseService, private ps: ProjectService, public afs: AngularFirestore, location: Location, private renderer: Renderer, private element: ElementRef, private router: Router, private as: ActivatedRoute) {
-    
+
     afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
@@ -56,7 +56,7 @@ export class TotalsActionItemsComponent implements OnInit {
     })
 
     // this.actionItemsTotals = afs.collection('Users').doc(this.userId).collection<workItem>('WeeklyActions').snapshotChanges().pipe(
-    
+
 
   }
 
@@ -65,19 +65,20 @@ export class TotalsActionItemsComponent implements OnInit {
 
     console.log(this.selectedDate);
     timesheetDocId = this.selectedDate;
-    let myLapses = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId.id).collection<workItem>('actionItems');
-    this.viewDailyTimeSheets = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId.id).collection<rpt>('actionItems').snapshotChanges().pipe(
+    const myLapses = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId.id)
+      .collection('actionItems');
+    this.viewDailyTimeSheets = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId.id)
+      .collection<rpt>('actionItems').snapshotChanges().pipe(
       map(b => b.map(a => {
-        let data = a.payload.doc.data() as rpt;
+        const data = a.payload.doc.data() as rpt;
         const id = a.payload.doc.id;
         let workStatus = 0;
         let mlapsdata: number;
         const strtTym = data.actualStart;
-        let tot = .5;
+        let tot = 0;
 
         // let mlapsdata
         // data.Hours = String(moment(moment(data.actualStart).diff(moment(data.actualEnd))).format('hh:mm:ss'));
-        
         if (data.name !== 'Lapsed') {
 
           data.actualStart = String(moment(data.actualStart).format('MMMM Do YYYY, h:mm:ss a'));
@@ -90,46 +91,46 @@ export class TotalsActionItemsComponent implements OnInit {
           if (data.workHours !== null) {
             data.workHours.forEach(element => {
               console.log(moment(element.time).format('DD-MM-YYYY') + ' ' + this.selectedDate.id);
-              const Tym = moment(element.time).format('DD-MM-YYYY'); 
-              const tet = moment(this.selectedDate.id).format('DD-MM-YYYY'); 
+              const Tym = moment(element.time).format('DD-MM-YYYY');
+              const tet = moment(this.selectedDate.id).format('DD-MM-YYYY');
               if (Tym === this.selectedDate.id) {
               // if (moment(element.time).isSameOrBefore(tet)) {
 
                 tot = tot + .5;
                 // data.Hours = String(moment(strtTym).add(tot, 'h').format('hh'));
                 data.Hours = String(tot);
-                
+
               //   console.log(data.Hours);
               }
 
             });
           } else {
-            
+
           }
           // tot = data.workHours.length
           console.log(tot);
           console.log(moment(strtTym).add(tot, 'h'));
-          
+
           // data.Hours = String(moment(moment(data.actualStart).diff(moment(data.actualEnd))).format('hh'));
         }
-        
+
         if (data.name === 'Lapsed') {
 
-          let lapData = myLapses.doc('lapsed').collection<unRespondedWorkReport>('lapses').snapshotChanges().pipe(
-            map(b => b.map(a => {
-              const data = a.payload.doc.data() as unRespondedWorkReport;
-              const id = a.payload.doc.id;
-              return { id, ...data };
+          const lapData = myLapses.doc('lapsed').collection<unRespondedWorkReport>('lapses').snapshotChanges().pipe(
+            map(c => c.map(d => {
+              const dat = d.payload.doc.data() as unRespondedWorkReport;
+              const id = d.payload.doc.id;
+              return { id, ...dat };
             }))
-          ); 
+          );
 
-          lapData.subscribe(ldata =>{
+          lapData.subscribe(ldata => {
             // console.log(ldata);
-            
+
             mlapsdata = (ldata.length);
             this.mlapsdata = mlapsdata;
             // console.log(mlapsdata);
-          
+
           })
           data.wrkHours = String(mlapsdata)
 
@@ -145,10 +146,12 @@ export class TotalsActionItemsComponent implements OnInit {
 
     console.log(this.selectedDate);
     timesheetDocId = this.selectedDate;
-    let myLapses = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId.id).collection<workItem>('actionItems');
-    this.viewDailyTimeSheets = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId.id).collection<rpt>('actionItems').snapshotChanges().pipe(
+    const myLapses = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId.id)
+      .collection<workItem>('actionItems');
+    this.viewDailyTimeSheets = this.afs.collection('Users').doc(this.userId).collection('TimeSheets').doc(timesheetDocId.id)
+      .collection<rpt>('actionItems').snapshotChanges().pipe(
       map(b => b.map(a => {
-        let data = a.payload.doc.data() as rpt;
+        const data = a.payload.doc.data() as rpt;
         const id = a.payload.doc.id;
         let workStatus = 0;
         let mlapsdata: number;
@@ -156,7 +159,7 @@ export class TotalsActionItemsComponent implements OnInit {
 
         data.actualStart = String(moment(data.actualStart).format('MMMM Do YYYY, h:mm:ss a'));
         console.log('start,', data.actualStart);
-        
+
         data.actualEnd = String(moment(data.actualEnd).format('MMMM Do YYYY, h:mm:ss a'));
 
         console.log('end,', data.actualEnd);
@@ -193,7 +196,7 @@ export class TotalsActionItemsComponent implements OnInit {
 
   }
 
-  dataCall(){
+  dataCall() {
     this.myDocument = this.afs.collection('Users').doc(this.userId);
 
     this.timesheetCollection = this.myDocument.collection('TimeSheets').snapshotChanges().pipe(
@@ -202,7 +205,7 @@ export class TotalsActionItemsComponent implements OnInit {
         const id = a.payload.doc.id;
         return { id, ...data };
       }))
-    ); 
+    );
 
     this.actionItemsTotals = this.afs.collection('Users').doc(this.userId).collection<workItem>('TimeSheets').snapshotChanges().pipe(
       map(b => b.map(a => {
@@ -214,7 +217,7 @@ export class TotalsActionItemsComponent implements OnInit {
 
         return { id, ...data };
       }))
-    ); 
+    );
 
 
     return
@@ -228,7 +231,7 @@ export class TotalsActionItemsComponent implements OnInit {
       // this.dataCall().subscribe();
     })
     console.log(this.userId);
-    
+
   }
 
 }

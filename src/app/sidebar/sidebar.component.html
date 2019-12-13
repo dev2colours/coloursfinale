@@ -26,16 +26,27 @@
 <div class="sidebar-wrapper" *ngIf="afAuth.user | async as user">
 
   <div class="user" >
-    <div *ngIf="user.photoURL" class="photo">
-      <img src="{{ user.photoURL }}" width="50px">
+    <div *ngIf="myData.photoURL; else showDm" class="photo">
+      <img src="{{ myData.photoURL }}" width="50px">
     </div>
+    <ng-template #showDm>
+        <div class="photo">
+            <img src="./assets/img/default-avatar.png" width="50px">
+        </div>
+    </ng-template>
+
     <div class="info" >
       <a data-toggle="collapse" href="#collapseExample" class="collapsed">
-        <span>
-            <span *ngIf=" user.displayName != null; else showEmail " class="title card-category" style="color:lightgray">{{user.displayName}}</span>
-            <ng-template #showEmail> {{user.email}} </ng-template>
-            <b class="caret"></b>
+        <span *ngIf="myData.name === null; else showNam ">
+            <span class="title nameCol" style="color:lightgray;">{{ user.email }}</span>
         </span>
+        <ng-template #showNam>
+            <span *ngIf="myData.name !== ''; else showEmail" class="title card-category nameCol" style="color:lightgray;">{{ myData.name }}</span>
+            <ng-template #showEmail>
+                <span class="title nameCol" style="color:lightgray;">{{ myData.email }}</span>
+            </ng-template>
+            <b class="caret"></b>
+        </ng-template>
       </a>
       <div class="clearfix"></div>
       <div class="collapse" id="collapseExample">

@@ -40,19 +40,18 @@ export class CreateEnterpriseComponent {
 
 
   constructor(public afAuth: AngularFireAuth, public router: Router, private afs: AngularFirestore) {
-    this.newEnterprise = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
-    this.newPart = { id: "", name: "", email: "", phoneNumber: "" }
+    this.newEnterprise = { name: '', by: '', byId: '', createdOn: '', id: '', location: '', sector: '', participants: null };
+    this.newPart = { id: '', name: '', email: '', phoneNumber: '' }
    }
 
   saveEnterprise() {
 
     // this.afAuth.authState.subscribe(user => { 
-    let compRef;  //ID of the new company that has been created under User/myEnterprises
-    let mycompanyRef;    //root enterprise
+    let compRef;  // ID of the new company that has been created under User/myEnterprises
+    let mycompanyRef;    // root enterprise
 
     // let comp: Enterprise;
-    let newRef = this.afs.collection('/Users').doc(this.userId).collection('myenterprises');
-
+    const newRef = this.afs.collection('/Users').doc(this.userId).collection('myenterprises');
     console.log(this.userId);
 
     this.newEnterprise.by = this.user.displayName;
@@ -62,28 +61,28 @@ export class CreateEnterpriseComponent {
     this.newEnterprise.participants = [this.newPart];
 
     console.log(this.newEnterprise);
-    let partId = this.userId;
-    let comp = this.newEnterprise;
-    let pUser = this.newPart;
+    const partId = this.userId;
+    const comp = this.newEnterprise;
+    const pUser = this.newPart;
     mycompanyRef = this.afs.collection('Enterprises')
 
     this.afs.collection('/Users').doc(this.user.uid).collection('myenterprises').add(comp).then(function (Ref) {
       console.log(Ref.id)
       console.log(pUser);
       compRef = Ref.id;
-      newRef.doc(compRef).collection('Participants').doc(partId).set(pUser);// add to participants collection in myenterprise collection
+      newRef.doc(compRef).collection('Participants').doc(partId).set(pUser); // add to participants collection in myenterprise collection
       console.log(compRef)
       mycompanyRef.doc(compRef).set(comp);
-      mycompanyRef.doc(compRef).collection('Participants').doc(partId).set(pUser);// add to participants collection in Enterprise collection
+      mycompanyRef.doc(compRef).collection('Participants').doc(partId).set(pUser); // add to participants collection in Enterprise collection
       console.log('enterprise ');
       newRef.doc(compRef).update({ 'id': compRef }); // updates the id attribute for the enterprise in myenterprise collection 
       mycompanyRef.doc(compRef).update({ 'id': compRef }); // updates the id attribute for the enterprise in Enterprise collection
     });
 
-    this.newEnterprise = { name: "", by: "", byId: "", createdOn: "", id: "", location: "", sector: "", participants: null };
+    this.newEnterprise = { name: '', by: '', byId: '', createdOn: '', id: '', location: '', sector: '', participants: null };
   }
 
-  dataCall(){
+  dataCall() {
     this.enterprises = this.afs.collection<Enterprise>('Enterprises').snapshotChanges().pipe(
       map(b => b.map(a => {
         const data = a.payload.doc.data() as Enterprise;
@@ -94,7 +93,7 @@ export class CreateEnterpriseComponent {
   }
 
 
-  OnInit(){
+  OnInit() {
   }
 
   ngOnInit() {

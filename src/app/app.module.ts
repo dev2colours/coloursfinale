@@ -19,7 +19,7 @@ import { NavbarModule} from './shared/navbar/navbar.module';
 import { AdminLayoutComponent } from './layouts/admin/admin-layout.component';
 import { AuthLayoutComponent } from './layouts/auth/auth-layout.component';
 import { AppRoutes } from './app.routing';
-
+// import * as firebase from 'firebase';
 import { environment } from 'environments/environment';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
@@ -29,6 +29,11 @@ import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { JWBootstrapSwitchModule } from 'jw-bootstrap-switch-ng2';
 
+
+import { BsDatepickerModule, BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+
+import { setTheme } from 'ngx-bootstrap/utils';
+setTheme('bs4'); // or 'bs4'
 // Ngx-Charts
 import { ProjectService } from './services/project.service';
 import { PersonalService } from './services/personal.service';
@@ -36,10 +41,12 @@ import { TaskService } from './services/task.service';
 import { EnterpriseService } from './services/enterprise.service';
 import { InitialiseService } from './services/initialise.service';
 import { AuthService } from './services/auth.service';
+import { NotificationService } from './services/notification.service';
 
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { WindowService } from './services/window.service';
 
 @NgModule({
     imports:      [
@@ -48,6 +55,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
         NgSelectModule,
         TagInputModule,
         NgxChartsModule,
+        BsDatepickerModule.forRoot(),
         // DragDropModule,
         // FileUploader,
         // FileSelectDirective,
@@ -69,13 +77,12 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ],
     providers: [
         ProjectService, PersonalService, TaskService,
-        EnterpriseService, InitialiseService, AuthService
+        EnterpriseService, InitialiseService, AuthService, NotificationService, WindowService
     ],
     declarations: [
         AppComponent,
         AdminLayoutComponent,
         AuthLayoutComponent,
-        
     ],
     bootstrap:    [ AppComponent ]
 })

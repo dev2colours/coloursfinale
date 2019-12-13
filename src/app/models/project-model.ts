@@ -1,7 +1,6 @@
-import { Time } from "@angular/common";
-import { actionActualData } from "./task-model";
-import { ParticipantData } from "./enterprise-model";
-import { classification } from "./user-model";
+import { actionActualData } from './task-model';
+import { ParticipantData } from './enterprise-model';
+import { classification } from './user-model';
 
 export interface Project {
     name: string,
@@ -27,17 +26,19 @@ export interface abridgedBill {
 };
 
 export interface workItem {
-    id: string, uid: string, name: string, unit: string, quantity: number, rate: number, amount: number, billID: string, championId: string,
-    billName: string, projectId: string, projectName: string, byId: string, by: string, createdOn: string, championName: string,
-    UpdatedOn: string, actualData: [actionActualData], workStatus: string, complete: boolean, start: string, end: string,
+    id: string, uid: string, name: string, description: String, unit: string, quantity: number, rate: number, amount: number,
+    billID: string, championId: string, billName: string, projectId: string, projectName: string, byId: string, by: string,
+    createdOn: string, championName: string, UpdatedOn: string, actualData: [actionActualData], workStatus: string,
     startWeek: string, startDay: string, startDate: string, endDay: string, endDate: string, endWeek: string, taskName: string,
     taskId: string, companyName: string, companyId: string, champion: ParticipantData, participants: [ParticipantData],
-    departmentName: string, departmentId: string, classification: classification, type: string, targetQty: number,
+    departmentName: string, departmentId: string, classification: classification, type: string, targetQty: number, complete: boolean,
     classificationName: string, classificationId: string, selectedWork: boolean, workHours: [workHours], section: Section,
-    actualStart: string, actualEnd: string, Hours: string, selectedWeekWork: boolean, selectedWeekly: boolean
+    actualStart: string, actualEnd: string, Hours: string, selectedWeekWork: boolean, selectedWeekly: boolean, start: string, end: string,
  };
 
 export interface subReport extends workItem { totalHours: number };
+
+export interface StatusWork extends workItem { status: string };
 
 // export interface sectWorkItem extends workItem { section: string, sectionNumber: number }
 

@@ -63,7 +63,7 @@ export class PopupComponent implements OnInit {
   openVerticallyCentered(content) {
     this.modalService.open(content, { centered: true });
   }
-  dataCall(){
+  dataCall() {
     this.myDocument = this.afs.collection('Users').doc(this.userId);
     this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
@@ -72,7 +72,7 @@ export class PopupComponent implements OnInit {
     }));
 
     this.userProfile.subscribe(userData => {
-      console.log(userData);
+      // console.log(userData);;
       let myData = {
         name: userData.name,
         email: this.user.email,

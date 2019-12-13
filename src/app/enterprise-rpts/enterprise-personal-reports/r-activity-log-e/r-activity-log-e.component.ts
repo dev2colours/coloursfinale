@@ -26,7 +26,8 @@ export class RActivityLogEComponent implements OnInit {
 
 	ngOnInit() {
 
-		this.rService.rOnInit_e("org2","name-list2","startdate2","enddate2")
+		//03-July-2019. Meaningful suffixes added to html components i.e. -ale for activity log enterprise
+		this.rService.rOnInit_e("org-ale","name-list-ale","startdate-ale","enddate-ale")
 
 	}
 

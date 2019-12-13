@@ -1,8 +1,13 @@
 import { Component, OnInit, AfterViewInit, AfterViewChecked, AfterContentInit } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Router } from '@angular/router';
+import { AngularFirestoreDocument, AngularFirestore } from 'angularfire2/firestore';
+import { ParticipantData } from 'app/models/enterprise-model';
+import { Observable } from 'rxjs';
+import { coloursUser } from 'app/models/user-model';
+import { map } from 'rxjs/operators';
 
-//Metadata
+// Metadata
 export interface RouteInfo {
     path: string;
     title: string;
@@ -25,21 +30,20 @@ var misc: any = {
     disabled_collapse_init: 0,
 }
 
-
-//Menu Items
+// Menu Items
 export const ROUTES: RouteInfo[] = [{
         path: '/dashboard',
         title: 'Dashboard',
         type: 'link',
         // icontype: 'nc-icon nc-bank'
         icontype: '',
-    },{
+    }, {
         path: '/notebook',
         title: 'Notebook',
         type: 'link',
         // icontype: 'fa fa-pied-piper-alt',
         icontype: '',
-    },{
+    }, {
         path: '/tasks-24/7',
         title: 'Tasks 24/7',
         type: 'link',
@@ -113,15 +117,29 @@ export const ROUTES: RouteInfo[] = [{
 
 export class SidebarComponent {
     public menuItems: any[];
-    public show: boolean = true;
+    public show = true;
     public buttonName: any = 'Show';
     user: firebase.User;
+    myDocument: AngularFirestoreDocument<{}>;
+    userProfile: Observable<coloursUser>;
+    myData: ParticipantData;
 
-    constructor(public afAuth: AngularFireAuth, private router : Router) {
-
+    constructor( public afs: AngularFirestore, public afAuth: AngularFireAuth, private router: Router) {
+        this.myData = {
+            name: '',
+            email: '',
+            bus_email: '',
+            id: '',
+            phoneNumber: '',
+            photoURL: '',
+            address: '',
+            nationality: '',
+            nationalId: ''
+          }
         afAuth.authState.subscribe(user => {
             console.log(user);
             this.user = user;
+            this.getData();
         });
     }
 
@@ -134,6 +152,51 @@ export class SidebarComponent {
     //     else
     //         this.buttonName = "Show";
     // }
+
+    getData() {
+        this.myDocument = this.afs.collection('Users').doc(this.user.uid);
+        this.userProfile = this.myDocument.snapshotChanges().pipe(map(a => {
+            const data = a.payload.data() as coloursUser;
+            const id = a.payload.id;
+            return { id, ...data };
+          }));
+        this.userProfile.subscribe(userData => {
+            // console.log(userData);;
+            const myData = {
+              name: userData.name,
+              email: this.user.email,
+              bus_email: userData.bus_email,
+              id: this.user.uid,
+              phoneNumber: userData.phoneNumber,
+              photoURL: this.user.photoURL,
+              address: userData.address,
+              nationality: userData.nationality,
+              nationalId: userData.nationalId,
+            }
+            if (userData.address === '' || userData.address === null || userData.address === undefined) {
+              userData.address = ''
+            }  else {}
+
+            if (userData.phoneNumber === '' || userData.phoneNumber === null || userData.phoneNumber === undefined) {
+              userData.phoneNumber = ''
+            } else {}
+
+            if (userData.bus_email === '' || userData.bus_email === null || userData.bus_email === undefined) {
+              userData.bus_email = ''
+            } else {}
+
+            if (userData.nationalId === '' || userData.nationalId === null || userData.nationalId === undefined) {
+              userData.nationalId = ''
+            } else {}
+
+            if (userData.nationality === '' || userData.nationality === null || userData.nationality === undefined) {
+              userData.nationality = ''
+            } else {}
+
+            this.myData = myData;
+            // this.userData = userData;
+          })
+    }
 
     minimizeSidebar() {
         const body = document.getElementsByTagName('body')[0];
@@ -167,24 +230,23 @@ export class SidebarComponent {
 
     logout() {
         // this.afAuth.auth.signOut();
-        this.afAuth.auth.signOut().then(()=>{
+        this.afAuth.auth.signOut().then(() => {
             this.router.navigate(['./pages/login'])
         })
         // this.router.navigate(['./pages/login'])
     }
 
-    isNotMobileMenu(){
-        if( window.outerWidth > 991){
+    isNotMobileMenu() {
+        if ( window.outerWidth > 10) {
             return false;
         }
         return true;
     }
 
     ngOnInit() {
-        
         this.menuItems = ROUTES.filter(menuItem => menuItem);
     }
-    ngAfterViewInit(){
-    
-    }
+    // ngAfterViewInit() {
+
+    // }
 }

@@ -1,0 +1,23 @@
+
+<ngx-charts-line-chart
+  [view]=[300,200]
+  [scheme]="colorScheme"
+  [results]="multi"
+  [gradient]="gradient"
+  [xAxis]="showXAxis"
+  [yAxis]="showYAxis"
+  [legend]="false"
+  [xAxisLabel]="xAxisLabel"
+  [yAxisLabel]="yAxisLabel"
+  [showXAxisLabel]="nshowXAxisLabel"
+  [showYAxisLabel]="nshowYAxisLabel"
+  [roundDomains]="true"
+  [autoScale]="autoScale"
+  (select)="onSelect($event)">
+</ngx-charts-line-chart>
+
+<!-- 
+  [view]="view" [view]=[320,200]
+  [xAxisLabel]="xAxisLabel"
+  [yAxisLabel]="yAxisLabel"
+-->

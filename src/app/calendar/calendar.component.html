@@ -3,18 +3,40 @@
     <div class="col-md-12">
       <div class="card">
         <div class="row">
-          <div class="col-md-10">
+          <div class="col-md-7">
             <div class="card-header" *ngIf="afAuth.user | async as user" style=" margin-top: -2.5em;">
-              <!-- <h4 class="card-category clrs-h1-font"> -->
-              <h4 class="card-category clrs-h1-font"><!-- style="height: 28px; font-size: 8;" clrs-h4-font -->
-                Hi : {{ user.displayName }}
-                <!-- Hi {{ myData.name }} -->
+              <h4 class="clrs-h1-font">
+                <span *ngIf=" myData?.name === null; else showmynaam">
+                    <span class="clrs-h4-font" style="color: #333366;">{{ user?.email }}</span>
+                </span>
+                <ng-template #showmynaam>
+                  <span *ngIf="myData.name !== ''; else showmyEmam" class="title card-category" style="color: #333366;">
+                    Hi {{ myData?.name }}
+                  </span>
+                  <ng-template #showmyEmam>
+                    <span class="clrs-h4-font" style="color: #333366;">{{ myData?.email }}</span>
+                  </ng-template>
+                </ng-template>
               </h4>
             </div>
           </div>
-          <div class="col-md-2">
-            <!-- <button class="btn-link btn-magnify" (click)="Update()">Update</button> -->
-            <button hidden class="btn-link btn-magnify" (click)="update2()">Update</button>
+          <div *ngIf="getSearch" class="row col-md-5 pull-left" style="padding-top: 15px">
+            <div class="col-md-3">
+              <button class="btn-link btn-magnify" (click)="displayPt()">Cancel</button>
+            </div>
+            <div class="col-md-9">
+              <div class="input-group pull-left" [ngClass]="{'input-group-focus':focus===true}">
+                <input id ="input" type="text" class="form-control  pull-left" placeholder="Search..." (keyup)="searchresult()"
+                  name="Inputinn" (focus)="focus=true" (blur)="focus=false" [(ngModel)]="value"/>
+                <div class="input-group-append" type="button" style="height: 35px;">
+                  <span class="input-group-text" style="padding-bottom: 7px; padding-left: 10px;" (click)="searchresult()"><i class="nc-icon nc-zoom-split"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!getSearch" class="col-md-5 ml-auto">
+            <button class="btn-link btn-magnify input-group-text pull-right" style="padding-bottom: 7px; padding-left: 10px;" (click)="gotoSearch()"><i class="nc-icon nc-zoom-split"></i></button>
+            <button hidden class="btn-link btn-magnify pull-right" (click)="update2()">Update</button>
           </div>
         </div>
         <div class="card-body">
@@ -24,24 +46,22 @@
                 <div class="nav-tabs-wrapper">
                   <ul class="nav nav-tabs flex-column nav-stacked text-left" role="tablist">
                     <li class="nav-item">
-                      <a class="nav-link active" href="#dash" role="tab" (click)="minimizeSidebar()" data-toggle="tab">Dashboard</a>
-                    </li>
+                      <a class="nav-link active" routerLink="/tasks-24/7" role="tab" (click)="minimizeSidebar()" data-toggle="tab">Dashboard</a>
+                    </li><!--  href="#dash" -->
                     <li class="nav-item">
-                      <a class="nav-link" href="#standards" role="tab" (click)="minimizeSidebar()" data-toggle="tab">Standards</a>
-                    </li>
+                      <a class="nav-link" routerLink="/standards" role="tab" (click)="minimizeSidebar()" data-toggle="tab">Standards</a>
+                    </li><!--  href="#standards" -->
                     <li class="nav-item">
-                      <a class="nav-link" href="#setup" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Setup</a>
-                    </li>
+                      <a class="nav-link" routerLink="/set-up" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Setup</a>
+                    </li><!--  href="#setup" -->
                     <li class="nav-item">
-                      <a class="nav-link" href="#planning" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Planning</a>
-                    </li>
+                      <a class="nav-link" routerLink="/planning" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Planning</a>
+                    </li><!--  href="#planning" -->
                     <li class="nav-item">
-                      <a class="nav-link" href="#implem" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Implementation</a>
-                    </li>
+                      <a class="nav-link" routerLink="/implementation" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Implementation</a>
+                    </li><!--  href="#implem" -->
                     <li class="nav-item">
-                       <!-- Amended 19-June-19 By VJ Sibanda -->     
                        <a class="nav-link" (click)="minimizeSidebar()" routerLink="/personal-r" role="tab" data-toggle="tab">Reporting</a>
-                      <!--a class="nav-link" href="#reports" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Reporting</a>-->
                     </li>
                     <li class="nav-item">
                       <a class="nav-link nav-colors" href="#popups" (click)="minimizeSidebar();" role="tab" data-toggle="tab">Diary</a>
@@ -50,7 +70,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto" style="padding-right: 0px;padding-left: 0px;"> <!--  dash-size  -->
+            <div *ngIf="!getSearch" class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto" style="padding-right: 0px;padding-left: 0px;"> <!--  dash-size  -->
               <div class="tab-content" style="padding-left:0px">
                 <div class="tab-pane active" id="dash">
                   <div class="row">
@@ -69,37 +89,25 @@
                           <div class="spacer" style="height: 2.4em;"></div>
                           <div class="row" style="height: 100px" >
                             <div  id="container">
-                              <!-- <div class="content container scroll-em" *ngIf="showActions"> -->
-                              <!-- <div class="content container scroll-em" *ngIf="myActionItems.length != 0"> -->
                               <div class="content container scroll-em" *ngIf="actionNo !== 0">
-                                <!-- <ol>
-                                  <li class="" style="color:steelblue" *ngFor="let event of myActionItems">
-                                      <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em">
-                                        <a style="color:slategrey">
-                                          {{ event.name }}<span class="label text-warning"> {{ event.when }}</span>
-                                        </a>
-                                      </div>
-                                  </li>
-                                </ol> -->
-                                <ol style="list-style-type:none;padding-left: 12px;">
-                                  <li class="" style="color:steelblue" *ngFor="let event of maActivities">
-                                    <!-- <div class="row"> -->
-                                    <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em">
-                                      <!-- margin-left:1.0em; -->
-                                      <a style="color:slategrey" [ngStyle]="{color: event.txtColours}">
-                                        <span class="label text-warning"> {{ event.start }}</span> {{ event.name }}
+                                <ol style="list-style-type:none;padding-left: 28px;">
+                                  <li class="" style="color:steelblue" *ngFor="let event of stdWorks">
+                                  <!-- <li class="" style="color:steelblue" *ngFor="let event of maActivities"> -->
+                                    <div class="" style="margin-left: 2px; margin-right:-.5em">
+                                      <a class="nameCol" style="color:slategrey" [ngStyle]="{color: event.txtColours}">
+                                        <span class="row">
+                                          <span class="label text-warning" style="width: 4em; padding-left: 1em"> {{ event.start }}</span>
+                                          <span class="nameCol" style="padding-left: 0.5em"> {{ event.name }}</span>
+                                        </span>
                                       </a>
                                     </div>
-                                    <!-- </div> -->
                                   </li>
                                 </ol>
                               </div>
-                              <!-- <div class="content container scroll-em" *ngIf="hideActions"> -->
-                              <!-- <div class="content container scroll-em" *ngIf="myActionItems.length === 0"> -->
                               <div class="content container scroll-em" *ngIf="actionNo == 0">
                                 <div class="row">
                                   <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
-                                    <ol>
+                                    <ol style="list-style-type:none;">
                                       <li>
                                         <!-- <div class="row"> -->
                                           <a style="color:lightgrey">
@@ -147,13 +155,13 @@
                           <hr>
                           <div class="row">
                             <div class="col-sm-7">
-                              <div class="footer-title">View more.....</div>
+                              <!-- <div class="footer-title">View more.....</div> -->
                             </div>
                             <div class="col-sm-5">
                               <div class="pull-right">
-                                <button class="btn btn-success btn-round btn-icon btn-sm">
+                                <!-- <button class="btn btn-success btn-round btn-icon btn-sm">
                                   <i class="nc-icon nc-simple-add"></i>
-                                </button>
+                                </button> -->
                               </div>
                             </div>
                           </div>
@@ -177,15 +185,18 @@
                           <div class="spacer" style="height:2.4em;"></div>
                           <div class="col-sm-10" id="pTasklist" style="height: 100px"><!--  style="margin-left: 2em" -->
                             <div class="content container scroll-em" *ngIf="showProjs">
-                              <ol>
-                                  <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let project of myProjects | async"><a [routerLink]="[ '/projects/', project.id ]" style="color:slategray"><span class="text-info">{{ project.name }}</span></a>
+                              <ol style="list-style-type:none;padding-left: 18px;">
+                                  <li class="col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let project of myProjects | async">
+                                    <a class="nameCol" [routerLink]="[ '/projects/', project.id ]" style="color:slategray">
+                                      <span class="nameCol" style="color:#333366">{{ project.name }}</span>
+                                    </a>
                                   </li>
                               </ol>
                             </div>
                             <div class="content container scroll-em" *ngIf="hideProjs">
                               <div class="row">
                                 <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
-                                  <ol>
+                                  <ol style="list-style-type:none;">
                                     <li>
                                       <!-- <div class="row"> -->
                                         <a style="color:lightgrey">
@@ -228,13 +239,13 @@
                           <hr>
                           <div class="row">
                             <div class="col-sm-7">
-                              <div class="footer-title">View more.....</div>
+                              <!-- <div class="footer-title">View more.....</div> -->
                             </div>
                             <div class="col-sm-5">
                               <div class="pull-right">
-                                <button class="btn btn-danger btn-round btn-icon btn-sm">
+                                <!-- <button class="btn btn-danger btn-round btn-icon btn-sm">
                                   <i class="nc-icon nc-button-play"></i>
-                                </button>
+                                </button> -->
                               </div>
                             </div>
                           </div>
@@ -244,25 +255,25 @@
                     <div class="col-xs-3 col-sm-4 ml-auto mar-auto dash-col-right">
                       <div class="card card-category">
                         <div class="btn-magnify">
-                          <div class="row col-md-12 col-xs-12" style="margin-left:2em; padding-bottom: -1em ">
+                          <div class="row col-md-12 col-xs-12" style="margin-left:1em; padding-bottom: -1em ">
                             <div class="pull-left card-category clrs-h1-font">
                               <a>
                                 <i class="nc-icon nc-globe-2"></i> Colours Enterprise</a>
                             </div>
                           </div>
                           <!-- <hr class="line" style="padding-bottom:0em; padding-top: -1em"> -->
-                          <div class="pull-left col-md-12" style="margin-left:2em;padding-top: -1em; color: steelblue; ">
+                          <div class="pull-left col-md-12" style="margin-left:1em;padding-top: -1em; color: steelblue; ">
                             <a>High Priority Enterprise Tasks</a>
                           </div>
                           <!-- <div class="numbers" style="margin-left:1em; color:rgb(15, 4, 4)">High Priority Enterprise Tasks</div> -->
                           <div class="spacer" style="height:2.4em;"></div>
                           <div id="eTasklixt" style="height: 100px">
                             <div class="content">
-                              <ol>
+                              <ol style="list-style-type:none;">
                                 <li>
                                   <!-- <div class="row"> -->
                                     <div class="col-xs-12" style="margin-left:4.0em">
-                                      <a style="color:lightgrey" class="text-info">Planning
+                                      <a  style="color:#333366">Planning
                                       </a>
                                     </div>
                                   <!-- </div> -->
@@ -270,7 +281,7 @@
                                 <li>
                                   <!-- <div class="row"> -->
                                     <div class="col-xs-12" style="margin-left:4.0em">
-                                      <a style="color:lightgrey" class="text-info">Business Case
+                                      <a style="color:#333366">Business Case
                                       </a>
                                     </div>
                                   <!-- </div> -->
@@ -278,7 +289,7 @@
                                 <li>
                                   <!-- <div class="row"> -->
                                     <div class="col-sm-12" style="margin-left:3.0em; margin-right:-1em">
-                                      <a style="color:lightgrey" class="text-info">Design
+                                      <a style="color:#333366">Design
                                       </a>
                                     </div>
                                   <!-- </div> -->
@@ -286,7 +297,7 @@
                                 <li>
                                   <!-- <div class="row"> -->
                                     <div class="col-sm-12" style="margin-left:3.0em; margin-right:-1em">
-                                      <a style="color:lightgrey; margin-bottom: 0px;" class="text-info">Implementation
+                                      <a  style="color:#333366; margin-bottom: 0px;">Implementation
                                       </a>
                                     </div>
                                   <!-- </div> -->
@@ -299,13 +310,13 @@
                           <hr>
                           <div class="row">
                             <div class="col-sm-7">
-                              <div class="footer-title">View more.....</div>
+                              <!-- <div class="footer-title">View more.....</div> -->
                             </div>
                             <div class="col-sm-5">
                               <div class="pull-right">
-                                <button class="btn btn-warning btn-round btn-icon btn-sm">
+                                <!-- <button class="btn btn-warning btn-round btn-icon btn-sm">
                                   <i class="nc-icon nc-alert-circle-i"></i>
-                                </button>
+                                </button> -->
                               </div>
                             </div>
                           </div>
@@ -327,7 +338,7 @@
                             <!-- <th></th> -->
                           </thead>
                           <tbody>
-                            <tr *ngFor="let std of standards | async">
+                            <tr *ngFor="let std of standards1 | async">
                               <td class="table td-clrs">{{ std.name }}</td>
                               <td class="table td-clrs">{{ std.classificationName }}</td>
                               <td class="table td-clrs">{{ std.period }}</td>
@@ -354,13 +365,13 @@
                     <!-- <div class="col-md-10 col-md-offset-1  "> -->
                       <div class="">
                         <p class="clrs-h1-font" style="margin-top:0em; color:darkslategray">Setup Your Personal Account...</p>
-                        <p class="category" style="margin-top:-1em">Map out your main life activities.
-                          <br>These are task classifications under which you do most of your life's daily activities</p>
+                        <p class="category" style="margin-top:-1em">Setup your Colours Personal Page by grouping your general activities into a number of classifications eg Health & Excercise.</p>
+                          <!-- <br>These are task classifications under which you do most of your life's daily activities</p> -->
                       </div>
                       <!-- <div class="spacer" style="margin-top:-3em"></div> -->
                       <div class="card-content table-responsive table-full-width">
                         <table class="table">
-                          <p>My Tasks Classifications</p>
+                          <p>My General Tasks Classifications</p>
                           <tbody>
                             <tr *ngFor="let classification of classifications | async">
                               <td class="table td-clrs" *ngIf="classification.name != 'Work'">{{ classification.name }}</td>
@@ -376,8 +387,8 @@
                                 <button class="info btn-link" rel="tooltip" (click)="selectClassification(classification)" title="Click to enter standards for this classification" data-toggle="modal" data-target="#personalStandard"><i class="fa fa-file-text"></i></button>
                               </td>
                               <td class="table td-clrs">
-                                <button *ngIf="classification.name !== 'Work'" class="danger btn-link remove" (click)="deleteClass(classification)"><i class="fa fa-times"></i></button>
-                              </td>
+                                <button *ngIf="classification.name !== 'Work'" (click)="selectClassification(classification)" class="danger btn-link remove" data-toggle="modal" data-target="#delNotice"><i class="fa fa-times"></i></button>
+                              </td><!--  (click)="deleteClass(classification)" -->
                             </tr>
                             <ng-container *ngIf="workdemo">
                               <tr style="width: inherit">
@@ -758,6 +769,76 @@
                 </div>
               </div>
             </div>
+            <div *ngIf="getSearch" class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto" style="padding-right: 0px;padding-left: 0px;">
+              <div *ngIf="!viewTask">
+                <div *ngIf="value !== ''" class="row">
+                  Tasks Found {{ results?.length }}
+                    <table class="table table-striped">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col">Name </th>
+                        <th scope="col">Champion</th>
+                        <th scope="col" class="text-right">Project</th>
+                        <th scope="col" class="text-right">Enterprise</th>
+                        <th scope="col" class="text-right">Complete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let workitem of results" > 
+                        <td class="table td-clrs"><a class="text-primary" (click)="selectTask(workitem)" style="cursor: pointer;">{{ workitem.name }}</a></td>
+                        <td class="table td-clrs">{{ workitem.champion.name }}</td>
+                        <td class="table td-clrs text-right">{{ workitem.projectName }}</td>
+                        <td class="table td-clrs text-right">{{ workitem.companyName }}</td>
+                        <td class="table td-clrs text-right">{{ workitem.complete }}</td>
+                      </tr>
+                    </tbody>
+                  </table> 
+                </div>
+              </div>
+              <div *ngIf="viewTask">
+                <div class="row">
+                  <div class="card col-md-9 mr-auto ml-auto">
+                    <div class="card-body">
+                      <label>Task</label>
+                      <div class="form-group">
+                        <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                          name="tname" [(ngModel)]="setTask.name" placeholder=" {{ setTask.name }}">
+                      </div>
+                      <label>Company</label>
+                      <div class="form-group">
+                        <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                          name="tcomp" [(ngModel)]="setTask.companyName" placeholder="{{ setTask.companyName }}">
+                      </div>
+                      <label>Project</label>
+                      <div class="form-group">
+                        <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                          name="tproj" [(ngModel)]="setTask.projectName" placeholder="{{ setTask.projectName }}">
+                      </div>
+                      <label>Champion</label>
+                      <div class="form-group">
+                        <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                          name="tchamp" [(ngModel)]="setTask.champion.name" placeholder="{{ setTask.champion.name }}">
+                      </div>
+                      <label>Dept</label>
+                      <div class="form-group">
+                        <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                          name="tdept" [(ngModel)]="setTask.department" placeholder="{{ setTask.department }}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card col-md-3 mr-auto ml-auto">
+                    <div class="card-body">
+                      <button class="btn-link"><label>Add subtask</label></button><br>
+                      <button class="btn-link"><label>View subtasks</label></button><br>
+                      <button class="btn-link"><label>Comment</label></button><br>
+                      <button class="btn-link"><label>Edit</label></button><br>
+                      <button class="btn-link"><label>Delete</label></button><br>
+                      <button class="btn-link" (click)="viewList()"><label>Back</label></button><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -765,29 +846,25 @@
   </div>
 </div>
 <div class="modal fade" id="timeBudget" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
-  <!-- <div class="modal-dialog modal-lg"> -->
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="card-body ">
-        <!-- <code>Time Budget</code> -->
-        <!-- <form> -->
           <div class="card-header ">
             <p class="title clrs-h1-font">Time Budget</p>
-            <p class="category">Add or Edit the classifications Time</p>
+            <!-- <p class="category">Add or Edit the classifications Time</p> -->
           </div>
           <div class="card-body ">
             <div class="form-group">
-              <label class="control-label" for="">Plan Classifications Time in Hours
+              <label class="control-label" for="">
+                Budget your general week by allocating hours per week to each of your activity classifications
                 <span class="star">*</span>
               </label>
-
               <table class="table">
                 <thead class="title clrs-h4 text-info">
                   <th class="text-left">Classification</th>
-                  <th class="text-left">Frequence
-                    <!-- <small> (Hrs)</small> -->
+                  <th class="text-left">Hours/week
                   </th>
-                  <th>action</th>
+                  <th>Save</th>
                 </thead>
                 <tbody>
                   <tr *ngFor="let item of classificationsToDate | async">                    
@@ -805,37 +882,17 @@
                     <td class="text-center table td-clrs" style="border-bottom-style: double; padding-right:3em; border-top-color:black; border-bottom-color:black">{{ totalPlannedTime }}</td>
                     <td></td>
                   </tr>
-                  <!-- <hr> -->
-                  <!-- <tr>
-                    <td style="padding-right:4em; border-top-color:black; border-bottom-color:black"></td>
-                    <td style="padding-right:4em; border-top-color:black; border-bottom-color:black"></td>
-                  </tr> -->
                 </tbody>
               </table>
-              
-                  <div style="width:fit-content category">
-                    <small>Totals shouldn't exceed total week hours (168 hrs)</small>
-                  </div>
+                <div style="width:fit-content category">
+                  <small>Total should not exceed total hours in a week (168 hrs)</small>
+                </div>
             </div>
           </div>
           <div class="card-footer text-right">
-            <button (click)="dismissTimeBudgdet()" data-dismiss="modal" class="btn btn-warning">Dismiss</button>
+            <button (click)="dismissTimeBudgdet()" data-dismiss="modal" class="btn btn-warning">Cancel</button>
             <button (click)="dismissTimeBudgdet()" data-dismiss="modal" class="btn btn-primary">Save</button>
-            <!-- <button (click)="addTimeBudget(time)" data-dismiss="modal" class="btn btn-primary">Save</button> -->
           </div>
-        <!-- </form> -->
-
-
-
-        <!-- <div class="modal-footer" style="margin-bottom:0%">
-          <div class="left-side">
-            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
-          </div>
-          <div class="divider"></div>
-          <div class="right-side">
-            <button type="button" class="btn btn-success btn-link" data-dismiss="modal" title="save action">Enter</button>
-          </div>
-        </div> -->
       </div>
     </div>
   </div>
@@ -844,12 +901,10 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="card-body ">
-        <!-- <code>Personal Standards</code> -->
           <form >
             <div class="card-header ">
-              <h4 class="title clrs-h1-font">Classification: {{ selectedClassification.name }}</h4>
+              <h4 class="title clrs-h1-font">Avtivity Classification: <span style="color: cadetblue;">{{ selectedClassification.name }}</span></h4>
               <p class="title na-p">Add Personal Standards</p>
-              
             </div>
             <div class="card-body ">
               <div class="form-group">
@@ -878,6 +933,7 @@
               
             </div>
             <div class="footer text-center pull-right">
+              <button (click)="dismissTimeBudgdet()" data-dismiss="modal" class="btn btn-warning">Cancel</button>
               <button (click)="addPersonalStandards()" data-dismiss="modal" class="btn btn-primary">Add</button>
             </div>
           </form>
@@ -1016,3 +1072,30 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="delNotice" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notice">
+      <div class="modal-content">
+        <!-- <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            <i class="nc-icon nc-simple-remove"></i>
+          </button>
+           <h5 class="modal-title" id="myModalLabel">{{ actionSet.name }}</h5>
+        </div> -->
+        <div class="modal-body">
+          <div class="instruction">
+            <div class="row">
+              <div class="col-md-10 text-center">
+                  <p><strong>You are going to lose all the data in this classification,</strong></p>
+              </div>
+            </div>
+            <br>
+            <p>are you sure you want to proceed</p>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-danger btn-round" (click)="deleteClass()"
+              data-dismiss="modal">Confirm</button>
+          </div>
+        </div>
+      </div>
+    </div>  
+  </div>  

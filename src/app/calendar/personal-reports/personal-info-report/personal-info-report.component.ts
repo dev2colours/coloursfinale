@@ -21,17 +21,15 @@ export class PersonalInfoReportComponent implements OnInit {
 
   myDataCall() {
 
-    var docRef = this.afs.collection("Users").doc(this.userId).snapshotChanges().pipe(map(a => {
+    const docRef = this.afs.collection('Users').doc(this.userId).snapshotChanges().pipe(map(a => {
       const data = a.payload.data() as coloursUser;
       const id = a.payload.id;
       return { id, ...data };
     }));
 
     docRef.subscribe(userData => {
-      // // console.log(userData);
-
-      // userData.bodyMassIndex = Math.round(userData.bodyWeight / ((userData.bodyHeight * (1 / 100)) * ((userData.bodyHeight * (1 / 100)))));
-      let bmi = (userData.bodyWeight / ((userData.bodyHeight * (1 / 100)) * ((userData.bodyHeight * (1 / 100)))));
+      // // // console.log(userData);;
+      const bmi = (userData.bodyWeight / ((userData.bodyHeight * (1 / 100)) * ((userData.bodyHeight * (1 / 100)))));
       // // console.log(bmi.toFixed(1));
 
       userData.bodyMassIndex = Number(bmi.toFixed(1));
@@ -41,7 +39,7 @@ export class PersonalInfoReportComponent implements OnInit {
     })
 
   }
-  
+
   ngOnInit() {
     this.afAuth.user.subscribe(user => {
       // // console.log(user);
@@ -50,7 +48,7 @@ export class PersonalInfoReportComponent implements OnInit {
       // // console.log(this.userId);
       // // console.log(this.user);
 
-      let mer = this.afs.doc(`Users/${this.userId}`);
+      const mer = this.afs.doc(`Users/${this.userId}`);
 
       // // console.log(mer.valueChanges());
       this.myDataCall();

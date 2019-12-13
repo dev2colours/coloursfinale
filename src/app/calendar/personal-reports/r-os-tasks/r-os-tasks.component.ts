@@ -10,7 +10,7 @@ export class ROsTasksComponent implements OnInit {
   
   userName: any;
  
-	constructor(public rService: ReportsService){}
+	constructor(public rService: ReportsService) {}
 
     ngOnInit() {
     

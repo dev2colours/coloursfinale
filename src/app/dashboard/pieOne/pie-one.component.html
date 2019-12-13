@@ -1,0 +1,14 @@
+
+<!-- <ngx-charts-pie-chart *ngIf = "chartdata" -->
+<ngx-charts-pie-chart *ngIf="stdWorks"
+  [view]=[320,200]
+  [scheme]="colorScheme"
+  [results]="workItemData"
+  [legend]="false"
+  [explodeSlices]="explodeSlices"
+  [labels]="showLabels"
+  [doughnut]="doughnut"
+  (select)="onSelect($event)">
+</ngx-charts-pie-chart>
+
+<!-- [view]="view" [view]=[320,280] -->

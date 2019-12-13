@@ -1,6 +1,7 @@
-import { Project, workItem } from "./project-model";
-import { Enterprise, Department, ParticipantData, projectRole, service } from "./enterprise-model";
+import { Project, workItem } from './project-model';
+import { Enterprise, Department, ParticipantData, projectRole, service } from './enterprise-model';
 
+// tslint:disable-next-line: class-name
 export interface coloursUser {
     name: string,
     username: string,
@@ -19,19 +20,22 @@ export interface coloursUser {
     city: string,
     by: string,
     byId: string,
+    totalIncome: string,
+    estimatedMonthlyIncome: string,
+    networth: string,
     companyName: string,
     companyId: string,
     createdOn: string,
     id: string,
     aboutMe: String,
-    profession: [profession];
-    qualifications:[string],
+    profession: profession[];
+    qualifications: string[],
     bodyWeight: number,
-    bodyHeight:number,
+    bodyHeight: number,
     bodyMassIndex: number,
     industrySector: string,
-    personalAssets: [personalAsset],
-    personalLiabilities: [personalLiability],
+    personalAssets: personalAsset[],
+    personalLiabilities: personalLiability[],
     reference: [string],
     focusFactor: number,
     referee: [ParticipantData],
@@ -41,12 +45,12 @@ export interface coloursUser {
     updated: boolean
     // User's FOcus Factor  = (Total assets value - Total cost of liability)/ (No of companies + projects user is Involved in)
 }
-
+// tslint:disable-next-line: class-name
 export interface profession {
     name: string;
 }
-
-export interface personalAsset { 
+// tslint:disable-next-line: class-name
+export interface personalAsset {
     name: string,
     assetNumber: string,
     by: string,
@@ -55,7 +59,7 @@ export interface personalAsset {
     value: string,
     id: string
 };
-
+// tslint:disable-next-line: class-name
 export interface personalLiability {
     name: string,
     by: string,
@@ -64,15 +68,11 @@ export interface personalLiability {
     amount: string,
     id: string
 };
-
+// tslint:disable-next-line: class-name
 export interface classification {
     name?: string; createdOn: string; plannedTime?: string; actualTime: string; Varience: string; id: string
 }
-
-export interface classification {
-    name?: string; createdOn: string; plannedTime?: string; actualTime: string; Varience: string; id: string
-}
-
+// tslint:disable-next-line: class-name
 export interface personalStandards {
     classificationName: string;
     classificationId: string;
@@ -81,13 +81,13 @@ export interface personalStandards {
     createdOn: string;
     id: string,
     unit: string,
-}   
-
+}
+// tslint:disable-next-line: class-name
 export interface selectedPeriod {
     name: string;
     id: string; //  must be valid email format
 }
-
+// tslint:disable-next-line: class-name
 export interface Applicant {
     company: projectRole,
     department: Department,
@@ -104,11 +104,11 @@ export interface Applicant {
     nationalId: string,
     // roles: [service]
 }
-
+// tslint:disable-next-line: class-name
 export interface emailLogin {
     password?: string; email?: string;
 }
-
+// tslint:disable-next-line: class-name
 export interface mail {
     Subject: string,
     createdOn: string,
@@ -116,20 +116,20 @@ export interface mail {
     To: string,
     HTMLBody: any,
 }
-
+// tslint:disable-next-line: class-name
 export interface timeSheetDate {
     name: string,
     id: string
     // value: string,
     // id: string
 }
-
+// tslint:disable-next-line: class-name
 export interface classWork extends classification  {
     Hours: [work],
     totalHours: number
 }
-
-export interface work{
+// tslint:disable-next-line: class-name
+export interface work {
     WorkingTime: string,
     name: string,
     id: string,
@@ -141,6 +141,7 @@ export interface work{
 //     id: string
 // }
 
+// tslint:disable-next-line: class-name
 export interface workReport  {
     name: string,
     id: string,
@@ -152,7 +153,7 @@ export interface workReport  {
     reason: string,
     hours: number
 }
-
+// tslint:disable-next-line: class-name
 export interface unRespondedWorkReport {
     name: string,
     id: string,
@@ -162,12 +163,15 @@ export interface unRespondedWorkReport {
     tMinutes: string,
     hours: number
 }
-
+// tslint:disable-next-line: class-name
 export interface rpt extends workItem {
     wrkHours: string,
     startTime: string,
     endTime: string
 }
-
-export interface report { name: string, description: String, type: string, id: string, byId: string, byPhotoUrl: string, by: string, createdOn: string, photoUrl: string, companyName: string, companyId: string, projectName: string, projectId: string, }
+// tslint:disable-next-line: class-name
+export interface report { name: string, description: String, type: string, id: string, byId: string, byPhotoUrl: string,
+    by: string, createdOn: string, photoUrl: string, companyName: string, companyId: string, projectName: string, projectId: string, }
+// tslint:disable-next-line: class-name
 export interface comment { name: string, id: string, byId: string, by: string, createdOn: string, photoUrl: string }
+export interface TaskComment { coment: String, by: ParticipantData, createdOn: string}

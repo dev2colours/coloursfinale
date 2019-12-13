@@ -380,7 +380,7 @@ export class JoinEnterpriseComponent {
     }));
 
     this.userProfile.subscribe(userData => {
-      console.log(userData);
+      // console.log(userData);;
       let myData = {
         name: userData.name,
         email: this.user.email,

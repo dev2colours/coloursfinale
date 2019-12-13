@@ -15,8 +15,8 @@ export class RDailyPlanEComponent implements OnInit {
   }
 
   ngOnInit() {
-  
-    this.rService.rOnInit_e("org3","name-list3","startdate3","")
+    //03-July-2019. Meaningful suffixes added to html components i.e. -dpe for daily plan enterprise
+    this.rService.rOnInit_e("org-dpe","name-list-dpe","startdate-dpe","")
 
   }
 

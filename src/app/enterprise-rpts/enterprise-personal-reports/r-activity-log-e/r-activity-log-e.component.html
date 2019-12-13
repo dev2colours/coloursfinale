@@ -13,21 +13,21 @@
 <h3 id="org2" style="margin-top:-0.5em">Personal Reports</h3>
 
 <h3 style="margin-top:-0.5em">Participant:
-    <span><select id="name-list2"></select></span>
+    <span><select id="name-list-ale"></select></span>
     <span> &nbsp;&nbsp; Hierarchy:</span><span>{{rService.User_Hky}}</span></h3>
 
 <h4 style="margin-top:-0.5em">Time Sheet Report for the period from <span>
         <!-- placeholder will not work, so stuck with dd----yyyyy -->
-        <input type="date" id="startdate2">
+        <input type="date" id="startdate-ale">
     </span> to <span>
-        <input type="date" id="enddate2">
-        <button id="btn2" (click)="rService.ractivitylog_e()">Generate report for selected period</button>
+        <input type="date" id="enddate-ale">
+        <button id="btn-ale" (click)="rService.ractivitylog_e()">Generate report for selected period</button>
     </span></h4>
 
 <!-- button onclick="javascript:alert('kkkkk')">Try it</button> -->
 <!-- button (click)="rService.clearTable()">Clear table</button> -->
 <!-- Table rows and headings only -->
-<table id="TbId2">
+<table id="TbId-ale">
     <!-- headings -->
     <tr>
         <th>Sub Task</th>

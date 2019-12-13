@@ -1,0 +1,108 @@
+<!-- <div class="full-page register-page section-image" data-image="./assets/img/bg/login.png"> -->
+<div class="full-page register-page section-image" data-image="./assets/img/bg/login.png">
+  <div class="wrapper wrapper-full-page">
+      <div class="content" style="padding-top: 0px;">
+        <div class="container align-middle" style=" margin-top: 20px">
+          <div class="spacer" style="height: 2em"></div>
+          <div class="row">
+            <div class="col-md-4 ml-auto mr-auto">
+              <!-- <div class="logo" style="width: 62px; height: auto; padding: top 0em; padding-bottom:1.5em"> -->
+              <div class="logo center">
+                <div class="logo-imgn">
+                  <img src="./assets/img/faces/colours_icon2.png" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <!-- <div class="col-md-8 col-md-offset-1">
+            </div> -->
+            <div class="col-md-4 ml-auto mr-auto card"  style="background-color: transparent;">
+              <!-- <form method="#" action="#"> -->
+                <div class="card card-plain">
+                  <div [hidden]="user" class="content">
+                    <!-- <div class="card-content">
+                        <h4 style="margin-top:10px ; margin-bottom :10px; color:#333366"><a style="text-emphasis-color: #333366" routerLink="/pages/register">
+                          <font size= 2 >Already have an account?</font></a>
+                          <br><span class="clrs-logo">Sign-in to Colours</span>
+                        </h4>
+                    </div> -->
+                    <div>
+                      <h4 class="card-category na-am" style="margin-top:10px ; margin-bottom :10px; color:#333366; white-space: nowrap;">
+                        <!-- <font size=2> -->
+                          Login using Phone
+                        <!-- </font> -->
+                        ||
+                          <button type="text" class="btn-link na-am"
+                            style="margin-top:10px ; margin-bottom :10px; color:#333366" routerLink="/pages/phoneLogin"> <!--  (click)="emailLogin()" -->
+                            <!-- <font size=2> -->
+                              email
+                            <!-- </font> -->
+                          </button>
+                      </h4>
+                        <div class="card-body ">
+                          <p *ngIf="statusPhone" class="category text-danger" style="margin-top:-1em; cursor: pointer;">Phone Required</p>
+                          <div class="input-group" style="background-color: transparent;"> <!--  [ngClass]="{'input-group-focus':focus===true}"   -->
+                            <div class="input-group-prepend" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                              <span class="input-group-text">
+                                <i class="fa fa fa-phone"></i>
+                              </span>
+                            </div>
+                            <input class="mdl-textfield__input form-control" type="text" pattern="\+[0-9\s\-\(\)]+" id="phone-number" (focus)="focus=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" [(ngModel)]="phoneNumberLogin"
+                            (keyup)="checkPhone()">
+                          </div>
+                          <div id="recaptcha-container"></div>
+                            <button (click)="sendCode()">SMS Text Login Code</button>
+                          <div>
+                            <hr>
+                            <label for="code">Enter your Verification Code Here</label><br>
+                            <p *ngIf="statusVerifyCode" class="category text-danger" style="margin-bottom: 0px; cursor: pointer;">Verification Code from your text check your phone</p>
+                            <div class="input-group">
+                              <div class="input-group-prepend" style="padding-top: 0px;padding-bottom: 0px; height: 32px;">
+                                <span class="input-group-text">
+                                  <i class="nc-icon nc-key-25"></i>
+                                </span>
+                              </div>
+                              <input [(ngModel)]="vCode" (keyup)="checkCode()" name="phoneVerify" type="text" placeholder="Verification Code" class="form-control" (focus)="focus=true" style="padding-top: 0px;padding-bottom: 0px; height: 32px;" (blur)="focus=false">
+                            </div>
+                            
+                            <!-- <a class="category" style="margin-top:-1em; cursor: pointer;">Forgot your Password? </a> -->
+                            <div class="card-footer text-left card-category">
+                              <a class="btn btn-info btn-link btn-round" style="color:#fafafa;background-color: #333366;" (click)="verifyCode()">Verify</a>
+                            </div>
+                          </div>
+                          
+                          <br>
+                        </div>
+                    </div>
+                  </div>
+                  <div *ngIf="user">
+                    You have successfully logged in with your phone number!
+                    UserId: {{ user?.uid }}
+                    <a class="btn btn-info btn-link btn-round" style="color:#fafafa;background-color: #333366;" (click)="logout()">Sign Out</a>                  
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+<style>
+  .clrs-logo{
+      font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      /* font-family: AR ESSENCE; */
+      /* color: steelblue; */
+      font-size: 30px;
+      backface-visibility: visible
+  }
+  .na-am{
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      font-size: 20px;
+
+  }
+  .tmColor {
+    color: #333366;
+  }
+  </style>

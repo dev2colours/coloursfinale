@@ -18,12 +18,12 @@ import * as firebase from 'firebase/app';
 declare var $: any;
 
 @Component({
-    moduleId:module.id,
+    moduleId: module.id,
     selector: 'register-cmp',
     templateUrl: './register.component.html'
 })
 
-export class RegisterComponent implements OnInit{
+export class RegisterComponent implements OnInit {
 
     actionCodeSettings = {
         // URL you want to redirect back to. The domain (www.example.com) for this
@@ -41,14 +41,14 @@ export class RegisterComponent implements OnInit{
         // },
         dynamicLinkDomain: 'http://www.colourssystem.com/'
     };
-    showless: boolean = false;
-    show1: boolean = false;
-    showmoreP: boolean = false;
-    showlessP: boolean = false;
-    showmoreE: boolean = true;
-    showlessE: boolean = true;
-    showEmailRegister: boolean = true;
-    showemailLogin: boolean = false;
+    showless =  false;
+    show1 =  false;
+    showmoreP =  false;
+    showlessP =  false;
+    showmoreE =  true;
+    showlessE =  true;
+    showEmailRegister =  true;
+    showemailLogin =  false;
     emailPasswordLogin: emailLogin;
 
     test: Date = new Date();
@@ -59,22 +59,22 @@ export class RegisterComponent implements OnInit{
     user: firebase.User;
     userId: string;
     userCollection: Observable<any[]>;
-    nullLoginEmail: boolean = true;
-    statusLoginEmail: boolean = false;
-    nullSigninEmail: boolean = true;
-    statusSigninEmail: boolean = false;
-    nullLoginPwd: boolean = true;
-    statusLoginPwd: boolean = false;
-    nullSigninPwd: boolean = true;
-    statusSigninPwd: boolean = false;
+    nullLoginEmail =  true;
+    statusLoginEmail =  false;
+    nullSigninEmail =  true;
+    statusSigninEmail =  false;
+    nullLoginPwd =  true;
+    statusLoginPwd =  false;
+    nullSigninPwd =  true;
+    statusSigninPwd =  false;
     emailId: string;
-    emailVerifiedinit: boolean = false;
-    emailVerified: boolean = true;
+    emailVerifiedinit =  false;
+    emailVerified =  true;
     emailUser: firebase.User;
     passwordTest: string;
     // cuser: coloursUser
-    passCheck: boolean = false;
-    misMatch: boolean = false;
+    passCheck =  false;
+    misMatch =  false;
 
     private future: Date;
     private futureString: string;
@@ -85,23 +85,31 @@ export class RegisterComponent implements OnInit{
     mytime: number;
     nMin: any;
     nHrs: any;
+    userData: any;
 
-    constructor(private element: ElementRef, private router: Router, public afAuth: AngularFireAuth, private afs: AngularFirestore, private pns: PersonalService, private as: AuthService) {
+    constructor(private element: ElementRef, private router: Router, public afAuth: AngularFireAuth, private afs: AngularFirestore,
+        private pns: PersonalService, private as: AuthService) {
         // pns.dataCall();
         this.dataCall();
         this.nativeElement = element.nativeElement;
         this.sidebarVisible = false;
         this.emailPasswordLogin = { email: '', password: '' };
-        // this.emailVerified = true;        
+        // this.emailVerified = true;
         this.emailId = '';
-        this.passwordTest = "";
-
+        this.passwordTest = '';
+        this.userData = {
+            name: '',
+            email: '',
+            id: '',
+            userImg: '',
+            LastTimeLogin: new Date().toString()
+        }
 
     }
 
-    testKeyMatch(){
-        
-        if (this.passwordTest !== "" || this.passwordTest !== undefined || this.passwordTest !== null) {
+    testKeyMatch() {
+
+        if (this.passwordTest !== '' || this.passwordTest !== undefined || this.passwordTest !== null) {
             if (this.passwordTest === this.emailPasswordLogin.password) {
                 this.passCheck = true;
                 this.misMatch = false;
@@ -125,12 +133,12 @@ export class RegisterComponent implements OnInit{
     }
 
     toggleLogIn(credentials) {
-        if (credentials.email != "") {
+        if (credentials.email !== '') {
 
             this.nullLoginEmail = true;
             this.statusLoginEmail = false;
 
-            if (credentials.password != "") {
+            if (credentials.password !== '') {
 
                 this.nullLoginPwd = true;
                 this.statusLoginPwd = false;
@@ -153,36 +161,47 @@ export class RegisterComponent implements OnInit{
                     // Sign in with email and pass.
                     // [START authwithemail]
                     firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password).then(ref => {
-                        console.log("Check User collection for doc");
+                        console.log('Check User collection for doc');
 
                         console.log(ref);
                         this.coloursUserDetails = ref;
 
-                        let coloursUser = ref.user;
-                        let userData = {
+                        const coloursUser = ref.user;
+                        this.userData = {
                             name: coloursUser.displayName,
                             email: coloursUser.email,
                             id: coloursUser.uid,
                             userImg: coloursUser.photoURL,
-                            //phoneNumber: coloursUser.phoneNumber,
+                            // phoneNumber: coloursUser.phoneNumber,
                             LastTimeLogin: new Date().toString()
                         }
-                        console.log(userData);
-                        if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-                            this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
-                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
-                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                            console.log("userData is set");
+                        if (coloursUser.photoURL === null) {
+                            this.userData = '';
+                            if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                                this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                                    this.afs.collection('Users').doc(coloursUser.uid)
+                                        .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                                    });
+                                    console.log('userData is set');
+                                }).catch(error => console.error());
+                            } else {
+                                console.log('userData is not updated');
+                            }
+                        } else {
+                            if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                                this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                                    this.afs.collection('Users').doc(coloursUser.uid)
+                                        .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                                    });
+                                    console.log('userData is set');
+                                }).catch(error => console.error());
+                            } else {
+                                console.log('userData is not updated');
+                            }
                         }
-                        else {
-                            // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-
-                            console.log("userData is not updated");
-                        }
+                        // console.log(userData);;
                         let value;
-                        let setUser = this.afs.collection('Users').doc(coloursUser.uid);
+                        const setUser = this.afs.collection('Users').doc(coloursUser.uid);
                         this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
                             map(b => b.map(a => {
                                 const data = a.payload.doc.data() as any;
@@ -190,20 +209,20 @@ export class RegisterComponent implements OnInit{
                                 return { id, ...data };
                             }))
                         );
-                        this.userCollection.subscribe(ref => {
-                            const index = ref.findIndex(user => user.name === userData.name);
+                        this.userCollection.subscribe(rf => {
+                            const index = rf.findIndex(usr => usr.name === this.userData.name);
                             if (index > -1) {
                                 value = ref[index].name;
                             } else {
-                                if (value === userData.name) {
-                                    setUser.update(userData);
+                                if (value === this.userData.name) {
+                                    setUser.update(this.userData);
                                 } else {
-                                    setUser.set(userData);
+                                    setUser.set(this.userData);
                                 }
                             }
                         })
                         // this.router.navigateByUrl('dashboard');
-                        //return
+                        // return
 
                         // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
                         // You can use these server side with your app's credentials to access the Twitter API.
@@ -212,12 +231,12 @@ export class RegisterComponent implements OnInit{
                         // The signed-in user info.
                         console.log(ref.credential);
 
-                        var user = ref.user;
+                        const user = ref.user;
                         // ...
                     }).catch(function (error) {
                         // Handle Errors here.
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
                         // [START_EXCLUDE]
                         if (errorCode === 'auth/wrong-password') {
                             alert('Wrong password.');
@@ -272,12 +291,12 @@ export class RegisterComponent implements OnInit{
             // [END_EXCLUDE]
         }).catch(function (error) {
             // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            const errorCode = error.code;
+            const errorMessage = error.message;
             // [START_EXCLUDE]
-            if (errorCode == 'auth/invalid-email') {
+            if (errorCode === 'auth/invalid-email') {
                 alert(errorMessage);
-            } else if (errorCode == 'auth/user-not-found') {
+            } else if (errorCode === 'auth/user-not-found') {
                 alert(errorMessage);
             }
             console.log(error);
@@ -289,10 +308,10 @@ export class RegisterComponent implements OnInit{
 
     coloursSignIn(credentials) {
 
-        if (credentials.email != "") {
+        if (credentials.email !== '') {
             this.nullSigninEmail = true;
             this.statusSigninEmail = false;
-            if (credentials.password != "") {
+            if (credentials.password !== '') {
 
                 this.nullSigninPwd = true;
                 this.statusSigninPwd = false;
@@ -303,7 +322,7 @@ export class RegisterComponent implements OnInit{
                     // [END signout]
                 } else {
                     console.log('email' + credentials.email);
-                    console.log('email' + email);
+                    // console.log('email' + email);
                     if (credentials.email.length < 4) {
                         alert('Please enter an email address.');
                         return;
@@ -320,7 +339,7 @@ export class RegisterComponent implements OnInit{
 
 
                     firebase.auth().createUserWithEmailAndPassword(credentials.email, credentials.password).then(ref => {
-                        console.log("Check User collection for doc");
+                        console.log('Check User collection for doc');
 
                         // userRef.sendEmailVerification();
                         // userRef.user.sendEmailVerification();
@@ -331,7 +350,7 @@ export class RegisterComponent implements OnInit{
 
                         console.log(firebase.auth().currentUser.providerData[0].providerId);
 
-                        let coloursUser = ref.user;
+                        const coloursUser = ref.user;
 
                         this.emailUser = coloursUser;
 
@@ -344,35 +363,46 @@ export class RegisterComponent implements OnInit{
                             // this.emailId = coloursUser.email;
 
                             if (coloursUser.emailVerified === false) {
-                                let emailVerified = false;
+                                const emailVerified = false;
                                 this.emailVerified = false;
                                 this.emailVerifiedinit = true;
                             }
 
-                            let userData = {
+                            this.userData = {
                                 name: coloursUser.displayName,
                                 email: coloursUser.email,
                                 id: coloursUser.uid,
                                 userImg: coloursUser.photoURL,
-                                //phoneNumber: coloursUser.phoneNumber,
+                                // phoneNumber: coloursUser.phoneNumber,
                                 LastTimeLogin: new Date().toString()
                             }
-                            console.log(userData);
-                            if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-                                this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
-                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
-                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                                console.log("userData is set");
 
-                            }
-                            else {
-                                // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                                console.log("userData is not updated");
+                            if (coloursUser.photoURL === null) {
+                                this.userData = '';
+                                if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                                    this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                                        this.afs.collection('Users').doc(coloursUser.uid)
+                                            .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                                        });
+                                        console.log('userData is set');
+                                    }).catch(error => console.error());
+                                } else {
+                                    console.log('userData is not updated');
+                                }
+                            } else {
+                                if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                                    this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                                        this.afs.collection('Users').doc(coloursUser.uid)
+                                            .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                                        });
+                                        console.log('userData is set');
+                                    }).catch(error => console.error());
+                                } else {
+                                    console.log('userData is not updated');
+                                }
                             }
                             let value;
-                            let setUser = this.afs.collection('Users').doc(coloursUser.uid);
+                            const setUser = this.afs.collection('Users').doc(coloursUser.uid);
                             this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
                                 map(b => b.map(a => {
                                     const data = a.payload.doc.data() as any;
@@ -380,15 +410,15 @@ export class RegisterComponent implements OnInit{
                                     return { id, ...data };
                                 }))
                             );
-                            this.userCollection.subscribe(ref => {
-                                const index = ref.findIndex(user => user.name === userData.name);
+                            this.userCollection.subscribe(rf => {
+                                const index = rf.findIndex(usr => usr.name === this.userData.name);
                                 if (index > -1) {
                                     value = ref[index].name;
                                 } else {
-                                    if (value === userData.name) {
-                                        setUser.update(userData);
+                                    if (value === this.userData.name) {
+                                        setUser.update(this.userData);
                                     } else {
-                                        setUser.set(userData);
+                                        setUser.set(this.userData);
                                     }
                                 }
                             })
@@ -402,12 +432,12 @@ export class RegisterComponent implements OnInit{
 
                         console.log(ref.credential);
 
-                        var user = ref.user;
+                        const user = ref.user;
                         // ...
                     }).catch(function (error) {
                         // Handle Errors here.
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
                         // [START_EXCLUDE]
                         if (errorCode === 'auth/wrong-password') {
                             alert('Wrong password.');
@@ -422,8 +452,7 @@ export class RegisterComponent implements OnInit{
 
                     // [END authwithemail]
                 }
-            }
-            else {
+            } else {
 
                 this.nullSigninPwd = false;
                 this.statusSigninPwd = true;
@@ -431,10 +460,8 @@ export class RegisterComponent implements OnInit{
                 console.log('Enter Your Correct Password');
 
             }
-        }
-
-        else {
-            var email = window.prompt('Please provide your email');
+        } else {
+            const email = window.prompt('Please provide your email');
             this.nullSigninEmail = false;
             this.statusSigninEmail = true;
             console.log('Enter Your Correct email');
@@ -455,8 +482,8 @@ export class RegisterComponent implements OnInit{
             // [END_EXCLUDE]
         }).catch(function (error) {
             // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            const errorCode = error.code;
+            const errorMessage = error.message;
             alert(errorCode + ' ' + errorMessage);
             console.log(error);
             // [END_EXCLUDE]
@@ -502,7 +529,7 @@ export class RegisterComponent implements OnInit{
     loginGoogle() {
         // this.as.googleSign();
         this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider()).then(ref => {
-            console.log("Check User collection for doc");
+            console.log('Check User collection for doc');
 
             console.log(firebase.auth().currentUser.providerData[0].providerId);
 
@@ -510,68 +537,52 @@ export class RegisterComponent implements OnInit{
             console.log(ref);
             this.coloursUserDetails = ref;
 
-            let coloursUser = ref.user;
-            let userData = {
+            const coloursUser = ref.user;
+            this.userData = {
                 name: coloursUser.displayName,
                 email: coloursUser.email,
                 id: coloursUser.uid,
                 userImg: coloursUser.photoURL,
-                address: "",
-                nationality: "",
-                nationalId: "",
-                bus_email: "",
+                // address: '',
+                // nationality: '',
+                // nationalId: '',
+                // bus_email: '',
                 // phoneNumber: coloursUser.phoneNumber,
                 LastTimeLogin: new Date().toString()
             }
-            console.log(userData);
-            if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-                this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
-                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
-                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                console.log("userData is set");
-
+            
+            if (coloursUser.photoURL === null) {
+                this.userData = '';
+                if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                    this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                        this.afs.collection('Users').doc(coloursUser.uid)
+                            .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                        });
+                        console.log('userData is set');
+                    }).catch(error => console.error());
+                } else {
+                    console.log('userData is not updated');
+                }
+            } else {
+                if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                    this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                        this.afs.collection('Users').doc(coloursUser.uid)
+                            .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                        });
+                        console.log('userData is set');
+                    }).catch(error => console.error());
+                } else {
+                    console.log('userData is not updated');
+                }
             }
-            else {
-                // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                console.log("userData is not updated");
-            }
-            // let value;
-            // let setUser = this.afs.collection('Users').doc(coloursUser.uid);
-            // this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
-            //     map(b => b.map(a => {
-            //         const data = a.payload.doc.data() as any;
-            //         const id = a.payload.doc.id;
-            //         return { id, ...data };
-            //     }))
-            // );
-            // this.userCollection.subscribe(ref => {
-            //     const index = ref.findIndex(user => user.name === userData.name);
-            //     if (index > -1) {
-            //         value = ref[index].name;
-            //     } else {
-            //         if (value === userData.name) {
-            //             setUser.update(userData);
-            //         } else {
-            //             setUser.set(userData);
-            //         }
-            //     }
-            // })
-            // this.router.navigateByUrl('dashboard');
-
-            //return
-
-
-
         }).catch(function (error) {
             // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            const errorCode = error.code;
+            const errorMessage = error.message;
             // The email of the user's account used.
-            var email = error.email;
+            const email = error.email;
             // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential;
+            const credential = error.credential;
             // ...
         });
     }
@@ -580,7 +591,7 @@ export class RegisterComponent implements OnInit{
 
         return this.afAuth.auth.signInWithPopup(
             new firebase.auth.TwitterAuthProvider()).then(ref => {
-                console.log("Check User collection for doc");
+                console.log('Check User collection for doc');
 
                 console.log(firebase.auth().currentUser.providerData[0].providerId);
 
@@ -588,152 +599,115 @@ export class RegisterComponent implements OnInit{
                 console.log(ref);
                 this.coloursUserDetails = ref;
 
-                let coloursUser = ref.user;
-                let userData = {
+                const coloursUser = ref.user;
+                this.userData = {
                     name: coloursUser.displayName,
                     email: coloursUser.email,
                     id: coloursUser.uid,
                     userImg: coloursUser.photoURL,
-                    //phoneNumber: coloursUser.phoneNumber,
+                    // phoneNumber: coloursUser.phoneNumber,
                     LastTimeLogin: new Date().toString()
                 }
-                console.log(userData);
-                if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-                    this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                    console.log("userData is set");
-
+               
+                if (coloursUser.photoURL === null) {
+                    this.userData = '';
+                    if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                        this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                            this.afs.collection('Users').doc(coloursUser.uid)
+                                .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                            });
+                            console.log('userData is set');
+                        }).catch(error => console.error());
+                    } else {
+                        console.log('userData is not updated');
+                    }
+                } else {
+                    if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                        this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                            this.afs.collection('Users').doc(coloursUser.uid)
+                                .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                            });
+                            console.log('userData is set');
+                        }).catch(error => console.error());
+                    } else {
+                        console.log('userData is not updated');
+                    }
                 }
-                else {
-                    // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                    console.log("userData is not updated");
-                }
-                // let value;
-                // let setUser = this.afs.collection('Users').doc(coloursUser.uid);
-                // this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
-                //     map(b => b.map(a => {
-                //         const data = a.payload.doc.data() as any;
-                //         const id = a.payload.doc.id;
-                //         return { id, ...data };
-                //     }))
-                // );
-                // this.userCollection.subscribe(ref => {
-                //     const index = ref.findIndex(user => user.name === userData.name);
-                //     if (index > -1) {
-                //         value = ref[index].name;
-                //     } else {
-                //         if (value === userData.name) {
-                //             setUser.update(userData);
-                //         } else {
-                //             setUser.set(userData);
-                //         }
-                //     }
-                // })
-                // this.router.navigateByUrl('dashboard');
-                //return
-
-
-                // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-                // You can use these server side with your app's credentials to access the Twitter API.
-                // var token = result.credential.accessToken;
-                // var secret = result.credential.secret;
-                // The signed-in user info.
                 console.log(ref.credential);
 
-                var user = ref.user;
+                const user = ref.user;
                 // ...
             }).catch(function (error) {
                 // Handle Errors here.
-                var errorCode = error.code;
-                var errorMessage = error.message;
+                const errorCode = error.code;
+                const errorMessage = error.message;
                 // The email of the user's account used.
-                var email = error.email;
+                const email = error.email;
                 // The firebase.auth.AuthCredential type that was used.
-                var credential = error.credential;
+                const credential = error.credential;
                 // ...
             });
     }
 
     signInWithFacebook() {
-        var provider = new firebase.auth.FacebookAuthProvider();
+        const provider = new firebase.auth.FacebookAuthProvider();
         firebase.auth().signInWithPopup(provider)
 
             .then(ref => {
-                console.log("Check User collection for doc");
+                console.log('Check User collection for doc');
 
                 console.log(firebase.auth().currentUser.providerData[0].providerId);
 
                 console.log(ref);
                 this.coloursUserDetails = ref;
 
-                let coloursUser = ref.user;
-                let userData = {
+                const coloursUser = ref.user;
+                this.userData = {
                     name: coloursUser.displayName,
                     email: coloursUser.email,
                     id: coloursUser.uid,
                     userImg: coloursUser.photoURL,
-                    //phoneNumber: coloursUser.phoneNumber,
+                    // phoneNumber: coloursUser.phoneNumber,
                     LastTimeLogin: new Date().toString()
                 }
-                console.log(userData);
-                if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-                    this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                    console.log("userData is set");
 
+                if (coloursUser.photoURL === null) {
+                    this.userData = '';
+                    if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                        this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                            this.afs.collection('Users').doc(coloursUser.uid)
+                                .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                            });
+                            console.log('userData is set');
+                        }).catch(error => console.error());
+                    } else {
+                        console.log('userData is not updated');
+                    }
+                } else {
+                    if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                        this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                            this.afs.collection('Users').doc(coloursUser.uid)
+                                .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                            });
+                            console.log('userData is set');
+                        }).catch(error => console.error());
+                    } else {
+                        console.log('userData is not updated');
+                    }
                 }
-                else {
-                    // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                    console.log("userData is not updated");
-                }
-                // let value;
-                // let setUser = this.afs.collection('Users').doc(coloursUser.uid);
-                // this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
-                //     map(b => b.map(a => {
-                //         const data = a.payload.doc.data() as any;
-                //         const id = a.payload.doc.id;
-                //         return { id, ...data };
-                //     }))
-                // );
-                // this.userCollection.subscribe(ref => {
-                //     const index = ref.findIndex(user => user.name === userData.name);
-                //     if (index > -1) {
-                //         value = ref[index].name;
-                //     } else {
-                //         if (value === userData.name) {
-                //             setUser.update(userData);
-                //         } else {
-                //             setUser.set(userData);
-                //         }
-                //     }
-                // })
-                // this.router.navigateByUrl('dashboard');
-                //return
 
-
-                // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-                // You can use these server side with your app's credentials to access the Twitter API.
-                // var token = result.credential.accessToken;
-                // var secret = result.credential.secret;
-                // The signed-in user info.
                 console.log(ref.credential);
 
-                var user = ref.user;
+                const user = ref.user;
                 // ...
             }).catch(function (error) {
                 // Handle Errors here.
-                var errorCode = error.code;
-                var errorMessage = error.message;
+                const errorCode = error.code;
+                const errorMessage = error.message;
                 // The email of the user's account used.
-                var email = error.email;
+                const email = error.email;
                 // The firebase.auth.AuthCredential type that was used.
-                var credential = error.credential;
+                const credential = error.credential;
                 // ...
             });
     }
@@ -753,9 +727,7 @@ export class RegisterComponent implements OnInit{
             console.log(user);
             if (user === null) {
                 // this.router.navigate(['/pages/login']);
-            }
-
-            else {
+            } else {
                 if (user !== null) {
 
                     this.user = user;
@@ -790,11 +762,10 @@ export class RegisterComponent implements OnInit{
     }
 
     checkFullPageBackgroundImage() {
-        var $page = $('.full-page');
-        var image_src = $page.data('image');
-
+        const $page = $('.full-page');
+        const image_src = $page.data('image');
         if (image_src !== undefined) {
-            var image_container = '<div class="full-page-background" style="background-image: url(' + image_src + ') "/>'
+            const image_container = '<div class="full-page-background" style="background-image: url(' + image_src + ') "/>'
             $page.append(image_container);
         }
     };
@@ -804,7 +775,7 @@ export class RegisterComponent implements OnInit{
         this.mytime = new Date().getTime()
         this.future = new Date();
 
-        var days, hours, minutes, seconds;
+        let days, hours, minutes, seconds;
         days = Math.floor(t / 86400);
         t -= days * 86400;
         hours = Math.floor(t / 3600) % 24;
@@ -819,7 +790,7 @@ export class RegisterComponent implements OnInit{
 
 
         return [
-            //days + 'd',
+            // days + 'd',
             hours + 'h',
             minutes + 'm',
             seconds + 's'
@@ -830,18 +801,18 @@ export class RegisterComponent implements OnInit{
 
         this.future = new Date();
         this.counter$ = Observable.interval(1000).map((x) => {
-            //return Math.floor((this.future.getTime() - new Date().getTime()) / 1000);
+            // return Math.floor((this.future.getTime() - new Date().getTime()) / 1000);
             return Math.floor((this.timedstamp - new Date().getTime()) / 1000);
 
-            //return Math.floor(( new Date().getTime()));
+            // return Math.floor(( new Date().getTime()));
         });
 
         this.subscription = this.counter$.subscribe((x) => this.message = this.dhms(x));
 
         this.checkFullPageBackgroundImage();
-        var body = document.getElementsByTagName('body')[0];
+        const body = document.getElementsByTagName('body')[0];
         body.classList.add('register-page');
-        var navbar: HTMLElement = this.element.nativeElement;
+        const navbar: HTMLElement = this.element.nativeElement;
         this.toggleButton = navbar.getElementsByClassName('navbar-toggle')[0];
 
         setTimeout(function () {
@@ -850,16 +821,17 @@ export class RegisterComponent implements OnInit{
         }, 700)
     }
 
+    // tslint:disable-next-line: use-life-cycle-interface
     ngOnDestroy() {
-        var body = document.getElementsByTagName('body')[0];
+        const body = document.getElementsByTagName('body')[0];
         body.classList.remove('register-page');
     }
 
     sidebarToggle() {
-        var toggleButton = this.toggleButton;
-        var body = document.getElementsByTagName('body')[0];
-        var sidebar = document.getElementsByClassName('navbar-collapse')[0];
-        if (this.sidebarVisible == false) {
+        const toggleButton = this.toggleButton;
+        const body = document.getElementsByTagName('body')[0];
+        const sidebar = document.getElementsByClassName('navbar-collapse')[0];
+        if (this.sidebarVisible === false) {
             setTimeout(function () {
                 toggleButton.classList.add('toggled');
             }, 500);

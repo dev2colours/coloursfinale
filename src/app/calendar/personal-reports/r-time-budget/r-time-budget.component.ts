@@ -13,7 +13,7 @@ export class RTimeBudgetComponent implements OnInit {
   
   //05-May-2019: Use constructor for declaring services. Not a good idea to call functions here
 	// although that can be done inside {}. (see Heroes tutorial on injectable services)
-	constructor(public rService: ReportsService){}
+	constructor(public rService: ReportsService) {}
 
   ngOnInit() {
     

@@ -1,0 +1,80 @@
+<div class="main-content">
+  <div class="row col-md-9 ml-auto mr-auto">
+    <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+      <input id ="input" type="text" class="form-control" placeholder="Search..." 
+        name="Inputnn" (focus)="focus=true" (blur)="focus=false" [(ngModel)]="value"/>
+      <div class="input-group-append" type="button">
+        <span class="input-group-text" style="padding-bottom: 7px; padding-left: 10px;" (click)="searchresult()"><i class="nc-icon nc-zoom-split"></i></span>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!viewTask">
+    <div *ngIf="value !== ''" class="row">
+      Tasks Found {{ results?.length }}
+        <table class="table table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Name </th>
+            <th scope="col">Champion</th>
+            <th scope="col" class="text-right">Project</th>
+            <th scope="col" class="text-right">Enterprise</th>
+            <!-- <th scope="col" class="text-right">Rate $/unit </th> -->
+            <th scope="col" class="text-right">Complete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let workitem of results" > 
+            <td><a class="text-primary" (click)="selectTask(workitem)">{{ workitem.name }}</a></td>
+            <td>{{ workitem.champion.name }}</td>
+            <td class="text-right">{{ workitem.projectName }}</td>
+            <td class="text-right">{{ workitem.companyName }}</td>
+            <td class="text-right">{{ workitem.complete }}</td>
+          </tr>
+        </tbody>
+      </table> 
+    </div>
+  </div>
+  <div *ngIf="viewTask">
+    <div class="row col-md-11 mr-auto ml-auto">
+      <div class="card col-md-8 mr-auto ml-auto">
+        <div class="card-body">
+          <label>Task</label>
+          <div class="form-group">
+            <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+              name="tname" [(ngModel)]="setTask.name" placeholder=" {{ setTask.name }}">
+          </div>
+          <label>Company</label>
+          <div class="form-group">
+            <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+              name="tcomp" [(ngModel)]="setTask.companyName" placeholder="{{ setTask.companyName }}">
+          </div>
+          <label>Project</label>
+          <div class="form-group">
+            <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+              name="tproj" [(ngModel)]="setTask.projectName" placeholder="{{ setTask.projectName }}">
+          </div>
+          <label>Champion</label>
+          <div class="form-group">
+            <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+              name="tchamp" [(ngModel)]="setTask.champion.name" placeholder="{{ setTask.champion.name }}">
+          </div>
+          <label>Dept</label>
+          <div class="form-group">
+            <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+              name="tdept" [(ngModel)]="setTask.department" placeholder="{{ setTask.department }}">
+          </div>
+        </div>
+      </div>
+      <div class="card col-md-3 mr-auto ml-auto">
+        <div class="card-body">
+          <button class="btn-link"><label>Add subtask</label></button><br>
+          <button class="btn-link"><label>View subtasks</label></button><br>
+          <button class="btn-link"><label>Comment</label></button><br>
+          <button class="btn-link"><label>Edit</label></button><br>
+          <button class="btn-link"><label>Delete</label></button><br>
+          <button class="btn-link" (click)="viewList()"><label>Back</label></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>      

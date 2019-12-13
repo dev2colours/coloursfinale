@@ -144,7 +144,7 @@
 //     return ActionArrayAll;
 //   }
 
-/* startView(){
+/* startView() {
 
     // this.viewPeriodTimeSheets = this.afs.collection('Users').doc(this.userId).collection('TimeSheets');
     let sheetRef = this.afs.collection('Users').doc(this.userId).collection('TimeSheets');

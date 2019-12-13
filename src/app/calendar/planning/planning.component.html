@@ -1,0 +1,359 @@
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="row">
+          <div class="col-md-7">
+            <div class="card-header" *ngIf="afAuth.user | async as user" style=" margin-top: -2.5em;">
+              <h4 class="clrs-h1-font">
+                <span *ngIf=" myData?.name === null; else showmynaam">
+                    <span class="clrs-h4-font" style="color: #333366;">{{ user?.email }}</span>
+                </span>
+                <ng-template #showmynaam>
+                  <span *ngIf="myData.name !== ''; else showmyEmam" class="title card-category" style="color: #333366;">
+                    Hi {{ myData?.name }}
+                  </span>
+                  <ng-template #showmyEmam>
+                    <span class="clrs-h4-font" style="color: #333366;">{{ myData?.email }}</span>
+                  </ng-template>
+                </ng-template>
+              </h4>
+            </div>
+          </div>
+          <div *ngIf="getSearch" class="row col-md-5 pull-left" style="padding-top: 15px">
+            <div class="col-md-3">
+              <button class="btn-link btn-magnify" (click)="displayPt()">Cancel</button>
+            </div>
+            <div class="col-md-9">
+              <div class="input-group pull-left" [ngClass]="{'input-group-focus':focus===true}">
+                <input id ="input" type="text" class="form-control  pull-left" placeholder="Search..." (keyup)="searchresult()"
+                  name="Inputinn" (focus)="focus=true" (blur)="focus=false" [(ngModel)]="value"/>
+                <div class="input-group-append" type="button" style="height: 35px;">
+                  <span class="input-group-text" style="padding-bottom: 7px; padding-left: 10px;" (click)="searchresult()"><i class="nc-icon nc-zoom-split"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!getSearch" class="col-md-5 ml-auto">
+            <button class="btn-link btn-magnify input-group-text pull-right" style="padding-bottom: 7px; padding-left: 10px;" (click)="gotoSearch()"><i class="nc-icon nc-zoom-split"></i></button>
+            <button hidden class="btn-link btn-magnify pull-right">Update</button><!--  (click)="update2()" -->
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="clrs-tabs">
+              <div class="nav-tabs-navigation vertical-navs">
+                <div class="nav-tabs-wrapper">
+                  <ul class="nav nav-tabs flex-column nav-stacked text-left" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link" routerLink="/tasks-24/7" role="tab" (click)="minimizeSidebar()" data-toggle="tab">Dashboard</a>
+                    </li><!--  href="#dash" -->
+                    <li class="nav-item">
+                      <a class="nav-link" routerLink="/standards" role="tab" (click)="minimizeSidebar()" data-toggle="tab">Standards</a>
+                    </li><!--  href="#standards" -->
+                    <li class="nav-item">
+                      <a class="nav-link" routerLink="/set-up" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Setup</a>
+                    </li><!--  href="#setup" -->
+                    <li class="nav-item">
+                      <a class="nav-link active" routerLink="/planning" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Planning</a>
+                    </li><!--  href="#planning" -->
+                    <li class="nav-item">
+                      <a class="nav-link" routerLink="/implementation" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Implementation</a>
+                    </li><!--  href="#implem" -->
+                    <li class="nav-item">
+                       <a class="nav-link" (click)="minimizeSidebar()" routerLink="/personal-r" role="tab" data-toggle="tab">Reporting</a>
+                      <!--a class="nav-link" href="#reports" (click)="minimizeSidebar()" role="tab" data-toggle="tab">Reporting</a>-->
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-colors" href="#popups" (click)="minimizeSidebar();" role="tab" data-toggle="tab">Diary</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!getSearch" class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto" style="padding-right: 0px;padding-left: 0px;"> <!--  dash-size  -->
+              <div class="tab-content" style="padding-left:0px">
+                <div class="tab-pane active" id="planning">
+                  <app-map-task></app-map-task>
+                </div>
+                <div class="tab-pane" id="reports">
+                  <p class="clrs-h1-font" style="margin-top:0em; color:darkslategray">Personal Report...</p>
+                  <div class="col-md-12">
+                    <div class="card">
+                      <!-- <div class="card-header">
+                        <h5>Horizontal Tabs</h5>
+                      </div> -->
+                      <div class="card-body" style="margin-top: -3em">
+                        <div class="nav-tabs-navigation">
+                          <div class="nav-tabs-wrapper">
+                            <ul id="tabs" class="nav nav-tabs" role="tablist">
+                              <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#personal" role="tab" aria-expanded="true">Private</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#public" role="tab" aria-expanded="false">Public</a>
+                              </li>
+                              <!-- <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#company" role="tab" aria-expanded="false">Preferences</a>
+                              </li> -->
+                            </ul>
+                          </div>
+                        </div>
+                        <div id="my-tab-content" class="tab-content text-center">
+                          <!-- start Here -->
+                          
+                          <div class="tab-pane active" id="personal" role="tabpanel" aria-expanded="true">
+                            <!-- <code>personal</code> -->
+
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <p class="text-left title card-category" style="color: darkslategray">
+                                    Many other Reports and Metrics are coming up covering all corners of a project, an enterprise and personal life
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../PersonalWeeklyPlan-report">My Weekly Plan</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../PersonalDailyPlan-report">My Daily Plan</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../outstandingTask-report">Outstanding Tasks</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../timeSpent-report">Total time spent on an activity in a period</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          
+                          
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../activity-reportLog">Time sheet report in a period</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          
+                          
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../total-actions">My Time Sheet for each day</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          
+                          
+
+                            <!-- <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../classification-log">My Summarized Time Sheet as @</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div> -->
+                          
+                          
+                            
+                          </div>
+
+
+                          <div class="tab-pane" id="public" role="tabpanel" aria-expanded="true">
+
+                            <!-- <code>public</code> -->
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <p class="text-left title card-category" style="color: darkslategray">
+                                    Many other Reports and Metrics are coming up covering all corners of a project, an enterprise and personal life
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../PersonalWeeklyPlan-report">My Weekly Plan</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../PersonalDailyPlan-report">My Daily Plan</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../outstandingTask-report">Outstanding Tasks</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../timeSpent-report">Total time spent on an activity in a period</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          
+                          
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../activity-reportLog">Time sheet report in a period</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          
+                          
+                            <div class="col-md-12 ml-auto mr-auto">
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <p class="text-left title " style="color: darkslategray">
+                                    <span> <a routerLink="../../total-actions">My Time Sheet for each day</a></span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- End Here -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane" id="popups">
+                  <!-- <app-timesheet></app-timesheet> -->
+                  <app-diary></app-diary>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="getSearch" class="col-lg-9 col-md-8 col-sm-8 col-8 ml-auto mr-auto" style="padding-right: 0px;padding-left: 0px;">
+              <div *ngIf="!viewTask">
+                <div *ngIf="value !== ''" class="row">
+                  Tasks Found {{ results?.length }}
+                    <table class="table table-striped">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col">Name </th>
+                        <th scope="col">Champion</th>
+                        <th scope="col" class="text-right">Project</th>
+                        <th scope="col" class="text-right">Enterprise</th>
+                        <th scope="col" class="text-right">Complete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let workitem of results" > 
+                        <td class="table td-clrs"><a class="text-primary" (click)="selectTask(workitem)" style="cursor: pointer;">{{ workitem.name }}</a></td>
+                        <td class="table td-clrs">{{ workitem.champion.name }}</td>
+                        <td class="table td-clrs text-right">{{ workitem.projectName }}</td>
+                        <td class="table td-clrs text-right">{{ workitem.companyName }}</td>
+                        <td class="table td-clrs text-right">{{ workitem.complete }}</td>
+                      </tr>
+                    </tbody>
+                  </table> 
+                </div>
+              </div>
+              <div *ngIf="viewTask">
+                <div class="row">
+                  <div class="card col-md-9 mr-auto ml-auto">
+                    <div class="card-body">
+                      <label>Task</label>
+                      <div class="form-group">
+                        <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                          name="tname" [(ngModel)]="setTask.name" placeholder=" {{ setTask.name }}">
+                      </div>
+                      <label>Company</label>
+                      <div class="form-group">
+                        <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                          name="tcomp" [(ngModel)]="setTask.companyName" placeholder="{{ setTask.companyName }}">
+                      </div>
+                      <label>Project</label>
+                      <div class="form-group">
+                        <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                          name="tproj" [(ngModel)]="setTask.projectName" placeholder="{{ setTask.projectName }}">
+                      </div>
+                      <label>Champion</label>
+                      <div class="form-group">
+                        <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                          name="tchamp" [(ngModel)]="setTask.champion.name" placeholder="{{ setTask.champion.name }}">
+                      </div>
+                      <label>Dept</label>
+                      <div class="form-group">
+                        <input type="text" class="form-control" style="padding-top: 0px;padding-bottom: 0px; height: 32px;"
+                          name="tdept" [(ngModel)]="setTask.department" placeholder="{{ setTask.department }}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card col-md-3 mr-auto ml-auto">
+                    <div class="card-body">
+                      <button class="btn-link"><label>Add subtask</label></button><br>
+                      <button class="btn-link"><label>View subtasks</label></button><br>
+                      <button class="btn-link"><label>Comment</label></button><br>
+                      <button class="btn-link"><label>Edit</label></button><br>
+                      <button class="btn-link"><label>Delete</label></button><br>
+                      <button class="btn-link" (click)="viewList()"><label>Back</label></button><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>  

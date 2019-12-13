@@ -42,11 +42,8 @@ export class UserComponent{
 
 
 
-    constructor(public afAuth: AngularFireAuth, private ps: PersonalService, private afs: AngularFirestore, public router: Router){
-        // afAuth.authState.subscribe(user => {
-        //     console.log(user);
-        //     this.user = user;
-        // });
+    constructor(public afAuth: AngularFireAuth, private ps: PersonalService, private afs: AngularFirestore, public router: Router) {
+
         this.user$ = this.afAuth.authState.pipe(
             switchMap(user => {
                 if (user) {
@@ -56,16 +53,19 @@ export class UserComponent{
                 }
             })
         );
-        this.userData = { name: "", gender: "", dob: "", age: 0, username: "", email: "", bus_email: "", phoneNumber: "", telephone: null, address: "", nationalId: "", nationality: "", zipCode: null, country: "", city: "", by: "", byId: "", companyName: "", companyId: "", createdOn: "", id: "", aboutMe: "", profession: null, qualifications: null, bodyWeight: 0, bodyHeight: 0, bodyMassIndex: 0, industrySector: "", personalAssets: null, personalLiabilities: null, reference: null, focusFactor: 0, userImg: "", LastTimeLogin: "", referee: [this.userInit], hierarchy: "", updated: false }; 
-        // this.contact = { name: "", id: "", email: "", phoneNumber: "" };
-
-        
+        this.userData = { name: '', gender: '', dob: '', age: 0, username: '', email: '', bus_email: '', phoneNumber: '',
+          telephone: null, address: '', nationalId: '', nationality: '', zipCode: null, country: '', city: '', by: '', byId: '',
+          companyName: '', companyId: '', createdOn: '', id: '', aboutMe: '', profession: null, qualifications: null, bodyWeight: 0,
+          bodyHeight: 0, bodyMassIndex: 0, industrySector: '', personalAssets: null, personalLiabilities: null, reference: null,
+          focusFactor: 0, userImg: '', LastTimeLogin: '', referee: [this.userInit], hierarchy: '', updated: false,
+          totalIncome: '', estimatedMonthlyIncome: '', networth: ''
+        };
     }
 
-    myDataCall(){
+    myDataCall() {
         this.myContacts = this.ps.getContacts(this.userId);
         this.coloursUsers = this.ps.getColoursUsers();
-        this.myContacts.subscribe(data=>{
+        this.myContacts.subscribe( data => {
             if (data.length > 0) {
                 this.showContacts = false;
             } else {
@@ -73,7 +73,7 @@ export class UserComponent{
             }
         })
 
-        var docRef = this.afs.collection("Users").doc(this.userId).snapshotChanges().pipe(map(a => {
+        const docRef = this.afs.collection("Users").doc(this.userId).snapshotChanges().pipe(map(a => {
             const data = a.payload.data() as coloursUser;
             const id = a.payload.id;
             return { id, ...data };
@@ -81,9 +81,7 @@ export class UserComponent{
 
         docRef.subscribe(userData => {
             console.log(userData);
-            
-            // userData.bodyMassIndex = Math.round(userData.bodyWeight / ((userData.bodyHeight * (1 / 100)) * ((userData.bodyHeight * (1 / 100)))));
-            let bmi = (userData.bodyWeight / ((userData.bodyHeight * (1 / 100)) * ((userData.bodyHeight * (1 / 100)))));
+            const bmi = (userData.bodyWeight / ((userData.bodyHeight * (1 / 100)) * ((userData.bodyHeight * (1 / 100)))));
             console.log(bmi.toFixed(1));
             
             userData.bodyMassIndex = Number(bmi.toFixed(1));
@@ -135,7 +133,7 @@ export class UserComponent{
         
         this.afs.collection('Users').doc(this.userId).collection('contacts').doc(newcontact.id).set(newcontact);
         this.selectedContacts.push(newcontact);
-        this.contact = { name: "", id: "", email: "", bus_email: "", phoneNumber: "", photoURL: "", address: "", nationalId: "", nationality: "" };
+        this.contact = { name: '', id: '', email: '', bus_email: '', phoneNumber: '', photoURL: '', address: '', nationalId: '', nationality: "" };
         this.newContact = null;
     }
     

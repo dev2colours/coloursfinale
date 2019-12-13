@@ -1,31 +1,61 @@
 export interface Enterprise {
-    name: string, by: string, byId: string, createdOn: string, id: string, address: String, telephone: string, location: string, sector: string, services: [service], participants: [ParticipantData],
-    champion: ParticipantData, taxDocument: any, HnSDocument: string, IndustrialSectorDocument: string, bus_email: string, updatedStatus: boolean 
+    name: string, by: string, byId: string, createdOn: string, id: string, address: String, telephone: string, location: string,
+    sector: string, services: [service], participants: [ParticipantData], bus_email: string, updatedStatus: boolean ,
+    champion: ParticipantData, taxDocument: any, HnSDocument: string, IndustrialSectorDocument: string,
+    targetMonthlyIncome: string, actualMonthlyIncome: string, balanceSheet: string, actualAnnualIncome: string,
+    targetAnnualIncome: string,
 }
 
+// export interface income {}
+
 export interface Subsidiary extends Enterprise { Holding_companyName: string, companyId: string }
+
+// tslint:disable-next-line: class-name
 export interface compProfile extends Enterprise { updated: boolean }
 
+// tslint:disable-next-line: class-name
 export interface service { display: string, value: string }
 
-export interface Department { name: string, by: string, byId: string, companyName: string, companyId: string, createdOn: string, id: string, hod: ParticipantData }
+export interface Department { name: string, by: string, byId: string, companyName: string, companyId: string, createdOn: string,
+    id: string, hod: ParticipantData }
 
-export interface employeeData extends ParticipantData { department: string, departmentId: string, hierarchy: string } /* nationalId: string, nationality: string, email: string, */
+// tslint:disable-next-line: class-name
+export interface companyStaff { name: string, phoneNumber: string, by: string, byId: string, createdOn: string, email: string,
+    bus_email: string, id: string, photoURL: string, departmentId: string, department: string, address: String, nationalId: string,
+    nationality: string, hierarchy: string  }
 
-export interface companyStaff { name: string, phoneNumber: string, by: string, byId: string, createdOn: string, email: string, bus_email: string, id: string, photoURL: string, departmentId: string, department: string, address: String, nationalId: string, nationality: string, hierarchy: string  }
+export interface ParticipantData { name: string, id: string, email: string, bus_email: string, phoneNumber: string, photoURL: string,
+    address: String, nationalId: string, nationality: string }
+// tslint:disable-next-line: class-name
+export interface employeeData extends ParticipantData { department: string, departmentId: string, hierarchy: string }
 
-export interface ParticipantData { name: string, id: string, email: string, bus_email: string, phoneNumber: string, photoURL: string, address: String, nationalId: string, nationality: string,}
+export interface Labour extends ParticipantData { cost: string, activeTime: string[] }
 
+// tslint:disable-next-line: class-name
+export interface stuffSalary extends companyStaff { monthlyPay: string, activeTime: string[] }
+
+// tslint:disable-next-line: class-name
 export interface companyChampion { companyName, id, contactPerson: ParticipantData }
 
-export interface asset { name: string, assetNumber: string, by: string, byId: string, companyName: string, companyId: string, createdOn: string, cost: string }
+// tslint:disable-next-line: class-name
+export interface asset { name: string, assetNumber: string, by: string, byId: string, companyName: string, companyId: string,
+    createdOn: string, cost: string }
 
-export interface assetInProject { name: string, assetNumber: string, by: string, byId: string, companyName: string, companyId: string, createdOn: string, rate: string, unit: string }
+// tslint:disable-next-line: class-name
+export interface assetInProject { name: string, assetNumber: string, by: string, byId: string, companyName: string, companyId: string,
+    createdOn: string, rate: string, unit: string }
 
+// tslint:disable-next-line: class-name
 export interface projectRole extends Enterprise { roles: [service] }
 
-export interface client { name: string, id: string, contactPerson: any, champion: ParticipantData, by: string, byId: string, joinedOn: string, createdOn: string, address: String, telephone: string, location: string, sector: string, services: [service], taxDocument: any, HnSDocument: string, IndustrialSectorDocument: string}
+// tslint:disable-next-line: class-name
+export interface client { name: string, id: string, contactPerson: any, champion: ParticipantData, by: string, byId: string,
+    createdOn: string, address: String, telephone: string, location: string, sector: string, services: [service], taxDocument: any,
+    HnSDocument: string, IndustrialSectorDocument: string, joinedOn: string}
 
-export interface scheduleRate { name: string, id: string, by: string, byId: string, companyName: string, companyId: string, projectName: string, projectId: string, createdOn: string, rate: number, unit: string }
+// tslint:disable-next-line: class-name
+export interface scheduleRate { name: string, id: string, by: string, byId: string, companyName: string, companyId: string,
+    projectId: string, createdOn: string, rate: number, unit: string, projectName: string }
 
-export interface hierarchy { name: "" }
+// tslint:disable-next-line: class-name
+export interface hierarchy { name: string }

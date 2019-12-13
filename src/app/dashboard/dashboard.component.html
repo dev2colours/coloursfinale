@@ -1,41 +1,37 @@
 <div class="main-content" style="margin-top:75px;">
   <div class="row">
-    <div class="col-lg-4 col-sm-6">
-    <!-- <div class="col-xs-3 col-sm-4 dash-col-left"> -->
-      <div class="card card-category">
+    <div class="col-lg-4 col-sm-6 dash">
+      <div class="card">
         <div class="btn-magnify">
           <div class="row col-md-12" style="margin-left:1em; padding-bottom: -1em ">
             <div class="pull-left card-category clrs-h1-font">
-              <a>
-                <i class="nc-icon nc-palette"></i> Colours Personal</a>
+              <a routerLink="/tasks-24/7" style="color:#333366"><i class="nc-icon nc-palette"></i> Colours Personal</a>
             </div>
-          </div><br>
+          </div>
           <div class="pull-left col-md-10" style="margin-left:1em;padding-top: -1em; color: steelblue ">
             <a>My Diary Today</a>
           </div>
           <div class="spacer" style="height: 2.4em;"></div>
           <div class="row" style="height: 100px; width: max-content">
             <div id="container">
-              <!-- <div class="content container scroll-em" *ngIf="showActions"> -->
               <div class="content container scroll-em" *ngIf="actionNo !== 0">
                 <ol style="list-style-type:none;padding-left: 12px;">
-                  <li class="" style="color:steelblue" *ngFor="let event of maActivities">
-                    <!-- <div class="row"> -->
+                  <li *ngFor="let event of stdWorks">
                     <div class="col-sm-12" style="margin-left: 2px; margin-right:-.5em">
-                      <!-- margin-left:1.0em; -->
-                      <a style="color:slategrey"  [ngStyle]="{color: event.txtColours}">
-                      <span class="label text-warning"> {{ event.start }}</span> {{ event.name }}
+                      <a class="nameCol" style="color:slategrey" [ngStyle]="{color: event.txtColours}">
+                        <span class="row">
+                          <span class="label text-warning" style="width: 4em; padding-left: 1em"> {{ event.start }}</span>
+                          <span class="nameCol" style="color:#333366;padding-left: 0.5em"> {{ event.name }}</span>
+                        </span>
                       </a>
                     </div>
-                    <!-- </div> -->
                   </li>
                 </ol>
               </div>
-              <!-- <div class="content container scroll-em" *ngIf="hideActions"> -->
               <div class="content container scroll-em" *ngIf="actionNo == 0">
                 <div class="row">
                   <div class="col-sm-12" style="margin-left:-.5em; margin-right:-.5em">
-                    <ol>
+                    <ol style="list-style-type:none;">
                       <li>
                         <!-- <div class="row"> -->
                         <a style="color:lightgrey">
@@ -74,16 +70,13 @@
               </div>
             </div>
           </div>
+          <div class="card-footer" style="padding-top: 0px; padding-bottom: 0px;">
+            <hr style="margin-bottom: 0px;">
+          </div>
         </div>
-        <!-- <div class="card-body">
-                              <h6 class="big-title">total earnings in last ten quarters</h6>
-                              <canvas id="activeUsers" width="auto" height="200"></canvas>
-                            </div> -->
         <br>
-        <div class="card-body">
-          <h6 class="big-title">total earnings in last ten quarters</h6>
-          <canvas id="activeUsers" width="826" height="380"></canvas>
-        </div>
+        <h6 class="big-title" style="padding-bottom: 0px; margin-bottom: 0px;"><u>My Diary Clock</u></h6>
+        <app-pie-one style=" align-self: center;"></app-pie-one>
         <div class="card-footer">
           <hr>
           <div class="row">
@@ -92,23 +85,22 @@
             </div>
             <div class="col-sm-5">
               <div class="pull-right">
-                <button class="btn btn-success btn-round btn-icon btn-sm">
+                <a class="btn btn-success btn-round btn-icon btn-sm" routerLink="/set-up"> <!-- (click)="gotoTask247()" -->
                   <i class="nc-icon nc-simple-add"></i>
-                </button>
+                </a>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-lg-4 col-sm-6">
-    <!-- <div class="col-xs-3 col-sm-4 dash-col"> -->
+    <div class="col-lg-4 col-sm-6 dash">
       <div class="card">
         <div class="card-content btn-magnify">
           <div class="col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
             <div class="clrs-h1-font">
               <a><i class="fa fa-folder-o [&#xf114;]"></i> Colours Project</a>
-            </div><br>
+            </div>
             <div class="text-left" style="padding-top: -1em; color: steelblue; ">
               <a>My Current Priority Projects</a>
             </div>
@@ -116,62 +108,65 @@
           <div class="spacer" style="height: 1em;"></div>
           <div id="pTasklist">
             <ng-template #showPDemo>
-              <div class="content container scroll-em" style="height: 100px">
-              <ol>
-                <li>
-                  <!-- <div class="row"> -->
-                    <div class="col-xs-10 " style="margin-left:2.0em">
-                      <a class="text-info" style="color:lightgrey" href="#send_agenda">
-                        Project one
-                      </a>
-                    </div>
-                  <!-- </div> -->
-                </li>
-                <li>
-                  <!-- <div class="row"> -->
-                    <div class="col-xs-10 " style="margin-left:2.0em">
-                      <a class="text-info" style="color:lightgrey" href="#send_agenda">
-                        Project two
-                      </a>
-                    </div>
-                  <!-- </div> -->
-                </li>
-                <li>
-                  <!-- <div class="row"> -->
-                    <div class="col-xs-10 " style="margin-left:2.0em">
-                      <a class="text-info" style="color:lightgrey" href="#send_agenda">
-                        Project three
-                      </a>
-                    </div>
-                  <!-- </div> -->
-                </li>
-                <li>
-                  <!-- <div class="row"> -->
-                    <div class="col-xs-10 " style="margin-left:2.0em">
-                      <a class="text-info" style="color:lightgrey" href="#send_agenda">
-                        Project four
-                      </a>
-                    </div>
-                  <!-- </div> -->
-                </li>
-              </ol>
+              <div class="content container scroll-em" style="height: 100px; color:#333366">
+                <ol style="list-style-type:none;">
+                  <li>
+                    <!-- <div class="row"> -->
+                      <div class="col-xs-10 " style="margin-left:2.0em">
+                        <a class="" style="color:#333366" href="#send_agenda">
+                          Project one
+                        </a>
+                      </div>
+                    <!-- </div> -->
+                  </li>
+                  <li>
+                    <!-- <div class="row"> -->
+                      <div class="col-xs-10 " style="margin-left:2.0em">
+                        <a class="" style="color:#333366" href="#send_agenda">
+                          Project two
+                        </a>
+                      </div>
+                    <!-- </div> -->
+                  </li>
+                  <li>
+                    <!-- <div class="row"> -->
+                      <div class="col-xs-10 " style="margin-left:2.0em">
+                        <a class="" style="color:#333366" href="#send_agenda">
+                          Project three
+                        </a>
+                      </div>
+                    <!-- </div> -->
+                  </li>
+                  <li>
+                    <!-- <div class="row"> -->
+                      <div class="col-xs-10 " style="margin-left:2.0em">
+                        <a class="" style="color:#333366" href="#send_agenda">
+                          Project four
+                        </a>
+                      </div>
+                    <!-- </div> -->
+                  </li>
+                </ol>
               </div>
             </ng-template>
             <div class="content container scroll-em" style="height: 100px" *ngIf="viewProjects.length !== 0 ; else showPDemo">
-              <ol>
+              <ol style="list-style-type:none;">
                 <!-- <li class="setLists col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let project of allMyProjects | async"><a -->
-                <li class="setLists col-xs-12 ml-auto mr-auto" style="color:steelblue" *ngFor="let project of viewProjects"><a
-                    [routerLink]="[ '/projects/', project.id ]" style="color:slategray"><span class="text-info">{{ project.name }}</span></a>
+                <li class="setLists col-xs-12 ml-auto mr-auto" *ngFor="let project of viewProjects">
+                  <a class="nameCol" [routerLink]="[ '/projects/', project.id ]"  style="color:#333366"><!--  style="color:slategray" -->
+                    <span class="nameCol">{{ project.name }}</span>
+                  </a>
                 </li>
               </ol>
             </div>
           </div>
+          <div class="card-footer" style="padding-top: 0px; padding-bottom: 0px;">
+            <hr style="margin-bottom: 0px;">
+          </div>
         </div>
         <br>
-        <div class="card-body">
-          <h6 class="big-title">total subscriptions in last 7 days</h6>
-          <canvas id="emailsCampaignChart" width="826" height="380"></canvas>
-        </div>
+        <h6 class="big-title" style="padding-bottom: 0px; margin-bottom: 0px;"><u>Most Productive Projects</u></h6>
+        <app-pie-one style=" align-self: center;"></app-pie-one>
         <div class="card-footer">
           <hr>
           <div class="row">
@@ -180,91 +175,68 @@
             </div>
             <div class="col-sm-5">
               <div class="pull-right">
-                <button class="btn btn-danger btn-round btn-icon btn-sm">
+                <a class="btn btn-danger btn-round btn-icon btn-sm" routerLink="/projects/p-create"><!-- (click)="gotoProject()" -->
                   <i class="nc-icon nc-button-play"></i>
-                </button>
+                </a>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-lg-4 col-sm-6">
-    <!-- <div class="col-xs-3 col-sm-4 ml-auto mar-auto dash-col-right"> -->
+    <div class="col-lg-4 col-sm-6 dash">
       <div class="card">
-        <!-- <div class="card-header">
-          <div class="row">
-            <div class="col-sm-7">
-              <div class="numbers pull-left">
-                8,960
-              </div>
-            </div>
-            <div class="col-sm-5">
-              <div class="pull-right">
-                <span class="badge badge-pill badge-warning">
-                  ~51%
-                </span>
-              </div>
-            </div>
-          </div>
-        </div> -->
         <div class="card-content btn-magnify">
           <div class="col-sm-12 ml-auto mr-auto" style="padding-bottom: -1em ">
             <div class="clrs-h1-font">
               <a><i class="nc-icon nc-globe-2"></i> Colours Enterprise</a>
-            </div><br>
+            </div>
             <div class="text-left" style="padding-top: -1em; color: steelblue; ">
               <a>High Priority Enterprise Tasks</a>
             </div>
           </div>
           <div class="spacer" style="height: 1em;"></div>
           <div id="eTasklixt">
-            <ol>
-              <li style="color:steelblue">
-                <!-- <div class="row"> -->
+            <div class="content container scroll-em" style="height: 100px">
+              <ol style="list-style-type:none;">
+                <li>
                   <div class="col-xs-10 " style="margin-left: 2em">
-                    <a class="text-info" style="color:lightgrey">
+                    <a style="color:#333366">
                       Send Agenda
                     </a>
                   </div>
-                <!-- </div> -->
-              </li>
-              <li  style="color:steelblue">
-                <!-- <div class="row"> -->
+                </li>
+                <li>
                   <div class="col-xs-10" style="margin-left:2em">
-                    <a class="text-info" href="#Respond_to_mail" style="color:lightgrey">
+                    <a href="#Respond_to_mail" style="color:#333366">
                       Respond to Mail
                     </a>
                   </div>
-                <!-- </div> -->
-              </li>
-              <li style="color:steelblue">
-                <!-- <div class="row"> -->
+                </li>
+                <li>
                   <div class="col-xs-10" style="margin-left:2em">
-                    <a class="text-info" href="#Contact_Supplier" style="color:lightgrey">
+                    <a href="#Contact_Supplier" style="color:#333366">
                       Contact Supplier
                     </a>
                   </div>
-                <!-- </div> -->
-              </li>
-              <li style="color:steelblue">
-                <!-- <div class="row"> -->
+                </li>
+                <li>
                   <div class="col-xs-10" style="margin-left:2em">
-                    <a class="text-info" href="#Aripo" style="color:lightgrey">
-                      Aripo
+                    <a href="#Aripo" style="color:#333366">
+                      Send Memo
                     </a>
                   </div>
-                <!-- </div> -->
-              </li>
-            </ol>
+                </li>
+              </ol>
+            </div>
+          </div>
+          <div class="card-footer" style="padding-top: 0px; padding-bottom: 0px;">
+            <hr style="margin-bottom: 0px;">
           </div>
         </div>
         <br>
-        <div class="card-body">
-          <!--  -->
-          <h6 class="big-title">total downloads in last 6 years</h6>
-          <canvas id="activeCountries" width="826" height="380"></canvas>
-        </div>
+        <h6 class="big-title" style="padding-bottom: 0px; margin-bottom: 0px;"><u>Current Company Productivity</u></h6>
+          <app-line-one style=" align-self: center;"></app-line-one>
         <div class="card-footer">
           <hr>
           <div class="row">
@@ -273,9 +245,9 @@
             </div>
             <div class="col-sm-5">
               <div class="pull-right">
-                <button class="btn btn-warning btn-round btn-icon btn-sm">
+                <a class="btn btn-warning btn-round btn-icon btn-sm" routerLink="/enterprises/create"><!-- (click)="gotoCompany()" -->
                   <i class="nc-icon nc-alert-circle-i"></i>
-                </button>
+                </a>
               </div>
             </div>
           </div>
@@ -283,15 +255,17 @@
       </div>
     </div>
   </div>
-  <div class="row">
+  <div class="row" style="margin-top: -1em;">
     <div class="col-md-12">
       <div class="card card-stats">
         <div class="card-body" style="padding-top: 0px;">
           <div class="row" style="height: 66px;">
             <div class="col-5 col-md-8">
               <div class="icon-big pull-left icon-warning" style="left:3em">
-                <p><i class="fa fa-rss text-warning" style="font-size:24px">....</i>
-                  <span style="font-size:22px">Colours Marketplace News Feeds</span></p>
+                <!-- <p> -->
+                  <i class="fa fa-rss text-warning" style="font-size:24px">....</i>
+                  <span style="font-size:22px">Colours Marketplace News Feeds</span>
+                <!-- </p> -->
               </div>
             </div>
             <div class="col-8 col-md-8">
@@ -301,13 +275,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="card" data-background-color="blue">
-          <marquee>
-            <a *ngFor="let project of allColoursProjects | async" style="color:rgb(35, 41, 49)" routerLink="#">
-              A project has been created, location: {{ project.location }}, type: {{ project.sector }}. . . . . . .
-              <span class="spacer" style="widows: 10px;"></span></a> <!-  in {{project.sector}}  ->
-          </marquee>
-        </div> -->
         <div class="card" data-background-color="blue" *ngIf="projs2No != 0">
           <marquee>
             <a *ngFor="let project of marketProjects" style="color:rgb(35, 41, 49)" routerLink="#" [ngStyle]="{color: project.txtColours}" >

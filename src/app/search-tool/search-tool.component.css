@@ -1,0 +1,12 @@
+.flexContainer {
+    display: flex;
+}
+
+.form-control{
+    flex: 1;
+}
+
+.red-now {
+    /* color:rgb(17, 129, 221); */
+    background-color:rgb(228, 61, 61) !important;
+}

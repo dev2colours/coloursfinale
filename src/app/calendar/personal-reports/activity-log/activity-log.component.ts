@@ -64,7 +64,7 @@ export class ActivityLogComponent implements OnInit {
 
   }
 
-  setPeriod(){
+  setPeriod() {
     if (this.selectedStartDate !== null) {
       if (this.selectedEndDate !== null) {
         console.log(this.selectedEndDate);

@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from "angularfire2/firestore";
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { auth } from 'firebase';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
 import { map, timestamp } from 'rxjs/operators';
-import { Enterprise, ParticipantData, companyChampion, Department } from "../models/enterprise-model";
-import { Project } from "../models/project-model";
-import { Task } from "../models/task-model";
+import { Enterprise, ParticipantData, companyChampion, Department } from '../models/enterprise-model';
+import { Project } from '../models/project-model';
+import { Task } from '../models/task-model';
 import * as moment from 'moment';
 import { TaskService } from 'app/services/task.service';
 import { InitialiseService } from 'app/services/initialise.service';
@@ -25,23 +25,23 @@ import { coloursUser, report, comment } from 'app/models/user-model';
 
 export class IssuesComponent {
 
-  public newReport: boolean = true;
-  public newEnReport: boolean = true;
-  public newPrReport: boolean = true;
-  public viewPsnRpt: boolean = false;
-  public viewPrjRpt: boolean = false;
-  public newComment_Psn: boolean = false;
-  public newComment_Prj: boolean = false;
-  public newComment_Ent: boolean = false;
-  public viewEntRpt: boolean = false;
-  public firstView: boolean = true;
+  public newReport = true;
+  public newEnReport = true;
+  public newPrReport = true;
+  public viewPsnRpt = false;
+  public viewPrjRpt = false;
+  public newComment_Psn = false;
+  public newComment_Prj = false;
+  public newComment_Ent = false;
+  public viewEntRpt = false;
+  public firstView = true;
 
-  public psnwarningName: boolean = false;
-  public psnwarningDscrpt: boolean = false;
-  public prjwarningName: boolean = false;
-  public prjwarningDscrpt: boolean = false;
-  public entwarningName: boolean = false;
-  public entwarningDscrpt: boolean = false;
+  public psnwarningName = false;
+  public psnwarningDscrpt = false;
+  public prjwarningName = false;
+  public prjwarningDscrpt = false;
+  public entwarningName = false;
+  public entwarningDscrpt = false;
 
   report: report;
   projReport: report;
@@ -65,41 +65,49 @@ export class IssuesComponent {
   prjIssuesComments: Observable<comment[]>;
   entIssuesComments: Observable<comment[]>;
 
-  constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private authService: AuthService, private ts: TaskService, private afs: AngularFirestore) {
+  constructor(public afAuth: AngularFireAuth, public router: Router, private is: InitialiseService, private authService: AuthService,
+    private ts: TaskService, private afs: AngularFirestore) {
     this.afAuth.user.subscribe(user => {
       this.userId = user.uid;
       this.user = user;
       this.dataCALL();
 
     });
-    this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
-    this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
-    this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+    this.report = { name: '', description: '', type: '', id: '', byId: '', by: '', createdOn: '', byPhotoUrl: '', photoUrl: '',
+      companyName: '', companyId: '', projectName: '', projectId: '' };
+    this.projReport = { name: '', description: '', type: '', id: '', byId: '', by: '', createdOn: '', byPhotoUrl: '', photoUrl: '',
+      companyName: '', companyId: '', projectName: '', projectId: '' };
+    this.entReport = { name: '', description: '', type: '', id: '', byId: '', by: '', createdOn: '', byPhotoUrl: '', photoUrl: '',
+      companyName: '', companyId: '', projectName: '', projectId: '' };
 
-    this.setPersonalreport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
-    this.setEntReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
-    this.setProjReport = { name: "", description: "", type: "", id: "", byId: "", by: "", createdOn: "", byPhotoUrl: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+    this.setPersonalreport = { name: '', description: '', type: '', id: '', byId: '', by: '', createdOn: '', byPhotoUrl: '', photoUrl: '',
+      companyName: '', companyId: '', projectName: '', projectId: '' };
+    this.setEntReport = { name: '', description: '', type: '', id: '', byId: '', by: '', createdOn: '', byPhotoUrl: '', photoUrl: '',
+      companyName: '', companyId: '', projectName: '', projectId: '' };
+    this.setProjReport = { name: '', description: '', type: '', id: '', byId: '', by: '', createdOn: '', byPhotoUrl: '', photoUrl: '',
+      companyName: '', companyId: '', projectName: '', projectId: '' };
     this.issues = this.afs.collection<report>('PersonalIssues', ref => ref.orderBy('createdOn', 'desc')).valueChanges();
     this.entIssues = this.afs.collection<report>('EnterpriseIssues', ref => ref.orderBy('createdOn', 'desc')).valueChanges();
     this.projIssues = this.afs.collection<report>('ProjectsIssues', ref => ref.orderBy('createdOn', 'desc')).valueChanges();
-    this.newCommentPrs = { name: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "" };
-    this.newCommentEnt = { name: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "" };
-    this.newCommentprj = { name: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "" };
+    this.newCommentPrs = { name: '', id: '', byId: '', by: '', createdOn: '', photoUrl: '' };
+    this.newCommentEnt = { name: '', id: '', byId: '', by: '', createdOn: '', photoUrl: '' };
+    this.newCommentprj = { name: '', id: '', byId: '', by: '', createdOn: '', photoUrl: '' };
   }
 
-  initPage(){
+  initPage() {
     this.newReport = false;
   }
 
   OninitPage() {
     this.newReport = true;
-    this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };      
+    this.report = { name: '', description: '', type: '', id: '', byId: '', by: '', byPhotoUrl: '', createdOn: '', photoUrl: '',
+      companyName: '', companyId: '', projectName: '', projectId: '' };
   }
 
-  addPsnComment(){
+  addPsnComment() {
     this.newComment_Psn = true;
   }
-  addPrjComment(){
+  addPrjComment() {
     this.newComment_Prj = true;
   }
   addEntComment() {
@@ -117,9 +125,10 @@ export class IssuesComponent {
     this.newComment_Ent = false;
   }
 
-  viewPersonalRpt(rpt){
+  viewPersonalRpt(rpt) {
     this.setPersonalreport = rpt;
-    this.pIssuesComments = this.afs.collection('PersonalIssues').doc(rpt.id).collection<comment>('comments', ref => ref.orderBy('createdOn', 'desc')).valueChanges();
+    this.pIssuesComments = this.afs.collection('PersonalIssues').doc(rpt.id).collection<comment>('comments', ref => ref
+      .orderBy('createdOn', 'desc')).valueChanges();
     this.viewPsnRpt = true;
     this.firstView = false;
     this.viewEntRpt = false;
@@ -127,7 +136,8 @@ export class IssuesComponent {
 
   viewProjectRpt(rpt) {
     this.setProjReport = rpt;
-    this.prjIssuesComments = this.afs.collection('ProjectsIssues').doc(rpt.id).collection<comment>('comments', ref => ref.orderBy('createdOn','desc')).valueChanges();
+    this.prjIssuesComments = this.afs.collection('ProjectsIssues').doc(rpt.id).collection<comment>('comments', ref => ref
+      .orderBy('createdOn', 'desc')).valueChanges();
     this.firstView = false;
     this.viewPrjRpt = true;
     this.viewPsnRpt = false;
@@ -136,7 +146,8 @@ export class IssuesComponent {
 
   viewCompanyRpt(rpt) {
     this.setEntReport = rpt;
-    this.entIssuesComments = this.afs.collection('EnterpriseIssues').doc(rpt.id).collection<comment>('comments', ref => ref.orderBy('createdOn', 'desc')).valueChanges();
+    this.entIssuesComments = this.afs.collection('EnterpriseIssues').doc(rpt.id).collection<comment>('comments', ref => ref
+    .orderBy('createdOn', 'desc')).valueChanges();
     this.firstView = false;
     this.viewEntRpt = true;
     this.viewPsnRpt = false;
@@ -148,7 +159,8 @@ export class IssuesComponent {
 
   OninitEntPage() {
     this.newEnReport = true;
-    this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };    
+    this.entReport = { name: '', description: '', type: '', id: '', byId: '', by: '', byPhotoUrl: '', createdOn: '', photoUrl: '',
+      companyName: '', companyId: '', projectName: '', projectId: '' };
   }
 
   initProjPage() {
@@ -157,38 +169,41 @@ export class IssuesComponent {
 
   OninitProjPage() {
     this.newPrReport = true;
-    this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };    
+    this.projReport = { name: '', description: '', type: '', id: '', byId: '', by: '', byPhotoUrl: '', createdOn: '', photoUrl: '',
+      companyName: '', companyId: '', projectName: '', projectId: '' };
   }
 
-  postIssue(){
+  postIssue() {
     console.log(this.report);
-    if (this.report.name !== "") {
+    if (this.report.name !== '') {
       this.psnwarningName = false;
-      if (this.report.description !== "") {
+      if (this.report.description !== '') {
         this.psnwarningDscrpt = false;
         this.report.by = this.myData.name;
-        this.report.type = "Personal";
+        this.report.type = 'Personal';
         this.report.byId = this.myData.id;
         this.report.createdOn = new Date().toISOString();
         this.afs.collection('PersonalIssues').add(this.report).then((ref) => {
-          let docId = ref.id;
+          const docId = ref.id;
           this.afs.collection('PersonalIssues').doc(docId).update({ 'id': docId }).then(() => {
             console.log('Issues set');
-            this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+            this.report = { name: '', description: '', type: '', id: '', byId: '', by: '', byPhotoUrl: '', createdOn: '', photoUrl: '',
+              companyName: '', companyId: '', projectName: '', projectId: '' };
             this.OninitPage();
 
           }).catch(error => {
             console.log('Issues not saved', error);
           })
           console.log('Issues SAVED');
-          this.report = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+          this.report = { name: '', description: '', type: '', id: '', byId: '', by: '', byPhotoUrl: '', createdOn: '', photoUrl: '',
+            companyName: '', companyId: '', projectName: '', projectId: '' };
           this.OninitPage();
 
         }).catch(error => {
           console.log('Issues not saved', error);
         })
       } else {
-        
+
         this.psnwarningDscrpt = true;
       }
     } else {
@@ -200,29 +215,31 @@ export class IssuesComponent {
 
   postEntIssue() {
     console.log(this.entReport);
-    if (this.entReport.name !=="") {
+    if (this.entReport.name !== '') {
 
       this.entwarningName = false;
 
-      if (this.entReport.description !== "") {
+      if (this.entReport.description !== '') {
 
         this.entwarningDscrpt = false;
 
         this.entReport.by = this.myData.name;
         this.entReport.byId = this.myData.id;
-        this.entReport.type = "Enterprise";
+        this.entReport.type = 'Enterprise';
         this.entReport.createdOn = new Date().toISOString();
         this.afs.collection('EnterpriseIssues').add(this.entReport).then((ref) => {
-          let docId = ref.id;
+          const docId = ref.id;
           this.afs.collection('EnterpriseIssues').doc(docId).update({ 'id': docId }).then(() => {
             console.log(' Enterprise issues set');
-            this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+            this.entReport = { name: '', description: '', type: '', id: '', byId: '', by: '', byPhotoUrl: '', createdOn: '', photoUrl: '',
+              companyName: '', companyId: '', projectName: '', projectId: '' };
             this.OninitEntPage();
           }).catch(error => {
             console.log('Enterprise issues not saved', error);
           })
           console.log('Enterprise issues SAVED');
-          this.entReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+          this.entReport = { name: '', description: '', type: '', id: '', byId: '', by: '', byPhotoUrl: '', createdOn: '', photoUrl: '',
+            companyName: '', companyId: '', projectName: '', projectId: '' };
           this.OninitEntPage();
         }).catch(error => {
           console.log('Enterprise issues not saved', error);
@@ -239,29 +256,31 @@ export class IssuesComponent {
 
   postProjIssue() {
     console.log(this.projReport);
-    if (this.projReport.name !== "") {
+    if (this.projReport.name !== '') {
 
       this.prjwarningName = false;
 
-      if (this.projReport.description !== "") {
+      if (this.projReport.description !== '') {
 
         this.prjwarningDscrpt = false;
 
         this.projReport.by = this.myData.name;
         this.projReport.byId = this.myData.id;
-        this.projReport.type = "Project";
+        this.projReport.type = 'Project';
         this.projReport.createdOn = new Date().toISOString();
         this.afs.collection('ProjectsIssues').add(this.projReport).then((ref) => {
-          let docId = ref.id;
+          const docId = ref.id;
           this.afs.collection('ProjectsIssues').doc(docId).update({ 'id': docId }).then(() => {
             console.log('Project issues set');
-            this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+            this.projReport = { name: '', description: '', type: '', id: '', byId: '', by: '', byPhotoUrl: '', createdOn: '', photoUrl: '',
+              companyName: '', companyId: '', projectName: '', projectId: '' };
             this.OninitProjPage();
           }).catch(error => {
             console.log('Project issues not saved', error);
           })
           console.log('Project issues SAVED');
-          this.projReport = { name: "", description: "", type: "", id: "", byId: "", by: "", byPhotoUrl: "", createdOn: "", photoUrl: "", companyName: "", companyId: "", projectName: "", projectId: "" };
+          this.projReport = { name: '', description: '', type: '', id: '', byId: '', by: '', byPhotoUrl: '', createdOn: '', photoUrl: '',
+            companyName: '', companyId: '', projectName: '', projectId: '' };
           this.OninitProjPage();
         }).catch(error => {
           console.log('Project issues not saved', error);
@@ -269,7 +288,7 @@ export class IssuesComponent {
       } else {
 
         this.prjwarningDscrpt = true;
-        
+
       }
     } else {
 
@@ -279,30 +298,30 @@ export class IssuesComponent {
     }
   }
 
-  commentPrsn(){
-    if (this.newCommentPrs.name !== "") {
+  commentPrsn() {
+    if (this.newCommentPrs.name !== '') {
       this.newCommentPrs.createdOn = new Date().toISOString();
       this.newCommentPrs.by = this.myData.name;
       this.newCommentPrs.byId = this.myData.id;
       this.newComment_Psn = false;
 
       console.log(this.newCommentPrs);
-      let docRef = this.afs.collection<report>('PersonalIssues').doc(this.setPersonalreport.id).collection('comments');
+      const docRef = this.afs.collection<report>('PersonalIssues').doc(this.setPersonalreport.id).collection('comments');
       docRef.add(this.newCommentPrs).then(doc => {
         docRef.doc(doc.id).update({ 'id': doc.id }).catch(error => {
           console.log('Error capture', error)
         });
         console.log('comment submitted');
-        this.newCommentPrs = { name: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "" };
+        this.newCommentPrs = { name: '', id: '', byId: '', by: '', createdOn: '', photoUrl: '' };
       })
     } else {
       console.log('No comments found');
-      
+
     }
   }
 
   commentPrj() {
-    if (this.newCommentprj.name !== "") {
+    if (this.newCommentprj.name !== '') {
       console.log(this.newCommentprj);
       this.newCommentprj.createdOn = new Date().toISOString();
       this.newCommentprj.by = this.myData.name;
@@ -310,41 +329,41 @@ export class IssuesComponent {
       this.newComment_Prj = false;
 
       console.log(this.newCommentprj);
-      let docRef = this.afs.collection<report>('ProjectsIssues').doc(this.setProjReport.id).collection('comments');
+      const docRef = this.afs.collection<report>('ProjectsIssues').doc(this.setProjReport.id).collection('comments');
       docRef.add(this.newCommentprj).then(doc => {
         docRef.doc(doc.id).update({ 'id': doc.id }).catch(error => {
           console.log('Error capture', error)
         });
         console.log('comment submitted');
-        this.newCommentprj = { name: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "" };
-      })
-    } else {
-      console.log('No comments found');  
-    }
-  }
-
-  commentEnt() {
-    if (this.newCommentEnt.name !== "") {
-      this.newCommentEnt.createdOn = new Date().toISOString();
-      this.newCommentEnt.by = this.myData.name;
-      this.newCommentEnt.byId = this.myData.id;
-      this.newComment_Ent = false;
-
-      console.log(this.newCommentEnt);
-      let docRef = this.afs.collection<report>('EnterpriseIssues').doc(this.setEntReport.id).collection('comments');
-      docRef.add(this.newCommentEnt).then(doc => {
-        docRef.doc(doc.id).update({ 'id': doc.id }).catch(error => {
-          console.log('Error capture', error)
-        });
-        console.log('comment submitted');
-        this.newCommentEnt = { name: "", id: "", byId: "", by: "", createdOn: "", photoUrl: "" };
+        this.newCommentprj = { name: '', id: '', byId: '', by: '', createdOn: '', photoUrl: '' };
       })
     } else {
       console.log('No comments found');
     }
   }
 
-  dataCALL(){
+  commentEnt() {
+    if (this.newCommentEnt.name !== '') {
+      this.newCommentEnt.createdOn = new Date().toISOString();
+      this.newCommentEnt.by = this.myData.name;
+      this.newCommentEnt.byId = this.myData.id;
+      this.newComment_Ent = false;
+
+      console.log(this.newCommentEnt);
+      const docRef = this.afs.collection<report>('EnterpriseIssues').doc(this.setEntReport.id).collection('comments');
+      docRef.add(this.newCommentEnt).then(doc => {
+        docRef.doc(doc.id).update({ 'id': doc.id }).catch(error => {
+          console.log('Error capture', error)
+        });
+        console.log('comment submitted');
+        this.newCommentEnt = { name: '', id: '', byId: '', by: '', createdOn: '', photoUrl: '' };
+      })
+    } else {
+      console.log('No comments found');
+    }
+  }
+
+  dataCALL() {
 
     this.myDocument = this.afs.collection('Users').doc(this.userId);
 
@@ -355,8 +374,8 @@ export class IssuesComponent {
     }));
 
     this.userProfile.subscribe(userData => {
-      console.log(userData);
-      let myData = {
+      // console.log(userData);;
+      const myData = {
         name: userData.name,
         email: this.user.email,
         bus_email: userData.bus_email,

@@ -1,7 +1,36 @@
   <div class="main-content">
-
-  <div class="row clrs-h1-font"><b>{{ user.name }}</b> </div>
+  <div *ngIf="user.name === null; else shownams">
+      <div class="row clrs-h1-font"><b>{{ user.email }}</b> </div>
+  </div>
+  <ng-template #shownams>
+    <div *ngIf="user.name !== '' ; else showEms" class="row clrs-h1-font"><b>{{ user.name }}</b> </div>
+    <ng-template #showEms>
+      <div class="row clrs-h1-font"><b>{{ user.email }}</b> </div>
+    </ng-template>
+  </ng-template>
   <br>
+  <div class="spacer" style="height: 2em"></div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="clrs-h4-font">All Colours Users</div><br>
+      <div *ngFor="let item of colUsers | async">
+        <div *ngIf="item.name !== ''" class="row col-md-12 col-sm-11">
+          <div class="col-md-6 col-sm-5" style="padding-left: 5px; padding-right:5px">
+            <span>{{ item.name }}</span>            
+          </div>
+          <div class="col-md-4 col-sm-3" style="padding-left: 5px; padding-right:5px">
+            <span>"{{ item.dob }}"</span>&nbsp;
+            <span>"{{ item.dob1 }}"</span>
+            
+          </div>
+          <div class="col-md-2 col-sm-2" style="padding-left: 5px; padding-right:5px">
+            {{ item.age }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="spacer" style="height: 2em"></div>
 
   <div class="row">
@@ -80,7 +109,7 @@
         </div>
       </li>
     </ul>
-  </div>>
+  </div>
   <br>
   <div class="row">
     <div class="col-sm-3">

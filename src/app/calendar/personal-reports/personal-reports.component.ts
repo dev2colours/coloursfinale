@@ -8,7 +8,7 @@ import { ReportsService } from '../../services/reports.service';
 })
 export class PersonalRdashboardComponent implements OnInit {
 
-  constructor(public rService: ReportsService){}
+  constructor(public rService: ReportsService) {}
 
   ngOnInit() {
   }

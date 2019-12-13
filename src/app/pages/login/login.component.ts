@@ -15,16 +15,16 @@ import { map } from 'rxjs/operators';
 import { emailLogin } from 'app/models/user-model';
 import * as firebase from 'firebase/app';
 
-declare var $:any;
+declare var $: any;
 
 @Component({
-    moduleId:module.id,
+    moduleId: module.id,
     selector: 'login-cmp',
     templateUrl: './login.component.html'
 })
 
 
-export class LoginComponent implements OnInit{
+export class LoginComponent implements OnInit {
 
     actionCodeSettings = {
     // URL you want to redirect back to. The domain (www.example.com) for this
@@ -42,51 +42,56 @@ export class LoginComponent implements OnInit{
     // },
     dynamicLinkDomain: 'http://www.colourssystem.com/'
 };
-    showless: boolean = false;
-    show1: boolean = false;
-    showmoreP: boolean = false;
-    showlessP: boolean = false;
-    showmoreE: boolean = true;
-    showlessE: boolean = true;
-    showEmailRegister: boolean = false;
-    showemailLogin: boolean = true;
+    showless = false;
+    show1 = false;
+    showmoreP = false;
+    showlessP = false;
+    showmoreE = true;
+    showlessE = true;
+    showEmailRegister = false;
+    showemailLogin = true;
     emailPasswordLogin: emailLogin;
 
-    test : Date = new Date();
+    test: Date = new Date();
     private toggleButton;
-    private sidebarVisible: boolean;
+    private sidebarVisible;
     private nativeElement: Node;
     coloursUserDetails: auth.UserCredential;
     user: firebase.User;
     userId: string;
     userCollection: Observable<any[]>;
-    nullLoginEmail: boolean = true;
-    statusLoginEmail: boolean = false;
-    nullSigninEmail: boolean = true;
-    statusSigninEmail: boolean = false;
-    nullLoginPwd: boolean = true;
-    statusLoginPwd: boolean = false;
-    nullSigninPwd: boolean = true;
-    statusSigninPwd: boolean = false;
+    nullLoginEmail = true;
+    statusLoginEmail = false;
+    nullSigninEmail = true;
+    statusSigninEmail = false;
+    nullLoginPwd = true;
+    statusLoginPwd = false;
+    nullSigninPwd = true;
+    statusSigninPwd = false;
     emailId: string;
-    emailVerifiedinit: boolean = false;
-    emailVerified: boolean = true;
+    emailVerifiedinit = false;
+    emailVerified = true;
     emailUser: firebase.User;
+    userData: any;
 
-    // cuser: coloursUser
-
-    constructor(private element: ElementRef, private router: Router, public afAuth: AngularFireAuth, private afs: AngularFirestore, private pns:PersonalService, private as: AuthService) {
+    constructor(private element: ElementRef, private router: Router, public afAuth: AngularFireAuth, private afs: AngularFirestore,
+        private pns: PersonalService, private as: AuthService) {
         // pns.dataCall();
         this.dataCall();
         this.nativeElement = element.nativeElement;
-        this.sidebarVisible = false;      
-        this.emailPasswordLogin = { email: '', password: ''};   
-        // this.emailVerified = true;        
+        this.sidebarVisible = false;
+        this.emailPasswordLogin = { email: '', password: ''};
+        // this.emailVerified = true;
         this.emailId = '';
-        
-
+        this.userData = {
+            name: '',
+            email: '',
+            id: '',
+            userImg: '',
+            LastTimeLogin: new Date().toString(),
+        }
     }
-    
+
     emailRegister() {
         this.showEmailRegister = true;
         this.showemailLogin = false;
@@ -98,12 +103,12 @@ export class LoginComponent implements OnInit{
     }
 
     toggleLogIn(credentials ) {
-        if (credentials.email != "" ) {
+        if (credentials.email !== '' ) {
 
             this.nullLoginEmail = true;
             this.statusLoginEmail = false;
 
-            if (credentials.password != "" ) {
+            if (credentials.password !== '' ) {
 
                 this.nullLoginPwd = true;
                 this.statusLoginPwd = false;
@@ -126,36 +131,50 @@ export class LoginComponent implements OnInit{
                     // Sign in with email and pass.
                     // [START authwithemail]
                     firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password).then(ref => {
-                        console.log("Check User collection for doc");
+                        console.log('Check User collection for doc');
 
                         console.log(ref);
                         this.coloursUserDetails = ref;
-
-                        let coloursUser = ref.user;
-                        let userData = {
+                        const coloursUser = ref.user;
+                        const joiningDate = new Date().toISOString();
+                        this.userData = {
                             name: coloursUser.displayName,
                             email: coloursUser.email,
                             id: coloursUser.uid,
                             userImg: coloursUser.photoURL,
-                            //phoneNumber: coloursUser.phoneNumber,
+                            // phoneNumber: coloursUser.phoneNumber,
                             LastTimeLogin: new Date().toString()
                         }
-                        console.log(userData);
-                        if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-                            this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
-                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
-                            this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                            console.log("userData is set");
-                        }
-                        else {
-                            // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                            
-                            console.log("userData is not updated");
+                        if(!this.userData.name) { this.userData.name = '' }
+                        // console.log(userData);;
+
+                        if (coloursUser.photoURL === null) {
+                            // this.userData = '';
+                            if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                                this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                                    this.afs.collection('Users').doc(coloursUser.uid)
+                                        .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                                        , 'joiningDate': joiningDate
+                                    });
+                                    console.log('userData is set');
+                                }).catch(error => console.error());
+                            } else {
+                                console.log('userData is not updated');
+                            }
+                        } else {
+                            if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                                this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                                    this.afs.collection('Users').doc(coloursUser.uid)
+                                        .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                                    });
+                                    console.log('userData is set');
+                                }).catch(error => console.error());
+                            } else {
+                                console.log('userData is not updated');
+                            }
                         }
                         let value;
-                        let setUser = this.afs.collection('Users').doc(coloursUser.uid);
+                        const setUser = this.afs.collection('Users').doc(coloursUser.uid);
                         this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
                             map(b => b.map(a => {
                                 const data = a.payload.doc.data() as any;
@@ -163,20 +182,20 @@ export class LoginComponent implements OnInit{
                                 return { id, ...data };
                             }))
                         );
-                        this.userCollection.subscribe(ref => {
-                            const index = ref.findIndex(user => user.name === userData.name);
+                        this.userCollection.subscribe(Users => {
+                            const index = Users.findIndex(usd => usd.name === this.userData.name);
                             if (index > -1) {
-                                value = ref[index].name;
+                                value = Users[index].name;
                             } else {
-                                if (value === userData.name) {
-                                    setUser.update(userData);
+                                if (value === this.userData.name) {
+                                    setUser.update(this.userData);
                                 } else {
-                                    setUser.set(userData);
+                                    setUser.set(this.userData);
                                 }
                             }
                         })
                         // this.router.navigateByUrl('dashboard');
-                        //return
+                        // return
 
                         // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
                         // You can use these server side with your app's credentials to access the Twitter API.
@@ -185,12 +204,12 @@ export class LoginComponent implements OnInit{
                         // The signed-in user info.
                         console.log(ref.credential);
 
-                        var user = ref.user;
+                        // // var user = ref.user;
                         // ...
                     }).catch(function (error) {
                         // Handle Errors here.
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
                         // [START_EXCLUDE]
                         if (errorCode === 'auth/wrong-password') {
                             alert('Wrong password.');
@@ -227,7 +246,7 @@ export class LoginComponent implements OnInit{
             // Save the email locally so you don't need to ask the user for it again
             // if they open the link on the same device.
             window.localStorage.setItem('emailForSignIn', email);
-            alert('Email Verification Sent!'); 
+            alert('Email Verification Sent!');
         })
         .catch(function (error) {
             // Some error occurred, you can inspect the code: error.code
@@ -245,12 +264,12 @@ export class LoginComponent implements OnInit{
             // [END_EXCLUDE]
         }).catch(function (error) {
             // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            const errorCode = error.code;
+            const errorMessage = error.message;
             // [START_EXCLUDE]
-            if (errorCode == 'auth/invalid-email') {
+            if (errorCode === 'auth/invalid-email') {
                 alert(errorMessage);
-            } else if (errorCode == 'auth/user-not-found') {
+            } else if (errorCode === 'auth/user-not-found') {
                 alert(errorMessage);
             }
             console.log(error);
@@ -258,14 +277,14 @@ export class LoginComponent implements OnInit{
         });
         // [END sendpasswordemail];
     }
-            
+
 
     coloursSignIn(credentials) {
 
-        if (credentials.email != "") {
+        if (credentials.email !== '') {
             this.nullSigninEmail = true;
             this.statusSigninEmail = false;
-            if (credentials.password != "") {
+            if (credentials.password !== '') {
 
                 this.nullSigninPwd = true;
                 this.statusSigninPwd = false;
@@ -276,7 +295,7 @@ export class LoginComponent implements OnInit{
                     // [END signout]
                 } else {
                     console.log('email' + credentials.email);
-                    console.log('email' + email);
+                    // console.log('email' + email);
                     if (credentials.email.length < 4) {
                         alert('Please enter an email address.');
                         return;
@@ -293,7 +312,7 @@ export class LoginComponent implements OnInit{
 
 
                     firebase.auth().createUserWithEmailAndPassword(credentials.email, credentials.password).then(ref => {
-                        console.log("Check User collection for doc");
+                        console.log('Check User collection for doc');
 
                         // userRef.sendEmailVerification();
                         // userRef.user.sendEmailVerification();
@@ -301,15 +320,15 @@ export class LoginComponent implements OnInit{
                         this.coloursUserDetails = ref;
 
                         console.log(firebase.auth.EmailAuthProvider);
-                        
+
                         console.log(firebase.auth().currentUser.providerData[0].providerId);
-                        
-                        let coloursUser = ref.user;
+
+                        const coloursUser = ref.user;
 
                         this.emailUser = coloursUser;
 
                         console.log(coloursUser.emailVerified);
-                        
+
 
                         coloursUser.sendEmailVerification();
 
@@ -317,35 +336,47 @@ export class LoginComponent implements OnInit{
                             // this.emailId = coloursUser.email;
 
                             if (coloursUser.emailVerified === false) {
-                                let emailVerified = false;
+                                const emailVerified = false;
                                 this.emailVerified = false;
                                 this.emailVerifiedinit = true;
                             }
 
-                            let userData = {
+                            this.userData = {
                                 name: coloursUser.displayName,
                                 email: coloursUser.email,
                                 id: coloursUser.uid,
                                 userImg: coloursUser.photoURL,
-                                //phoneNumber: coloursUser.phoneNumber,
+                                // phoneNumber: coloursUser.phoneNumber,
                                 LastTimeLogin: new Date().toString()
                             }
-                            console.log(userData);
-                            if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-                                this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
-                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
-                                this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                                console.log("userData is set");
+                            // console.log(userData);;
 
-                            }
-                            else {
-                                // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                                console.log("userData is not updated");
+                            if (coloursUser.photoURL === null) {
+                                // this.userData = '';
+                                if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                                    this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                                        this.afs.collection('Users').doc(coloursUser.uid)
+                                            .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                                        });
+                                        console.log('userData is set');
+                                    }).catch(error => console.error());
+                                } else {
+                                    console.log('userData is not updated');
+                                }
+                            } else {
+                                if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                                    this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                                        this.afs.collection('Users').doc(coloursUser.uid)
+                                            .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                                        });
+                                        console.log('userData is set');
+                                    }).catch(error => console.error());
+                                } else {
+                                    console.log('userData is not updated');
+                                }
                             }
                             let value;
-                            let setUser = this.afs.collection('Users').doc(coloursUser.uid);
+                            const setUser = this.afs.collection('Users').doc(coloursUser.uid);
                             this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
                                 map(b => b.map(a => {
                                     const data = a.payload.doc.data() as any;
@@ -353,34 +384,34 @@ export class LoginComponent implements OnInit{
                                     return { id, ...data };
                                 }))
                             );
-                            this.userCollection.subscribe(ref => {
-                                const index = ref.findIndex(user => user.name === userData.name);
+                            this.userCollection.subscribe(refCol => {
+                                const index = refCol.findIndex(user => user.name === this.userData.name);
                                 if (index > -1) {
-                                    value = ref[index].name;
+                                    value = refCol[index].name;
                                 } else {
-                                    if (value === userData.name) {
-                                        setUser.update(userData);
+                                    if (value === this.userData.name) {
+                                        setUser.update(this.userData);
                                     } else {
-                                        setUser.set(userData);
+                                        setUser.set(this.userData);
                                     }
                                 }
                             })
-                            
+
                             // this.router.navigateByUrl('dashboard');
 
                         } else {
-                            
+
                         }
-                        
+
 
                         console.log(ref.credential);
 
-                        var user = ref.user;
+                        // var user = ref.user;
                         // ...
                     }).catch(function (error) {
                         // Handle Errors here.
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
                         // [START_EXCLUDE]
                         if (errorCode === 'auth/wrong-password') {
                             alert('Wrong password.');
@@ -395,8 +426,7 @@ export class LoginComponent implements OnInit{
 
                     // [END authwithemail]
                 }
-            }
-            else {
+            } else {
 
                 this.nullSigninPwd = false;
                 this.statusSigninPwd = true;
@@ -404,9 +434,8 @@ export class LoginComponent implements OnInit{
                 console.log('Enter Your Correct Password');
 
             }
-        }
-        else {
-            var email = window.prompt('Please provide your email');
+        } else {
+            const email = window.prompt('Please provide your email');
             this.nullSigninEmail = false;
             this.statusSigninEmail = true;
             console.log('Enter Your Correct email');
@@ -419,7 +448,7 @@ export class LoginComponent implements OnInit{
     }
 
 
-    sendVerification(){
+    sendVerification() {
         this.user.sendEmailVerification().then(function () {
             // Password Reset Email Sent!
             // [START_EXCLUDE]
@@ -427,23 +456,23 @@ export class LoginComponent implements OnInit{
             // [END_EXCLUDE]
         }).catch(function (error) {
             // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            const errorCode = error.code;
+            const errorMessage = error.message;
             alert(errorCode + ' ' + errorMessage);
             console.log(error);
             // [END_EXCLUDE]
         });
     }
 
-    run1(){
-        this.show1=true;
+    run1() {
+        this.show1 = true;
         this.showless = true;
         this.compShowLess();
         this.projectShowLess();
     }
 
-    showLess(){
-        this.showless=false;
+    showLess() {
+        this.showless = false;
         this.show1 = false;
     }
 
@@ -460,7 +489,7 @@ export class LoginComponent implements OnInit{
     }
 
     compShowMore() {
-        this.showmoreE= true;
+        this.showmoreE = true;
         this.showlessE = true;
         this.showLess();
         this.projectShowLess();
@@ -474,76 +503,49 @@ export class LoginComponent implements OnInit{
     loginGoogle() {
         // this.as.googleSign();
         this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider()).then(ref => {
-            console.log("Check User collection for doc");
+            console.log('Check User collection for doc');
 
             console.log(firebase.auth().currentUser.providerData[0].providerId);
-
-
             console.log(ref);
             this.coloursUserDetails = ref;
-
-            let coloursUser = ref.user;
-            let userData = {
+            const joiningDate = new Date().toISOString();
+            const coloursUser = ref.user;
+            this.userData = {
                 name: coloursUser.displayName,
                 email: coloursUser.email,
                 id: coloursUser.uid,
                 userImg: coloursUser.photoURL,
-                address: "",
-                nationality: "",
-                nationalId: "",
-                bus_email: "",
+                // address: '',
+                // nationality: '',
+                // nationalId: '',
+                // bus_email: '',
+                // province: '',
                 // phoneNumber: coloursUser.phoneNumber,
                 LastTimeLogin: new Date().toString()
             }
-            console.log(userData);
+            if (!this.userData.name) { this.userData.name = '' }
+            // console.log(userData);;
             if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-                this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
-                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
-                // this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                console.log("userData is set");
-
-            }
-            else {
+                this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                    this.afs.collection('Users').doc(coloursUser.uid)
+                        .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                        ,'joiningDate': joiningDate
+                    });
+                    console.log('userData is set');
+                }).catch(error => console.error());
+            } else {
                 // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                console.log("userData is not updated");
+                console.log('userData is not updated');
             }
-            // let value;
-            // let setUser = this.afs.collection('Users').doc(coloursUser.uid);
-            // this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
-            //     map(b => b.map(a => {
-            //         const data = a.payload.doc.data() as any;
-            //         const id = a.payload.doc.id;
-            //         return { id, ...data };
-            //     }))
-            // );
-            // this.userCollection.subscribe(ref => {
-            //     const index = ref.findIndex(user => user.name === userData.name);
-            //     if (index > -1) {
-            //         value = ref[index].name;
-            //     } else {
-            //         if (value === userData.name) {
-            //             setUser.update(userData);
-            //         } else {
-            //             setUser.set(userData);
-            //         }
-            //     }
-            // })
-            // this.router.navigateByUrl('dashboard');
-
-                //return
-
-
 
         }).catch(function (error) {
             // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            const errorCode = error.code;
+            const errorMessage = error.message;
             // The email of the user's account used.
-            var email = error.email;
+            const email = error.email;
             // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential;
+            const credential = error.credential;
             // ...
         });
     }
@@ -552,164 +554,127 @@ export class LoginComponent implements OnInit{
 
     return this.afAuth.auth.signInWithPopup(
         new firebase.auth.TwitterAuthProvider()).then(ref => {
-        console.log("Check User collection for doc");
+        console.log('Check User collection for doc');
 
             console.log(firebase.auth().currentUser.providerData[0].providerId);
 
 
         console.log(ref);
         this.coloursUserDetails = ref;
-
-        let coloursUser = ref.user;
-        let userData = {
+        const joiningDate = new Date().toISOString();
+        const coloursUser = ref.user;
+        this.userData = {
             name: coloursUser.displayName,
             email: coloursUser.email,
             id: coloursUser.uid,
             userImg: coloursUser.photoURL,
-            //phoneNumber: coloursUser.phoneNumber,
+            // phoneNumber: coloursUser.phoneNumber,
             LastTimeLogin: new Date().toString()
         }
-        console.log(userData);
-        if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-            this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-            this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-            this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
-            this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
-            this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-            console.log("userData is set");
 
+        if (!this.userData) { this.userData = ''; }
+        if (coloursUser.photoURL === null) {
+            this.userData = '';
+            if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                    this.afs.collection('Users').doc(coloursUser.uid)
+                        .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                        , 'joiningDate': joiningDate
+                    });
+                    console.log('userData is set');
+                }).catch(error => console.error());
+            } else {
+                console.log('userData is not updated');
+            }
+        } else {
+            if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                    this.afs.collection('Users').doc(coloursUser.uid)
+                        .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                    });
+                    console.log('userData is set');
+                }).catch(error => console.error());
+            } else {
+                console.log('userData is not updated');
+            }
         }
-        else {
-            // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-            console.log("userData is not updated");
-        }
-        // let value;
-        // let setUser = this.afs.collection('Users').doc(coloursUser.uid);
-        // this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
-        //     map(b => b.map(a => {
-        //         const data = a.payload.doc.data() as any;
-        //         const id = a.payload.doc.id;
-        //         return { id, ...data };
-        //     }))
-        // );
-        // this.userCollection.subscribe(ref => {
-        //     const index = ref.findIndex(user => user.name === userData.name);
-        //     if (index > -1) {
-        //         value = ref[index].name;
-        //     } else {
-        //         if (value === userData.name) {
-        //             setUser.update(userData);
-        //         } else {
-        //             setUser.set(userData);
-        //         }
-        //     }
-        // })
-        // this.router.navigateByUrl('dashboard');
-                //return
-
-
-        // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-        // You can use these server side with your app's credentials to access the Twitter API.
-        // var token = result.credential.accessToken;
-        // var secret = result.credential.secret;
-        // The signed-in user info.
         console.log(ref.credential);
-        
-        var user = ref.user;
+
+        // var user = ref.user;
         // ...
     }).catch(function (error) {
         // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
+        const errorCode = error.code;
+        const errorMessage = error.message;
         // The email of the user's account used.
-        var email = error.email;
+        const email = error.email;
         // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
+        const credential = error.credential;
         // ...
     });
     }
 
     signInWithFacebook() {
-        var provider = new firebase.auth.FacebookAuthProvider();
+        const provider = new firebase.auth.FacebookAuthProvider();
         firebase.auth().signInWithPopup(provider)
-        
+
             .then(ref => {
-                console.log("Check User collection for doc");
-
+                console.log('Check User collection for doc');
                 console.log(firebase.auth().currentUser.providerData[0].providerId);
-
                 console.log(ref);
                 this.coloursUserDetails = ref;
-
-                let coloursUser = ref.user;
-                let userData = {
+                const joiningDate = new Date().toISOString();
+                const coloursUser = ref.user;
+                this.userData = {
                     name: coloursUser.displayName,
                     email: coloursUser.email,
                     id: coloursUser.uid,
                     userImg: coloursUser.photoURL,
-                    //phoneNumber: coloursUser.phoneNumber,
+                    // phoneNumber: coloursUser.phoneNumber,
                     LastTimeLogin: new Date().toString()
                 }
-                console.log(userData);
-                if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
-                    this.afs.collection('Users').doc(coloursUser.uid).set(userData).catch(error => console.error());
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'bus_email': "" });
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationalId': "" });
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'nationality': "" });
-                    this.afs.collection('Users').doc(coloursUser.uid).update({ 'address': "" });
-                    console.log("userData is set");
-
+                if (!this.userData) { this.userData = '' }
+                if (coloursUser.photoURL === null) {
+                    this.userData = '';
+                    if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                        this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                            this.afs.collection('Users').doc(coloursUser.uid)
+                                .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                                ,'joiningDate': joiningDate
+                            });
+                            console.log('userData is set');
+                        }).catch(error => console.error());
+                    } else {
+                        console.log('userData is not updated');
+                    }
+                } else {
+                    if (this.coloursUserDetails.additionalUserInfo.isNewUser) {
+                        this.afs.collection('Users').doc(coloursUser.uid).set(this.userData).then(() => {
+                            this.afs.collection('Users').doc(coloursUser.uid)
+                                .update({ 'bus_email': '', 'nationalId': '', 'nationality': '', 'address': '', 'province': ''
+                            });
+                            console.log('userData is set');
+                        }).catch(error => console.error());
+                    } else {
+                        console.log('userData is not updated');
+                    }
                 }
-                else {
-                    // this.afs.collection('Users').doc(coloursUser.uid).update(userData).catch(error => console.error());
-                    console.log("userData is not updated");
-                }
-                // let value;
-                // let setUser = this.afs.collection('Users').doc(coloursUser.uid);
-                // this.userCollection = this.afs.collection('Users').snapshotChanges().pipe(
-                //     map(b => b.map(a => {
-                //         const data = a.payload.doc.data() as any;
-                //         const id = a.payload.doc.id;
-                //         return { id, ...data };
-                //     }))
-                // );
-                // this.userCollection.subscribe(ref => {
-                //     const index = ref.findIndex(user => user.name === userData.name);
-                //     if (index > -1) {
-                //         value = ref[index].name;
-                //     } else {
-                //         if (value === userData.name) {
-                //             setUser.update(userData);
-                //         } else {
-                //             setUser.set(userData);
-                //         }
-                //     }
-                // })
-                // this.router.navigateByUrl('dashboard');
-                //return
-
-
-                // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-                // You can use these server side with your app's credentials to access the Twitter API.
-                // var token = result.credential.accessToken;
-                // var secret = result.credential.secret;
-                // The signed-in user info.
                 console.log(ref.credential);
 
-                var user = ref.user;
+                // var user = ref.user;
                 // ...
             }).catch(function (error) {
             // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            const errorCode = error.code;
+            const errorMessage = error.message;
             // The email of the user's account used.
-            var email = error.email;
+            const email = error.email;
             // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential;
+            const credential = error.credential;
             // ...
         });
     }
-    
+
     logout() {
         this.afAuth.auth.signOut();
     }
@@ -725,17 +690,17 @@ export class LoginComponent implements OnInit{
             console.log(user);
             if (user === null) {
                 // this.router.navigate(['/pages/login']);
-            }
-
-            else {
-                if (user !== null){
+                // this.router.navigateByUrl('/dashboard');
+            } else {
+                if (user !== null) {
 
                     this.user = user;
                     this.userId = user.uid;
 
                     if (firebase.auth().currentUser.providerData[0].providerId === 'password') {
                         if (firebase.auth().currentUser.emailVerified === true) {
-                            this.router.navigate(['/dashboard']);
+                            // this.router.navigate(['/dashboard']);
+                            this.router.navigateByUrl('/dashboard');
                         } else {
                             this.emailId = firebase.auth().currentUser.email;
                             this.emailVerifiedinit = true;
@@ -744,15 +709,18 @@ export class LoginComponent implements OnInit{
                     }
 
                     if (firebase.auth().currentUser.providerData[0].providerId === 'google.com') {
-                        this.router.navigate(['/dashboard']);
+                        // this.router.navigate(['/dashboard']);
+                        this.router.navigateByUrl('/dashboard');
                     }
 
                     if (firebase.auth().currentUser.providerData[0].providerId === 'facebook.com') {
-                        this.router.navigate(['/dashboard']);
+                        // this.router.navigate(['/dashboard']);
+                        this.router.navigateByUrl('/dashboard');
                     }
 
                     if (firebase.auth().currentUser.providerData[0].providerId === 'twitter.com') {
-                        this.router.navigate(['/dashboard']);
+                        // this.router.navigate(['/dashboard']);
+                        this.router.navigateByUrl('/dashboard');
                     }
                 }
 
@@ -761,47 +729,48 @@ export class LoginComponent implements OnInit{
         })
     }
 
-    checkFullPageBackgroundImage(){
-        var $page = $('.full-page');
-        var image_src = $page.data('image');
+    checkFullPageBackgroundImage() {
+        const $page = $('.full-page');
+        const image_src = $page.data('image');
 
-        if(image_src !== undefined){
-            var image_container = '<div class="full-page-background" style="background-image: url(' + image_src + ') "/>'
+        if (image_src !== undefined) {
+            const image_container = '<div class="full-page-background" style="background-image: url(' + image_src + ') "/>'
             $page.append(image_container);
         }
     };
 
-    ngOnInit(){
+    ngOnInit() {
 
         // this.afAuth.authState.subscribe(user => {
         //     this.router.navigate(['./dashboard'])
         // })
 
         this.checkFullPageBackgroundImage();
-        var body = document.getElementsByTagName('body')[0];
+        const body = document.getElementsByTagName('body')[0];
         body.classList.add('login-page');
-        var navbar : HTMLElement = this.element.nativeElement;
+        const navbar: HTMLElement = this.element.nativeElement;
         this.toggleButton = navbar.getElementsByClassName('navbar-toggle')[0];
 
-        setTimeout(function(){
+        setTimeout(function() {
             // after 1000 ms we add the class animated to the login/register card
             $('.card').removeClass('card-hidden');
         }, 700)
     }
 
-    ngOnDestroy(){
-        var body = document.getElementsByTagName('body')[0];
+    // tslint:disable-next-line: use-life-cycle-interface
+    ngOnDestroy() {
+        const body = document.getElementsByTagName('body')[0];
         body.classList.remove('login-page');
     }
 
-    sidebarToggle(){
-        var toggleButton = this.toggleButton;
-        var body = document.getElementsByTagName('body')[0];
-        var sidebar = document.getElementsByClassName('navbar-collapse')[0];
-        if(this.sidebarVisible == false){
-            setTimeout(function(){
+    sidebarToggle() {
+        const toggleButton = this.toggleButton;
+        const body = document.getElementsByTagName('body')[0];
+        const sidebar = document.getElementsByClassName('navbar-collapse')[0];
+        if (this.sidebarVisible === false) {
+            setTimeout(function() {
                 toggleButton.classList.add('toggled');
-            },500);
+            }, 500);
             body.classList.add('nav-open');
             this.sidebarVisible = true;
         } else {
